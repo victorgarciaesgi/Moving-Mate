@@ -62,7 +62,7 @@ export default class HeaderComponent extends Vue {
   @NotifAction addNotification;
 
 
-  public ConnexionState: boolean = true;
+  public ConnexionState: boolean = false;
 
   showConnexion() {
     this.ConnexionState = true;

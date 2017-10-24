@@ -44,14 +44,14 @@ export default class Alerts extends Vue {
 
 ul#alertes-container{
   position: fixed;
-  bottom: 0;
+  top: calc(#{$headerHeight} + 10px);
   left: 0;
   padding: 10px;
   width: 350px;
   height: auto;
   z-index: 10005;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
 
   li{
     position: relative;
@@ -87,7 +87,7 @@ ul#alertes-container{
 }
 .alert-enter, .alert-leave-to /* .list-leave-active below version 2.1.8 */ {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(-30px);
 }
 
 </style>
