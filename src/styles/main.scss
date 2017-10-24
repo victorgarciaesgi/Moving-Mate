@@ -1,0 +1,29 @@
+@import 'fonts';
+@import 'tools';
+@import 'variables';
+@import 'classes';
+
+
+.view{
+  position: absolute;
+  flex-flow: column wrap;
+  left: 0;
+  top: $headerHeight;
+  min-width: 100%;
+  max-width: 100%;
+  display: flex;
+  height: calc(100% - #{$headerHeight});
+  
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.15s ease-out;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+
+
+  

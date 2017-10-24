@@ -1,0 +1,45 @@
+{
+  "editor.detectIndentation": false,// The number of spaces a tab is equal to. This setting is overriden
+  // based on the file contents when `editor.detectIndentation` is true.
+  "editor.tabSize": 2,
+  
+  // Insert spaces when pressing Tab. This setting is overriden
+  // based on the file contents when `editor.detectIndentation` is true.
+  "editor.insertSpaces": true,
+  "eslint.enable": false,
+  
+  // When opening a file, `editor.tabSize` and `editor.insertSpaces`
+  // will be detected based on the file contents.
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/*.map": true,
+    "**/*.css": true
+  },
+  "html.suggest.angular1": false,
+  "html.suggest.ionic": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
+  
+
+  // {
+  //   "scope": "entity.name.tag.css",
+  //   "settings": {
+  //     "foreground": "#cf7676"
+  //   }
+  // },
+  // {
+  //   "scope": "meta.directive.vue entity.other.attribute-name.html",
+  //   "settings": {
+  //     "foreground": "#4EC9B0"
+  //   }
+  // },
+  // {
+  //   "scope": "entity.other.attribute-name.html",
+  //   "settings": {
+  //     "foreground": "#DCDCAA"
+  //   }
+  // }
+}

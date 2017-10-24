@@ -1,0 +1,162 @@
+// Couleurs
+$mainStyle: #4975BA;
+
+$yellow1: #f4af00;
+$yellow2: #D99E7E;
+
+$blue1: #4286f4;
+$blue2: #63d4ff;
+
+$red1: #E54C4C;
+
+$green1: #5cb85c;
+$green2: #CEE8DF;
+$green3: #70BEB1;
+
+
+$w255: rgb(255, 255, 255);
+$w250: rgb(250, 250, 250);
+$w245: rgb(245, 245, 245);
+$w240: rgb(240, 240, 240);
+$w235: rgb(235, 235, 235);
+$w230: rgb(230, 230, 230);
+$w225: rgb(225, 225, 225);
+$w220: rgb(220, 220, 220);
+$w210: rgb(210, 210, 210);
+$w200: rgb(200, 200, 200);
+$w190: rgb(190, 190, 190);
+$w180: rgb(180, 180, 180);
+$w170: rgb(170, 170, 170);
+$w160: rgb(160, 160, 160);
+$w150: rgb(150, 150, 150);
+$w140: rgb(140, 140, 140);
+$w130: rgb(130, 130, 130);
+$w120: rgb(120, 120, 120);
+$w110: rgb(110, 110, 110);
+$w100: rgb(100, 100, 100);
+
+$g90: rgb(90, 90, 90);
+$g80: rgb(80, 80, 80);
+$g70: rgb(70, 70, 70);
+$g60: rgb(60, 60, 60);
+$g50: rgb(50, 50, 50);
+$g40: rgb(40, 40, 40);
+$g30: rgb(30, 30, 30);
+$g20: rgb(20, 20, 20);
+$g10: rgb(10, 10, 10);
+$g0: rgb(0, 0, 0);
+
+$ombre: rgba(20,20,20,0.2);
+$mainColor: $g90;
+
+
+$mainFont: 'Arial, sans-serif';
+
+$mini: "(max-width: 1000px)";
+$desktop: "(min-width: 1001px)";
+
+
+$Loadersize: 20px;
+
+//tailles
+
+$headerHeight: 50px;
+$headerColor: #373F46;
+
+
+$boutonfont: 14px;
+$boutonH: 20px;
+
+$aside-w: 180px;
+
+$contentSize: 170px;
+
+// fonts
+
+
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -o-transition: $args;
+  -ms-transition: $args;
+  transition: $args;
+}
+
+@mixin scale($scale) {
+  -webkit-transform: scale($scale);
+  -moz-transform: scale($scale);
+  -o-transform: scale($scale);
+  -ms-transform: scale($scale);
+  transform: scale($scale);
+}
+
+@mixin rotate($angle) {
+  -webkit-transform: rotate($angle);
+  -moz-transform: rotate($angle);
+  -o-transform: rotate($angle);
+  -ms-transform: rotate($angle);
+  transform: rotate($angle);
+}
+
+@mixin translateX($value) {
+  -webkit-transform: translateX($value);
+  -moz-transform: translateX($value);
+  -o-transform: translateX($value);
+  -ms-transform: translateX($value);
+  transform: translateX($value);
+}
+
+@mixin translateY($value) {
+  -webkit-transform: translateY($value);
+  -moz-transform: translateY($value);
+  -o-transform: translateY($value);
+  -ms-transform: translateY($value);
+  transform: translateY($value);
+}
+
+@mixin translate($x, $y) {
+  -webkit-transform: translate($x, $y);
+  -moz-transform: translate($x, $y);
+  -o-transform: translate($x, $y);
+  -ms-transform: translate($x, $y);
+  transform: translate($x, $y);
+}
+
+@mixin userselect {
+  -webkit-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+@mixin ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: nowrap;
+}
+
+@mixin inputbase {
+  outline: none;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+@mixin bg-center {
+  background: {
+    size: cover;
+    position: center center;
+    repeat: no-repeat;
+  };
+}
+
+@mixin filter($property) {
+  -webkit-filter: $property;
+  -o-filter: $property;
+  -moz-filter: $property;
+  -ms-filter: $property;
+  filter: $property;
+}

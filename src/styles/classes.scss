@@ -1,0 +1,95 @@
+@import "variables.scss";
+
+
+.input-container{
+  display: flex;
+  position: relative;
+  flex-direction: row wrap;
+
+  .errorMessage{
+    height: auto;
+    width: 100%;
+    color: $red1;
+    font-size: 13px;
+
+    span{
+      padding: 5px;
+    }
+  }
+  .infoMessage{
+    @extend .errorMessage;
+    color: #ea730b;
+  }
+}
+
+
+
+.input-form {
+  position: relative;
+  flex: 1 1 auto;
+  background-color: $w230;
+  border: 1px solid transparent;
+  color: $g40;
+  height: 40px;
+  padding: 5px 30px 5px 9px;
+  width: 100%;
+  margin: 5px 0 5px 0;
+  line-height: 30px;
+  font-size: 15px;
+  border-radius: 3px;
+
+  &:focus{
+    background-color: $w225;
+    & + .input-form-result{
+      display: block;
+    }
+  }
+
+  // &.formError{
+  //   // border-color: $red1;
+  //   // background-color: $w245;
+  // }
+  // &.formValid{
+  //   // border-color: $mainStyle;
+  //   // background-color: $w245;
+  // }
+}
+
+.form-valid-icon{
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  height: 20px;
+  width: 20px;
+  @include translateY(-50%);
+  @include bg-center;
+  cursor: pointer;
+
+  &.form-valid{
+    background-image: url('~@icons/form-valid.svg');
+  }
+  &.form-invalid{
+    background-image: url('~@icons/form-invalid.svg');
+  }
+  &.form-required{
+    background-image: url('~@icons/form-required.svg');
+    height: 15px;
+    width: 15px;
+    &:hover:after{
+      content:"Champs requis";
+      background-color: $g70;
+      color: white;
+      position: absolute;
+      width: auto;
+      height: auto;
+      left: 50%;
+      @include translateX(-50%);
+      text-align: center;
+      top: calc(-100% - 20px);
+      border-radius: 3px;
+      font-size: 11px;
+      opacity: 1;
+      padding: 4px 6px 4px 6px;
+    }
+  }
+}
