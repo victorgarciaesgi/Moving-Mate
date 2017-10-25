@@ -1,9 +1,7 @@
 <template lang='html'>
   <transition name='slide'>
     <div class='view'>
-      <section>
-        
-      </section>
+      <h1>Moving</h1>
     </div>
   </transition>
 </template>
@@ -14,7 +12,7 @@ import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
 @Component({})
-export default class Home extends Vue {
+export default class Moving extends Vue {
 
 }
 </script>
@@ -23,12 +21,6 @@ export default class Home extends Vue {
 <style lang="scss" scoped>
 
 
-section{
-  display: flex;
-  height: 500px;
-  background-image: url('~@images/home_image.jpg');
-  @include bg-center;
-}
 
 
 </style>

@@ -7,12 +7,14 @@
                 :class='{
                   formError: (!valid && dirty && error),
                   formValid: (valid && dirty && error),
+                  icon: icon
                 }'
                 :placeholder="placeholder"
                 :required='required'
                 :disabled='disabled'
                 @input="updateValue($event.target.value)" />
-
+                
+        <img v-if='icon' :src="icon">
         <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
         <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
@@ -32,9 +34,7 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { IValidator } from 'vuelidate';
 
-@Component({
-  name: 'FormText',
-})
+@Component({})
 export default class FormText extends Vue {
 
   @Prop() value: string;
@@ -43,6 +43,7 @@ export default class FormText extends Vue {
   @Prop({required: false}) error: boolean;
   @Prop({required: false}) disabled: boolean;
   @Prop({required: false}) required: boolean;
+  @Prop({required: false}) icon: string;
   @Prop({required: false}) $v: IValidator;
 
   updateValue(value){

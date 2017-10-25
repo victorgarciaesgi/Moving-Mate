@@ -8,10 +8,14 @@ $ npm install
 $ yarn
 ```
 
-### Pour developper
+## Pour developper
 
-```npm run dev```
+```bash
+npm run dev
+```
 
-### Pour deployer en prod
+## Pour deployer en prod
 
-```npm run prod```
+```bash
+npm run prod
+```

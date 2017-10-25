@@ -1,7 +1,6 @@
 const glob = require('glob'),
   path = require('path'),
   webpack =  require('webpack'),
-  UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   CompressionPlugin = require('compression-webpack-plugin'),
   ExtractTextPlugin = require('extract-text-webpack-plugin'),
@@ -54,10 +53,24 @@ webpackConfig.output.filename = "[name].[hash].js";
 
 webpackConfig.plugins = [...webpackConfig.plugins,
   extractSass,
+  new webpack.optimize.UglifyJsPlugin({
+    include: /\.js$/,
+    mangle: { keep_fnames: false, screw_ie8: true },
+    compress: { keep_fnames: false, screw_ie8: true, warnings: false },
+    sourceMap: false,
+    removeComments: true,
+    beautify: false
+  }),
+  new CompressionPlugin({
+    asset: "[path].gz[query]",
+    algorithm: "gzip",
+    test: /\.js$/,
+    threshold: 10240,
+    minRatio: 0.8
+  }),
   new HtmlWebpackPlugin({
     inject: true,
     template: helpers.root('/src/index.html'),
-    // favicon: path.resolve('/src/favicon.ico'),
     minify: {
       removeComments: true,
       collapseWhitespace: true,
@@ -71,21 +84,9 @@ webpackConfig.plugins = [...webpackConfig.plugins,
       minifyURLs: true
     }
   }),
-  new UglifyJsPlugin({
-    include: /\.min\.js$/,
-    minimize: true
-  }),
-  new CompressionPlugin({
-    asset: "[path].gz[query]",
-    algorithm: "gzip",
-    test: /\.js$/,
-    threshold: 10240,
-    minRatio: 0.8
-  }),
   new DefinePlugin({
     'process.env': env
   }),
-  new webpack.optimize.AggressiveMergingPlugin()
 ];
 
 module.exports = webpackConfig;

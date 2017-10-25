@@ -13,9 +13,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop, Model } from "vue-property-decorator";
 
-@Component({
-  name: 'FormButton',
-})
+@Component({})
 export default class FormButton extends Vue {
 
   @Prop({required: false}) submitting: boolean;

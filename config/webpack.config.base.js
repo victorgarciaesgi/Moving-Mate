@@ -1,11 +1,13 @@
 const path = require('path');
 const helpers = require('./helpers');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 
 
 let config = {
   entry: {
-    'bundle': helpers.root('/src/main.ts')
+    'bundle': helpers.root('/src/main.ts')  
   },
   output: {
     filename: 'bundle.js',
@@ -76,7 +78,10 @@ let config = {
         yandex: false,
         windows: false
       }
-    })
+    }),
+    new CopyWebpackPlugin([{
+      from: helpers.root('src/assets')
+    }])
   ],
   devtool: 'source-map'
 };

@@ -7,7 +7,7 @@
         </router-link>
         <ul class='nav-list'>
           <router-link :to='item.link' v-for="item in nav" :key='item.name'>
-            <li class='route' :class='{active: $route.name == item.name}' :size='26'>
+            <li class='route' :class='{active: $store.state.route.path === item.link}' :size='26'>
               <span>{{item.title}}</span>
             </li>
           </router-link>
@@ -23,9 +23,11 @@
             <li class="header-button" @click='showConnexion()'>
               Connexion
             </li>
-            <li class="header-button">
-              Inscription
-            </li>
+            <router-link to='/inscription'>
+              <li class="header-button">
+                Inscription
+              </li>
+            </router-link>
           </template>
         </ul>
       </nav>
@@ -50,7 +52,6 @@ const LoginGetter = namespace('LoginModule', Getter);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
-  name: "HeaderComponent",
   components: { Connexion },
   filters: {
     uppercase: uppercase
@@ -74,6 +75,7 @@ export default class HeaderComponent extends Vue {
 
   // async mounted() {
   //   await timeout(1000);
+  //   console.log(this)
   //   this.addNotification({type: "success", message: "Test de notification"});
   // }
 

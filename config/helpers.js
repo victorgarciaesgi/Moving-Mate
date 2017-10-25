@@ -1,6 +1,5 @@
 const path = require('path');
 
-// Helper functions
 const ROOT = path.resolve(__dirname, '..');
 
 function root(args) {

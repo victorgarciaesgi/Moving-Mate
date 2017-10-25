@@ -55,7 +55,6 @@ interface IStarValidate {
 }
 
 @Component({
-  name: 'StarRating',
   validations: {
     filled: {
       required: required

@@ -24,9 +24,7 @@ import {State, namespace } from "vuex-class";
 const NotifState = namespace('NotificationsModule', State);
 
 
-@Component({
-  name: 'Alerts',
-})
+@Component({})
 export default class Alerts extends Vue {
 
   @NotifState notificationList;
@@ -44,7 +42,7 @@ export default class Alerts extends Vue {
 
 ul#alertes-container{
   position: fixed;
-  top: calc(#{$headerHeight} + 10px);
+  top: $headerHeight;
   left: 0;
   padding: 10px;
   width: 350px;

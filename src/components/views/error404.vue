@@ -14,9 +14,6 @@ import { Prop, Watch } from 'vue-property-decorator';
 @Component({})
 export default class error404 extends Vue {
 
-  created() {
-    console.log('error404 created');
-  }
 }
 
 

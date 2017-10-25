@@ -7,8 +7,5 @@
     "dist/"
   ],
   "verbose": false,
-  "events": {
-    "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
-  },
   "ext": "js json"
 }
