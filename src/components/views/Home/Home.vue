@@ -1,9 +1,8 @@
 <template lang='html'>
   <transition name='slide'>
     <div class='view'>
-      <section>
-        
-      </section>
+      <section></section>
+      <SearchComponent/>
     </div>
   </transition>
 </template>
@@ -13,7 +12,13 @@ import Vue from 'vue'
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
-@Component({})
+import SearchComponent from './SearchComponent';
+
+@Component({
+  components: {
+    SearchComponent
+  }
+})
 export default class Home extends Vue {
 
 }

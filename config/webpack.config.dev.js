@@ -2,7 +2,7 @@ webpackConfig = require('./webpack.config.base'),
   helpers = require('./helpers'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   DefinePlugin = require('webpack/lib/DefinePlugin'),
-  autoprefixer = require('autoprefixer'),  
+  autoprefixer = require('autoprefixer'),
   env = require('../environment/dev.env');
 const path = require('path');
 
@@ -10,9 +10,9 @@ webpackConfig.module.rules = [...webpackConfig.module.rules,
 {
   test: /\.scss$/,
   use: [{
-      loader: 'style-loader'
-    },
-    {
+    loader: 'style-loader'
+  },
+  {
     loader: 'css-loader',
     options: {
       minimize: false,

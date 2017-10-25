@@ -11,12 +11,14 @@
 
 <script lang="ts"> 
 import Vue from 'vue';
-import router from './router';
 import Component from 'vue-class-component';
-import { Prop, Watch } from 'vue-property-decorator';
-import { store } from '@store';
+import { Action, namespace } from "vuex-class";
 
+import router from './router';
+import { store } from '@store';
 import * as Components from '@components';
+
+const LoginActions = namespace('LoginModule', Action);
 
 @Component({
   components: {
@@ -28,6 +30,11 @@ import * as Components from '@components';
 })
 export default class App extends Vue {
 
+  @LoginActions checkUserSession;
+
+  created() {
+    this.checkUserSession();
+  }
 }
 
 

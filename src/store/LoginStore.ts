@@ -19,7 +19,7 @@ const state: ILoginState = {
   isLoggedIn: false,
   isAdmin: false,
   status: null,
-  showModal: false,
+  showConnexion: false,
   reset() {
     this.name = null;
     this.surname = null;
@@ -36,6 +36,12 @@ const getters: GetterTree<ILoginState, RootState> = {
 }
 
 const mutations: MutationTree<ILoginState> = {
+  showModal(state) {
+    state.showConnexion = true;
+  },
+  closeModal(state) {
+    state.showConnexion = false;
+  },
   connectUser(state, userData) {
     state = _.merge(state, userData);
     state.isLoggedIn = true;
@@ -62,6 +68,7 @@ const actions: ActionTree<ILoginState, RootState> = {
       }
     } catch (error) {
       console.log(error);
+      return false;
     }
   },
   async disconnectRequest({commit, dispatch, rootState}) {
@@ -70,7 +77,12 @@ const actions: ActionTree<ILoginState, RootState> = {
     commit('disconnectUser');
   },
   async checkUserSession({commit, dispatch, rootState}) {
-
+    console.log('Checking user Auth...');
+    if (!!localStorage.getItem("id_token") && !!localStorage.getItem("access_token")){
+      commit('connectUser', jwtDecode(localStorage.getItem("id_token")));
+    } else {
+      console.log('User not logged');
+    }
   }
 }
 

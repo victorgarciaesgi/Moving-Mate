@@ -44,6 +44,7 @@ export default class CheckBox extends Vue {
 
   span{
     font-size: 14px;
+    font-weight: bold;
   }
 
   label.button{

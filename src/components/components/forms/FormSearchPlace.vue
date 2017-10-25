@@ -138,5 +138,46 @@ export default class FormText extends Vue {
   }
 }
 
+
+.input-form-result{
+  position: absolute;
+  top: calc(100% - 6px);
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 3;
+  background-color: white;
+  box-shadow: 0 0 5px transparentize($g30, 0.7);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+
+  ul{
+    display: flex;
+    flex-flow: column nowrap;
+
+    div.error_message{
+      height: 30px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    li{
+      width: 100%;
+      height: 40px;
+      border-bottom: 1px solid $w230;
+      cursor: pointer;
+      color: $g90;
+
+      &:last-child{
+        border: none;
+      }
+    }
+  }
+}
+
+
 </style>
 

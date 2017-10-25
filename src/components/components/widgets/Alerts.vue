@@ -3,11 +3,15 @@
     <ul id="alertes-container" v-show='notificationList.length'>
       <transition-group name='alert'>
         <li v-for='alert in notificationList' :key='alert.id' :type='alert.type'>
-          <span>{{alert.message}}</span>
-          <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
-          <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
-          <img src="~@icons/warning.svg" v-else-if='alert.type == "warning"'>
-          <img src="~@icons/infos.svg" v-else-if='alert.type == "alert"'>
+          <div class='alert-text'>
+            <span>{{alert.message}}</span>
+          </div>
+          <div class='alert-icon'>
+            <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
+            <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
+            <img src="~@icons/warning.svg" v-else-if='alert.type == "warning"'>
+            <img src="~@icons/infos.svg" v-else-if='alert.type == "alert"'>
+          </div>
         </li>
       </transition-group>
     </ul>

@@ -1,11 +1,11 @@
-<template>
+<template lang='html'>
   <div>
     <Modal :show='show' @close='closeModal()' :width='400'>
       <span slot='header'>Connexion</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
-        <FormText :required='true' type='email' icon='/icons/mail.svg' :error='true' placeholder='Adresse mail'
+        <FormText :required='true' type='email' :inline='true' :icon='images.login' :error='true' placeholder='Adresse mail'
                   v-model='LoginForm.login' :$v='$v.LoginForm.login' @input='$v.LoginForm.login.$touch()'/>
-        <FormText :required='true' type='password' icon='/icons/password.svg' :error='false' placeholder='Mot de passe'
+        <FormText :required='true' type='password' :inline='true' :icon='images.password' :error='false' placeholder='Mot de passe'
                   v-model='LoginForm.password' :$v='$v.LoginForm.password' @input='$v.LoginForm.password.$touch()'/>
         <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
         
@@ -50,6 +50,11 @@ export default class Connexion extends Vue {
   @NotifAction addNotification;
 
   @Prop() show: boolean;
+
+  public images = {
+    login: require('@icons/mail.svg'),
+    password: require('@icons/password.svg')
+  }
 
   public LoginForm = {
     login: '',

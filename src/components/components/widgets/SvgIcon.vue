@@ -1,5 +1,5 @@
 <template>
-  <div class='svg-container' v-html='baseToSvg'></div>
+  <div class='svg-container' v-html='baseToSvg' ></div>
 </template>
 
 <script lang="ts">
@@ -10,12 +10,12 @@ import {Prop} from 'vue-property-decorator'
 @Component({})
 export default class SvgIcon extends Vue {
 
-  @Prop({required: true}) icon: string; // base64 svg
-  @Prop({required: false}) size: number; 
+  @Prop({required: true}) src: string; // base64 svg
+  @Prop({required: false}) size: number;
 
 
   get baseToSvg(): string {
-    return window.atob(this.icon.split(',')[1]);
+    return window.atob(this.src.split(',')[1]);
   }
 }
 </script>

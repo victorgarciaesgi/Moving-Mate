@@ -33,7 +33,7 @@
       </nav>
     </header>
   
-  <Connexion :show='ConnexionState' v-if='!loginState.isLoggedIn' @close='closeConnexion()'></Connexion>
+  <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' @close='closeConnexion()'></Connexion>
 
   </div>
 </template>
@@ -41,7 +41,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { namespace, Getter, State, Action } from "vuex-class";
+import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
 import { uppercase } from "@filters";
 import { ILoginState } from '@types';
@@ -49,6 +49,7 @@ import { timeout } from '@methods';
 import { SvgIcon, Connexion } from "@components";
 
 const LoginGetter = namespace('LoginModule', Getter);
+const LoginMutation = namespace('LoginModule', Mutation);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
@@ -60,27 +61,26 @@ const NotifAction = namespace('NotificationsModule', Action);
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
   @LoginGetter fullName;
+  @LoginMutation showModal;
+  @LoginMutation closeModal;
+
   @NotifAction addNotification;
 
-
-  public ConnexionState: boolean = false;
-
   showConnexion() {
-    this.ConnexionState = true;
+    this.showModal();
   }
 
   closeConnexion() {
-    this.ConnexionState = false;
+    this.closeModal();
   }
 
-  // async mounted() {
-  //   await timeout(1000);
-  //   console.log(this)
-  //   this.addNotification({type: "success", message: "Test de notification"});
-  // }
+  async mounted() {
+    await timeout(1000);
+    this.addNotification({type: "success", message: "Test de notification"});
+  }
 
   public nav = [
-    { title: "Je déménage", name: "moving", link: "/moving" },
+    { title: "Les déménagements", name: "moving", link: "/moving" },
     { title: "Les déménageurs", name: "movers", link: "/movers" }
   ];
 }
