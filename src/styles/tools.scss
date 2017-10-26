@@ -16,6 +16,7 @@ body {
   box-sizing: border-box;
   background-color: $w250;
   overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-flow: column wrap;
   -webkit-font-smoothing: antialiased;

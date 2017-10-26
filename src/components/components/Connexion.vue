@@ -3,17 +3,20 @@
     <Modal :show='show' @close='closeModal()' :width='400'>
       <span slot='header'>Connexion</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
-        <FormText :required='true' type='email' :inline='true' :icon='images.login' :error='true' placeholder='Adresse mail'
-                  v-model='LoginForm.login' :$v='$v.LoginForm.login' @input='$v.LoginForm.login.$touch()'/>
-        <FormText :required='true' type='password' :inline='true' :icon='images.password' :error='false' placeholder='Mot de passe'
-                  v-model='LoginForm.password' :$v='$v.LoginForm.password' @input='$v.LoginForm.password.$touch()'/>
+        <FormText type='email' placeholder='Adresse mail'
+            :icon='images.login'  v-model='LoginForm.login' :$v='$v.LoginForm.login'/>
+        <FormText type='password' placeholder='Mot de passe' :error='false'
+            :icon='images.password' v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
         <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
         
-        <!-- <pre>{{$v.form}}</pre> -->
+        <div class='infoMessage' v-if='infoMessage.length' :class='{error: error, warning: warning}'>
+          {{infoMessage}}
+        </div>
+        <pre>{{LoginForm}}</pre>
       </div>
       <template slot='footer'>
         <FormButton @click='closeModal()'>Annuler</FormButton>
-        <FormButton @click='submitForm()' :submitting='submitting' color='blue'>Valider</FormButton>
+        <FormButton @click='submitForm()' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
       </template>
     </Modal>
   </div>
@@ -61,7 +64,10 @@ export default class Connexion extends Vue {
     password:'',
     souvenir: false
   };
+  public infoMessage: string = 'Test d\'erreur';
   public submitting: boolean = false;
+  public error: boolean = true;
+  public warning: boolean = false;
 
   closeModal() {
     this.$emit("close");

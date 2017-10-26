@@ -39,6 +39,8 @@ declare module "vuelidate" {
      */
     $pending: boolean;
 
+    $params: any;
+
     /**
      * Sets the $dirty flag of the model and all its children to true recursively.
      */
@@ -47,6 +49,7 @@ declare module "vuelidate" {
      * Sets the $dirty flag of the model and all its children to false recursively.
      */
     $reset(): void;
+    $flattenParams(): void;
   }
 
   /**

@@ -54,6 +54,7 @@ export default class Modal extends Vue {
 
   .modal-window{
     display: flex;
+    position: relative;
     background-color: white;
     border-radius: 3px;
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);

@@ -6,7 +6,7 @@
 
 .view{
   position: absolute;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
   left: 0;
   top: $headerHeight;
   min-width: 100%;

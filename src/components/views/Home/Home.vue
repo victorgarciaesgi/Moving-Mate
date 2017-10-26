@@ -12,7 +12,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
-import SearchComponent from './SearchComponent';
+import SearchComponent from './SearchComponent.vue';
 
 @Component({
   components: {

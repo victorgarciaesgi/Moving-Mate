@@ -69,12 +69,12 @@ button {
     width: 17px;
   }
 
-  &[disabled='disabled']{
+  &.disabled{
     cursor: not-allowed;
     opacity: 0.7;
   }
 
-  &.submitting .loading{
+  &.submitting{
     display: block;
   }
 

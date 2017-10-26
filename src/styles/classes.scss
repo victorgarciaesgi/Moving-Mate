@@ -39,3 +39,19 @@
     }
   }
 }
+
+
+.infoMessage {
+  border: 1px solid $w210;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 10px;
+  color: $g90;
+  
+  &.error {
+    color: $red1;
+    border-color: $red1;
+    background-color: lighten($red1, 30%)
+  }
+}

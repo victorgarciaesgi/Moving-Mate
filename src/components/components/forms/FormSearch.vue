@@ -1,33 +1,34 @@
-<template>
-    <div>
-      <div class="input-container">
-        <input  class='input-form'
-                :type="type"
-                :value='value'
-                :class='{
-                  formError: (!valid && dirty && error),
-                  formValid: (valid && dirty && error),
-                  icon: icon
-                }'
-                :placeholder="placeholder"
-                :required='required'
-                :disabled='disabled'
-                @input="updateValue($event.target.value)" />
-                
-        <img class='input-icon' v-if='icon && !inline' :src="icon">
-        <SvgIcon class='input-icon' v-else :src="icon" />
+<template lang='html'>
+  <div>
+    <div class="input-container">
+      <input  class='input-form'
+              type='text'
+              :value='value'
+              :class='{
+                formError: (!valid && dirty && error),
+                formValid: (valid && dirty && error),
+                icon: icon,
+                big: !!big
+              }'
+              :placeholder="placeholder"
+              :required='required'
+              :disabled='disabled'
+              @input="updateValue($event.target.value)" />
+              
+      <img class='input-icon' v-if='icon && !inline' :src="icon">
+      <SvgIcon class='input-icon' v-else :src="icon" />
 
-        <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
-        <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
-        <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
-      </div>
-      <div class="errorMessage" v-if='!valid && dirty'>
-        <span v-if='$v.$error.required && $v.required'>Champs requis</span>
-      </div>
-      <div class="infoMessage" v-if='$v.$pending'>
-        <span>Verification...</span>
-      </div>
+      <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
+      <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
+      <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
     </div>
+    <div class="errorMessage" v-if='!valid && dirty'>
+      <span v-if='$v.$error.required && $v.required'>Champs requis</span>
+    </div>
+    <div class="infoMessage" v-if='$v.$pending'>
+      <span>Verification...</span>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -46,16 +47,18 @@ import { SvgIcon } from '@components';
 export default class FormText extends Vue {
 
   @Prop() value: string;
-  @Prop({required: false}) type: string;
+  @Prop({required: false, default: 'text'}) type: string;
   @Prop({required: false}) placeholder: string;
-  @Prop({required: false}) error: boolean;
+  @Prop({required: false, default: true}) error: boolean;
   @Prop({required: false}) disabled: boolean;
   @Prop({required: false}) required: boolean;
   @Prop({required: false}) icon: string;
-  @Prop({required: false}) inline: boolean;
+  @Prop({required: false, default: true}) inline: boolean;
+  @Prop({required: false}) big: boolean;
   @Prop({required: false}) $v: IValidator;
 
   updateValue(value){
+    this.$v.$touch();
     this.$emit('input', value);
   }
 
@@ -89,7 +92,7 @@ export default class FormText extends Vue {
   }
 
   .input-form:focus + .input-icon svg {
-    fill: $mainStyle;
+    fill: $g60;
   }
 
   svg {
@@ -101,7 +104,7 @@ export default class FormText extends Vue {
     flex: 1 1 auto;
     background-color: $w230;
     border: 1px solid transparent;
-    color: $g40;
+    color: $g60;
     height: 40px;
     padding: 5px 30px 5px 9px;
     width: 100%;
@@ -109,6 +112,19 @@ export default class FormText extends Vue {
     line-height: 30px;
     font-size: 15px;
     border-radius: 3px;
+
+    &.big{
+      height: 50px;
+      font-size: 18px;
+    }
+
+    &.formValid + .input-icon svg {
+      fill: $mainStyle;
+    }
+
+    &.formError + .input-icon svg {
+      fill: $red1;
+    }
   
     &:focus{
       background-color: $w225;
@@ -137,7 +153,6 @@ export default class FormText extends Vue {
     color: #ea730b;
   }
 }
-
 
 .input-form-result{
   position: absolute;
@@ -177,7 +192,6 @@ export default class FormText extends Vue {
     }
   }
 }
-
 
 </style>
 
