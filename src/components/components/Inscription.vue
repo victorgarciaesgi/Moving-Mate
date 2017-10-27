@@ -1,21 +1,19 @@
 <template lang='html'>
   <Modal :show='show' @close='closeModal(stateName)' :width='400'>
-    <span slot='header'>Connexion</span>
+    <span slot='header'>Inscription</span>
     <div slot='content' style='padding: 10px 30px 0px 30px'>
-      <FormText type='email' placeholder='Adresse mail' :error='false'
-          :icon='images.login'  v-model='LoginForm.login' :$v='$v.LoginForm.login'/>
-      <FormText type='password' placeholder='Mot de passe' :error='false'
-          :icon='images.password' v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
-      <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
-      
+      <FormText type='email' placeholder='Nom' description='Votre nom de famille'
+            v-model='LoginForm.name' :$v='$v.LoginForm.name'/>
+      <FormText type='password' placeholder='Prénom' description='Votre nom de famille'
+          v-model='LoginForm.surname' :$v='$v.LoginForm.surname'/>
+          
       <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
         {{infoMessage}}
       </div>
-      <pre>{{LoginForm}}</pre>
     </div>
     <template slot='footer'>
       <FormButton @click='closeModal(stateName)'>Annuler</FormButton>
-      <FormButton @click='submitForm()' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
+      <FormButton @click='submitForm()' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>S'inscrire</FormButton>
     </template>
   </Modal>
 </template>
@@ -28,7 +26,7 @@ import { Mutation, Action, namespace } from "vuex-class";
 
 import { Modal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
-import { required, email } from 'vuelidate/lib/validators';
+import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 
 const LoginActions = namespace('LoginModule', Action);
 const LoginMutation = namespace('LoginModule', Mutation);
@@ -40,12 +38,15 @@ const NotifAction = namespace('NotificationsModule', Action);
   },
   validations: {
     LoginForm: {
-      login: {required},
-      password: {required}
+      name: {required, minLength: minLength(4), maxLength: maxLength(20)},
+      surname: {required, minLength: minLength(4), maxLength: maxLength(20)},
+      email: {required, email},
+      password: {required},
+      confirmPassword: {required, sameAs: sameAs('password')}
     }
   }
 })
-export default class Connexion extends Vue {
+export default class Inscription extends Vue {
 
   @LoginActions connexionRequest;
   @LoginMutation showModal;
@@ -56,7 +57,7 @@ export default class Connexion extends Vue {
   @Prop({required: true}) show: boolean;
   @Prop({default: false}) window: boolean;
 
-  public stateName: string = 'showConnexion'
+  public stateName: string = 'showInscription'
   public infoMessage: string = '';
   public submitting: boolean = false;
   public error: boolean = true;
@@ -67,9 +68,11 @@ export default class Connexion extends Vue {
     password: require('@icons/password.svg')
   }
   public LoginForm = {
-    login: '',
-    password:'',
-    souvenir: false
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   };
 
   async submitForm(){

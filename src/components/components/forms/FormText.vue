@@ -30,7 +30,7 @@
           <span v-if='description && !$v.$error' class='description'>{{description}}</span>
           <ul v-if='!$v.error && dirty && error' class='error'>
             <li v-for='(key, index) in filterErrors' :key='key'>
-              • {{errorMessages[key]}}
+               <span></span>
             </li>
           </ul>
           <span v-if='$v.$pending' class='info'>Verification...</span>
@@ -80,7 +80,9 @@ export default class FormText extends Vue {
   };
   public errorMessages = {
     required: "Ce champs est requis",
-    email: "L'adresse mail doit être valide"
+    email: "L'adresse mail doit être valide",
+    minLenght: `${this.$v.$params.minLenght?this.$v.$params.minLenght.min:""} caractères minimum`,
+    maxLenght: `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
   }
 
   updateValue(value){
@@ -221,11 +223,11 @@ export default class FormText extends Vue {
 
   .popup-message {
     position: fixed;
-    background-color: $g70;
+    background-color: $w250;
     border-radius: 5px;
     box-shadow: 0 0 10px transparentize($g0, 0.7);
     padding: 10px;
-    color: white;
+    color: $g90;
     font-weight: bold;
     height: auto;
     width: 100%;
@@ -233,14 +235,10 @@ export default class FormText extends Vue {
     font-size: 13px;
     display: none;
     flex-flow: column wrap;
-
-    .description {
-      align-self: center;
-      text-align: center;
-    }
+    align-self: center;
+    text-align: center;
 
     .error{
-      position: relative;
       color: $red1;
     }
     .info {
@@ -257,7 +255,7 @@ export default class FormText extends Vue {
       height: 0;
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
-      border-top: 10px solid $g70;
+      border-top: 10px solid $w250;
       filter: drop-shadow(0px 6px 4px rgba(50,50,50, 0.1));
     }
   }

@@ -3,10 +3,8 @@
     <div class='view'>
       <section class='image-home'>
         <div class='background-mask'></div>
-        <SearchComponent/>
+        <!-- <SearchComponent/> -->
       </section>
-
-      
     </div>
   </transition>
 </template>

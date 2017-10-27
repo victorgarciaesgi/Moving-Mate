@@ -15,7 +15,9 @@
       </div>
     </div>
     <div class='submit-container'>
-      
+      <div class='submit-button'>
+        <span>Rechercher</span>
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +66,7 @@ export default class SearchMoving extends Vue {
 #moving-search-container{
   display: flex;
   flex-flow: column wrap;
+  position: relative;
 
   .search-boxes {
     display: flex;
@@ -75,12 +78,31 @@ export default class SearchMoving extends Vue {
       display: flex;
       margin: 20px;
       flex: 1 1 auto;
+      justify-content: center;
     }
   }
 
   .submit-container {
     display: flex;
     flex-flow: row nowrap;
+    justify-content: center;
+
+    .submit-button {
+      display: flex;
+      height: 50px;
+      border-radius: 50px;
+      padding: 5px 30px 5px 30px;
+      align-items: center;
+      background-color: $mainStyle;
+      font-weight: bold;
+      box-shadow: 0 0 10px $ombre;
+      color: white;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($mainStyle, 5%);
+      }
+    }
   }
 }
 

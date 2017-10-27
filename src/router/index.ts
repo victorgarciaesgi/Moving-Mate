@@ -9,10 +9,11 @@ const Rooter = new VueRouter({
   mode: 'history',
   routes: [
     { path: '/', name: 'Accueil', alias: 'home', component: Views.Home},
-    { path: '/moving', name: 'Je déménage', alias: 'moving', component: Views.Moving},
-    { path: '/inscription', name: 'Inscription', alias: 'moving', component: Views.Inscription},
-    { path: '/movers', name: 'Les déménageurs', alias: 'movers', component: Views.Movers},    
-    { path: '*', component: Views.error404 }
+    { path: '/moving', name: 'Je déménage', component: Views.Moving},
+    { path: '/inscription', name: 'Inscription', component: Components.Inscription, props: {window: true}},
+    { path: '/connexion', name: 'Connexion', component: Components.Connexion, props: {window: true}},
+    { path: '/movers', name: 'Les déménageurs', component: Views.Movers},
+    { path: '*', component: Views.Home }
   ]
 })
 

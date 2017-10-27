@@ -20,6 +20,7 @@ const state: ILoginState = {
   isAdmin: false,
   status: null,
   showConnexion: false,
+  showInscription: false,
   reset() {
     this.name = null;
     this.surname = null;
@@ -36,11 +37,11 @@ const getters: GetterTree<ILoginState, RootState> = {
 }
 
 const mutations: MutationTree<ILoginState> = {
-  showModal(state) {
-    state.showConnexion = true;
+  showModal(state, modal) {
+    state[modal] = true;
   },
-  closeModal(state) {
-    state.showConnexion = false;
+  closeModal(state, modal) {
+    state[modal] = false;
   },
   connectUser(state, userData) {
     state = _.merge(state, userData);
@@ -62,13 +63,12 @@ const actions: ActionTree<ILoginState, RootState> = {
         let userData = jwtDecode(loginResponse.data.id_token);
         commit('connectUser', userData);
         dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${userData.name}`}, {root: true})
-
+        return {success: true };
       } else {
-        return false;
+        return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
       }
     } catch (error) {
-      console.log(error);
-      return false;
+      return {success: false, type: 'warning', message: 'Impossible de se connecter, vérifiez votre connexion internet' };
     }
   },
   async disconnectRequest({commit, dispatch, rootState}) {

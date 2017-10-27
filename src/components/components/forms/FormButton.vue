@@ -22,7 +22,9 @@ export default class FormButton extends Vue {
   @Prop({required: false}) color: string;
 
   emitClick(){
-    this.$emit('click');
+    if (!this.submitting && !this.disabled) {
+      this.$emit('click');
+    }
   }
 
   get colorClass(){
@@ -74,8 +76,11 @@ button {
     opacity: 0.7;
   }
 
-  &.submitting{
-    display: block;
+  &.submitting {
+    cursor: wait;
+    .loading{
+      display: block;
+    }
   }
 
   &:hover{

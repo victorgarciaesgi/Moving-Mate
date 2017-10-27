@@ -54,4 +54,10 @@
     border-color: $red1;
     background-color: lighten($red1, 30%)
   }
+
+  &.warning {
+    color: $yellow2;
+    border-color: $yellow2;
+    background-color: lighten($yellow2, 30%)
+  }
 }

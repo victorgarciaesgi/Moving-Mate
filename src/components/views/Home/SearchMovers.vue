@@ -7,7 +7,11 @@
       </div>
     </div>
     <div class='submit-container'>
-      
+      <div class='submit-container'>
+        <div class='submit-button'>
+          <span>Rechercher</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>

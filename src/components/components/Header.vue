@@ -20,20 +20,19 @@
 
           </template>
           <template v-else>
-            <li class="header-button" @click='showConnexion()'>
+            <li class="header-button" @click='showModal("showConnexion")'>
               Connexion
             </li>
-            <router-link to='/inscription'>
-              <li class="header-button">
-                Inscription
-              </li>
-            </router-link>
+            <li class="header-button"  @click='showModal("showInscription")'>
+              Inscription
+            </li>
           </template>
         </ul>
       </nav>
     </header>
   
-  <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' @close='closeConnexion()'></Connexion>
+  <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' ></Connexion>  
+  <Inscription :show='loginState.showInscription' v-if='!loginState.isLoggedIn'></Inscription>
 
   </div>
 </template>
@@ -46,14 +45,14 @@ import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 import { uppercase } from "@filters";
 import { ILoginState } from '@types';
 import { timeout } from '@methods';
-import { SvgIcon, Connexion } from "@components";
+import { SvgIcon, Connexion, Inscription } from "@components";
 
 const LoginGetter = namespace('LoginModule', Getter);
 const LoginMutation = namespace('LoginModule', Mutation);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
-  components: { Connexion },
+  components: { Connexion, Inscription },
   filters: {
     uppercase: uppercase
   }
@@ -65,14 +64,6 @@ export default class HeaderComponent extends Vue {
   @LoginMutation closeModal;
 
   @NotifAction addNotification;
-
-  showConnexion() {
-    this.showModal();
-  }
-
-  closeConnexion() {
-    this.closeModal();
-  }
 
   async mounted() {
     await timeout(1000);
