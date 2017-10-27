@@ -3,7 +3,7 @@
     <Modal :show='show' @close='closeModal()' :width='400'>
       <span slot='header'>Connexion</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
-        <FormText type='email' placeholder='Adresse mail'
+        <FormText type='email' placeholder='Adresse mail' :error='false'
             :icon='images.login'  v-model='LoginForm.login' :$v='$v.LoginForm.login'/>
         <FormText type='password' placeholder='Mot de passe' :error='false'
             :icon='images.password' v-model='LoginForm.password' :$v='$v.LoginForm.password'/>

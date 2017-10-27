@@ -1,8 +1,12 @@
 <template lang='html'>
   <transition name='slide'>
     <div class='view'>
-      <section></section>
-      <SearchComponent/>
+      <section class='image-home'>
+        <div class='background-mask'></div>
+        <SearchComponent/>
+      </section>
+
+      
     </div>
   </transition>
 </template>
@@ -30,9 +34,23 @@ export default class Home extends Vue {
 
 section{
   display: flex;
-  height: 500px;
+  flex-flow: column nowrap;
+  justify-content: center;
+  position: relative;
+}
+
+.image-home {
   background-image: url('~@images/home_image.jpg');
+  position: relative;
+  height: 500px;
   @include bg-center;
+
+  .background-mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: transparentize($g20, 0.7);
+  }
 }
 
 

@@ -77,13 +77,10 @@ export default class CheckBox extends Vue {
       background-image: url('~@icons/done.svg');
       border: 1px solid transparent;
 
-      & + span{
+      & ~ span{
         color: $mainStyle;
       }
     }
-    // &:focus + label{
-    //   border: 1px solid $mainGreen2;
-    // }
   }
 }
 
