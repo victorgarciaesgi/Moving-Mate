@@ -19,7 +19,7 @@
                 @input="updateValue($event.target.value)" />
                 
         <img class='input-icon' v-if='icon && !inline' :src="icon">
-        <SvgIcon class='input-icon' v-else :src="icon" />
+        <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
 
         <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
@@ -30,7 +30,7 @@
           <span v-if='description && !$v.$error' class='description'>{{description}}</span>
           <ul v-if='!$v.error && dirty && error' class='error'>
             <li v-for='(key, index) in filterErrors' :key='key'>
-               <span></span>
+               <span>{{errorMessages[key]}}</span> {{key}}
             </li>
           </ul>
           <span v-if='$v.$pending' class='info'>Verification...</span>
@@ -65,7 +65,7 @@ export default class FormText extends Vue {
   @Prop({required: false}) disabled: boolean;
   @Prop({required: false}) description: string;
   @Prop({required: false, default: true}) required: boolean;
-  @Prop({required: false}) icon: string;
+  @Prop({required: false, default: null}) icon: string;
   @Prop({required: false, default: true}) inline: boolean;
   @Prop({required: false}) big: boolean;
   @Prop({required: false}) design: string;
@@ -81,8 +81,8 @@ export default class FormText extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
-    minLenght: `${this.$v.$params.minLenght?this.$v.$params.minLenght.min:""} caractères minimum`,
-    maxLenght: `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
+    "minLenght": `${this.$v.$params.minLenght?this.$v.$params.minLenght.min:""} caractères minimum`,
+    "maxLenght": `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
   }
 
   updateValue(value){

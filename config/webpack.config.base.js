@@ -2,6 +2,7 @@ const path = require('path');
 const helpers = require('./helpers');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+var DashboardPlugin = require('webpack-dashboard/plugin');
 
 
 
@@ -60,6 +61,7 @@ let config = {
     }]
   },
   plugins: [
+    new DashboardPlugin(),
     new FaviconsWebpackPlugin({
       logo: helpers.root('src/assets/images/logo_M.svg'),
       prefix: 'icons-[hash]/',

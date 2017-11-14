@@ -29,7 +29,6 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 
-
 section{
   display: flex;
   flex-flow: column nowrap;

@@ -11,7 +11,7 @@
     "dev-server": "webpack --watch --hot",
     "prod": "cross-env NODE_ENV=production npm run clean && npm run build-prod && npm run server-prod",
     "clean": "rimraf dist",
-    "build-prod": "webpack --config config/webpack.config.prod.js"
+    "build-prod": "webpack --config config/webpack.config.prod.js --progress"
   },
   "dependencies": {
     "axios": "^0.16.2",
@@ -81,6 +81,7 @@
     "vue-template-compiler": "^2.5.2",
     "vue-ts-loader": "0.0.3",
     "vuex-typescript": "^0.1.0",
-    "webpack": "3.8.1"
+    "webpack": "3.8.1",
+    "webpack-dashboard": "^1.0.0"
   }
 }

@@ -2,14 +2,22 @@
   <Modal :show='show' @close='closeModal(stateName)' :width='400'>
     <span slot='header'>Inscription</span>
     <div slot='content' style='padding: 10px 30px 0px 30px'>
-      <FormText type='email' placeholder='Nom' description='Votre nom de famille'
+      <FormText type='text' placeholder='Nom' description='Votre nom de famille'
             v-model='LoginForm.name' :$v='$v.LoginForm.name'/>
-      <FormText type='password' placeholder='Prénom' description='Votre nom de famille'
+      <FormText type='text' placeholder='Prénom' description='Votre prénom'
           v-model='LoginForm.surname' :$v='$v.LoginForm.surname'/>
+      <FormText type='email' placeholder='Email' description='Votre adresse email'
+            v-model='LoginForm.email' :$v='$v.LoginForm.email'/>
+      <FormText type='password' placeholder='Mot de passe' description='Votre de mot de passe'
+          v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
+      <FormText type='password' placeholder="Confirmez votre mot de passe" description='Confirmation du mot de passe'
+          v-model='LoginForm.confirmPassword' :$v='$v.LoginForm.confirmPassword'/>
           
       <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
         {{infoMessage}}
       </div>
+
+      <pre>{{LoginForm}}</pre>
     </div>
     <template slot='footer'>
       <FormButton @click='closeModal(stateName)'>Annuler</FormButton>

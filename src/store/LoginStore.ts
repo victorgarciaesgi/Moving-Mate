@@ -8,8 +8,8 @@ import { RootState } from './index';
 import { capitalize } from '@filters';
 import { timeout } from '@methods';
 
-const API_URL = 'http://localhost:3001/'
-const LOGIN_URL = API_URL + 'login/'
+const API_URL = 'http://localhost:8000/'
+const LOGIN_URL = API_URL + 'login_check'
 const SIGNUP_URL = API_URL + 'users/'
 
 const state: ILoginState = {

@@ -2,10 +2,10 @@
 
 ```bash
 $ npm install
+```
 
-# or
-
-$ yarn
+```
+$ yarn install #plus rapide
 ```
 
 ## Pour developper
