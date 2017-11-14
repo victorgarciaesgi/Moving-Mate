@@ -3,7 +3,7 @@
     <span slot='header'>Connexion</span>
     <div slot='content' style='padding: 10px 30px 0px 30px'>
       <FormText type='email' placeholder='Adresse mail' :error='false'
-          :icon='images.login'  v-model='LoginForm.login' :$v='$v.LoginForm.login'/>
+          :icon='images.username'  v-model='LoginForm.username' :$v='$v.LoginForm.username'/>
       <FormText type='password' placeholder='Mot de passe' :error='false'
           :icon='images.password' v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
       <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
@@ -40,7 +40,7 @@ const NotifAction = namespace('NotificationsModule', Action);
   },
   validations: {
     LoginForm: {
-      login: {required},
+      username: {required},
       password: {required}
     }
   }
@@ -63,11 +63,11 @@ export default class Connexion extends Vue {
   public errorType: string = '';
 
   public images = {
-    login: require('@icons/mail.svg'),
+    username: require('@icons/mail.svg'),
     password: require('@icons/password.svg')
   }
   public LoginForm = {
-    login: '',
+    username: '',
     password:'',
     souvenir: false
   };
