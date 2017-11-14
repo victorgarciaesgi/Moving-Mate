@@ -30,7 +30,7 @@
           <span v-if='description && !$v.$error' class='description'>{{description}}</span>
           <ul v-if='!$v.error && dirty && error' class='error'>
             <li v-for='(key, index) in filterErrors' :key='key'>
-               <span>{{errorMessages[key]}}</span> {{key}}
+               <span>{{errorMessages[key]}}</span>
             </li>
           </ul>
           <span v-if='$v.$pending' class='info'>Verification...</span>
@@ -81,8 +81,8 @@ export default class FormText extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
-    "minLenght": `${this.$v.$params.minLenght?this.$v.$params.minLenght.min:""} caractères minimum`,
-    "maxLenght": `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
+    minLength: `${this.$v.$params.minLength?this.$v.$params.minLength.min:""} caractères minimum`,
+    maxLength: `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
   }
 
   updateValue(value){
@@ -114,7 +114,6 @@ export default class FormText extends Vue {
   }
 
   handleScroll() {
-    console.log('test')
     Vue.set(this.popupPosition , 'display', 'none');
   }
 
