@@ -52,6 +52,7 @@
     "object-literal-key-quotes": false,
     "trailing-comma": false,
     "quotemark": false,
+    "one-variable-per-declaration": false,
     "one-line": [true,
       "check-open-brace",
       "check-catch",

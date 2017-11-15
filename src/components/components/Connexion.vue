@@ -3,10 +3,10 @@
     <span slot='header'>Connexion</span>
     <div slot='content' style='padding: 10px 30px 0px 30px'>
       <FormText type='email' placeholder='Adresse mail' :error='false'
-          :icon='images.username'  v-model='LoginForm.username' :$v='$v.LoginForm.username'/>
+          :icon='images.username'  v-model='LoginForm._username' :$v='$v.LoginForm._username'/>
       <FormText type='password' placeholder='Mot de passe' :error='false'
-          :icon='images.password' v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
-      <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
+          :icon='images.password' v-model='LoginForm._password' :$v='$v.LoginForm._password'/>
+      <!-- <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" /> -->
       
       <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
         {{infoMessage}}
@@ -40,8 +40,8 @@ const NotifAction = namespace('NotificationsModule', Action);
   },
   validations: {
     LoginForm: {
-      username: {required},
-      password: {required}
+      _username: {required},
+      _password: {required}
     }
   }
 })
@@ -67,9 +67,8 @@ export default class Connexion extends Vue {
     password: require('@icons/password.svg')
   }
   public LoginForm = {
-    username: '',
-    password:'',
-    souvenir: false
+    _username: '',
+    _password:'',
   };
 
   async submitForm(){

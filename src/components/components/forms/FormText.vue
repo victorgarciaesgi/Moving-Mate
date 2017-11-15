@@ -25,7 +25,7 @@
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
         <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
 
-        <div class='popup-message' v-if='(description || $v.$error) && error' 
+        <div class='popup-message' v-if='(description || $v.$error) && error && !valid' 
             :style='popupPosition'>
           <span v-if='description && !$v.$error' class='description'>{{description}}</span>
           <ul v-if='!$v.error && dirty && error' class='error'>

@@ -67,7 +67,7 @@ export default class HeaderComponent extends Vue {
 
   async mounted() {
     await timeout(1000);
-    this.addNotification({type: "success", message: "Chibre veineux (Test notification)"});
+    this.addNotification({type: "success", message: "(Test notification)"});
   }
 
   public nav = [

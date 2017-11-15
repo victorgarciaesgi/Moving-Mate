@@ -2,16 +2,16 @@
   <Modal :show='show' @close='closeModal(stateName)' :width='400'>
     <span slot='header'>Inscription</span>
     <div slot='content' style='padding: 10px 30px 0px 30px'>
-      <FormText type='text' placeholder='Nom' description='Votre nom de famille'
-            v-model='LoginForm.name' :$v='$v.LoginForm.name'/>
-      <FormText type='text' placeholder='Prénom' description='Votre prénom'
-          v-model='LoginForm.surname' :$v='$v.LoginForm.surname'/>
+      <FormText type='text' placeholder='Nom' description='Votre prénom'
+          :icon="images.name"  v-model='LoginForm.name' :$v='$v.LoginForm.name'/>
+      <FormText type='text' placeholder='Prénom' description='Votre nom de famille'
+          :icon="images.surname" v-model='LoginForm.surname' :$v='$v.LoginForm.surname'/>
       <FormText type='email' placeholder='Email' description='Votre adresse email'
-            v-model='LoginForm.email' :$v='$v.LoginForm.email'/>
+          :icon="images.email"  v-model='LoginForm.email' :$v='$v.LoginForm.email'/>
       <FormText type='password' placeholder='Mot de passe' description='Votre de mot de passe'
-          v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
+          :icon="images.password" v-model='LoginForm.password' :$v='$v.LoginForm.password'/>
       <FormText type='password' placeholder="Confirmez votre mot de passe" description='Confirmation du mot de passe'
-          v-model='LoginForm.confirmPassword' :$v='$v.LoginForm.confirmPassword'/>
+          :icon="images.password" v-model='LoginForm.confirmPassword' :$v='$v.LoginForm.confirmPassword'/>
           
       <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
         {{infoMessage}}
@@ -72,7 +72,9 @@ export default class Inscription extends Vue {
   public errorType: string = '';
 
   public images = {
-    login: require('@icons/mail.svg'),
+    name: require('@icons/name.svg'),
+    surname: require('@icons/surname.svg'),
+    email: require('@icons/mail.svg'),
     password: require('@icons/password.svg')
   }
   public LoginForm = {

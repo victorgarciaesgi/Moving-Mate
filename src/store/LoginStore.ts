@@ -1,16 +1,11 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash'
-import axios from 'axios'
-import { disconnect } from 'cluster';
+import Api from './Api';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ILoginState } from '@types';
 import { RootState } from './index';
 import { capitalize } from '@filters';
 import { timeout } from '@methods';
-
-const API_URL = 'http://localhost:8000/'
-const LOGIN_URL = API_URL + 'login_check'
-const SIGNUP_URL = API_URL + 'users/'
 
 const state: ILoginState = {
   name: null,
@@ -55,19 +50,21 @@ const mutations: MutationTree<ILoginState> = {
 const actions: ActionTree<ILoginState, RootState> = {
   async connexionRequest({commit, dispatch, rootState}, loginData) {
     try {
-      let loginResponse = await axios.post(LOGIN_URL, loginData);
-      loginResponse = loginResponse.data;
+      console.log('Requiring Auth verification...')
+      let loginResponse = await Api.post('login_check', loginData)
+      console.log(loginResponse);
       if (loginResponse.data.success) {
         localStorage.setItem('id_token', loginResponse.data.id_token);
         localStorage.setItem('access_token', loginResponse.data.access_token);
         let userData = jwtDecode(loginResponse.data.id_token);
         commit('connectUser', userData);
         dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${userData.name}`}, {root: true})
-        return {success: true };
+        return { success: true };
       } else {
         return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
       }
     } catch (error) {
+      console.log(error);
       return {success: false, type: 'warning', message: 'Impossible de se connecter, vérifiez votre connexion internet' };
     }
   },
@@ -78,7 +75,7 @@ const actions: ActionTree<ILoginState, RootState> = {
   },
   async checkUserSession({commit, dispatch, rootState}) {
     console.log('Checking user Auth...');
-    if (!!localStorage.getItem("id_token") && !!localStorage.getItem("access_token")){
+    if (!!localStorage.getItem("id_token") && !!localStorage.getItem("access_token")) {
       commit('connectUser', jwtDecode(localStorage.getItem("id_token")));
     } else {
       console.log('User not logged');
