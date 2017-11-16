@@ -9,7 +9,7 @@
     "curly": false,
     "eofline": false,
     "expr" : true,
-    "forin": true,
+    "forin": false,
     "indent": [true, "spaces"],
     "label-position": true,
     "label-undefined": true,

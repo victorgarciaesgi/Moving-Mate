@@ -10,6 +10,7 @@ import { timeout } from '@methods';
 const state: ILoginState = {
   name: null,
   surname: null,
+  username: null,
   id: null,
   isLoggedIn: false,
   isAdmin: false,
@@ -18,10 +19,14 @@ const state: ILoginState = {
   showInscription: false,
   reset() {
     this.name = null;
+    this.username = null;
     this.surname = null;
     this.id = null;
     this.isLoggedIn = false;
+    this.isAdmin = false,
     this.status = null;
+    this.showConnexion = false;
+    this.showInscription = false;
   }
 }
 
@@ -53,12 +58,11 @@ const actions: ActionTree<ILoginState, RootState> = {
       console.log('Requiring Auth verification...')
       let loginResponse = await Api.post('login_check', loginData)
       console.log(loginResponse);
-      if (loginResponse.data.success) {
-        localStorage.setItem('id_token', loginResponse.data.id_token);
-        localStorage.setItem('access_token', loginResponse.data.access_token);
-        let userData = jwtDecode(loginResponse.data.id_token);
+      if (loginResponse.token) {
+        localStorage.setItem('access_token', loginResponse.token);
+        let userData = await jwtDecode(loginResponse.token);
         commit('connectUser', userData);
-        dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${userData.name}`}, {root: true})
+        dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${userData.username}`}, {root: true})
         return { success: true };
       } else {
         return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
@@ -69,14 +73,14 @@ const actions: ActionTree<ILoginState, RootState> = {
     }
   },
   async disconnectRequest({commit, dispatch, rootState}) {
-    localStorage.removeItem('id_token');
     localStorage.removeItem('access_token');
     commit('disconnectUser');
+    dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous avez été deconnecté`}, {root: true})
   },
   async checkUserSession({commit, dispatch, rootState}) {
     console.log('Checking user Auth...');
-    if (!!localStorage.getItem("id_token") && !!localStorage.getItem("access_token")) {
-      commit('connectUser', jwtDecode(localStorage.getItem("id_token")));
+    if (!!localStorage.getItem("access_token")) {
+      commit('connectUser', jwtDecode(localStorage.getItem("access_token")));
     } else {
       console.log('User not logged');
     }

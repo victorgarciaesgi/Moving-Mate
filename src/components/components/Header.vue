@@ -17,7 +17,12 @@
             Devenir déménageur
           </li>
           <template v-if='loginState.isLoggedIn'>
-
+            <li class="header-button">
+              {{loginState.username}}
+            </li>
+            <li class="header-button" @click='disconnectRequest'>
+              Deconnexion
+            </li>
           </template>
           <template v-else>
             <li class="header-button" @click='showModal("showConnexion")'>
@@ -49,6 +54,7 @@ import { SvgIcon, Connexion, Inscription } from "@components";
 
 const LoginGetter = namespace('LoginModule', Getter);
 const LoginMutation = namespace('LoginModule', Mutation);
+const LoginAction = namespace('LoginModule', Action);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
@@ -62,6 +68,7 @@ export default class HeaderComponent extends Vue {
   @LoginGetter fullName;
   @LoginMutation showModal;
   @LoginMutation closeModal;
+  @LoginAction disconnectRequest
 
   @NotifAction addNotification;
 
