@@ -11,9 +11,7 @@ const state: INotificationState = {
   notificationList: []
 }
 
-const getters: GetterTree<INotificationState, RootState> = {
-
-}
+const getters: GetterTree<INotificationState, RootState> = {}
 
 const mutations: MutationTree<INotificationState> = {
   addAlert(state, alert: INotification) {

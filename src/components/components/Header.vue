@@ -14,22 +14,20 @@
         </ul>
         <ul class='login-list'>
           <li class="header-button color">
-            Devenir déménageur
+            <span>Devenir déménageur</span>
           </li>
           <template v-if='loginState.isLoggedIn'>
             <li class="header-button">
-              {{loginState.username}}
-            </li>
-            <li class="header-button" @click='disconnectRequest'>
-              Deconnexion
+              <span>{{loginState.username | capitalize}}</span>
+              <div class='profile-image' :style='userProfileImage'></div>
             </li>
           </template>
           <template v-else>
             <li class="header-button" @click='showModal("showConnexion")'>
-              Connexion
+              <span>Connexion</span>
             </li>
             <li class="header-button"  @click='showModal("showInscription")'>
-              Inscription
+              <span>Inscription</span>
             </li>
           </template>
         </ul>
@@ -47,7 +45,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
-import { uppercase } from "@filters";
+import { uppercase, capitalize } from "@filters";
 import { ILoginState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription } from "@components";
@@ -59,9 +57,7 @@ const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
   components: { Connexion, Inscription },
-  filters: {
-    uppercase: uppercase
-  }
+  filters: { uppercase, capitalize }
 })
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
@@ -75,6 +71,13 @@ export default class HeaderComponent extends Vue {
   async mounted() {
     await timeout(1000);
     this.addNotification({type: "success", message: "(Test notification)"});
+  }
+
+  get userProfileImage() {
+    let image = this.loginState.profilePicture || require('@images/user.jpg')
+    return {
+      backgroundImage: `url(${image})`
+    }
   }
 
   public nav = [
@@ -177,16 +180,15 @@ header {
       justify-content: flex-end;
       padding: 8px 15px 8px 15px;
 
-      li {
+      li.header-button {
         display: flex;
         flex-flow: row nowrap;
         justify-content: center;
         align-items: center;
         align-content: center;
         font-size: 14px;
-        padding: 7px 15px 8px 15px;
         font-weight: bold;
-        margin-right: 10px;
+        margin-left: 10px;
         border-radius: 40px;
         cursor: pointer;
 
@@ -201,6 +203,19 @@ header {
           &:hover {
             background-color: darken($mainStyle, 2%);
           }
+        }
+
+        span {
+          padding: 7px 15px 8px 15px;
+        }
+
+        .profile-image {
+          @include bg-center;
+          height: 26px;
+          width: 26px;
+          margin-left: -5px;
+          margin-right: 15px;
+          border-radius: 40px;
         }
       }
     }

@@ -11,6 +11,7 @@ const state: ILoginState = {
   name: null,
   surname: null,
   username: null,
+  profilePicture: null,
   id: null,
   isLoggedIn: false,
   isAdmin: false,
@@ -54,22 +55,17 @@ const mutations: MutationTree<ILoginState> = {
 
 const actions: ActionTree<ILoginState, RootState> = {
   async connexionRequest({commit, dispatch, rootState}, loginData) {
-    try {
-      console.log('Requiring Auth verification...')
-      let loginResponse = await Api.post('login_check', loginData)
-      console.log(loginResponse);
-      if (loginResponse.token) {
-        localStorage.setItem('access_token', loginResponse.token);
-        let userData = await jwtDecode(loginResponse.token);
-        commit('connectUser', userData);
-        dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${userData.username}`}, {root: true})
-        return { success: true };
-      } else {
-        return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
-      }
-    } catch (error) {
-      console.log(error);
-      return {success: false, type: 'warning', message: 'Impossible de se connecter, vérifiez votre connexion internet' };
+    console.log('Requiring Auth verification...')
+    let loginResponse = await Api.post('login_check', loginData)
+    console.log(loginResponse);
+    if (loginResponse.token) {
+      localStorage.setItem('access_token', loginResponse.token);
+      let userData = await jwtDecode(loginResponse.token);
+      commit('connectUser', userData);
+      dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}`}, {root: true})
+      return { success: true };
+    } else {
+      return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
     }
   },
   async disconnectRequest({commit, dispatch, rootState}) {
