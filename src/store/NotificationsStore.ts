@@ -3,8 +3,10 @@ import { INotificationState, INotification, INotificationType } from '@types';
 import { RootState } from './index';
 import { capitalize } from '@filters';
 import { timeout } from '@methods';
-import _ from 'lodash'
-import axios from 'axios'
+import _ from 'lodash';
+import axios from 'axios';
+
+const TIMEOUT = 3000;
 
 const state: INotificationState = {
   notificationCount: 0,
@@ -31,7 +33,7 @@ const actions: ActionTree<INotificationState, RootState> = {
     })
     state.notificationCount++;
     commit('addAlert', alert);
-    await timeout(5000);
+    await timeout(TIMEOUT);
     commit('deleteAlert', alert)
   }
 }

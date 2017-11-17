@@ -25,7 +25,7 @@
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
         <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
 
-        <div class='popup-message' v-if='(description || $v.$error) && error && !valid' 
+        <div class='popup-message' v-if='(description || $v.$error) && error && !valid && popupPosition.display' 
             :style='popupPosition'>
           <span v-if='description && !$v.$error' class='description'>{{description}}</span>
           <ul v-if='!$v.error && dirty && error' class='error'>
@@ -76,7 +76,7 @@ export default class FormText extends Vue {
     bottom: null,
     left: null,
     width: null,
-    display: 'none'
+    display: false
   };
   public errorMessages = {
     required: "Ce champs est requis",
@@ -91,14 +91,13 @@ export default class FormText extends Vue {
   }
 
   hidePopup() {
-     Vue.set(this.popupPosition , 'display', 'none');
+     Vue.set(this.popupPosition , 'display', false);
   }
 
   showPopup() {
-    let bottom, left, width, height;
     let element = this.$refs['input'];
-    width = $(element).outerWidth();
-    height = $(element).outerHeight() + 12;
+    let width = $(element).outerWidth();
+    let height = $(element).outerHeight() + 12;
     let viewportOffset = element.getBoundingClientRect();
     let windowHeight = $(window).height();
     let position = {
@@ -109,12 +108,12 @@ export default class FormText extends Vue {
       bottom: position.bottom + "px",
       left: position.left + "px",
       width: width + "px",
-      display: 'flex'
+      display: true
     }
   }
 
   handleScroll() {
-    Vue.set(this.popupPosition , 'display', 'none');
+    Vue.set(this.popupPosition , 'display', false);
   }
 
   get filterErrors() {
@@ -232,7 +231,7 @@ export default class FormText extends Vue {
     width: 100%;
     z-index: 10010;
     font-size: 13px;
-    display: none;
+    display: flex;
     flex-flow: column wrap;
     align-self: center;
     text-align: center;

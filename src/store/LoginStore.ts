@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import _ from 'lodash'
+import { merge } from 'lodash'
 import Api from './Api';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ILoginState } from '@types';
@@ -45,7 +45,7 @@ const mutations: MutationTree<ILoginState> = {
     state[modal] = false;
   },
   connectUser(state, userData) {
-    state = _.merge(state, userData);
+    state = merge(state, userData);
     state.isLoggedIn = true;
   },
   disconnectUser(state, data) {

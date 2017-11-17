@@ -53,7 +53,7 @@
     "trailing-comma": false,
     "quotemark": false,
     "one-variable-per-declaration": false,
-    "one-line": [true,
+    "one-line": [false,
       "check-open-brace",
       "check-catch",
       "check-else",

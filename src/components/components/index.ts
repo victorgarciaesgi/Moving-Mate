@@ -1,5 +1,6 @@
 export * from './widgets'
 export * from './forms';
+export {default as Popup} from './Popup.vue';
 export {default as Modal} from './Modal.vue';
 export {default as Connexion} from './Connexion.vue';
 export {default as Inscription} from './Inscription.vue';

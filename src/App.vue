@@ -1,5 +1,5 @@
 <template>
-  <div id='app'>
+  <div id='app' @click='closePopups()'>
     <HeaderComponent/>
     <Alerts/>
     <transition name='fade' mode='out-in'>
@@ -15,7 +15,7 @@ import Component from 'vue-class-component';
 import { Action, namespace } from "vuex-class";
 
 import router from './router';
-import { store } from '@store';
+import { store, EventBus } from '@store';
 import * as Components from '@components';
 
 const LoginActions = namespace('LoginModule', Action);
@@ -34,6 +34,10 @@ export default class App extends Vue {
 
   created() {
     this.checkUserSession();
+  }
+
+  closePopups() {
+    EventBus.$emit('closePopups');
   }
 }
 

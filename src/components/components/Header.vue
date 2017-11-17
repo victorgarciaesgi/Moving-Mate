@@ -16,8 +16,8 @@
           <li class="header-button color">
             <span>Devenir déménageur</span>
           </li>
-          <template v-if='loginState.isLoggedIn'>
-            <li class="header-button">
+          <template v-if='loginState.isLoggedIn' >
+            <li class="header-button" @click.stop="togglePopup('profile', $event.target)">
               <span>{{loginState.username | capitalize}}</span>
               <div class='profile-image' :style='userProfileImage'></div>
             </li>
@@ -37,6 +37,25 @@
   <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' ></Connexion>  
   <Inscription :show='loginState.showInscription' v-if='!loginState.isLoggedIn'></Inscription>
 
+  <Popup ref='profile' v-if='loginState.isLoggedIn' :width='250'>
+    <template>
+      <div class="user">
+          <div class="user-picture" :style='userProfileImage'></div>
+          <div class="user-name">{{loginState.username | capitalize}}</div>
+      </div>
+      <ul class='user-option-list'>
+          <a href="#"><li class='user-option'>Mon profil</li></a>
+            <a href="#">
+              <li id='aide' class='user-option'>
+                Administration
+              </li>
+            </a>
+          <li class='user-option'>Aide</li>
+          <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
+      </ul>
+    </template>
+  </Popup>
+
   </div>
 </template>
 
@@ -45,10 +64,10 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
-import { uppercase, capitalize } from "@filters";
+import { capitalize } from "@filters";
 import { ILoginState } from '@types';
 import { timeout } from '@methods';
-import { SvgIcon, Connexion, Inscription } from "@components";
+import { SvgIcon, Connexion, Inscription, Popup } from "@components";
 
 const LoginGetter = namespace('LoginModule', Getter);
 const LoginMutation = namespace('LoginModule', Mutation);
@@ -56,8 +75,8 @@ const LoginAction = namespace('LoginModule', Action);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
-  components: { Connexion, Inscription },
-  filters: { uppercase, capitalize }
+  components: { Connexion, Inscription, Popup },
+  filters: { capitalize }
 })
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
@@ -68,9 +87,13 @@ export default class HeaderComponent extends Vue {
 
   @NotifAction addNotification;
 
+  public ready: boolean = false;
+
   async mounted() {
     await timeout(1000);
-    this.addNotification({type: "success", message: "(Test notification)"});
+    this.addNotification({type: "success", message: "(Test notification success)"});
+    this.addNotification({type: "error", message: "(Test notification error)"});
+    this.ready = true;
   }
 
   get userProfileImage() {
@@ -80,10 +103,16 @@ export default class HeaderComponent extends Vue {
     }
   }
 
+  togglePopup(popupName: string, target: HTMLElement) {
+    console.log(this.$refs);
+    this.$refs[popupName].togglePopup(target);
+  }
+
   public nav = [
     { title: "Les déménagements", name: "moving", link: "/moving" },
     { title: "Les déménageurs", name: "movers", link: "/movers" }
   ];
+
 }
 </script>
 
@@ -192,8 +221,14 @@ header {
         border-radius: 40px;
         cursor: pointer;
 
-        &:not(.color):hover {
-          background-color: $w235;
+        &:not(.color) {
+          &:hover {
+            background-color: $w240;
+          }
+
+          &.active {
+            background-color: $w230;
+          }
         }
 
         &.color {
@@ -201,7 +236,11 @@ header {
           color: white;
 
           &:hover {
-            background-color: darken($mainStyle, 2%);
+            background-color: darken($mainStyle, 4%);
+          }
+
+          &:active {
+            background-color: darken($mainStyle, 8%);
           }
         }
 
@@ -211,15 +250,72 @@ header {
 
         .profile-image {
           @include bg-center;
-          height: 26px;
-          width: 26px;
+          height: 28px;
+          width: 28px;
           margin-left: -5px;
           margin-right: 15px;
           border-radius: 40px;
+          border: 2px solid $mainStyle;
         }
       }
     }
   }
 }
+
+.user{
+  position: relative;
+  display: flex;
+  height: auto;
+  flex-flow: column nowrap;
+  border-bottom: 1px solid $w240;
+  align-items: center;
+
+  .user-picture{
+    position: relative;
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    margin-top: 10px;
+    border: 2px solid $mainStyle;
+    @include bg-center;
+  }
+
+  .user-name{
+    position: relative;
+    height: 40px;
+    font-size: 17px;
+    line-height: 40px;
+    text-align: center;
+    text-transform: capitalize;
+    font-weight: bold;
+  }
+}
+
+.user-option-list{
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  overflow: hidden;
+  border-radius: 0 0 3px 3px;
+
+  .user-option{
+    position: relative;
+    height: 35px;
+    padding-left: 20px;
+    line-height: 35px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: bold;
+
+    &:hover{
+      background-color: $w240;
+    }
+
+    &:active{
+      background-color: $w220;
+    }
+  }
+}
+
 </style>
 
