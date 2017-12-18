@@ -29,6 +29,6 @@ const actions: ActionTree<ISearchMovingState, RootState> = {
   
 }
 
-export const LoginModule: Module<ISearchMovingState, RootState> = {
+export const SearchMovingModule: Module<ISearchMovingState, RootState> = {
   state, getters, mutations, actions, namespaced: true
 }

@@ -1,5 +1,26 @@
 <template>
+  
+
   <div class='header-wrapper'>
+    <Popup ref='profile' v-if='loginState.isLoggedIn' :width='250'>
+      <template>
+        <div class="user">
+            <div class="user-picture" :style='userProfileImage'></div>
+            <div class="user-name">{{loginState.username | capitalize}}</div>
+        </div>
+        <ul class='user-option-list'>
+            <a href="#"><li class='user-option'>Mon profil</li></a>
+              <a href="#">
+                <li id='aide' class='user-option'>
+                  Administration
+                </li>
+              </a>
+            <li class='user-option'>Aide</li>
+            <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
+        </ul>
+      </template>
+    </Popup>
+
     <header>
       <nav>
         <router-link to='/' class='logo'>
@@ -14,10 +35,11 @@
         </ul>
         <ul class='login-list'>
           <li class="header-button color">
-            <span>Devenir déménageur</span>
+            <span>Devenir déménageur yes</span>
           </li>
           <template v-if='loginState.isLoggedIn' >
-            <li class="header-button" @click.stop="togglePopup('profile', $event.target)">
+            <li class="header-button" @click.stop="togglePopup('profile', $event.target)" 
+              :class='{active: refs.profile?refs.profile.show:false}'>
               <span>{{loginState.username | capitalize}}</span>
               <div class='profile-image' :style='userProfileImage'></div>
             </li>
@@ -37,24 +59,6 @@
   <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' ></Connexion>  
   <Inscription :show='loginState.showInscription' v-if='!loginState.isLoggedIn'></Inscription>
 
-  <Popup ref='profile' v-if='loginState.isLoggedIn' :width='250'>
-    <template>
-      <div class="user">
-          <div class="user-picture" :style='userProfileImage'></div>
-          <div class="user-name">{{loginState.username | capitalize}}</div>
-      </div>
-      <ul class='user-option-list'>
-          <a href="#"><li class='user-option'>Mon profil</li></a>
-            <a href="#">
-              <li id='aide' class='user-option'>
-                Administration
-              </li>
-            </a>
-          <li class='user-option'>Aide</li>
-          <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
-      </ul>
-    </template>
-  </Popup>
 
   </div>
 </template>
@@ -87,13 +91,10 @@ export default class HeaderComponent extends Vue {
 
   @NotifAction addNotification;
 
-  public ready: boolean = false;
+  public refs = {};
 
-  async mounted() {
-    await timeout(1000);
-    this.addNotification({type: "success", message: "(Test notification success)"});
-    this.addNotification({type: "error", message: "(Test notification error)"});
-    this.ready = true;
+  async updated() {
+    this.refs = this.$refs;
   }
 
   get userProfileImage() {
@@ -104,7 +105,6 @@ export default class HeaderComponent extends Vue {
   }
 
   togglePopup(popupName: string, target: HTMLElement) {
-    console.log(this.$refs);
     this.$refs[popupName].togglePopup(target);
   }
 

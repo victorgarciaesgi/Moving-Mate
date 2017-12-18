@@ -7,6 +7,7 @@ export interface ILoginState {
   isLoggedIn: boolean,
   isAdmin: boolean,
   status: MovingStatus,
+  userToken: string,
   showConnexion: boolean,
   showInscription: boolean,
   reset: () => void

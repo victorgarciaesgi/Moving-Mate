@@ -7,7 +7,7 @@ import { RootState } from './index';
 import { capitalize } from '@filters';
 import { timeout } from '@methods';
 
-const state: ILoginState = {
+export const state: ILoginState = {
   name: null,
   surname: null,
   username: null,
@@ -16,6 +16,7 @@ const state: ILoginState = {
   isLoggedIn: false,
   isAdmin: false,
   status: null,
+  userToken: null,
   showConnexion: false,
   showInscription: false,
   reset() {
@@ -32,7 +33,7 @@ const state: ILoginState = {
 }
 
 const getters: GetterTree<ILoginState, RootState> = {
-  fullName(state) {
+  fullName(state): string {
     return capitalize(state.surname) + " " + capitalize(state.name)
   }
 }
@@ -53,20 +54,25 @@ const mutations: MutationTree<ILoginState> = {
   }
 }
 
-const actions: ActionTree<ILoginState, RootState> = {
+export const actions: ActionTree<ILoginState, RootState> = {
+  async submitRequest({commit, dispatch, rootState}, loginData) {
+    let loginResponse = await Api.post('register/confirmed', loginData)
+  },
   async connexionRequest({commit, dispatch, rootState}, loginData) {
-    console.log('Requiring Auth verification...')
-    let loginResponse = await Api.post('login_check', loginData)
-    console.log(loginResponse);
+    let loginResponse = await Api.post('login_check', loginData);
     if (loginResponse.token) {
       localStorage.setItem('access_token', loginResponse.token);
-      let userData = await jwtDecode(loginResponse.token);
-      commit('connectUser', userData);
-      dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}`}, {root: true})
+      dispatch('connexionSuccess', loginResponse.token);
       return { success: true };
     } else {
       return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
     }
+  },
+  async connexionSuccess({commit, dispatch, rootState}, token) {
+    let userData = await jwtDecode(token);
+    userData = merge(userData, token);
+    commit('connectUser', userData);
+    dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}`}, {root: true})
   },
   async disconnectRequest({commit, dispatch, rootState}) {
     localStorage.removeItem('access_token');
@@ -74,9 +80,9 @@ const actions: ActionTree<ILoginState, RootState> = {
     dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous avez été deconnecté`}, {root: true})
   },
   async checkUserSession({commit, dispatch, rootState}) {
-    console.log('Checking user Auth...');
-    if (!!localStorage.getItem("access_token")) {
-      commit('connectUser', jwtDecode(localStorage.getItem("access_token")));
+    let token = localStorage.getItem("access_token");
+    if (!!token) {
+      dispatch('connexionSuccess', token);
     } else {
       console.log('User not logged');
     }

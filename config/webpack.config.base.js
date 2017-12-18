@@ -2,7 +2,7 @@ const path = require('path');
 const helpers = require('./helpers');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-var DashboardPlugin = require('webpack-dashboard/plugin');
+
 
 
 
@@ -60,8 +60,16 @@ let config = {
       }
     }]
   },
+  devServer: {
+    contentBase: path.join(__dirname, "dist"),
+    port: 5000,
+    historyApiFallback: true,
+    hot: true,
+    quiet: true,
+    open: true,
+    inline: true
+  },
   plugins: [
-    new DashboardPlugin(),
     new FaviconsWebpackPlugin({
       logo: helpers.root('src/assets/images/logo_M.svg'),
       prefix: 'icons-[hash]/',

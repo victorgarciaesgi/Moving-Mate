@@ -1,31 +1,51 @@
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+import { state } from './LoginStore';
 
-const API_URL = 'http://localhost:8000';
+export const API_URL = process.env.API_URL;
 
 const axios_instance: AxiosInstance = axios.create({
   baseURL: API_URL,
-  headers: {'Content-Type': 'multipart/form-data'}
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
+
+const headers = () => {
+  let authToken: any = "";
+  if (state.isLoggedIn) {
+    authToken = {
+      "Authorization": `Bearer ${state.userToken}`
+    }
+  }
+  return authToken;
+}
 
 const api_tool = {
   async post(path: string, payload: any) {
-    payload = JSON.parse(JSON.stringify(payload))
-    console.log(`Calling POST "${path}" with data: `, payload);
-    let FormObject = new FormData();
-    for (var key in payload) {
-      FormObject.append(key, payload[key]);
-    }
-    let response: AxiosResponse = await axios_instance.post(path, FormObject);
-    return response.data
+    let response: AxiosResponse = await axios_instance.post(path, payload, {
+      headers: headers()
+    });
+    return response.data;
   },
   async get(path: string, payload: any) {
-    payload = JSON.parse(JSON.stringify(payload))
-    console.log(`Calling GET "${path}" with data: `, payload);
-
     let response: AxiosResponse = await axios_instance.get(path, {
-      params: payload
+      params: payload,
+      headers: headers()
     });
-    return response.data
-  }
+    return response.data;
+  },
+  async put(path: string, payload: any) {
+    let response: AxiosResponse = await axios_instance.put(path, payload, {
+      headers: headers()
+    });
+    return response.data;
+  },
+  async delete(path: string, payload: any) {
+    let response: AxiosResponse = await axios_instance.delete(path, {
+      params: payload,
+      headers: headers()
+    });
+    return response.data;
+  },
 }
 export default api_tool;

@@ -1,23 +1,25 @@
 <template lang='html'>
+  <form @submit.prevent='submitForm()' novalidate>
   <Modal :show='show' @close='closeModal(stateName)' :width='400'>
-    <span slot='header'>Connexion</span>
-    <div slot='content' style='padding: 10px 30px 0px 30px'>
-      <FormText type='email' placeholder='Adresse mail' :error='false'
-          :icon='images.username'  v-model='LoginForm._username' :$v='$v.LoginForm._username'/>
-      <FormText type='password' placeholder='Mot de passe' :error='false'
-          :icon='images.password' v-model='LoginForm._password' :$v='$v.LoginForm._password'/>
-      <!-- <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" /> -->
-      
-      <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
-        {{infoMessage}}
+      <span slot='header'>Connexion</span>
+      <div slot='content' style='padding: 10px 30px 0px 30px'>
+        <FormText type='email' placeholder='Adresse mail' :error='false'
+            :icon='images._username'  v-model='LoginForm._username' :$v='$v.LoginForm._username'/>
+        <FormText type='password' placeholder='Mot de passe' :error='false'
+            :icon='images._password' v-model='LoginForm._password' :$v='$v.LoginForm._password'/>
+        <!-- <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" /> -->
+        
+        <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
+          {{infoMessage}}
+        </div>
+        <pre>{{LoginForm}}</pre>
       </div>
-      <pre>{{LoginForm}}</pre>
-    </div>
-    <template slot='footer'>
-      <FormButton @click='closeModal(stateName)'>Annuler</FormButton>
-      <FormButton @click='submitForm()' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
-    </template>
+      <template slot='footer'>
+        <FormButton @click='closeModal(stateName)'>Annuler</FormButton>
+        <FormButton type='submit' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
+      </template>
   </Modal>
+  </form>
 </template>
 
 <script lang="ts">
@@ -63,8 +65,8 @@ export default class Connexion extends Vue {
   public errorType: string = '';
 
   public images = {
-    username: require('@icons/mail.svg'),
-    password: require('@icons/password.svg')
+    _username: require('@icons/mail.svg'),
+    _password: require('@icons/password.svg')
   }
   public LoginForm = {
     _username: '',

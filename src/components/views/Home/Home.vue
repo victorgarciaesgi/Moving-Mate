@@ -1,10 +1,9 @@
 <template lang='html'>
   <transition name='slide'>
     <div class='view'>
-      <section class='image-home'>
+      <!-- <section class='image-home'>
         <div class='background-mask'></div>
-        <!-- <SearchComponent/> -->
-      </section>
+      </section> -->
     </div>
   </transition>
 </template>
@@ -37,7 +36,7 @@ section{
 }
 
 .image-home {
-  background-image: url('~@images/home_image.jpg');
+  // background-image: url('~@images/home_image.jpg');
   position: relative;
   height: 500px;
   @include bg-center;

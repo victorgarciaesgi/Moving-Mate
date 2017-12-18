@@ -1,5 +1,5 @@
 <template>
-  <button @click='emitClick()' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
+  <button @click='emitClick($event)' :type='type' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
     <img v-if='!!icon' :src="icon">
     <span>
       <slot></slot>
@@ -18,12 +18,15 @@ export default class FormButton extends Vue {
 
   @Prop({required: false}) submitting: boolean;
   @Prop({required: false}) disabled: boolean;
+  @Prop({required: false, default: 'button'}) type: string;
   @Prop({required: false}) icon: string;
   @Prop({required: false}) color: string;
 
-  emitClick(){
+  emitClick(event: Event){
     if (!this.submitting && !this.disabled) {
       this.$emit('click');
+    } else{
+      event.preventDefault();
     }
   }
 

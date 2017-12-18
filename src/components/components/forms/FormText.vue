@@ -83,6 +83,7 @@ export default class FormText extends Vue {
     email: "L'adresse mail doit être valide",
     minLength: `${this.$v.$params.minLength?this.$v.$params.minLength.min:""} caractères minimum`,
     maxLength: `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
+    sameAs: "Les mots de passe doivent être identiques"
   }
 
   updateValue(value){

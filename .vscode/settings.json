@@ -22,8 +22,6 @@
   "html.suggest.angular1": false,
   "html.suggest.ionic": false,
   "typescript.tsdk": "node_modules/typescript/lib"
-  
-
   // {
   //   "scope": "entity.name.tag.css",
   //   "settings": {
