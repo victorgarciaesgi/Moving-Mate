@@ -3,15 +3,12 @@ const helpers = require('./helpers');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-
-
-
-let config = {
+const baseConfig = {
   entry: {
-    'bundle': helpers.root('/src/main.ts')  
+    'bundle': helpers.root('/src/main.ts')
   },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     publicPath: '/',
     path: helpers.root('dist')
   },
@@ -60,15 +57,6 @@ let config = {
       }
     }]
   },
-  devServer: {
-    contentBase: path.join(__dirname, "dist"),
-    port: 5000,
-    historyApiFallback: true,
-    hot: true,
-    quiet: true,
-    open: true,
-    inline: true
-  },
   plugins: [
     new FaviconsWebpackPlugin({
       logo: helpers.root('src/assets/images/logo_M.svg'),
@@ -93,7 +81,6 @@ let config = {
       from: helpers.root('src/assets')
     }])
   ],
-  devtool: 'source-map'
 };
 
-module.exports = config;
+module.exports = baseConfig;

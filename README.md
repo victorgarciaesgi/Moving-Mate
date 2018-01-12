@@ -5,7 +5,7 @@ $ npm install
 ```
 
 ```
-$ yarn install #plus rapide
+$ yarn
 ```
 
 ## Pour developper

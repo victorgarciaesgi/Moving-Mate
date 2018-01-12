@@ -35,7 +35,7 @@
         </ul>
         <ul class='login-list'>
           <li class="header-button color">
-            <span>Devenir déménageur yes</span>
+            <span>Devenir déménageur</span>
           </li>
           <template v-if='loginState.isLoggedIn' >
             <li class="header-button" @click.stop="togglePopup('profile', $event.target)" 

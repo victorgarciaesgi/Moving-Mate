@@ -5,27 +5,26 @@
   "author": "Victor Garcia <victorgarciaparis13@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --hot --inline --progress",
-    "server": "nodemon Server.js",
-    "server-prod": "cross-env NODE_ENV=production nodemon Server.js",
-    "dev-server": "",
-    "prod": "concurrently --kill-others \"cross-env NODE_ENV=production npm run clean && npm run build-prod\" \"npm run server-prod\"",
+    "dev": "webpack-dev-server --inline --progress",
+    "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
+    "prod": "concurrently --kill-others \"cross-env NODE_ENV=production npm run clean && npm run build:prod\" \"npm run server:prod\"",
     "clean": "rimraf dist",
-    "build-prod": "webpack --config config/webpack.config.prod.js --progress"
+    "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress"
   },
   "dependencies": {
     "axios": "^0.16.2",
     "jquery": "^3.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
-    "vue": "2.5.11",
+    "vue": "2.5.13",
     "vue-class-component": "6.1.2",
     "vue-property-decorator": "6.0.0",
     "vue-router": "3.0.1",
     "vuelidate": "^0.6.1",
     "vuex": "3.0.1",
     "vuex-class": "0.3.0",
-    "vuex-router-sync": "5.0.0"
+    "vuex-router-sync": "5.0.0",
+    "webpack-merge": "^4.1.1"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -73,7 +72,7 @@
     "url-loader": "^0.6.2",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.3",
-    "vue-template-compiler": "^2.5.2",
+    "vue-template-compiler": "^2.5.13",
     "vue-ts-loader": "0.0.3",
     "vuex-typescript": "^3.0.2",
     "webpack": "3.8.1",
