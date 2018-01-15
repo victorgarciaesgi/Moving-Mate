@@ -8,8 +8,8 @@ export interface ILoginState {
   isAdmin: boolean,
   status: MovingStatus,
   userToken: string,
-  showConnexion: boolean,
-  showInscription: boolean,
+  showModal: boolean,
+  init?: void ,
   reset: () => void
 }
 

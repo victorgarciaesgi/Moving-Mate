@@ -4,6 +4,12 @@
       <!-- <section class='image-home'>
         <div class='background-mask'></div>
       </section> -->
+
+      <StarRating v-model='note' />
+
+      {{note}}
+
+
     </div>
   </transition>
 </template>
@@ -13,14 +19,19 @@ import Vue from 'vue'
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
+import { StarRating } from '@components'
+
 import SearchComponent from './SearchComponent.vue';
 
 @Component({
   components: {
-    SearchComponent
+    SearchComponent,
+    StarRating
   }
 })
 export default class Home extends Vue {
+
+  public note: number = 2;
 
 }
 </script>

@@ -1,9 +1,9 @@
 
-export const numberFilter = (value: number, format: number): number => {
+export function numberFilter(value: number, format: number): number{
   return Number(value.toPrecision(format));
 }
 
-export const capitalize =  (value: string): string => {
+export function capitalize(value: string): string{
   if (!value && typeof value !== 'string') {
     return '';
   };
@@ -11,7 +11,7 @@ export const capitalize =  (value: string): string => {
   return newValue.charAt(0).toUpperCase() + newValue.slice(1);
 }
 
-export const uppercase =  (value: string): string => {
+export function uppercase(value: string): string{
   if (!value && typeof value !== 'string') {
     return '';
   };
@@ -19,7 +19,7 @@ export const uppercase =  (value: string): string => {
   return newValue.toUpperCase();
 }
 
-export const lowercase =  (value: string): string => {
+export function lowercase(value: string): string{
   if (!value && typeof value !== 'string') {
     return '';
   };

@@ -1,13 +1,18 @@
+import { namespace } from 'vuex-class/lib';
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import { state } from './LoginStore';
 
 export const API_URL = process.env.API_URL;
 
-const axios_instance: AxiosInstance = axios.create({
+const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  transformResponse(response) {
+    console.log(JSON.parse(response));
+    return JSON.parse(response);
+  }
 });
 
 const headers = () => {
@@ -20,32 +25,32 @@ const headers = () => {
   return authToken;
 }
 
-const api_tool = {
-  async post(path: string, payload: any) {
-    let response: AxiosResponse = await axios_instance.post(path, payload, {
+namespace ApiTool {
+  export async function post(path: string, payload: any) {
+    let response: AxiosResponse = await axiosInstance.post(path, payload, {
       headers: headers()
-    });
+    })
     return response.data;
-  },
-  async get(path: string, payload: any) {
-    let response: AxiosResponse = await axios_instance.get(path, {
+  }
+  export async function get(path: string, payload?: any) {
+    let response: AxiosResponse = await axiosInstance.get(path, {
       params: payload,
       headers: headers()
     });
     return response.data;
-  },
-  async put(path: string, payload: any) {
-    let response: AxiosResponse = await axios_instance.put(path, payload, {
+  }
+  export async function put(path: string, payload: any) {
+    let response: AxiosResponse = await axiosInstance.put(path, payload, {
       headers: headers()
     });
     return response.data;
-  },
-  async delete(path: string, payload: any) {
-    let response: AxiosResponse = await axios_instance.delete(path, {
+  }
+  export async function Delete(path: string, payload: any) {
+    let response: AxiosResponse = await axiosInstance.delete(path, {
       params: payload,
       headers: headers()
     });
     return response.data;
-  },
+  }
 }
-export default api_tool;
+export default ApiTool;

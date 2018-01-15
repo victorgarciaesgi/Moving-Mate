@@ -8,7 +8,8 @@
               half: index == hoverCount - 0.5,
               empty: index >= hoverCount
             }' 
-            :color='(!hoverStar && $v.filled.$dirty)?"green":"brown"'>
+            :color='(!hoverStar && vl?vl.$dirty:false)?"green":"brown"'
+            @mouseenter="float?'':hover(index + 1)" @click="float?'':set(index + 1)">
           <div class="part" @mouseenter="hover(index + 0.5)" @click="set(index + 0.5)"></div>
           <div class="part" @mouseenter="hover(index + 1)" @click="set(index + 1)"></div>
         </div>
@@ -30,117 +31,110 @@
         {{noteCount}} {{noteCount > 1?'notes':'note'}}
       </div>
     </div>
-    <input type="hidden" :name='name' v-model='filled'>
 
-    <div v-if='!$v.filled.$dirty && !displayNote' class="form-valid-icon form-required"></div>
-    <div v-if='!$v.filled.$invalid && $v.filled.$dirty && !displayNote' class="form-valid-icon form-valid"></div>
-    <div v-if='$v.filled.$invalid && $v.filled.$dirty && !displayNote' class="form-valid-icon form-invalid"></div>
+    <template v-if='vl'>
+      <div v-if='!vl.$dirty && !displayNote' class="form-valid-icon form-required"></div>
+      <div v-if='!vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-valid"></div>
+      <div v-if='vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-invalid"></div>
+    </template>
 
   </div>
  
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component';
-import { Prop, Watch } from 'vue-property-decorator';
-import { required } from 'vuelidate/lib/validators';
-import { Vuelidate } from 'vuelidate';
-
-import { numberFilter } from '@filters';
+import Vue from "vue";
+import Component from "vue-class-component";
+import { Prop, Watch } from "vue-property-decorator";
+import { IValidator } from "vuelidate";
 
 
-interface IStarValidate {
-  filled: string;
+import { numberFilter } from "@filters";
+
+interface IStarValidate extends IValidator {
+  filled: IValidator;
 }
 
 @Component({
-  validations: {
-    filled: {
-      required: required
-    }
-  },
   filters: {
-    'numberFilter': numberFilter
+    numberFilter: numberFilter
   },
 })
 export default class StarRating extends Vue {
+  public rating: number = 0; // Alternive variable pour garder la valeur d'avant lors d'un hover
+  public hoverCount: number = 0; // Valeur de la note affichée
+  public hoverStar: boolean = false; // Etat hover du block d'étoiles
 
-  starCount: number = 5; // Nombre d'étoiles
-  rating: number = 0; // Alternive variable pour garder la valeur d'avant lors d'un hover
-  hoverCount: number = 0; // Valeur de la note affichée
-  hoverStar: boolean = false; // Etat hover du block d'étoiles
-  filled: string = ''; // Placeholder qui rempli le champs input hidden
-  $v: Vuelidate<IStarValidate>
-
-  @Prop({ required: false }) starModel: number;
-  @Prop({ required: false }) required: boolean;
-  @Prop({ required: false }) name: string;
-  @Prop({ required: false }) editable: boolean;
-  @Prop({ required: false }) init: number;
-  @Prop({ required: false }) noteCount: number;
-  @Prop({ required: false }) displayNote: boolean;
-
+  @Prop() value: number;
+  @Prop({ default: 5 }) starCount: number;
+  @Prop({ default: false }) required: boolean;
+  @Prop() name: string;
+  @Prop({ default: true }) editable: boolean;
+  @Prop({ default: 0 }) init: number;
+  @Prop() noteCount: number;
+  @Prop({ default: false }) displayNote: boolean;
+  @Prop({ default: true }) float: boolean;
+  @Prop() vl: IStarValidate;
 
   mounted() {
-    if (!this.starModel) {
-      this.hoverCount = (this.init ? this.init : 0);
-      // Store.commit('increment');
-    }
-    else {
-      this.hoverCount = this.starModel;
-    }
+    this.hoverCount = this.value;
+  }
+  
+
+  updateValue(value) {
+    this.vl.$touch();
+    this.$emit("input", value);
   }
 
   hover(value) {
-    if (this.editable) {
-      this.hoverStar = true;
-      this.hoverCount = value;
-    }
+    this.hoverStar = true;
+    this.hoverCount = value;
   }
 
   leave() {
     if (this.editable) {
       this.hoverStar = false;
-      this.hoverCount = (this.$v.filled.$dirty ? this.rating : this.init);
+      if (this.vl) {
+        this.hoverCount = this.vl.filled.$dirty ? this.rating : this.init;
+      } else {
+        this.hoverCount = this.value ? this.value : this.init;
+      }
+      
     }
   }
 
   set(value) {
-    if (this.editable && this.starModel) {
+    if (this.editable) {
       this.hoverStar = false;
-      this.starModel = value;
       this.rating = value;
-      this.$emit('onSelectResult', { note: value });
-    }
-    else {
+      this.$emit("input", value);
+    } else {
       this.hoverStar = false;
       this.hoverCount = value;
       this.rating = value;
     }
   }
 
-  @Watch('starModel') starValueChanged(newVal, oldVal) {
-    if (this.editable) {
-      if (!!newVal) {
-        if (!this.$v.filled.$dirty) {
-          this.$v.filled.$touch;
-        }
-        this.filled = (newVal.length == 0 ? null : "filled");
-      }
-      else {
-        this.hoverCount = (this.init ? this.init : 0);
-        this.filled = "";
-      }
-    }
-  }
+  // @Watch('starModel') starValueChanged(newVal, oldVal) {
+  //   if (this.editable) {
+  //     if (!!newVal) {
+  //       if (!this.vl.filled.$dirty) {
+  //         this.vl.filled.$touch;
+  //       }
+  //       this.filled = (newVal.length == 0 ? null : "filled");
+  //     }
+  //     else {
+  //       this.hoverCount = (this.init ? this.init : 0);
+  //       this.filled = "";
+  //     }
+  //   }
+  // }
 
-  @Watch('init') initChanged(newVal, oldVal) {
-    if (!this.editable) {
-      this.hoverCount = (!!newVal ? newVal : 0);
-    }
-  }
-
+  // @Watch('init') initChanged(newVal, oldVal) {
+  //   if (!this.editable) {
+  //     this.hoverCount = (!!newVal ? newVal : 0);
+  //   }
+  // }
 }
 </script>
 
@@ -160,23 +154,23 @@ export default class StarRating extends Vue {
     background-position: center center;
     background-size: 30px 30px;
 
-    &.full[color='brown'] {
-      background-image: url('./assets/star_plain.svg');
+    &.full[color="brown"] {
+      background-image: url("./assets/star_plain.svg");
     }
-    &.half[color='brown'] {
-      background-image: url('./assets/star_half.svg');
+    &.half[color="brown"] {
+      background-image: url("./assets/star_half.svg");
     }
-    &.empty[color='brown'] {
-      background-image: url('./assets/star_empty.svg');
+    &.empty[color="brown"] {
+      background-image: url("./assets/star_empty.svg");
     }
-    &.full[color='green'] {
-      background-image: url('./assets/star_plain_green.svg');
+    &.full[color="green"] {
+      background-image: url("./assets/star_plain_green.svg");
     }
-    &.half[color='green'] {
-      background-image: url('./assets/star_half_green.svg');
+    &.half[color="green"] {
+      background-image: url("./assets/star_half_green.svg");
     }
-    &.empty[color='green'] {
-      background-image: url('./assets/star_empty_green.svg');
+    &.empty[color="green"] {
+      background-image: url("./assets/star_empty_green.svg");
     }
 
     &[editable] {

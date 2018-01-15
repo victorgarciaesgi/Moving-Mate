@@ -1,19 +1,19 @@
 <template lang='html'>
-  <form @submit.prevent='submitForm()' novalidate>
-    <Modal :show='show' @close='closeModal(stateName)' :width='400'>
+  <form @submit.prevent='submitForm()' novalidate method='post' action>
+    <Modal :show='show' @close='close()' :width='400'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
         <FormText type='email' placeholder='Adresse mail'
-            :icon="images['fos_user_registration_form[email]']"  v-model="LoginForm['fos_user_registration_form[email]']" :$v='$v.LoginForm["fos_user_registration_form[email]"]'/>
+            :icon="images.email"  v-model="SignupForm.email" :vl='$v.SignupForm.email'/>
         
         <FormText type='text' placeholder="Nom d'utilisateur"
-            :icon="images['fos_user_registration_form[username]']"  v-model="LoginForm['fos_user_registration_form[username]']" :$v='$v.LoginForm["fos_user_registration_form[username]"]'/>
+            :icon="images.username"  v-model="SignupForm.username" :vl='$v.SignupForm.username'/>
 
         <FormText type='password' placeholder='Mot de passe'
-            :icon="images['fos_user_registration_form[plainPassword][first]']"  v-model="LoginForm['fos_user_registration_form[plainPassword][first]']" :$v='$v.LoginForm["fos_user_registration_form[plainPassword][first]"]'/>
+            :icon="images['plainPassword[first]']"  v-model="SignupForm['plainPassword[first]']" :vl='$v.SignupForm["plainPassword[first]"]'/>
 
         <FormText type="password" placeholder='Confirmez le mot de passe'
-            :icon="images['fos_user_registration_form[plainPassword][second]']"  v-model="LoginForm['fos_user_registration_form[plainPassword][second]']" :$v='$v.LoginForm["fos_user_registration_form[plainPassword][second]"]'/>
+            :icon="images['plainPassword[second]']"  v-model="SignupForm['plainPassword[second]']" :vl='$v.SignupForm["plainPassword[second]"]'/>
 
         <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
           {{infoMessage}}
@@ -21,8 +21,8 @@
 
       </div>
       <template slot='footer'>
-        <FormButton @click='closeModal(stateName)'>Annuler</FormButton>
-        <FormButton type='submit' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>S'inscrire</FormButton>
+        <FormButton @click='close()'>Annuler</FormButton>
+        <FormButton type='submit' :submitting='submitting' :disabled='$v.SignupForm.$invalid' color='blue'>S'inscrire</FormButton>
       </template>
     </Modal>
   </form>
@@ -47,17 +47,17 @@ const NotifAction = namespace('NotificationsModule', Action);
     Modal, FormText, CheckBox, FormButton
   },
   validations: {
-    LoginForm: {
-      "fos_user_registration_form[email]": {required, email},
-      "fos_user_registration_form[username]": {required, minLength: minLength(4), maxLength: maxLength(20)},
-      "fos_user_registration_form[plainPassword][first]": {required},
-      "fos_user_registration_form[plainPassword][second]": {required, sameAs: sameAs('password')},
+    SignupForm: {
+      email: {required, email},
+      username: {required, minLength: minLength(4), maxLength: maxLength(20)},
+      "plainPassword[first]": {required},
+      "plainPassword[second]": {required, sameAs: sameAs('fos_user_registration_form[plainPassword][first]')},
     }
   }
 })
 export default class Inscription extends Vue {
 
-  @LoginActions submitRequest;
+  @LoginActions signupRequest;
   @LoginMutation showModal;
   @LoginMutation closeModal;
 
@@ -66,32 +66,42 @@ export default class Inscription extends Vue {
   @Prop({required: true}) show: boolean;
   @Prop({default: false}) window: boolean;
 
-  public stateName: string = 'showInscription'
   public infoMessage: string = '';
   public submitting: boolean = false;
   public error: boolean = true;
   public errorType: string = '';
 
   public images = {
-    "fos_user_registration_form[email]": require('@icons/mail.svg'),
-    "fos_user_registration_form[username]": require('@icons/surname.svg'),
-    "fos_user_registration_form[plainPassword][first]": require('@icons/mail.svg'),
-    "fos_user_registration_form[plainPassword][second]": require('@icons/password.svg')
+    email: require('@icons/mail.svg'),
+    username: require('@icons/surname.svg'),
+    "plainPassword[first]": require('@icons/mail.svg'),
+    "plainPassword[second]": require('@icons/password.svg')
   }
-  public LoginForm = {
-    "fos_user_registration_form[email]": '',
-    "fos_user_registration_form[username]": '',
-    "fos_user_registration_form[plainPassword][first]": '',
-    "fos_user_registration_form[plainPassword][second]": ''
+  public SignupForm = {
+    email: 'victor2@free.fr',
+    username: 'victor2',
+    "plainPassword[first]": 'aaaaa',
+    "plainPassword[second]": 'aaaaa',
+    reset() {
+      this.email = '';
+      this.username = '';
+      this["plainPassword[first]"] = '';
+      this["plainPassword[second]"] = '';
+    }
   };
+
+  close() {
+    this.closeModal();
+    this.SignupForm.reset();
+  }
 
   async submitForm() {
     this.submitting = true;
-    let loginResponse = await this.submitRequest(this.LoginForm);
+    let submitResponse = await this.signupRequest(this.SignupForm);
     this.submitting = false;
-    if (!loginResponse.success){
-      this.errorType = loginResponse.type;
-      this.infoMessage = loginResponse.message;
+    if (!submitResponse.success){
+      this.errorType = submitResponse.type;
+      this.infoMessage = submitResponse.message;
     }
   }
 }

@@ -7,17 +7,20 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress",
     "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
-    "prod": "concurrently --kill-others \"cross-env NODE_ENV=production npm run clean && npm run build:prod\" \"npm run server:prod\"",
+    "prod": "npm run clean && npm run build:prod && npm run server:prod",
     "clean": "rimraf dist",
     "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress"
   },
   "dependencies": {
+    "@types/jquery": "^3.2.18",
     "axios": "^0.16.2",
     "jquery": "^3.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
+    "uglifyjs-webpack-plugin": "^1.1.6",
     "vue": "2.5.13",
     "vue-class-component": "6.1.2",
+    "vue-i18n": "^7.4.0",
     "vue-property-decorator": "6.0.0",
     "vue-router": "3.0.1",
     "vuelidate": "^0.6.1",

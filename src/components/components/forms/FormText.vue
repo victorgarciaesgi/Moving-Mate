@@ -23,22 +23,33 @@
 
         <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
-        <div v-if='!dirty && $v.required' class="form-valid-icon form-required"></div>
+        <div v-if='!dirty && vl.required' class="form-valid-icon form-required"></div>
 
-        <div class='popup-message' v-if='(description || $v.$error) && error && !valid && popupPosition.display' 
+        <div class='popup-message' v-if='description && popupPosition.display'
             :style='popupPosition'>
-          <span v-if='description && !$v.$error' class='description'>{{description}}</span>
-          <ul v-if='!$v.error && dirty && error' class='error'>
+          <span v-if='description && !vl.$error' class='description'>{{description}}</span>
+          <!-- <ul v-if='!vl.error && dirty && error' class='error'>
             <li v-for='(key, index) in filterErrors' :key='key'>
                <span>{{errorMessages[key]}}</span>
             </li>
           </ul>
-          <span v-if='$v.$pending' class='info'>Verification...</span>
+          <span v-if='vl.$pending' class='info'>Verification...</span> -->
 
           <div class='triangle'></div>
         </div>
 
       </div>
+
+      <div class='errorMessage'>
+        <span v-if='description && !vl.$error' class='description'>{{description}}</span>
+          <ul v-if='!vl.error && dirty && error' class='error'>
+            <li v-for='key in filterErrors' :key='key'>
+               <span>{{errorMessages[key]}}</span>
+            </li>
+          </ul>
+          <span v-if='vl.$pending' class='info'>Verification...</span>
+      </div>
+
     </div>
 </template>
 
@@ -69,7 +80,7 @@ export default class FormText extends Vue {
   @Prop({required: false, default: true}) inline: boolean;
   @Prop({required: false}) big: boolean;
   @Prop({required: false}) design: string;
-  @Prop({required: false}) $v: IValidator;
+  @Prop({required: false}) vl: IValidator;
 
 
   public popupPosition: any = {
@@ -81,13 +92,13 @@ export default class FormText extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
-    minLength: `${this.$v.$params.minLength?this.$v.$params.minLength.min:""} caractères minimum`,
-    maxLength: `${this.$v.$params.maxLength?this.$v.$params.maxLength.max:""} caractères maximum`,
+    minLength: `${this.vl.$params.minLength?this.vl.$params.minLength.min:""} caractères minimum`,
+    maxLength: `${this.vl.$params.maxLength?this.vl.$params.maxLength.max:""} caractères maximum`,
     sameAs: "Les mots de passe doivent être identiques"
   }
 
   updateValue(value){
-    this.$v.$touch();
+    this.vl.$touch();
     this.$emit('input', value);
   }
 
@@ -118,22 +129,22 @@ export default class FormText extends Vue {
   }
 
   get filterErrors() {
-    return Object.keys(this.$v.$params).filter(key => !this.$v[key]);
+    return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
   }
 
   get valid(){
-    return !this.$v.$invalid;
+    return !this.vl.$invalid;
   }
 
   get dirty(){
-    return this.$v.$dirty;
+    return this.vl.$dirty;
   }
 
-  mounted () {
+  mounted() {
     window.addEventListener('scroll', this.handleScroll);
   }
 
-  destroyed () {
+  destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
   }
 }
@@ -149,6 +160,18 @@ export default class FormText extends Vue {
   flex: 1 1 auto;
   min-width: 250px;
   max-width: 450px;
+
+
+  .errorMessage {
+    display: flex;
+    position: relative;
+    flex-flow: row wrap;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 5px;
+    color: $red1;
+  }
 }
 
 

@@ -5,7 +5,8 @@ import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ILoginState } from '@types';
 import { RootState } from './index';
 import { capitalize } from '@filters';
-import { timeout } from '@methods';
+
+const LOGIN_URL = "login_check";
 
 export const state: ILoginState = {
   name: null,
@@ -17,8 +18,7 @@ export const state: ILoginState = {
   isAdmin: false,
   status: null,
   userToken: null,
-  showConnexion: false,
-  showInscription: false,
+  showModal: false,
   reset() {
     this.name = null;
     this.username = null;
@@ -27,8 +27,7 @@ export const state: ILoginState = {
     this.isLoggedIn = false;
     this.isAdmin = false,
     this.status = null;
-    this.showConnexion = false;
-    this.showInscription = false;
+    this.showModal = false;
   }
 }
 
@@ -39,11 +38,11 @@ const getters: GetterTree<ILoginState, RootState> = {
 }
 
 const mutations: MutationTree<ILoginState> = {
-  showModal(state, modal) {
-    state[modal] = true;
+  showLogin(state, modal) {
+    state.showModal = true;
   },
-  closeModal(state, modal) {
-    state[modal] = false;
+  closeModal( modal) {
+    state.showModal = false;
   },
   connectUser(state, userData) {
     state = merge(state, userData);
@@ -55,31 +54,28 @@ const mutations: MutationTree<ILoginState> = {
 }
 
 export const actions: ActionTree<ILoginState, RootState> = {
-  async submitRequest({commit, dispatch, rootState}, loginData) {
-    let loginResponse = await Api.post('register/confirmed', loginData)
-  },
-  async connexionRequest({commit, dispatch, rootState}, loginData) {
-    let loginResponse = await Api.post('login_check', loginData);
-    if (loginResponse.token) {
-      localStorage.setItem('access_token', loginResponse.token);
-      dispatch('connexionSuccess', loginResponse.token);
+  async connexionRequest({commit, dispatch}, loginData) {
+    let { token } = await Api.post(LOGIN_URL, loginData);
+    if (token) {
+      localStorage.setItem('access_token', token);
+      dispatch('connexionSuccess', token);
       return { success: true };
     } else {
       return {success: false, type: 'error', message: 'Adresse email ou mot de passe incorrect' };
     }
   },
-  async connexionSuccess({commit, dispatch, rootState}, token) {
+  async connexionSuccess({commit, dispatch}, token: string) {
     let userData = await jwtDecode(token);
-    userData = merge(userData, token);
+    userData = merge(userData, {userToken: token});
     commit('connectUser', userData);
     dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}`}, {root: true})
   },
-  async disconnectRequest({commit, dispatch, rootState}) {
+  disconnectRequest({commit, dispatch}) {
     localStorage.removeItem('access_token');
     commit('disconnectUser');
     dispatch('NotificationsModule/addNotification', {type: "success", message: `Vous avez été deconnecté`}, {root: true})
   },
-  async checkUserSession({commit, dispatch, rootState}) {
+  checkUserSession({commit, dispatch}) {
     let token = localStorage.getItem("access_token");
     if (!!token) {
       dispatch('connexionSuccess', token);
@@ -87,6 +83,10 @@ export const actions: ActionTree<ILoginState, RootState> = {
       console.log('User not logged');
     }
   }
+}
+
+function fetchTokens() {
+  
 }
 
 export const LoginModule: Module<ILoginState, RootState> = {

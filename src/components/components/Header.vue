@@ -1,6 +1,4 @@
 <template>
-  
-
   <div class='header-wrapper'>
     <Popup ref='profile' v-if='loginState.isLoggedIn' :width='250'>
       <template>
@@ -45,10 +43,10 @@
             </li>
           </template>
           <template v-else>
-            <li class="header-button" @click='showModal("showConnexion")'>
+            <li class="header-button" @click='showLogin'>
               <span>Connexion</span>
             </li>
-            <li class="header-button"  @click='showModal("showInscription")'>
+            <li class="header-button"  @click='showSignup'>
               <span>Inscription</span>
             </li>
           </template>
@@ -56,10 +54,8 @@
       </nav>
     </header>
   
-  <Connexion :show='loginState.showConnexion' v-if='!loginState.isLoggedIn' ></Connexion>  
-  <Inscription :show='loginState.showInscription' v-if='!loginState.isLoggedIn'></Inscription>
-
-
+    <Connexion :show='loginState.showModal' v-if='!loginState.isLoggedIn' ></Connexion>  
+    <Inscription :show='signupState.showModal' v-if='!loginState.isLoggedIn'></Inscription>
   </div>
 </template>
 
@@ -69,14 +65,14 @@ import Component from "vue-class-component";
 import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
 import { capitalize } from "@filters";
-import { ILoginState } from '@types';
+import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
 
 const LoginGetter = namespace('LoginModule', Getter);
 const LoginMutation = namespace('LoginModule', Mutation);
 const LoginAction = namespace('LoginModule', Action);
-const NotifAction = namespace('NotificationsModule', Action);
+const SignupMutation = namespace('SignupModule', Mutation);
 
 @Component({
   components: { Connexion, Inscription, Popup },
@@ -84,12 +80,11 @@ const NotifAction = namespace('NotificationsModule', Action);
 })
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
+  @State('SignupModule') signupState: ILoginState;
   @LoginGetter fullName;
-  @LoginMutation showModal;
-  @LoginMutation closeModal;
-  @LoginAction disconnectRequest
-
-  @NotifAction addNotification;
+  @LoginMutation showLogin;
+  @LoginAction disconnectRequest;
+  @SignupMutation showSignup;
 
   public refs = {};
 

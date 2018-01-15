@@ -1,12 +1,12 @@
 <template lang='html'>
   <form @submit.prevent='submitForm()' novalidate>
-  <Modal :show='show' @close='closeModal(stateName)' :width='400'>
+  <Modal :show='show' @close='closeModal' :width='400'>
       <span slot='header'>Connexion</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
         <FormText type='email' placeholder='Adresse mail' :error='false'
-            :icon='images._username'  v-model='LoginForm._username' :$v='$v.LoginForm._username'/>
+            :icon='images._username'  v-model='LoginForm._username' :vl='$v.LoginForm._username'/>
         <FormText type='password' placeholder='Mot de passe' :error='false'
-            :icon='images._password' v-model='LoginForm._password' :$v='$v.LoginForm._password'/>
+            :icon='images._password' v-model='LoginForm._password' :vl='$v.LoginForm._password'/>
         <!-- <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" /> -->
         
         <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
@@ -15,7 +15,7 @@
         <pre>{{LoginForm}}</pre>
       </div>
       <template slot='footer'>
-        <FormButton @click='closeModal(stateName)'>Annuler</FormButton>
+        <FormButton @click='closeModal'>Annuler</FormButton>
         <FormButton type='submit' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
       </template>
   </Modal>

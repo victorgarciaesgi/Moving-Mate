@@ -17,6 +17,9 @@ import { Action, namespace } from "vuex-class";
 import router from './router';
 import { store, EventBus } from '@store';
 import * as Components from '@components';
+import $ from 'jquery'
+
+import {Api} from '@store';
 
 const LoginActions = namespace('LoginModule', Action);
 
@@ -34,7 +37,14 @@ export default class App extends Vue {
 
   created() {
     this.checkUserSession();
+    document.addEventListener("touchstart",() => {},<any>{passive: true});
+    $(window).resize(() => {EventBus.$emit('closePopups')})
   }
+
+  mounted() {
+    
+  }
+  
 
   closePopups() {
     EventBus.$emit('closePopups');

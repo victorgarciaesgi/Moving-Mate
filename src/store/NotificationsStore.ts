@@ -1,10 +1,8 @@
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { INotificationState, INotification, INotificationType } from '@types';
 import { RootState } from './index';
-import { capitalize } from '@filters';
 import { timeout } from '@methods';
-import _ from 'lodash';
-import axios from 'axios';
+import { merge } from 'lodash';
 
 const TIMEOUT = 3000;
 
@@ -18,6 +16,7 @@ const getters: GetterTree<INotificationState, RootState> = {}
 const mutations: MutationTree<INotificationState> = {
   addAlert(state, alert: INotification) {
     state.notificationList.push(alert);
+    state.notificationCount++;
   },
   deleteAlert(state, alert: INotification) {
     var index = state.notificationList.findIndex(element => element.id === alert.id);
@@ -26,12 +25,11 @@ const mutations: MutationTree<INotificationState> = {
 }
 
 const actions: ActionTree<INotificationState, RootState> = {
-  async addNotification({commit, rootState}, alert: INotification) {
-    alert = _.merge(alert, {
+  async addNotification({ commit, rootState }, alert: INotification) {
+    alert = merge(alert, {
       id: state.notificationCount,
       isNotif: alert.isNotif || false
     })
-    state.notificationCount++;
     commit('addAlert', alert);
     await timeout(TIMEOUT);
     commit('deleteAlert', alert)

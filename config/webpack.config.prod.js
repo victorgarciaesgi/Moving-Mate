@@ -4,6 +4,7 @@ const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const webpackConfig = require('./webpack.config.base');
 const helpers = require('./helpers');
@@ -61,14 +62,15 @@ const configProd = {
     new DefinePlugin({
       'process.env': env
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      include: /\.js$/,
-      mangle: { keep_fnames: false, screw_ie8: true },
-      compress: { keep_fnames: false, screw_ie8: true, warnings: false },
-      sourceMap: false,
-      removeComments: true,
-      beautify: false
-    }),
+    new UglifyJsPlugin(),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   include: /\.js$/,
+    //   mangle: { keep_fnames: false, screw_ie8: true },
+    //   compress: { keep_fnames: false, screw_ie8: true, warnings: false },
+    //   sourceMap: false,
+    //   removeComments: true,
+    //   beautify: false
+    // }),
     extractSass,
     new HtmlWebpackPlugin({
       inject: true,
@@ -90,6 +92,7 @@ const configProd = {
     
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
+    new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks (module) {
