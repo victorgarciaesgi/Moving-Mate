@@ -1,8 +1,12 @@
 import { namespace } from 'vuex-class/lib';
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
-import { state } from './LoginStore';
+import { store } from './index';
+
+console.log(store)
 
 export const API_URL = process.env.API_URL;
+
+// const userState = store.state['LoginModule']
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -17,11 +21,11 @@ const axiosInstance: AxiosInstance = axios.create({
 
 const headers = () => {
   let authToken: any = "";
-  if (state.isLoggedIn) {
-    authToken = {
-      "Authorization": `Bearer ${state.userToken}`
-    }
-  }
+  // if (userState.isLoggedIn) {
+  //   authToken = {
+  //     "Authorization": `Bearer ${userState.userToken}`
+  //   }
+  // }
   return authToken;
 }
 

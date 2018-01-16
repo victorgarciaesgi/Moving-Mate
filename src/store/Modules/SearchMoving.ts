@@ -1,12 +1,6 @@
-import jwtDecode from 'jwt-decode';
-import _ from 'lodash'
-import axios from 'axios'
-import { disconnect } from 'cluster';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ISearchMovingState } from '@types';
-import { RootState } from './index';
-import { capitalize } from 'lodash';
-import { timeout } from '@methods';
+import { RootState } from '../index';
 
 const API_URL = "https://geo.api.gouv.fr/communes?boost=population&nom=";
 

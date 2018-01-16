@@ -1,11 +1,11 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
-import Api from './Api';
+import Api from '../Api';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ISignupState } from '@types';
-import { RootState } from './index';
+import { RootState } from '../index';
 
-export const state: ISignupState = {
+const state: ISignupState = {
   showModal: false,
 }
 
@@ -22,7 +22,7 @@ const mutations: MutationTree<ISignupState> = {
   }
 }
 
-export const actions: ActionTree<ISignupState, RootState> = {
+const actions: ActionTree<ISignupState, RootState> = {
   async signupRequest({commit, dispatch}, loginData) {
     let submitResponse = await Api.post('register', loginData)
     return submitResponse;

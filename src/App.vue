@@ -25,11 +25,11 @@ import $ from 'jquery'
 const LoginActions = namespace('LoginModule', Action);
 
 @Component({
-  store,
   components: {
     HeaderComponent, Alerts
   },
   router,
+  store,
 })
 export default class App extends Vue {
 

@@ -2,6 +2,7 @@ export * from './LoginState';
 export * from './Signup';
 export * from './SearchMoving';
 export * from './Notifications';
+export * from './ProgressBar.d'
 
 
 export interface IResponse<T> {
@@ -9,5 +10,4 @@ export interface IResponse<T> {
   message?: string,
   type: 'error'|'warning'
   data: T,
-
 }

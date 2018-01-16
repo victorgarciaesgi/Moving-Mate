@@ -1,6 +1,6 @@
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { INotificationState, INotification, INotificationType } from '@types';
-import { RootState } from './index';
+import { RootState } from '../index';
 import { timeout } from '@methods';
 import { merge } from 'lodash';
 

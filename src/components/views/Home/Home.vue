@@ -1,13 +1,14 @@
 <template lang='html'>
   <transition name='slide'>
-    <section class='image-home'>
+    <!-- <section class='image-home'>
       <div class='background-mask'></div>
-    </section>
+    </section> -->
 
     <!-- <div style='width: 300px'>
         :displayNote='true'/>
       <StarRating v-model='note' 
     </div> -->
+    <h1>Home</h1>
   </transition>
 </template>
 

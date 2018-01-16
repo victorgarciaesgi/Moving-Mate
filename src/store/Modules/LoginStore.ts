@@ -8,7 +8,7 @@ import { capitalize } from 'lodash';
 
 const LOGIN_URL = "login_check";
 
-export const state: ILoginState = {
+const state: ILoginState = {
   name: null,
   surname: null,
   username: null,
@@ -53,7 +53,7 @@ const mutations: MutationTree<ILoginState> = {
   }
 }
 
-export const actions: ActionTree<ILoginState, RootState> = {
+const actions: ActionTree<ILoginState, RootState> = {
   async connexionRequest({commit, dispatch}, loginData) {
     let { token } = await Api.post(LOGIN_URL, loginData);
     if (token) {
