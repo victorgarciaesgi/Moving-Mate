@@ -1,8 +1,6 @@
 <template lang='html'>
   <transition name='slide'>
-    <div class='view'>
-      <h1>Moving</h1>
-    </div>
+    <h1>Moving</h1>
   </transition>
 </template>
 

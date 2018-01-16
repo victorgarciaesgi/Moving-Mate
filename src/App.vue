@@ -2,9 +2,11 @@
   <div id='app' @click='closePopups()'>
     <HeaderComponent/>
     <Alerts/>
-    <transition name='fade' mode='out-in'>
-      <router-view/>
-    </transition>
+    <div class='view'>
+      <transition name='fade' mode='out-in'>
+        <router-view/>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -12,24 +14,22 @@
 <script lang="ts"> 
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import {EventBus, store} from '@store'
+import router from './router';
 import { Action, namespace } from "vuex-class";
 
-import router from './router';
-import { store, EventBus } from '@store';
-import * as Components from '@components';
+import {HeaderComponent, Alerts} from '@components';
 import $ from 'jquery'
 
-import {Api} from '@store';
 
 const LoginActions = namespace('LoginModule', Action);
 
 @Component({
+  store,
   components: {
-    "HeaderComponent": Components.HeaderComponent,
-    "Alerts": Components.Alerts
+    HeaderComponent, Alerts
   },
   router,
-  store
 })
 export default class App extends Vue {
 
@@ -38,11 +38,11 @@ export default class App extends Vue {
   created() {
     this.checkUserSession();
     document.addEventListener("touchstart",() => {},<any>{passive: true});
-    $(window).resize(() => {EventBus.$emit('closePopups')})
+    $(window).resize(() => {EventBus.$emit('closePopups')});
   }
 
   mounted() {
-    
+    console.log(this)
   }
   
 

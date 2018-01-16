@@ -14,9 +14,12 @@ const getters: GetterTree<ISignupState, RootState> = {
 }
 
 const mutations: MutationTree<ISignupState> = {
-  showSignup(state, modal) {
+  showSignup(state) {
     state.showModal = true;
   },
+  closeModal(state) {
+    state.showModal = false;
+  }
 }
 
 export const actions: ActionTree<ISignupState, RootState> = {

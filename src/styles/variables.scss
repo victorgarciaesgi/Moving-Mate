@@ -1,6 +1,10 @@
 // Couleurs
 $mainStyle: #4975BA;
 
+:export {
+  mainColor: $mainStyle;
+}
+
 $yellow1: #f8ab1c;
 $yellow2: rgb(221, 144, 35);
 

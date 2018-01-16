@@ -1,6 +1,6 @@
 <template lang='html'>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
-    <Modal :show='show' @close='close()' :width='400'>
+    <Modal :show='show' @close='close()' :width='400' :window='window'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
         <FormText type='email' placeholder='Adresse mail'
@@ -38,8 +38,8 @@ import { Modal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 
-const LoginActions = namespace('LoginModule', Action);
-const LoginMutation = namespace('LoginModule', Mutation);
+const SignupActions = namespace('SignupModule', Action);
+const SignupMutation = namespace('SignupModule', Mutation);
 const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
@@ -57,14 +57,14 @@ const NotifAction = namespace('NotificationsModule', Action);
 })
 export default class Inscription extends Vue {
 
-  @LoginActions signupRequest;
-  @LoginMutation showModal;
-  @LoginMutation closeModal;
+  @SignupActions signupRequest;
+  @SignupMutation showSignup;
+  @SignupMutation closeModal;
 
   @NotifAction addNotification;
 
-  @Prop({required: true}) show: boolean;
-  @Prop({default: false}) window: boolean;
+  @Prop({default: true}) window: boolean;
+  @Prop({required: false, default: true}) show: boolean;
 
   public infoMessage: string = '';
   public submitting: boolean = false;
@@ -91,8 +91,10 @@ export default class Inscription extends Vue {
   };
 
   close() {
-    this.closeModal();
-    this.SignupForm.reset();
+    if (this.window) {
+      this.closeModal();
+      this.SignupForm.reset();
+    }
   }
 
   async submitForm() {

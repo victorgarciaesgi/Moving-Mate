@@ -1,9 +1,9 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
-import Api from './Api';
+import Api from '../Api';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ILoginState } from '@types';
-import { RootState } from './index';
+import { RootState } from '../index';
 import { capitalize } from 'lodash';
 
 const LOGIN_URL = "login_check";

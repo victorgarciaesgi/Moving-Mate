@@ -5,7 +5,7 @@
   "author": "Victor Garcia <victorgarciaparis13@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress",
+    "start": "webpack-dev-server --inline --progress",
     "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
     "prod": "npm run clean && npm run build:prod && npm run server:prod",
     "clean": "rimraf dist",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@types/jquery": "^3.2.18",
     "axios": "^0.16.2",
+    "element-ui": "^2.0.11",
     "jquery": "^3.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
@@ -21,8 +22,10 @@
     "vue": "2.5.13",
     "vue-class-component": "6.1.2",
     "vue-i18n": "^7.4.0",
+    "vue-progressbar": "^0.7.3",
     "vue-property-decorator": "6.0.0",
     "vue-router": "3.0.1",
+    "vue2-filters": "^0.2.2",
     "vuelidate": "^0.6.1",
     "vuex": "3.0.1",
     "vuex-class": "0.3.0",

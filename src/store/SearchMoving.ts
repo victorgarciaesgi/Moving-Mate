@@ -5,7 +5,7 @@ import { disconnect } from 'cluster';
 import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
 import { ISearchMovingState } from '@types';
 import { RootState } from './index';
-import { capitalize } from '@filters';
+import { capitalize } from 'lodash';
 import { timeout } from '@methods';
 
 const API_URL = "https://geo.api.gouv.fr/communes?boost=population&nom=";

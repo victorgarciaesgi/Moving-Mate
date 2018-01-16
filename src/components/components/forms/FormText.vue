@@ -7,7 +7,7 @@
                 :class='[{
                   formError: (!valid && dirty && error),
                   formValid: (valid && dirty && error),
-                  icon: icon,
+                  icon,
                   big: !!big,
                 }, design]'
                 :placeholder="placeholder"
@@ -152,7 +152,7 @@ export default class FormText extends Vue {
 
 
 
-<style lang='scss'>
+<style lang='scss' >
 
 .input-box {
   display: block;

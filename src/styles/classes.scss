@@ -40,6 +40,32 @@
   }
 }
 
+@media only screen and (max-width: 950px) {
+  .not-tablet {
+    display: none!important;
+  }
+}
+
+
+@media screen and (min-width: 950px) {
+  .tablet {
+    display: none!important;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .not-mobile {
+    display: none!important;
+  }
+}
+
+
+@media screen and (min-width: 480px) {
+  .mobile {
+    display: none!important;
+  }
+}
+
 
 .infoMessage {
   border: 1px solid $w210;

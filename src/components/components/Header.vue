@@ -27,7 +27,8 @@
         <ul class='nav-list'>
           <router-link :to='item.link' v-for="item in nav" :key='item.name'>
             <li class='route' :class='{active: $store.state.route.path === item.link}' :size='26'>
-              <span>{{item.title}}</span>
+              <SvgIcon class='tablet' :src='item.icon'></SvgIcon>
+              <span class='not-tablet'>{{item.title}}</span>
             </li>
           </router-link>
         </ul>
@@ -64,7 +65,6 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
-import { capitalize } from "@filters";
 import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
@@ -75,8 +75,7 @@ const LoginAction = namespace('LoginModule', Action);
 const SignupMutation = namespace('SignupModule', Mutation);
 
 @Component({
-  components: { Connexion, Inscription, Popup },
-  filters: { capitalize }
+  components: { Connexion, Inscription, Popup, SvgIcon },
 })
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
@@ -87,6 +86,10 @@ export default class HeaderComponent extends Vue {
   @SignupMutation showSignup;
 
   public refs = {};
+
+  mounted() {
+    this.refs = this.$refs;
+  }
 
   async updated() {
     this.refs = this.$refs;
@@ -104,8 +107,8 @@ export default class HeaderComponent extends Vue {
   }
 
   public nav = [
-    { title: "Les déménagements", name: "moving", link: "/moving" },
-    { title: "Les déménageurs", name: "movers", link: "/movers" }
+    { title: "Les déménagements", name: "moving", link: "/moving", icon: require('@icons/truck.svg')},
+    { title: "Les déménageurs", name: "movers", link: "/movers", icon: require('@icons/people.svg')}
   ];
 
 }
@@ -165,7 +168,7 @@ header {
       a {
         display: flex;
 
-        li {
+        li.route {
           display: flex;
           flex-flow: row nowrap;
           justify-content: center;
@@ -180,18 +183,26 @@ header {
           &:not(.active):hover {
             border-color: $mainStyle;
             color: $g40;
+
           }
 
           &.active {
             border-color: $mainStyle;
             color: $g40;
+
+            /deep/ svg {
+              fill: $mainStyle
+            }
           }
 
-          div,
-          svg {
-            fill: white;
-            height: 22px;
-            width: 22px;
+          span {
+            margin-left: 5px;
+          }
+
+          /deep/ div, svg {
+            fill: $g90;
+            height: 25px;
+            width: 25px;
           }
         }
       }

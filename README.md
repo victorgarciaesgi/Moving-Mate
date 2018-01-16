@@ -11,7 +11,7 @@ $ yarn
 ## Pour developper
 
 ```bash
-npm run dev
+npm start
 ```
 
 ## Pour deployer en prod

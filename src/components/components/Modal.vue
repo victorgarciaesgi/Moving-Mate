@@ -1,5 +1,8 @@
 <template>
-  <div v-if='show' class='modal-base' @click='closeModal()' >
+  <div v-if='show' class='modal-base' @click='closeModal()' 
+    :class='{
+      full: !window
+    }'>
     <div class="modal-window" @click.stop :style='{
         maxHeight: height?`${height}px`:"",
         width: width?`${width}px`:"",
@@ -27,6 +30,7 @@ import { Prop, Watch } from "vue-property-decorator";
 export default class Modal extends Vue {
   
   @Prop() show: boolean;
+  @Prop() window: boolean;
   @Prop({required: false}) height: number;
   @Prop({required: false}) width: number;
 
@@ -51,6 +55,11 @@ export default class Modal extends Vue {
   align-items: center;
   align-content: center;
   z-index: 10001;
+
+  &.full{
+    z-index: 2;
+    background-color: $w245
+  }
 
   .modal-window{
     display: flex;

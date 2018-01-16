@@ -1,6 +1,6 @@
 <template lang='html'>
   <form @submit.prevent='submitForm()' novalidate>
-  <Modal :show='show' @close='closeModal' :width='400'>
+  <Modal :show='show' @close='closeModal' :width='400' :window='window'>
       <span slot='header'>Connexion</span>
       <div slot='content' style='padding: 10px 30px 0px 30px'>
         <FormText type='email' placeholder='Adresse mail' :error='false'
@@ -55,8 +55,8 @@ export default class Connexion extends Vue {
 
   @NotifAction addNotification;
 
-  @Prop({required: true}) show: boolean;
-  @Prop({default: false}) window: boolean;
+  @Prop({required: false, default: true}) show: boolean;
+  @Prop({default: true}) window: boolean;
 
   public stateName: string = 'showConnexion'
   public infoMessage: string = '';

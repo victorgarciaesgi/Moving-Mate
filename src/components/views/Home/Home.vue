@@ -1,16 +1,13 @@
 <template lang='html'>
   <transition name='slide'>
-    <div class='view'>
-      <!-- <section class='image-home'>
-        <div class='background-mask'></div>
-      </section> -->
+    <section class='image-home'>
+      <div class='background-mask'></div>
+    </section>
 
-      <StarRating v-model='note' />
-
-      {{note}}
-
-
-    </div>
+    <!-- <div style='width: 300px'>
+        :displayNote='true'/>
+      <StarRating v-model='note' 
+    </div> -->
   </transition>
 </template>
 
@@ -18,14 +15,10 @@
 import Vue from 'vue'
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
-
 import { StarRating } from '@components'
-
-import SearchComponent from './SearchComponent.vue';
 
 @Component({
   components: {
-    SearchComponent,
     StarRating
   }
 })
@@ -47,7 +40,7 @@ section{
 }
 
 .image-home {
-  // background-image: url('~@images/home_image.jpg');
+  background-image: url('~@images/home_image.jpg');
   position: relative;
   height: 500px;
   @include bg-center;

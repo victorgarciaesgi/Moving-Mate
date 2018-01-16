@@ -14,7 +14,7 @@ import { merge } from 'lodash'
 
 import { EventBus } from '@store';
 import { calculatePopupPosition } from '@methods';
-import { Prop, Watch } from "vue-property-decorator";
+import { Prop } from "vue-property-decorator";
 
 @Component({})
 export default class Popup extends Vue {

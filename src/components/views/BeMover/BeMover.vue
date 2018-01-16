@@ -10,7 +10,7 @@ import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
 @Component({})
-export default class Movers extends Vue {
+export default class BeMover extends Vue {
 
 }
 </script>

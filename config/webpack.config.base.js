@@ -22,12 +22,15 @@ const baseConfig = {
       '@icons': helpers.root('src/assets/icons'),
       '@images': helpers.root('src/assets/images'),
       '@fonts': helpers.root('src/assets/fonts'),
+      '@utils': helpers.root('src/utils/index.ts'),
+      '@css': helpers.root('src/styles/variables.scss'),
       '@views': helpers.root('src/components/views/index.ts'),
       '@validators': helpers.root('src/utils/validators.ts'),
       '@methods': helpers.root('src/utils/methods.ts'),
       '@filters': helpers.root('src/utils/filters.ts'),
       '@types': helpers.root('src/typings/index.ts'),
       '@store': helpers.root('src/store/index.ts'),
+      '@modules': helpers.root('src/store/Modules/index.ts'),
     }
   },
   module: {
