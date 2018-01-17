@@ -61,7 +61,6 @@ const webpackDevConfig = {
     historyApiFallback: true,
     hot: true,
     quiet: true,
-    open: true,
     inline: true
   },
   devtool: 'cheap-module-eval-source-map'

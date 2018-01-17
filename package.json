@@ -81,6 +81,7 @@
     "vue-template-compiler": "^2.5.13",
     "vue-ts-loader": "0.0.3",
     "vuex-typescript": "^3.0.2",
+    "vuex-typex": "^3.0.1",
     "webpack": "3.8.1",
     "webpack-dashboard": "^1.0.0",
     "webpack-dev-server": "^2.9.7"

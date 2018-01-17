@@ -1,34 +1,66 @@
-import jwtDecode from 'jwt-decode';
-import { merge } from 'lodash'
-import Api from '../Api';
-import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
+import {ActionContext  } from 'vuex';
 import { ISignupState } from '@types';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
 import { RootState } from '../index';
+import { timeout } from '@methods';
+import { merge } from 'lodash';
+import { storeBuilder } from "./Store/Store";
+
+type SignupContext = ActionContext<ISignupState, RootState>;
 
 const state: ISignupState = {
   showModal: false,
 }
 
-const getters: GetterTree<ISignupState, RootState> = {
+const b = storeBuilder.module<ISignupState>("SignupModule", state);
+const stateGetter = b.state()
 
+// Getters
+
+namespace Getters {
+  export const getters = {
+    
+  }  
 }
 
-const mutations: MutationTree<ISignupState> = {
-  showSignup(state) {
+// Mutations
+
+namespace Mutations {
+  function showSignup(state) {
     state.showModal = true;
-  },
-  closeModal(state) {
+  }
+  function closeModal(state) {
     state.showModal = false;
+  }
+
+  export const mutations = {
+    showSignupMutation: b.commit(showSignup),
+    closeModalMutation: b.commit(closeModal),
   }
 }
 
-const actions: ActionTree<ISignupState, RootState> = {
-  async signupRequest({commit, dispatch}, loginData) {
+// Actions
+
+namespace Actions {
+  async function signupRequest(context:SignupContext, loginData: Object) {
     let submitResponse = await Api.post('register', loginData)
     return submitResponse;
-  },
+  }
+
+  export const actions = {
+    signupRequestAction: b.dispatch(signupRequest),
+  }
 }
 
-export const SignupModule: Module<ISignupState, RootState> = {
-  state, getters, mutations, actions, namespaced: true
+// Module
+
+const SignupModule = {
+  get state() { return stateGetter()},
+  getters: Getters.getters,
+  mutations: Mutations.mutations,
+  actions: Actions.actions
 }
+
+
+export default SignupModule;
+

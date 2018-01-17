@@ -7,6 +7,7 @@ export interface RootState {
   SignupModule: ISignupState
 }
 
-export {store} from './Store';
+
+export * from './Modules'
 export {default as EventBus} from './EventBus';
 export {default as Api} from './Api';

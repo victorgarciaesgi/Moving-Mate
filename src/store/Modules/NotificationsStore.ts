@@ -1,45 +1,73 @@
-import { Store, GetterTree, MutationTree, ActionTree, Module } from 'vuex';
+import { ActionContext  } from 'vuex';
 import { INotificationState, INotification, INotificationType } from '@types';
 import { RootState } from '../index';
 import { timeout } from '@methods';
 import { merge } from 'lodash';
+import { storeBuilder } from "./Store/Store";
 
-const TIMEOUT = 3000;
+const TIMEOUT: number = 3000;
+type NotificationContext = ActionContext<INotificationState, RootState>;
 
 const state: INotificationState = {
   notificationCount: 0,
   notificationList: []
 }
 
-const getters: GetterTree<INotificationState, RootState> = {}
+const b = storeBuilder.module<INotificationState>("NotificationsModule", state);
+const stateGetter = b.state()
 
-const mutations: MutationTree<INotificationState> = {
-  addAlert(state, alert: INotification) {
+// Getters
+
+namespace Getters {
+  export const getters = {
+    
+  }  
+}
+
+// Mutations
+
+namespace Mutations {
+  function addAlert(state: INotificationState, alert: INotification) {
     state.notificationList.push(alert);
     state.notificationCount++;
-  },
-  deleteAlert(state, alert: INotification) {
+  }
+  function deleteAlert(state: INotificationState, alert: INotification) {
     var index = state.notificationList.findIndex(element => element.id === alert.id);
     state.notificationList.splice(index, 1);
   }
+
+  export const mutations = {
+    addAlertMutation: b.commit(addAlert),
+    deleteAlertMutation: b.commit(deleteAlert),
+  }
 }
 
-const actions: ActionTree<INotificationState, RootState> = {
-  async addNotification({ commit, rootState }, alert: INotification) {
+// Actions
+
+namespace Actions {
+  async function addNotification(context: NotificationContext, alert: INotification) {
     alert = merge(alert, {
       id: state.notificationCount,
       isNotif: alert.isNotif || false
     })
-    commit('addAlert', alert);
+    NotificationsModule.mutations.addAlertMutation(alert);
     await timeout(TIMEOUT);
-    commit('deleteAlert', alert)
+    NotificationsModule.mutations.deleteAlertMutation(alert);
+  }
+
+  export const actions = {
+    addNotificationAction: b.dispatch(addNotification),
   }
 }
 
-export const NotificationsModule: Module<INotificationState, RootState> = {
-  state,
-  getters,
-  mutations,
-  actions,
-  namespaced: true
+//Module
+
+const NotificationsModule = {
+  get state() { return stateGetter()},
+  getters: Getters.getters,
+  mutations: Mutations.mutations,
+  actions: Actions.actions
 }
+
+
+export default NotificationsModule;

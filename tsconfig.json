@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "es6", 
+    "module": "es2015", 
     "target": "es6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true, 
@@ -9,6 +9,7 @@
     "removeComments": true,
     "noImplicitAny": false,
     "pretty": true,
+    "noImplicitThis": true,
     "lib": [
       "dom",
       "es5",

@@ -79,7 +79,7 @@ const SignupMutation = namespace('SignupModule', Mutation);
 })
 export default class HeaderComponent extends Vue {
   @State('LoginModule') loginState: ILoginState;
-  @State('SignupModule') signupState: ILoginState;
+  @State('SignupModule') signupState: ISignupState;
   @LoginGetter fullName;
   @LoginMutation showLogin;
   @LoginAction disconnectRequest;
@@ -87,19 +87,19 @@ export default class HeaderComponent extends Vue {
 
   public refs = {};
 
+  get userProfileImage() {
+    let image = this.loginState.profilePicture || require('@images/user.jpg')
+    return {
+      backgroundImage: `url(${image})`
+    }
+  }
+
   mounted() {
     this.refs = this.$refs;
   }
 
   async updated() {
     this.refs = this.$refs;
-  }
-
-  get userProfileImage() {
-    let image = this.loginState.profilePicture || require('@images/user.jpg')
-    return {
-      backgroundImage: `url(${image})`
-    }
   }
 
   togglePopup(popupName: string, target: HTMLElement) {

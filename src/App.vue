@@ -11,45 +11,41 @@
 </template>
 
 
-<script lang="ts"> 
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import {EventBus, store} from '@store'
-import router from './router';
-import { Action, namespace } from "vuex-class";
+<script lang="ts">
+import Vue from "vue";
+import { Store } from "vuex";
+import {sync} from 'vuex-router-sync'
+import {Component} from "vue-property-decorator";
+import { EventBus, RootState, storeBuilder } from "@store";
+import router from "./router";
+import { HeaderComponent, Alerts } from "@components";
+import { LoginStore } from "@modules";
+import $ from "jquery";
 
-import {HeaderComponent, Alerts} from '@components';
-import $ from 'jquery'
-
-
-const LoginActions = namespace('LoginModule', Action);
+const store: Store<RootState> = storeBuilder.vuexStore();
+sync(store, router);
 
 @Component({
   components: {
-    HeaderComponent, Alerts
+    HeaderComponent,
+    Alerts
   },
   router,
-  store,
+  store: store,
 })
 export default class App extends Vue {
-
-  @LoginActions checkUserSession;
-
   created() {
-    this.checkUserSession();
-    document.addEventListener("touchstart",() => {},<any>{passive: true});
-    $(window).resize(() => {EventBus.$emit('closePopups')});
+    LoginStore.actions.checkUserSessionAction();
+    document.addEventListener("touchstart", () => {}, <any>{ passive: true });
+    $(window).resize(() => {
+      EventBus.$emit("closePopups");
+    });
   }
 
-  mounted() {
-    console.log(this)
-  }
-  
+  mounted() {}
 
   closePopups() {
-    EventBus.$emit('closePopups');
+    EventBus.$emit("closePopups");
   }
 }
-
-
 </script> 

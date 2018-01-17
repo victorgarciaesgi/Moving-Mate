@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const baseConfig = {
   entry: {
-    'bundle': helpers.root('/src/main.ts')
+    'bundle': helpers.root('/src/main.ts'),
   },
   output: {
     filename: '[name].js',

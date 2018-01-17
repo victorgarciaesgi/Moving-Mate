@@ -1,6 +1,6 @@
 <template lang='html'>
   <transition name='slide'>
-    <h1>Movers</h1>
+    <h1>Devenir déménageur</h1>
   </transition>
 </template>
 

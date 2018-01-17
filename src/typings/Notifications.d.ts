@@ -7,9 +7,9 @@ export interface INotificationState {
 export interface INotification {
   type: INotificationType,
   message: string;
-  link: string;
-  id: number;
-  isNotif: boolean
+  link?: string;
+  id?: number;
+  isNotif?: boolean
 }
 
-export type INotificationType = "success | error | warning | alert";
+export type INotificationType = "success"| "error" | "warning" | "alert";

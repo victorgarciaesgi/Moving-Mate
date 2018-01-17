@@ -40,14 +40,14 @@
 
       </div>
 
-      <div class='errorMessage'>
+      <div class='errorMessage'  v-if='vl.$error || description || vl.$pending'>
         <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-          <ul v-if='!vl.error && dirty && error' class='error'>
-            <li v-for='key in filterErrors' :key='key'>
-               <span>{{errorMessages[key]}}</span>
-            </li>
-          </ul>
-          <span v-if='vl.$pending' class='info'>Verification...</span>
+        <ul v-if='!vl.error && dirty && error' class='error'>
+          <li v-for='key in filterErrors' :key='key'>
+              <span>{{errorMessages[key]}}</span>
+          </li>
+        </ul>
+        <span v-if='vl.$pending' class='info'>Verification...</span>
       </div>
 
     </div>
@@ -167,6 +167,7 @@ export default class FormText extends Vue {
     position: relative;
     flex-flow: row wrap;
     justify-content: center;
+    text-align: center;
     font-size: 13px;
     font-weight: bold;
     margin-top: 5px;
