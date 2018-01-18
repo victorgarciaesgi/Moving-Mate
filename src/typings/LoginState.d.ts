@@ -11,7 +11,7 @@ export interface ILoginState {
   requesting: boolean
   showModal: boolean,
   RouteAfter: string,
-  init?: void ,
+  init?: void,
   reset: () => void
 }
 

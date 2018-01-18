@@ -1,5 +1,8 @@
 <template>
     <div class="input-box">
+      <label v-if='label || placeholder' :class='{formError: (!valid && dirty && error)}'>
+        {{label || placeholder}}
+      </label>
       <div class="input-container">
         <input ref='input' class='input-form'
                 :type='type'
@@ -34,13 +37,12 @@
             </li>
           </ul>
           <span v-if='vl.$pending' class='info'>Verification...</span> -->
-
           <div class='triangle'></div>
         </div>
 
       </div>
 
-      <div class='errorMessage'  v-if='vl.$error || description || vl.$pending'>
+      <div class='errorMessage' v-if='(vl.$error && error) || description || vl.$pending'>
         <span v-if='description && !vl.$error' class='description'>{{description}}</span>
         <ul v-if='!vl.error && dirty && error' class='error'>
           <li v-for='key in filterErrors' :key='key'>
@@ -72,6 +74,7 @@ export default class FormText extends Vue {
   @Prop() value: string;
   @Prop({required: false, default: 'text'}) type: string;
   @Prop({required: false}) placeholder: string;
+  @Prop({required: false}) label: string;
   @Prop({required: false, default: true}) error: boolean;
   @Prop({required: false}) disabled: boolean;
   @Prop({required: false}) description: string;
@@ -152,14 +155,25 @@ export default class FormText extends Vue {
 
 
 
-<style lang='scss' >
+<style lang='scss' scoped>
 
 .input-box {
   display: block;
   position: relative;
   flex: 1 1 auto;
   min-width: 250px;
+  padding: 5px;
   max-width: 450px;
+
+  label {
+    font-weight: bold;
+    color: $mainStyle;
+    font-size: 15px;
+
+    &.formError {
+      color: $red1;
+    }
+  }
 
 
   .errorMessage {
@@ -171,6 +185,8 @@ export default class FormText extends Vue {
     font-size: 13px;
     font-weight: bold;
     margin-top: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $w220;
     color: $red1;
   }
 }
@@ -181,7 +197,6 @@ export default class FormText extends Vue {
   position: relative;
   flex-flow: row wrap;
   justify-content: center;
-  margin: 5px;
 
   .input-icon{
     position: absolute;
@@ -193,14 +208,14 @@ export default class FormText extends Vue {
   }
 
 
-  svg {
+  /deep/ svg {
     fill: $g90;
   }
 
   .input-form {
     position: relative;
     background-color: $w230;
-    color: $g60;
+    color: $g70;
     height: 40px;
     padding: 5px 30px 5px 9px;
     margin: 5px 0 5px 0;
@@ -217,7 +232,7 @@ export default class FormText extends Vue {
 
     &:focus{
       background-color: $w225;
-      &~ .input-icon svg {
+      &~ .input-icon /deep/ svg {
         fill: $g60;
       }
       & + .input-form-result{
@@ -225,11 +240,11 @@ export default class FormText extends Vue {
       }
     }
 
-    &.formValid ~ .input-icon svg {
+    &.formValid ~ .input-icon /deep/ svg {
       fill: $mainStyle;
     }
 
-    &.formError ~ .input-icon svg {
+    &.formError ~ .input-icon /deep/ svg {
       fill: $red1;
     }
 

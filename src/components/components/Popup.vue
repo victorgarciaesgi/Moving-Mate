@@ -1,5 +1,6 @@
 <template>
-  <div ref='popup' v-show='show' @click.stop class="popup-box" :style='popupPosition'>
+  <div ref='popup' v-show='show' @click.stop class="popup-box" :style='popupStyles'
+    :class='{active: show}'>
     <slot></slot>
   </div>
   
@@ -15,11 +16,13 @@ import { merge } from 'lodash'
 import { EventBus } from '@store';
 import { calculatePopupPosition } from '@methods';
 import { Prop } from "vue-property-decorator";
+import { relative, isAbsolute } from "path";
 
 @Component({})
 export default class Popup extends Vue {
 
   @Prop() width: number;
+  @Prop({default: false}) absolute: boolean;
 
   public show: boolean = false;
   public origin: HTMLElement;
@@ -29,13 +32,22 @@ export default class Popup extends Vue {
     top: null,
     width: this.width + "px"
   };
+
+  get popupStyles() {
+    if (this.absolute) {
+      return this.popupPosition;
+    }
+    return;
+  }
   
 
-  togglePopup(origin: HTMLElement) {
+  togglePopup(origin?: HTMLElement) {
     if (!this.show) {
-      this.origin = origin;
-      let positions = calculatePopupPosition(origin, this.$refs['popup']);
-      this.popupPosition = merge(this.popupPosition, positions);
+      if (this.absolute) {
+        this.origin = origin;
+        let positions = calculatePopupPosition(origin, this.$refs['popup']);
+        this.popupPosition = merge(this.popupPosition, positions);
+      } 
       this.show = true;
     } 
     else {
@@ -59,10 +71,12 @@ export default class Popup extends Vue {
 <style lang='scss' scoped>
 
 .popup-box{
-  position: fixed;
+  position: absolute;
   background-color: white;
+  left: 0px;
+  top: calc(100% + 15px);
   border-radius: 5px;
-  box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
+  box-shadow: 0 0 15px rgba(20, 20, 20, 0.2);
   height: auto;
   min-height: 200px;
   min-width: 250px;
@@ -71,6 +85,11 @@ export default class Popup extends Vue {
   flex-flow: column nowrap;
   overflow: hidden;
   z-index: 10011;
+
+  &.right {
+    left: auto;
+    right: 0px;
+  }
 
   div.header {
     display: flex;

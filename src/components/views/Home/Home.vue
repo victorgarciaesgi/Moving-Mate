@@ -1,14 +1,21 @@
 <template lang='html'>
   <transition name='slide'>
-    <!-- <section class='image-home'>
-      <div class='background-mask'></div>
-    </section> -->
+    <div class='home'>
+      <section class='image-home'>
+        <div class='background-mask'></div>
+      </section>
 
-    <!-- <div style='width: 300px'>
-        :displayNote='true'/>
-      <StarRating v-model='note' 
-    </div> -->
-    <h1>Home</h1>
+      <section>
+        <div class='help-wrapper'>
+          <ul>
+            <li v-for='help in helps'>
+              <div class='icon' :style='{backgroundImage: `url(${help.icon})`}'></div>
+              <div class='text'>{{help.text}}</div>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
   </transition>
 </template>
 
@@ -25,7 +32,12 @@ import { StarRating } from '@components'
 })
 export default class Home extends Vue {
 
-  public note: number = 2;
+  public helps = [
+    {icon: require('@icons/annonce_blue.svg'), text:'Publiez une annonce gratuitement sur le site!'},
+    {icon: require('@icons/people_blue.svg'), text:'Des déménageurs répertoriés viendront proposer leur services pour votre déménagement'},
+    {icon: require('@icons/payment_blue.svg'), text:'Je valide et je prépaie en ligne. La somme sera verséee une fois le déménagement fini'},
+    {icon: require('@icons/star_plain_blue.svg'), text:'Je laisse un avis et une note sur les déménageurs'},
+  ]
 
 }
 </script>

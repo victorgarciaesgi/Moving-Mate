@@ -17,7 +17,6 @@ const b = storeBuilder.module<INotificationState>("NotificationsModule", state);
 const stateGetter = b.state()
 
 // Getters
-
 namespace Getters {
   export const getters = {
     
@@ -25,7 +24,6 @@ namespace Getters {
 }
 
 // Mutations
-
 namespace Mutations {
   function addAlert(state: INotificationState, alert: INotification) {
     state.notificationList.push(alert);
@@ -33,7 +31,9 @@ namespace Mutations {
   }
   function deleteAlert(state: INotificationState, alert: INotification) {
     var index = state.notificationList.findIndex(element => element.id === alert.id);
-    state.notificationList.splice(index, 1);
+    if (index !== -1) {
+      state.notificationList.splice(index, 1);
+    }
   }
 
   export const mutations = {
@@ -43,7 +43,6 @@ namespace Mutations {
 }
 
 // Actions
-
 namespace Actions {
   async function addNotification(context: NotificationContext, alert: INotification) {
     alert = merge(alert, {
@@ -61,7 +60,6 @@ namespace Actions {
 }
 
 //Module
-
 const NotificationsModule = {
   get state() { return stateGetter()},
   getters: Getters.getters,

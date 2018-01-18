@@ -8,7 +8,12 @@
         width: width?`${width}px`:"",
       }'>
       <div class='header'>
-        <slot name='header'></slot>
+        <div class='header-slot'>
+          <slot name='header'></slot>
+        </div>
+        <div class='close-wrap'>
+          <img src='~@icons/quit.svg' @click="closeModal()">
+        </div>
       </div>
       <div class='content'>
         <slot name='content'></slot>
@@ -77,13 +82,27 @@ export default class Modal extends Vue {
     
     div.header {
       display: flex;
-      flex-flow: column wrap;
-      flex: 0 0 auto;
+      flex-flow: row wrap;
+      flex: 1;
       height: 40px;
       padding-left: 10px;
       font-weight: bold;
-      justify-content: center;
       border-bottom: 1px solid $w230;
+
+      div.header-slot{
+        display: flex;
+        flex: 1;
+        align-items: center;
+      }
+
+      div.close-wrap {
+        display: flex;
+        width: 40px;
+        cursor: pointer;
+        flex: 0 0 auto;
+        justify-content: center;
+        align-items: center;
+      }
 
     }
 

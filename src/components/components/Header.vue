@@ -1,24 +1,5 @@
 <template>
   <div class='header-wrapper'>
-    <Popup ref='profile' v-if='loginState.isLoggedIn' :width='250'>
-      <template>
-        <div class="user">
-            <div class="user-picture" :style='userProfileImage'></div>
-            <div class="user-name">{{loginState.username | capitalize}}</div>
-        </div>
-        <ul class='user-option-list'>
-            <a href="#"><li class='user-option'>Mon profil</li></a>
-              <a href="#">
-                <li id='aide' class='user-option'>
-                  Administration
-                </li>
-              </a>
-            <li class='user-option'>Aide</li>
-            <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
-        </ul>
-      </template>
-    </Popup>
-
     <header>
       <nav>
         <router-link to='/' class='logo'>
@@ -39,12 +20,30 @@
             </router-link>
           </li>
           <template v-if='loginState.isLoggedIn' >
-            <input id='user-menu' type="checkbox" v-model='popups.profile' style='display: none'>
-            <label for='user-menu' class="header-button" @click.stop="togglePopup('profile', $event.target)" 
-              :class='{active: popups.profile}'>
-              <span>{{loginState.username | capitalize}}</span>
-              <div class='profile-image' :style='userProfileImage'></div>
-            </label>
+            <li for='user-menu' class="header-button popup" @click.stop="togglePopup('profile')">
+              <Popup ref='profile' class='right' v-if='loginState.isLoggedIn' :width='250'>
+                <template>
+                  <div class="user">
+                      <div class="user-picture" :style='userProfileImage'></div>
+                      <div class="user-name">{{loginState.username | capitalize}}</div>
+                  </div>
+                  <ul class='user-option-list'>
+                      <a href="#"><li class='user-option'>Mon profil</li></a>
+                        <a href="#">
+                          <li id='aide' class='user-option'>
+                            Administration
+                          </li>
+                        </a>
+                      <li class='user-option'>Aide</li>
+                      <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
+                  </ul>
+                </template>
+              </Popup>
+              <div class='bouton-data'>
+                <span>{{loginState.username | capitalize}}</span>
+                <div class='profile-image' :style='userProfileImage'></div>
+              </div>
+            </li>
           </template>
           <template v-else>
             <li class="header-button" @click='showLogin'>
@@ -98,7 +97,7 @@ export default class HeaderComponent extends Vue {
     this.refs = this.$refs;
   }
 
-  togglePopup(popupName: string, target: HTMLElement) {
+  togglePopup(popupName: string, target?: HTMLElement) {
     this.$refs[popupName].togglePopup(target);
   }
 
@@ -179,21 +178,14 @@ header {
           &:not(.active):hover {
             border-color: $mainStyle;
             color: $g40;
-
           }
-
           &.active {
             border-color: $mainStyle;
             color: $g40;
-
-            /deep/ svg {
-              fill: $mainStyle
-            }
+            /deep/ svg { fill: $mainStyle }
           }
 
-          span {
-            margin-left: 5px;
-          }
+          span {margin-left: 5px;}
 
           /deep/ div, svg {
             fill: $g90;
@@ -211,7 +203,7 @@ header {
       justify-content: flex-end;
       padding: 8px 15px 8px 15px;
 
-      .header-button {
+      %header-button {
         display: flex;
         flex-flow: row nowrap;
         justify-content: center;
@@ -219,39 +211,19 @@ header {
         align-content: center;
         font-size: 14px;
         font-weight: bold;
-        margin-left: 10px;
         border-radius: 40px;
         cursor: pointer;
-
         &:not(.color) {
-          &:hover {
-            background-color: $w240;
-          }
-
-          &.active {
-            background-color: $w230;
-          }
+          &:hover {background-color: $w240;}
+          &.active {background-color: $w230;}
         }
-
         &.color {
           background-color: $mainStyle;
           color: white;
-
-          &:hover {
-            background-color: darken($mainStyle, 4%);
-          }
-
-          &:active {
-            background-color: darken($mainStyle, 8%);
-          }
+          &:hover {background-color: darken($mainStyle, 4%);}
+          &:active {background-color: darken($mainStyle, 8%);}
         }
-        a {
-          display: flex;
-        }
-
-        span {
-          padding: 7px 15px 8px 15px;
-        }
+        span {padding: 7px 15px 8px 15px;}
 
         .profile-image {
           @include bg-center;
@@ -263,6 +235,32 @@ header {
           border: 2px solid $mainStyle;
         }
       }
+
+      li.header-button {
+        &:not(.popup) {
+          margin-left: 10px;
+          @extend %header-button;
+        }
+
+        &.popup {
+          display: block;
+          height: 100%;
+          width: auto;
+          position: relative;
+          margin-left: 10px;
+          white-space: nowrap;
+          float: left;
+
+          .bouton-data {
+            @extend %header-button;
+          }
+
+          .popup-box.active ~ .bouton-data{
+            background-color: $w230;
+          }
+
+        }
+      }  
     }
   }
 }
@@ -307,13 +305,14 @@ header {
     position: relative;
     height: 40px;
     padding-left: 20px;
-    line-height: 35px;
+    line-height: 40px;
     font-size: 14px;
     cursor: pointer;
     font-weight: bold;
 
     &:hover{
       background-color: $w240;
+      color: $mainStyle;
     }
 
     &:active{

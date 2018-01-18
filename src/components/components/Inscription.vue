@@ -2,7 +2,7 @@
   <form @submit.prevent='submitForm()' novalidate method='post' action>
     <Modal :show='show' @close='close()' :width='400' :window='window'>
       <span slot='header'>Inscription</span>
-      <div slot='content' style='padding: 10px 30px 0px 30px'>
+      <div slot='content' style='padding: 10px 20px 0px 20px'>
         <FormText type='email' placeholder='Adresse mail'
             :icon="images.email"  v-model="SignupForm.email" :vl='$v.SignupForm.email'/>
         
@@ -21,7 +21,7 @@
 
       </div>
       <template slot='footer'>
-        <FormButton @click='close()'>Annuler</FormButton>
+        <FormButton @click='close()' v-if='window'>Annuler</FormButton>
         <FormButton type='submit' :submitting='submitting' :disabled='$v.SignupForm.$invalid' color='blue'>S'inscrire</FormButton>
       </template>
     </Modal>
@@ -37,6 +37,8 @@ import { Mutation, Action, namespace } from "vuex-class";
 import { Modal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
+import { IValidator } from 'vuelidate';
+
 
 const SignupActions = namespace('SignupModule', Action);
 const SignupMutation = namespace('SignupModule', Mutation);
@@ -70,6 +72,7 @@ export default class Inscription extends Vue {
   public submitting: boolean = false;
   public error: boolean = true;
   public errorType: string = '';
+  public $v: IValidator;
 
   public images = {
     email: require('@icons/mail.svg'),
@@ -78,7 +81,7 @@ export default class Inscription extends Vue {
     "plainPassword[second]": require('@icons/password.svg')
   }
   public SignupForm = {
-    email: 'victor2@free.fr',
+    email: null,
     username: 'victor2',
     "plainPassword[first]": 'aaaaa',
     "plainPassword[second]": 'aaaaa',
@@ -90,10 +93,14 @@ export default class Inscription extends Vue {
     }
   };
 
-  close() {
+  close(reset?: boolean) {
     if (this.window) {
       this.closeModal();
       this.SignupForm.reset();
+    } else if (reset) {
+      this.closeModal();
+      this.SignupForm.reset();
+      this.$v.$reset();
     }
   }
 

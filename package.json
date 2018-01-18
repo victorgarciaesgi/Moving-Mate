@@ -5,7 +5,7 @@
   "author": "Victor Garcia <victorgarciaparis13@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --inline --progress",
+    "start": "npm run clean && webpack-dev-server --inline --progress",
     "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
     "prod": "npm run clean && npm run build:prod && npm run server:prod",
     "clean": "rimraf dist",

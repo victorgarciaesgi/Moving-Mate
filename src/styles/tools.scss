@@ -31,7 +31,11 @@ a {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-
+  display: inherit;
+  flex-flow: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  align-content: inherit;
 }
 
 span {
@@ -55,6 +59,7 @@ ul, li {
 
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px $w230 inset;
+  -webkit-text-fill-color: $g60;
 }
 
 input, textarea, button {

@@ -43,7 +43,6 @@ const stateGetter = b.state()
 
 
 // Getters
-
 namespace Getters {
   function fullName(state: ILoginState): string {
     return capitalize(state.surname) + " " + capitalize(state.name)
@@ -60,7 +59,6 @@ namespace Getters {
 }
 
 // Mutations
-
 namespace Mutations {
   function showLogin(state: ILoginState) {
     state.showModal = true;
@@ -95,7 +93,6 @@ namespace Mutations {
 
 
 // Actions
-
 namespace Actions {
   async function connexionRequest(context: LoginContext, loginData: Object): Promise<ApiResponse> {
     state.requesting = true;
@@ -146,7 +143,6 @@ namespace Actions {
 
 
 // Module
-
 const LoginModule = {
   get state() { return stateGetter() },
   getters: Getters.getters,
