@@ -22,6 +22,7 @@ export default class Popup extends Vue {
   @Prop() width: number;
 
   public show: boolean = false;
+  public origin: HTMLElement;
   public popupPosition = {
     bottom: null,
     left: null,
@@ -32,6 +33,7 @@ export default class Popup extends Vue {
 
   togglePopup(origin: HTMLElement) {
     if (!this.show) {
+      this.origin = origin;
       let positions = calculatePopupPosition(origin, this.$refs['popup']);
       this.popupPosition = merge(this.popupPosition, positions);
       this.show = true;
@@ -45,6 +47,7 @@ export default class Popup extends Vue {
   created(){
     EventBus.$on('closePopups', () => {
       this.show = false;
+      this.$emit('close');
     })
   }
 

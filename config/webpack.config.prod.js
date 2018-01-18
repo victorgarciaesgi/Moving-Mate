@@ -16,8 +16,6 @@ const extractSass = new ExtractTextPlugin({
   disable: process.env.NODE_ENV === 'development'
 });
 
-
-
 const configProd = {
   output: {
     filename: "[name].[hash].js",
@@ -62,15 +60,15 @@ const configProd = {
     new DefinePlugin({
       'process.env': env
     }),
-    new UglifyJsPlugin(),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   include: /\.js$/,
-    //   mangle: { keep_fnames: false, screw_ie8: true },
-    //   compress: { keep_fnames: false, screw_ie8: true, warnings: false },
-    //   sourceMap: false,
-    //   removeComments: true,
-    //   beautify: false
-    // }),
+    // new UglifyJsPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      include: /\.js$/,
+      mangle: { keep_fnames: false, screw_ie8: true },
+      compress: { keep_fnames: false, screw_ie8: true, warnings: false },
+      sourceMap: false,
+      removeComments: true,
+      beautify: false
+    }),
     extractSass,
     new HtmlWebpackPlugin({
       inject: true,

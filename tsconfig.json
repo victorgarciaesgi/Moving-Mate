@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "es2015", 
-    "target": "es6",
+    "target": "es5",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true, 
     "emitDecoratorMetadata": true,
@@ -24,6 +24,7 @@
       "@icons/*": ["./assets/icons/*"],
       "@views": ["./components/views/index.ts"],
       "@utils": ["./utils/index.ts"],
+      "@router": ["./router/index.ts"],
       "@validators": ["./utils/validators.ts"],
       "@methods": ["./utils/methods.ts"],
       "@filters": ["./utils/filters.ts"],

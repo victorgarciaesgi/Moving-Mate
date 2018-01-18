@@ -2,7 +2,7 @@
 const tokenID = "access_token"
 
 export namespace JWT {
-  export function fetch() : string {
+  export function fetch(): string {
     return localStorage.getItem(tokenID);
   }
 

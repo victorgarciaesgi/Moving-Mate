@@ -34,14 +34,17 @@
         </ul>
         <ul class='login-list'>
           <li class="header-button color">
-            <span>Devenir déménageur</span>
+            <router-link to='/bemover'>
+              <span>Devenir déménageur</span>
+            </router-link>
           </li>
           <template v-if='loginState.isLoggedIn' >
-            <li class="header-button" @click.stop="togglePopup('profile', $event.target)" 
-              :class='{active: refs.profile?refs.profile.show:false}'>
+            <input id='user-menu' type="checkbox" v-model='popups.profile' style='display: none'>
+            <label for='user-menu' class="header-button" @click.stop="togglePopup('profile', $event.target)" 
+              :class='{active: popups.profile}'>
               <span>{{loginState.username | capitalize}}</span>
               <div class='profile-image' :style='userProfileImage'></div>
-            </li>
+            </label>
           </template>
           <template v-else>
             <li class="header-button" @click='showLogin'>
@@ -63,29 +66,26 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { namespace, Getter, State, Action, Mutation } from "vuex-class";
 
 import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
-
-const LoginGetter = namespace('LoginModule', Getter);
-const LoginMutation = namespace('LoginModule', Mutation);
-const LoginAction = namespace('LoginModule', Action);
-const SignupMutation = namespace('SignupModule', Mutation);
+import { LoginStore, SignupStore } from '@modules'
 
 @Component({
   components: { Connexion, Inscription, Popup, SvgIcon },
 })
 export default class HeaderComponent extends Vue {
-  @State('LoginModule') loginState: ILoginState;
-  @State('SignupModule') signupState: ISignupState;
-  @LoginGetter fullName;
-  @LoginMutation showLogin;
-  @LoginAction disconnectRequest;
-  @SignupMutation showSignup;
+  loginState = LoginStore.state;
+  fullName = LoginStore.getters.fullName;
+  showLogin = LoginStore.mutations.showLogin;
+  disconnectRequest = LoginStore.actions.disconnectRequest;
+
+  signupState = SignupStore.state;
+  showSignup = SignupStore.mutations.showSignup;
 
   public refs = {};
+  public popups = [];
 
   get userProfileImage() {
     let image = this.loginState.profilePicture || require('@images/user.jpg')
@@ -95,10 +95,6 @@ export default class HeaderComponent extends Vue {
   }
 
   mounted() {
-    this.refs = this.$refs;
-  }
-
-  async updated() {
     this.refs = this.$refs;
   }
 
@@ -215,7 +211,7 @@ header {
       justify-content: flex-end;
       padding: 8px 15px 8px 15px;
 
-      li.header-button {
+      .header-button {
         display: flex;
         flex-flow: row nowrap;
         justify-content: center;
@@ -248,6 +244,9 @@ header {
           &:active {
             background-color: darken($mainStyle, 8%);
           }
+        }
+        a {
+          display: flex;
         }
 
         span {
@@ -306,7 +305,7 @@ header {
 
   .user-option{
     position: relative;
-    height: 35px;
+    height: 40px;
     padding-left: 20px;
     line-height: 35px;
     font-size: 14px;

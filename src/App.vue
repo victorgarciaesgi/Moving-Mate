@@ -16,13 +16,13 @@ import Vue from "vue";
 import { Store } from "vuex";
 import {sync} from 'vuex-router-sync'
 import {Component} from "vue-property-decorator";
-import { EventBus, RootState, storeBuilder } from "@store";
+import { EventBus, RootState, storeBuilder, DebugMode } from "@store";
 import router from "./router";
 import { HeaderComponent, Alerts } from "@components";
 import { LoginStore } from "@modules";
 import $ from "jquery";
 
-const store: Store<RootState> = storeBuilder.vuexStore();
+const store: Store<RootState> = storeBuilder.vuexStore({strict: DebugMode});
 sync(store, router);
 
 @Component({
@@ -35,7 +35,7 @@ sync(store, router);
 })
 export default class App extends Vue {
   created() {
-    LoginStore.actions.checkUserSessionAction();
+    LoginStore.actions.checkUserSession();
     document.addEventListener("touchstart", () => {}, <any>{ passive: true });
     $(window).resize(() => {
       EventBus.$emit("closePopups");

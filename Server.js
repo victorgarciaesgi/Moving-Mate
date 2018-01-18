@@ -10,13 +10,11 @@ const PORT = process.env.PORT || 5000;
 app.use(morgan('tiny'));
 app.get('*.js', function (req, res, next) {
   if (process.env.NODE_ENV === 'production'){
-    
     var url = req.url + '.gz';
     if (fs.existsSync(`./dist${url}`)){
       req.url = url;
       res.set('Content-Encoding', 'gzip');
     }
-    
     //Renvoie le fichier js zippé en production
   }
   next();

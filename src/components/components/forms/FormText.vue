@@ -200,7 +200,6 @@ export default class FormText extends Vue {
   .input-form {
     position: relative;
     background-color: $w230;
-    border: 1px solid transparent;
     color: $g60;
     height: 40px;
     padding: 5px 30px 5px 9px;

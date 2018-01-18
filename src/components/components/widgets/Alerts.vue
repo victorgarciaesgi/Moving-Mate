@@ -3,14 +3,17 @@
     <ul id="alertes-container" v-show='notificationList.length'>
       <transition-group name='alert'>
         <li v-for='alert in notificationList' :key='alert.id' :type='alert.type'>
-          <div class='alert-text'>
-            <span>{{alert.message}}</span>
-          </div>
           <div class='alert-icon'>
             <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
             <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
             <img src="~@icons/warning.svg" v-else-if='alert.type == "warning"'>
             <img src="~@icons/infos.svg" v-else-if='alert.type == "alert"'>
+          </div>
+          <div class='alert-text'>
+            <span>{{alert.message}}</span>
+          </div>
+          <div class='alert-quit' @click='deleteAlert(alert)'>
+            <img src='~@icons/quit.svg'>
           </div>
         </li>
       </transition-group>
@@ -22,20 +25,18 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import {State, namespace } from "vuex-class";
-
-
-const NotifState = namespace('NotificationsModule', State);
-
+import { State, namespace } from "vuex-class";
+import { NotificationsStore } from "@modules";
 
 @Component({})
 export default class Alerts extends Vue {
+  notificationList = NotificationsStore.state.notificationList;
+  notificationCount = NotificationsStore.state.notificationCount;
 
-  @NotifState notificationList;
-  @NotifState notificationCount;
+  deleteAlert = NotificationsStore.mutations.deleteAlert;
 
-  updateValue(value){
-    this.$emit('input', value);
+  updateValue(value) {
+    this.$emit("input", value);
   }
 }
 </script>
@@ -43,54 +44,72 @@ export default class Alerts extends Vue {
 
 
 <style lang='scss' scoped>
-
-ul#alertes-container{
+ul#alertes-container {
   position: fixed;
   top: $headerHeight;
   left: 0;
   padding: 10px;
-  width: 350px;
+  width: 380px;
   height: auto;
   z-index: 10005;
   display: flex;
   flex-direction: column;
 
-  li{
+  li {
     position: relative;
     height: auto;
+    display: flex;
+    flex-flow: row nowrap;
     width: 100%;
     margin-top: 5px;
-    padding: 15px 10px 15px 50px;
-    box-shadow: 0 0 10px rgba(20,20,20,0.2);
+    padding: 15px 10px 15px 0px;
+    box-shadow: 0 0 10px rgba(20, 20, 20, 0.2);
     font-size: 14px;
     color: $g90;
     text-align: center;
-    align-content: center;
     font-weight: bold;
     border-radius: 3px;
     background-color: white;
     line-height: 17px;
 
-    img{
-      position: absolute;
-      top: 50%;
-      @include translateY(-50%);
-      left: 10px;
+    div {
+      display: flex;
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+
+      &.alert-text {
+        flex: 1 1 auto;
+      }
+      &.alert-icon {
+        width: 50px;
+        flex: 0 0 auto;
+      }
+      
+      &.alert-quit {
+        width: 30px;
+        cursor: pointer;
+        flex: 0 0 auto;
+      }
     }
+
+
+
   }
 }
 
-.hide-leave-active{
+.hide-leave-active {
   transition: all 0.6s;
 }
 
-.alert-enter-active, .alert-leave-active {
+.alert-enter-active,
+.alert-leave-active {
   transition: all 0.5s;
 }
-.alert-enter, .alert-leave-to /* .list-leave-active below version 2.1.8 */ {
+.alert-enter,
+.alert-leave-to {
   opacity: 0;
   transform: translateY(-30px);
 }
-
 </style>
 

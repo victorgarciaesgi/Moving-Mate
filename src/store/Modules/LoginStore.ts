@@ -1,7 +1,8 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
-import NotificationsModule from './NotificationsStore'
+import NotificationsModule from './NotificationsStore';
+import router from '@router';
 import { ActionContext } from 'vuex';
 import { ILoginState } from '@types';
 import { RootState } from '../index';
@@ -19,9 +20,11 @@ const state: ILoginState = {
   profilePicture: null,
   id: null,
   isLoggedIn: false,
-  isAdmin: false,
+  roles: null,
   status: null,
   userToken: null,
+  requesting: false,
+  RouteAfter: null,
   showModal: false,
   reset() {
     this.name = null;
@@ -29,7 +32,7 @@ const state: ILoginState = {
     this.surname = null;
     this.id = null;
     this.isLoggedIn = false;
-    this.isAdmin = false;
+    this.roles = null;
     this.status = null;
     this.showModal = false;
   }
@@ -46,8 +49,13 @@ namespace Getters {
     return capitalize(state.surname) + " " + capitalize(state.name)
   }
 
+  function isAdmin(state: ILoginState) : boolean {
+    return state.roles.include("ROLE_ADMIN");
+  }
+
   export const getters = {
-    get getFullName() { return b.read(fullName) }
+    get fullName() { return b.read(fullName) },
+    get isAdmin() {return b.read(isAdmin)}
   }
 }
 
@@ -57,22 +65,31 @@ namespace Mutations {
   function showLogin(state: ILoginState) {
     state.showModal = true;
   }
+  function showLoginRoute(state: ILoginState, route: string) {
+    state.showModal = true;
+    state.RouteAfter = route;
+  }
   function closeModal(state: ILoginState) {
     state.showModal = false;
   }
   function connectUser(state: ILoginState, userData: Object) {
     state = merge(state, userData);
     state.isLoggedIn = true;
+    if (state.RouteAfter) {
+      router.push(state.RouteAfter);
+    }
   }
   function disconnectUser(state: ILoginState) {
-    state.reset()
+    state.reset();
+    router.push('/');
   }
 
   export const mutations = {
-    showLoginMutation: b.commit(showLogin),
-    closeModalMutation: b.commit(closeModal),
-    connectUserMutation: b.commit(connectUser),
-    disconnectUserMutation: b.commit(disconnectUser),
+    showLogin: b.commit(showLogin),
+    showLoginRoute: b.commit(showLoginRoute),
+    closeModal: b.commit(closeModal),
+    connectUser: b.commit(connectUser),
+    disconnectUser: b.commit(disconnectUser),
   }
 }
 
@@ -80,11 +97,13 @@ namespace Mutations {
 // Actions
 
 namespace Actions {
-  async function connexionRequest(context: LoginContext, loginData): Promise<ApiResponse> {
+  async function connexionRequest(context: LoginContext, loginData: Object): Promise<ApiResponse> {
+    state.requesting = true;
     let { success, status, data } = await Api.post(LOGIN_URL, loginData);
+    state.requesting = false;
     if (success) {
       JWT.set(data.token);
-      context.dispatch('connexionSuccess', data.token);
+      LoginModule.actions.connexionSuccess(data.token);
       return new ApiSuccess();
     } else {
       if (status === 401) {
@@ -96,32 +115,32 @@ namespace Actions {
       }
     }
   }
-  async function connexionSuccess(context: LoginContext, token: string) {
+  async function connexionSuccess(context: LoginContext, token: string): Promise<void> {
     let userData = await jwtDecode(token);
     console.log(userData);
-    userData = merge(userData, { userToken: token });
-    LoginModule.mutations.connectUserMutation(userData);
-    NotificationsModule.actions.addNotificationAction({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
+    LoginModule.mutations.connectUser(userData);
+    NotificationsModule.actions.addNotification({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
   }
-  function disconnectRequest(context: LoginContext) {
-    JWT.clear()
-    context.commit('disconnectUser');
-    NotificationsModule.actions.addNotificationAction({ type: "success", message: `Vous avez été deconnecté` })
+  function disconnectRequest() {
+    JWT.clear();
+    LoginModule.mutations.disconnectUser();
+    NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
   }
-  function checkUserSession(context: LoginContext) {
+  async function checkUserSession() : Promise<void>{
     let token = JWT.fetch();
     if (!!token) {
-      LoginModule.mutations.connectUserMutation(token);
+      let userData = await jwtDecode(token);
+      LoginModule.mutations.connectUser(userData);
     } else {
       console.log('User not logged');
     }
   }
 
   export const actions = {
-    connexionRequestAction: b.dispatch(connexionRequest),
-    connexionSuccessAction: b.dispatch(connexionSuccess),
-    disconnectRequestAction: b.dispatch(disconnectRequest),
-    checkUserSessionAction: b.dispatch(checkUserSession),
+    connexionRequest: b.dispatch(connexionRequest),
+    connexionSuccess: b.dispatch(connexionSuccess),
+    disconnectRequest: b.dispatch(disconnectRequest),
+    checkUserSession: b.dispatch(checkUserSession),
   }
 }
 

@@ -40,19 +40,25 @@ span {
 }
 
 p{
+  display: flex;
   margin: 0;
 }
 
 ul, li {
   @include userselect;
-
+  display: flex;
   padding: 0;
   margin: 0;
   list-style: none;
   list-style-type: none;
 }
 
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px $w230 inset;
+}
+
 input, textarea, button {
+  display: flex;
   outline: none;
   border: none;
   background: none;

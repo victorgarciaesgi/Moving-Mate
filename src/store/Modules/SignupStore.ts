@@ -34,8 +34,8 @@ namespace Mutations {
   }
 
   export const mutations = {
-    showSignupMutation: b.commit(showSignup),
-    closeModalMutation: b.commit(closeModal),
+    showSignup: b.commit(showSignup),
+    closeModal: b.commit(closeModal),
   }
 }
 
@@ -48,7 +48,7 @@ namespace Actions {
   }
 
   export const actions = {
-    signupRequestAction: b.dispatch(signupRequest),
+    signupRequest: b.dispatch(signupRequest),
   }
 }
 

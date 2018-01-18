@@ -5,7 +5,7 @@ import { timeout } from '@methods';
 import { merge } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 
-const TIMEOUT: number = 3000;
+const TIMEOUT: number = 5000;
 type NotificationContext = ActionContext<INotificationState, RootState>;
 
 const state: INotificationState = {
@@ -37,8 +37,8 @@ namespace Mutations {
   }
 
   export const mutations = {
-    addAlertMutation: b.commit(addAlert),
-    deleteAlertMutation: b.commit(deleteAlert),
+    addAlert: b.commit(addAlert),
+    deleteAlert: b.commit(deleteAlert),
   }
 }
 
@@ -50,13 +50,13 @@ namespace Actions {
       id: state.notificationCount,
       isNotif: alert.isNotif || false
     })
-    NotificationsModule.mutations.addAlertMutation(alert);
+    NotificationsModule.mutations.addAlert(alert);
     await timeout(TIMEOUT);
-    NotificationsModule.mutations.deleteAlertMutation(alert);
+    NotificationsModule.mutations.deleteAlert(alert);
   }
 
   export const actions = {
-    addNotificationAction: b.dispatch(addNotification),
+    addNotification: b.dispatch(addNotification),
   }
 }
 

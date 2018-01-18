@@ -5,10 +5,12 @@ export interface ILoginState {
   surname: string,
   profilePicture: string,
   isLoggedIn: boolean,
-  isAdmin: boolean,
+  roles: Array,
   status: MovingStatus | null,
   userToken: string,
+  requesting: boolean
   showModal: boolean,
+  RouteAfter: string,
   init?: void ,
   reset: () => void
 }

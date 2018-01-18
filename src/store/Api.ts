@@ -104,7 +104,8 @@ export type ApiResponse = ApiSuccess|ApiError|ApiWarning;
 export class ApiSuccess {
   public success: boolean = true;
   public message: string;
-  public data: any;
+  public data?: any;
+  public type?: string = 'success';
 
   constructor(message?: string, data?: any) {
     this.message = message;
@@ -115,7 +116,7 @@ export class ApiSuccess {
 export class ApiError {
   public success: boolean = false;
   public message: string;
-  public type: string = 'error';
+  public type?: string = 'error';
 
   constructor(message?: string) {
     this.message = message;
@@ -125,7 +126,7 @@ export class ApiError {
 export class ApiWarning {
   public success: boolean = false;
   public message: string;
-  public type: string = 'warning';
+  public type?: string = 'warning';
 
   constructor(message?: string) {
     this.message = message;

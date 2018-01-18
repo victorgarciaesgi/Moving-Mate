@@ -7,16 +7,16 @@
               :icon='images._username'  v-model='LoginForm._username' :vl='$v.LoginForm._username'/>
           <FormText type='password' placeholder='Mot de passe' :error='false'
               :icon='images._password' v-model='LoginForm._password' :vl='$v.LoginForm._password'/>
-          <!-- <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" /> -->
+          <CheckBox v-model='LoginForm.souvenir' label='Se souvenir de moi' name="souvenir" />
           
           <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
             {{infoMessage}}
           </div>
-          <pre>{{LoginForm}}</pre>
+          <!-- <pre>{{LoginForm}}</pre> -->
         </div>
         <template slot='footer'>
           <FormButton @click='closeModal'>Annuler</FormButton>
-          <FormButton type='submit' :submitting='submitting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
+          <FormButton type='submit' :submitting='loginState.requesting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
         </template>
     </Modal>
   </form>
@@ -31,10 +31,7 @@ import { Mutation, Action, namespace } from "vuex-class";
 import { Modal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email } from 'vuelidate/lib/validators';
-
-const LoginActions = namespace('LoginModule', Action);
-const LoginMutation = namespace('LoginModule', Mutation);
-const NotifAction = namespace('NotificationsModule', Action);
+import { LoginStore, NotificationsStore } from '@modules'
 
 @Component({
   components: {
@@ -49,18 +46,18 @@ const NotifAction = namespace('NotificationsModule', Action);
 })
 export default class Connexion extends Vue {
 
-  @LoginActions connexionRequest;
-  @LoginMutation showModal;
-  @LoginMutation closeModal;
-
-  @NotifAction addNotification;
-
   @Prop({required: false, default: true}) show: boolean;
   @Prop({default: true}) window: boolean;
 
+  loginState = LoginStore.state;
+  connexionRequest = LoginStore.actions.connexionRequest;
+  closeModal = LoginStore.mutations.closeModal;
+
+  addNotification = NotificationsStore.actions.addNotification;
+
+
   public stateName: string = 'showConnexion'
   public infoMessage: string = '';
-  public submitting: boolean = false;
   public error: boolean = true;
   public errorType: string = '';
 
@@ -74,9 +71,7 @@ export default class Connexion extends Vue {
   };
 
   async submitForm(){
-    this.submitting = true;
     let loginResponse = await this.connexionRequest(this.LoginForm);
-    this.submitting = false;
     if (!loginResponse.success){
       this.errorType = loginResponse.type;
       this.infoMessage = loginResponse.message;

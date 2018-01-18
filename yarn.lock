@@ -8305,7 +8305,13 @@ vuex-typescript@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/vuex-typescript/-/vuex-typescript-3.0.2.tgz#d0b23acf7c046bce36ddfef756a7110d4551f9a9"
 
-vuex@3.0.1:
+vuex-typex@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/vuex-typex/-/vuex-typex-3.0.1.tgz#f54619d76081e2bd902120d145284a3ba0a95758"
+  dependencies:
+    vuex "^3.0.0"
+
+vuex@3.0.1, vuex@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.0.1.tgz#e761352ebe0af537d4bb755a9b9dc4be3df7efd2"
 
