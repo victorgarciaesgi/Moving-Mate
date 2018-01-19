@@ -20,7 +20,7 @@
       </section>
 
       <section class='france-map'>
-
+        <MapViewer svgPath='departements' />
       </section>
     </div>
   </transition>
@@ -30,12 +30,12 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
-import { StarRating, SvgIcon } from '@components';
+import { StarRating, SvgIcon, MapViewer } from '@components';
 const css = require('@css');
 
 @Component({
   components: {
-    StarRating, SvgIcon
+    StarRating, SvgIcon, MapViewer
   }
 })
 export default class Home extends Vue {
@@ -136,6 +136,12 @@ section.help {
       }
     }
   }
+}
+
+
+section.france-map {
+  background-color: $g60;
+  height: 600px;
 }
 
 
