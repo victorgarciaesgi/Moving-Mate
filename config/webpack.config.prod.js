@@ -24,7 +24,7 @@ const configProd = {
   module: {
     rules: [
       {
-        test: /\.scss$/,
+        test: /\.s?css$/,
         use: extractSass.extract({
           use: [{
             loader: 'css-loader',
@@ -32,22 +32,19 @@ const configProd = {
               minimize: true,
               importLoaders: 2
             }
-          },
-          {
+          },{
             loader: 'postcss-loader',
             options: {
               plugins: () => [autoprefixer]
             }
-          },
-          {
+          },{
             loader: 'sass-loader',
             options: {
               outputStyle: 'compressed',
               sourceMap: false,
               sourceMapContents: false
             }
-          }
-          ],
+          }],
           fallback: 'style-loader'
         })
       }, {
@@ -87,13 +84,13 @@ const configProd = {
       },
       chunksSortMode: 'dependency',
     }),
-    
+
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks (module) {
+      minChunks(module) {
         // any required modules inside node_modules are extracted to vendor
         return (
           module.resource &&
@@ -124,4 +121,4 @@ const configProd = {
   ]
 }
 
-  module.exports = merge(webpackConfig, configProd);
+module.exports = merge(webpackConfig, configProd);

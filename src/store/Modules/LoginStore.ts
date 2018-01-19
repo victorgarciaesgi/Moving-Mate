@@ -17,10 +17,10 @@ const state: ILoginState = {
   name: null,
   surname: null,
   username: null,
-  profilePicture: null,
+  profile: null,
   id: null,
   isLoggedIn: false,
-  roles: null,
+  roles: [],
   status: null,
   userToken: null,
   requesting: false,
@@ -31,8 +31,9 @@ const state: ILoginState = {
     this.username = null;
     this.surname = null;
     this.id = null;
+    this.profile = null;
     this.isLoggedIn = false;
-    this.roles = null;
+    this.roles = [];
     this.status = null;
     this.showModal = false;
   }
@@ -44,17 +45,24 @@ const stateGetter = b.state()
 
 // Getters
 namespace Getters {
-  function fullName(state: ILoginState): string {
+  const fullName = b.read(function fullName(state: ILoginState): string {
     return capitalize(state.surname) + " " + capitalize(state.name)
-  }
+  })
 
-  function isAdmin(state: ILoginState) : boolean {
-    return state.roles.include("ROLE_ADMIN");
-  }
+  const isAdmin = b.read(function isAdmin(state: ILoginState) : boolean {
+    return state.roles.includes("ROLE_ADMIN");
+  })
+
+  const userPicture = b.read(function userPicture(state: ILoginState) : string {
+    let image = state.profile?state.profile: require('@images/user.jpg');
+    console.log(image)
+    return image;
+  })
 
   export const getters = {
-    get fullName() { return b.read(fullName) },
-    get isAdmin() {return b.read(isAdmin)}
+    get fullName() { return fullName() },
+    get isAdmin() {return isAdmin()},
+    get userPicture() {return userPicture()}
   }
 }
 

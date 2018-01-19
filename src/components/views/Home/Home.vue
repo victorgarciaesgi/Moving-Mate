@@ -5,38 +5,48 @@
         <div class='background-mask'></div>
       </section>
 
-      <section>
-        <div class='help-wrapper'>
-          <ul>
-            <li v-for='help in helps'>
-              <div class='icon' :style='{backgroundImage: `url(${help.icon})`}'></div>
-              <div class='text'>{{help.text}}</div>
-            </li>
-          </ul>
-        </div>
+      <section class='help'>
+        <span class='title'>Comment ça marche?</span>
+        <ul class='help-wrapper'>
+          <li v-for='help in helps'>
+            <div class='icon'>
+              <div class='icon-circle'>
+                <SvgIcon :src='help.icon' :size='70' color='#FFF'></SvgIcon>
+              </div>
+            </div>
+            <div class='text'>{{help.text}}</div>
+          </li>
+        </ul>
+      </section>
+
+      <section class='france-map'>
+
       </section>
     </div>
   </transition>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
-import { StarRating } from '@components'
+import { StarRating, SvgIcon } from '@components';
+const css = require('@css');
 
 @Component({
   components: {
-    StarRating
+    StarRating, SvgIcon
   }
 })
 export default class Home extends Vue {
 
+  public css = css;
+
   public helps = [
-    {icon: require('@icons/annonce_blue.svg'), text:'Publiez une annonce gratuitement sur le site!'},
-    {icon: require('@icons/people_blue.svg'), text:'Des déménageurs répertoriés viendront proposer leur services pour votre déménagement'},
-    {icon: require('@icons/payment_blue.svg'), text:'Je valide et je prépaie en ligne. La somme sera verséee une fois le déménagement fini'},
-    {icon: require('@icons/star_plain_blue.svg'), text:'Je laisse un avis et une note sur les déménageurs'},
+    {icon: require('@icons/annonce.svg'), text:'Je publie une annonce gratuitement sur le site!'},
+    {icon: require('@icons/people.svg'), text:'Des déménageurs répertoriés viendront proposer leur services'},
+    {icon: require('@icons/payment.svg'), text:'Je prépaie en ligne. La somme sera verséee une fois le déménagement fini'},
+    {icon: require('@icons/star_plain.svg'), text:'Je laisse un avis et une note sur les déménageurs'},
   ]
 
 }
@@ -52,7 +62,7 @@ section{
   position: relative;
 }
 
-.image-home {
+section.image-home {
   background-image: url('~@images/home_image.jpg');
   position: relative;
   height: 500px;
@@ -63,6 +73,68 @@ section{
     height: 100%;
     width: 100%;
     background-color: transparentize($g20, 0.7);
+  }
+}
+
+
+section.help {
+  padding: 30px 20px 30px 20px;
+  align-content: center;
+  align-items: center;
+
+  span.title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  ul.help-wrapper {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-content: center;
+    
+    li {
+      display: flex;
+      flex: 0 1 auto;
+      flex-flow: column nowrap;
+      width: 180px;
+      margin: 15px;
+      height: 240px;
+      padding: 20px 10px 20px 10px;
+      box-shadow: 0 0 10px rgba(10,10,10,0.2);
+      border-radius: 5px;
+      background-color: white;
+
+      .icon {
+        display: flex;
+        height: 100px;
+        justify-content: center;
+        align-items: center;
+        
+
+        .icon-circle {
+          border-radius: 100%;
+          display: flex;
+          height: 100px;
+          justify-content: center;
+          align-items: center;
+          width: 100px;
+          background-color: $mainStyle;
+          padding: 25px;
+        }
+      }
+
+      .text {
+        display: flex;
+        flex: 1 1 auto;
+        align-content: center;
+        text-align: center;
+        font-size: 15px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    }
   }
 }
 

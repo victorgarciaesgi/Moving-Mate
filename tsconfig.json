@@ -22,6 +22,7 @@
       "@components": ["./components/components/index.ts"],
       "@images/*": ["./assets/images/*"],
       "@icons/*": ["./assets/icons/*"],
+      "@css": ["./styles/variables.scss"],
       "@views": ["./components/views/index.ts"],
       "@utils": ["./utils/index.ts"],
       "@router": ["./router/index.ts"],

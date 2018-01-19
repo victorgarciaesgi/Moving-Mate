@@ -3,7 +3,7 @@ export interface ILoginState {
   name: string,
   username: string,
   surname: string,
-  profilePicture: string,
+  profile: string,
   isLoggedIn: boolean,
   roles: Array,
   status: MovingStatus | null,

@@ -167,7 +167,7 @@ export default class FormText extends Vue {
 
   label {
     font-weight: bold;
-    color: $mainStyle;
+    color: $g80;
     font-size: 15px;
 
     &.formError {

@@ -19,12 +19,26 @@
               <span>Devenir déménageur</span>
             </router-link>
           </li>
+
+          <!-- If user logged in -->
+
           <template v-if='loginState.isLoggedIn' >
+            <li for='user-notifications' class='header-button popup'>
+              <Popup ref='profile' class='right' v-if='loginState.isLoggedIn' :width='250'>
+                <template>
+                  
+                </template>
+              </Popup>
+              <div class='bouton-data image'>
+                <SvgIcon :src="require('@icons/notification_none.svg')"></SvgIcon>
+              </div>
+            </li>
+
             <li for='user-menu' class="header-button popup" @click.stop="togglePopup('profile')">
               <Popup ref='profile' class='right' v-if='loginState.isLoggedIn' :width='250'>
                 <template>
                   <div class="user">
-                      <div class="user-picture" :style='userProfileImage'></div>
+                      <div class="user-picture" :style='getProfileImage'></div>
                       <div class="user-name">{{loginState.username | capitalize}}</div>
                   </div>
                   <ul class='user-option-list'>
@@ -41,10 +55,13 @@
               </Popup>
               <div class='bouton-data'>
                 <span>{{loginState.username | capitalize}}</span>
-                <div class='profile-image' :style='userProfileImage'></div>
+                <div class='profile-image' :style='getProfileImage'></div>
               </div>
             </li>
           </template>
+
+          <!-- Else -->
+
           <template v-else>
             <li class="header-button" @click='showLogin'>
               <span>Connexion</span>
@@ -77,6 +94,7 @@ import { LoginStore, SignupStore } from '@modules'
 export default class HeaderComponent extends Vue {
   loginState = LoginStore.state;
   fullName = LoginStore.getters.fullName;
+  userPicture = LoginStore.getters.userPicture;
   showLogin = LoginStore.mutations.showLogin;
   disconnectRequest = LoginStore.actions.disconnectRequest;
 
@@ -86,15 +104,15 @@ export default class HeaderComponent extends Vue {
   public refs = {};
   public popups = [];
 
-  get userProfileImage() {
-    let image = this.loginState.profilePicture || require('@images/user.jpg')
+  get getProfileImage() {
     return {
-      backgroundImage: `url(${image})`
+      backgroundImage: `url(${this.userPicture})`
     }
   }
 
   mounted() {
     this.refs = this.$refs;
+    console.log(this.userPicture)
   }
 
   togglePopup(popupName: string, target?: HTMLElement) {
@@ -119,148 +137,157 @@ div.header-wrapper{
   width: 100%;
   top: 0;
   left: 0;
-}
 
 
-header {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  height: $headerHeight;
-  width: 100%;
-  display: flex;
-  background-color: white;
-  color: $mainColor;
-  z-index: 10000;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  box-shadow: 0 0 5px transparentize($g20, 0.8);
-
-  .logo {
+  header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: $headerHeight;
+    width: 100%;
     display: flex;
-    flex: 0 0 auto;
-    padding: 5px;
-    align-items: center;
-
-    img {
-      height: 30px;
-      width: auto;
-      max-width: 100%;
-    }
-  }
-
-  nav {
-    display: flex;
+    background-color: white;
+    color: $mainColor;
+    z-index: 10000;
     flex-flow: row nowrap;
-    flex: 1 1 auto;
+    justify-content: flex-start;
+    box-shadow: 0 0 5px transparentize($g20, 0.8);
 
-    ul.nav-list {
+    .logo {
       display: flex;
-      flex-flow: row wrap;
-      flex: 1 0 auto;
-      padding: 0px 15px 0px 15px;
+      flex: 0 0 auto;
+      padding: 5px;
+      align-items: center;
 
-      a {
+      img {
+        height: 30px;
+        width: auto;
+        max-width: 100%;
+      }
+    }
+
+    nav {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: 1 1 auto;
+
+      ul.nav-list {
         display: flex;
+        flex-flow: row wrap;
+        flex: 1 0 auto;
+        padding: 0px 15px 0px 15px;
 
-        li.route {
+        a {
+          display: flex;
+
+          li.route {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            font-size: 14px;
+            padding: 7px 5px 5px 5px;
+            font-weight: bold;
+            margin-right: 5px;
+            border-bottom: 3px solid transparent;
+
+            &:not(.active):hover {
+              border-color: $mainStyle;
+              color: $g40;
+            }
+            &.active {
+              border-color: $mainStyle;
+              color: $g40;
+              /deep/ svg { fill: $mainStyle }
+            }
+
+            span {margin-left: 5px;}
+
+            /deep/ div, svg {
+              fill: $g90;
+              height: 25px;
+              width: 25px;
+            }
+          }
+        }
+      }
+
+      ul.login-list {
+        display: flex;
+        flex-flow: row nowrap;
+        flex: 1 0 auto;
+        justify-content: flex-end;
+        padding: 8px 15px 8px 15px;
+
+        %header-button {
           display: flex;
           flex-flow: row nowrap;
           justify-content: center;
           align-items: center;
           align-content: center;
           font-size: 14px;
-          padding: 7px 5px 5px 5px;
           font-weight: bold;
-          margin-right: 5px;
-          border-bottom: 3px solid transparent;
-
-          &:not(.active):hover {
-            border-color: $mainStyle;
-            color: $g40;
-          }
-          &.active {
-            border-color: $mainStyle;
-            color: $g40;
-            /deep/ svg { fill: $mainStyle }
-          }
-
-          span {margin-left: 5px;}
-
-          /deep/ div, svg {
-            fill: $g90;
-            height: 25px;
-            width: 25px;
-          }
-        }
-      }
-    }
-
-    ul.login-list {
-      display: flex;
-      flex-flow: row nowrap;
-      flex: 1 0 auto;
-      justify-content: flex-end;
-      padding: 8px 15px 8px 15px;
-
-      %header-button {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: center;
-        align-items: center;
-        align-content: center;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 40px;
-        cursor: pointer;
-        &:not(.color) {
-          &:hover {background-color: $w240;}
-          &.active {background-color: $w230;}
-        }
-        &.color {
-          background-color: $mainStyle;
-          color: white;
-          &:hover {background-color: darken($mainStyle, 4%);}
-          &:active {background-color: darken($mainStyle, 8%);}
-        }
-        span {padding: 7px 15px 8px 15px;}
-
-        .profile-image {
-          @include bg-center;
-          height: 28px;
-          width: 28px;
-          margin-left: -5px;
-          margin-right: 15px;
           border-radius: 40px;
-          border: 2px solid $mainStyle;
+          transition: all 0.3s;
+          cursor: pointer;
+          &:not(.color) {
+            // &:hover {background-color: $w230;}
+            // &.active {background-color: $w220;}
+          }
+          &.color {
+            // background-color: $mainStyle;
+            color: $mainStyle;
+            // &:hover {background-color: darken($mainStyle, 4%);}
+            // &:active {background-color: darken($mainStyle, 8%);}
+          }
+
+          &:hover {background-color: $w235;}
+          &.active {background-color: $w220;}
+
+          span {padding: 7px 15px 8px 15px;}
+
+          .profile-image {
+            @include bg-center;
+            height: 28px;
+            width: 28px;
+            margin-left: -5px;
+            margin-right: 15px;
+            border-radius: 40px;
+            border: 2px solid $mainStyle;
+          }
         }
-      }
 
-      li.header-button {
-        &:not(.popup) {
-          margin-left: 10px;
-          @extend %header-button;
-        }
-
-        &.popup {
-          display: block;
-          height: 100%;
-          width: auto;
-          position: relative;
-          margin-left: 10px;
-          white-space: nowrap;
-          float: left;
-
-          .bouton-data {
+        li.header-button {
+          &:not(.popup) {
+            margin-left: 5px;
             @extend %header-button;
           }
 
-          .popup-box.active ~ .bouton-data{
-            background-color: $w230;
-          }
+          &.popup {
+            display: block;
+            height: 100%;
+            width: auto;
+            position: relative;
+            margin-left: 10px;
+            white-space: nowrap;
+            float: left;
 
-        }
-      }  
+            .bouton-data {
+              @extend %header-button;
+
+              &.image {
+                padding: 5px;
+              }
+            }
+
+            .popup-box.active ~ .bouton-data{
+              background-color: $w220;
+            }
+
+          }
+        }  
+      }
     }
   }
 }

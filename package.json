@@ -14,6 +14,7 @@
   "dependencies": {
     "@types/jquery": "^3.2.18",
     "axios": "^0.16.2",
+    "cheerio": "^1.0.0-rc.2",
     "element-ui": "^2.0.11",
     "jquery": "^3.2.1",
     "jwt-decode": "^2.2.0",
@@ -74,6 +75,7 @@
     "tslint": "^5.7.0",
     "tslint-loader": "^3.5.3",
     "typescript": "2.6.2",
+    "typings-for-css-modules-loader": "^1.7.0",
     "url": "^0.11.0",
     "url-loader": "^0.6.2",
     "vue-loader": "^13.3.0",

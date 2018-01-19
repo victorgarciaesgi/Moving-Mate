@@ -1,4 +1,3 @@
-import { namespace } from 'vuex-class/lib';
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse, AxiosInterceptorManager } from 'axios';
 import LoginModule from '../Modules/LoginStore';
 import router from '@src/router'
