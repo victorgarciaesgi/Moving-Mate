@@ -1,14 +1,27 @@
+# Moving Mate
+
 <p align="center"><a href="https://vuejs.org" target="_blank"><img width="100" src="https://vuejs.org/images/logo.png" alt="Vue logo"></a></p>
 
+## Features
 
-# Installation
+- Vue single file components
+- Vuex Store with namespaced modules
+- Vue router with progress bar and async fetch before resolve
+- Webpack dev server with Hot Modules Replacements and minified/gzipped code in Prod
+- Dynamic component import
+- Use of repo [Vuex-Typex](https://github.com/mrcrowl/vuex-typex) to have Vuex typed
+- Typescript implementation. Target to es2015 and esnext modules
+- SCSS implementation
+- JWT auth
+
+## Installation
 
 ```bash
- $ npm install
+npm install
 ```
 
 ```bash
- $ yarn
+yarn
 ```
 
 ## Developing
