@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "es2015", 
-    "target": "es5",
+    "module": "esnext", 
+    "target": "es6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true, 
     "emitDecoratorMetadata": true,
@@ -20,10 +20,12 @@
     "paths": {
       "@src/*": ["./*"],
       "@components": ["./components/components/index.ts"],
+      "@components/*": ["./components/components/*"],
+      "@views": ["./components/views/index.ts"],
+      "@views/*": ["./components/views/*"],
       "@images/*": ["./assets/images/*"],
       "@icons/*": ["./assets/icons/*"],
       "@css": ["./styles/variables.scss"],
-      "@views": ["./components/views/index.ts"],
       "@utils": ["./utils/index.ts"],
       "@router": ["./router/index.ts"],
       "@validators": ["./utils/validators.ts"],

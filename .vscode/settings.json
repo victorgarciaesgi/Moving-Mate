@@ -6,7 +6,7 @@
   // Insert spaces when pressing Tab. This setting is overriden
   // based on the file contents when `editor.detectIndentation` is true.
   "editor.insertSpaces": true,
-  "eslint.enable": false,
+  "eslint.enable": true,
   
   // When opening a file, `editor.tabSize` and `editor.insertSpaces`
   // will be detected based on the file contents.

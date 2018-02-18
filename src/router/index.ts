@@ -1,10 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import * as Views from '@views';
 import * as Components from '@components';
-import {LoginStore} from '@modules';
+import { LoginStore } from '@modules';
+import { timeout } from '@methods';
+import {routesList} from './routes';
+import { ProgressBar } from '@store';
 
 Vue.use(VueRouter);
+
 
 const Rooter = new VueRouter({
   mode: 'history',
@@ -12,29 +15,51 @@ const Rooter = new VueRouter({
   scrollBehavior(to, from, savedPosition) {
     return { x: 0, y: 0 }
   },
-  routes: [
-    { path: '/', name: 'Accueil', alias: 'home', component: Views.Home },
-    { path: '/moving', name: 'Je déménage', component: Views.Moving },
-    { path: '/inscription', name: 'Inscription', component: Components.Inscription, props: { window: false } },
-    { path: '/connexion', name: 'Connexion', component: Components.Connexion, props: { window: false } },
-    { path: '/movers', name: 'Les déménageurs', component: Views.Movers },
-    { path: '/bemover', name: 'Devenir déménageur', component: Views.BeMover, meta: { requiresAuth: true } },
-    { path: '*', component: Views.Home }
-  ]
+  routes: routesList
 })
 
-Rooter.beforeEach((to, from, next) => {
-  document.title = `${to.name} - MovingMate`;
-  if(to.meta.requiresAuth) {
-    if (LoginStore.state.isLoggedIn) {
-      next()
+// Before each route hook test auth
+Rooter.beforeEach(async (to, from, next) => {
+  console.log(from);
+  if (LoginStore.state.sessionChecked) {
+    ProgressBar.mutations.start();
+    if (!to.meta.contentProp) {
+      document.title = `${to.name} - MovingMate`;
     }
-    else {
-      LoginStore.mutations.showLoginRoute(to.fullPath);
+    if (to.matched.some(m => m.meta.requiresAuth)) {
+      if (LoginStore.state.isLoggedIn) {
+        if (to.meta.asyncData) {
+          await getRouteData(to);
+        }
+        next(ProgressBar.mutations.finish());
+      }
+      else {
+        ProgressBar.mutations.hide();
+        LoginStore.mutations.showLoginRoute(to.fullPath);
+      }
+    } else {
+      if (to.meta.asyncData) {
+        await getRouteData(to);
+      }
+      next(ProgressBar.mutations.finish());
     }
   } else {
+    await LoginStore.actions.checkUserSession();
     next();
   }
 })
+
+const getRouteData = async (to) => {
+  ProgressBar.mutations.start();
+  try {
+    await to.meta.asyncData();
+  } catch(err) {
+    ProgressBar.mutations.fail();
+    console.log(err);
+  }
+}
+
+
+
 
 export default Rooter;

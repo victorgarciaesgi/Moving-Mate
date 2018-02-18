@@ -18,6 +18,9 @@ const baseConfig = {
     ],
     alias: {
       '@components': helpers.root('src/components/components/index.ts'),
+      '@components': helpers.root('src/components/components'),
+      '@views': helpers.root('src/components/views/index.ts'),
+      '@views': helpers.root('src/components/views'),
       '@src': helpers.root('src'),
       '@icons': helpers.root('src/assets/icons'),
       '@images': helpers.root('src/assets/images'),
@@ -25,7 +28,6 @@ const baseConfig = {
       '@utils': helpers.root('src/utils/index.ts'),
       '@css': helpers.root('src/styles/variables.scss'),
       '@router': helpers.root('src/router/index.ts'),
-      '@views': helpers.root('src/components/views/index.ts'),
       '@validators': helpers.root('src/utils/validators.ts'),
       '@methods': helpers.root('src/utils/methods.ts'),
       '@filters': helpers.root('src/utils/filters.ts'),
@@ -48,7 +50,7 @@ const baseConfig = {
                 esModule: true
               }
             }],
-            ts: 'ts-loader',
+            ts: 'ts-loader!tslint-loader',
           }
         }
       }
@@ -57,7 +59,7 @@ const baseConfig = {
       exclude: /node_modules/,
       loader: 'ts-loader',
       options: {
-        appendTsSuffixTo: [/\.vue$/],
+        appendTsSuffixTo: [/\.vue$/]
       }
     }]
   },
