@@ -16,7 +16,7 @@
 }
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.15s ease-out;
+  transition: opacity 0.2s ease-out;
 }
 
 .fade-enter, .fade-leave-to {
@@ -24,5 +24,14 @@
 }
 
 
+
+
+section.line-separator::before {
+  content:'';
+  width: 80%;
+  margin: auto;
+  height: 1px;
+  background-color: $w210;
+}
 
   

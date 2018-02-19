@@ -57,15 +57,28 @@ const configProd = {
     new DefinePlugin({
       'process.env': env
     }),
-    // new UglifyJsPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
+    new UglifyJsPlugin({
       include: /\.js$/,
-      mangle: { keep_fnames: false, screw_ie8: true },
-      compress: { keep_fnames: false, screw_ie8: true, warnings: false },
-      sourceMap: false,
-      removeComments: true,
-      beautify: false
+      uglifyOptions: {
+        ie8: false,
+        ecma: 6,
+        mangle: { keep_fnames: true },
+        output: {
+          comments: false,
+          beautify: false,
+        },
+        compress: { keep_fnames: true },
+        warnings: false
+      }
     }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   include: /\.js$/,
+    //   mangle: { keep_fnames: false, screw_ie8: true },
+    //   compress: { keep_fnames: false, screw_ie8: true, warnings: false },
+    //   sourceMap: false,
+    //   removeComments: true,
+    //   beautify: false
+    // }),
     extractSass,
     new HtmlWebpackPlugin({
       inject: true,

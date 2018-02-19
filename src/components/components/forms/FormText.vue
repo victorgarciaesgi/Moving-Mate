@@ -21,8 +21,10 @@
                 @focus='showPopup()'
                 @input="updateValue($event.target.value)" />
                 
-        <img class='input-icon' v-if='icon && !inline' :src="icon">
-        <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
+        <div class='input-icon-contain'>
+          <img class='input-icon' v-if='icon && !inline' :src="icon">
+          <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
+        </div>
 
         <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
@@ -127,10 +129,6 @@ export default class FormText extends Vue {
     }
   }
 
-  handleScroll() {
-    Vue.set(this.popupPosition , 'display', false);
-  }
-
   get filterErrors() {
     return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
   }
@@ -141,14 +139,6 @@ export default class FormText extends Vue {
 
   get dirty(){
     return this.vl.$dirty;
-  }
-
-  mounted() {
-    window.addEventListener('scroll', this.handleScroll);
-  }
-
-  destroyed() {
-    window.removeEventListener('scroll', this.handleScroll);
   }
 }
 </script>
@@ -188,6 +178,12 @@ export default class FormText extends Vue {
     padding-bottom: 10px;
     border-bottom: 1px solid $w220;
     color: $red1;
+
+    ul {
+     display: flex;
+     flex-flow: column wrap;
+     align-items: center;
+    }
   }
 }
 
@@ -198,14 +194,28 @@ export default class FormText extends Vue {
   flex-flow: row wrap;
   justify-content: center;
 
-  .input-icon{
+  .input-icon-contain {
     position: absolute;
-    left: 9px;
-    height: 22px;
-    width: 22px;
-    top: 50%;
-    @include translateY(-50%);
+    left: 0;
+    top: 0;
+    width: 40px;
+    height: calc(100% - 26px);
+    margin-top: 13px;
+    margin-bottom: 13px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid $w190;
+
+
+
+    .input-icon{
+      height: 22px;
+      width: 22px;
+    }
   }
+
+  
 
 
   /deep/ svg {
@@ -232,7 +242,7 @@ export default class FormText extends Vue {
 
     &:focus{
       background-color: $w225;
-      &~ .input-icon /deep/ svg {
+      &~ .input-icon-contain .input-icon /deep/ svg {
         fill: $g60;
       }
       & + .input-form-result{
@@ -240,16 +250,16 @@ export default class FormText extends Vue {
       }
     }
 
-    &.formValid ~ .input-icon /deep/ svg {
+    &.formValid ~ .input-icon-contain .input-icon /deep/ svg {
       fill: $mainStyle;
     }
 
-    &.formError ~ .input-icon /deep/ svg {
+    &.formError ~ .input-icon-contain .input-icon /deep/ svg {
       fill: $red1;
     }
 
     &.icon{
-      padding-left: 40px;
+      padding-left: 50px;
     }
 
     &.white {

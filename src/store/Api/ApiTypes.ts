@@ -1,3 +1,5 @@
+import {NotificationsStore} from '@store';
+
 export class AxiosSuccess {
   public success: boolean = true;
   public status: number;
@@ -15,6 +17,9 @@ export class AxiosError {
 
   constructor(status?: number) {
     this.status = status;
+    if (status == 0) {
+      NotificationsStore.actions.addNotification({type: 'warning', message: 'Vérifiez votre connexion Internet'})
+    }
   }
 }
 

@@ -1,4 +1,9 @@
 export interface IProgressState {
-  lenght: number,
-  error: boolean,
+  percent: number,
+  show: boolean,
+  canSuccess: boolean,
+  duration: number,
+  height: string,
+  color: string,
+  failedColor: string,
 }

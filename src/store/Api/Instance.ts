@@ -8,11 +8,12 @@ const API_URL = process.env.API_URL;
 axios.interceptors.response.use(
   (response) => {
     console.log(response)
-    return response 
+    return response
   },
   (error) => {
     return Promise.reject(error)
-})
+  }
+)
 
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -22,32 +23,30 @@ const axiosInstance: AxiosInstance = axios.create({
   }
 });
 
-const headers = () => {
-  let authToken: any = "";
-  const userState = LoginModule.state;
-  if (userState.isLoggedIn) {
-    authToken = { "Authorization": `Bearer ${userState.userToken}`}
-  }
-  return authToken;
-}
+export const addAuthHeaders = () => {
+  axiosInstance.defaults.headers.Authorization = `Bearer ${LoginModule.state.userInfos.userToken}`;
+};
+
+export const removeAuthHeaders = () => {
+  delete axiosInstance.defaults.headers.Authorization;
+  console.log(axiosInstance.defaults);
+};
 
 async function Request(type: string, path: string, payload: any): Promise<Types.AxiosSuccess | Types.AxiosError> {
   try {
-    if (type === 'post'||'put') {
-      let response: AxiosResponse = await axiosInstance[type](path, payload, {
-        headers: headers()
-      })
+    console.log(axiosInstance.defaults)
+    if (type === 'post' || 'put') {
+      let response: AxiosResponse = await axiosInstance[type](path, payload)
       console.log(new Types.AxiosSuccess(response.data))
       return new Types.AxiosSuccess(response.data);
     } else {
       let response: AxiosResponse = await axiosInstance[type](path, {
         params: payload,
-        headers: headers()
       })
       return new Types.AxiosSuccess(response.data);;
     }
-  } 
-  catch(error) {
+  }
+  catch (error) {
     if (error.response) {
       return new Types.AxiosError(error.response.status);
     } else {

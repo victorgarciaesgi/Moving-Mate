@@ -1,5 +1,6 @@
 import Request from './Instance';
 export * from './ApiTypes';
+export {addAuthHeaders, removeAuthHeaders} from './Instance';
 
 export namespace ApiTool {
   export async function post(path: string, payload: any) {

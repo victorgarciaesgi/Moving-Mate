@@ -76,7 +76,7 @@ export default class Popup extends Vue {
   left: 0px;
   top: calc(100% + 15px);
   border-radius: 5px;
-  box-shadow: 0 0 15px rgba(20, 20, 20, 0.2);
+  box-shadow: 0 0 20px rgba(10,10,10,0.2);
   height: auto;
   min-height: 200px;
   min-width: 250px;

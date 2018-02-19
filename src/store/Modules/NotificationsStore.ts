@@ -8,6 +8,8 @@ import { storeBuilder } from "./Store/Store";
 const TIMEOUT: number = 5000;
 type NotificationContext = ActionContext<INotificationState, RootState>;
 
+
+//State
 const state: INotificationState = {
   notificationCount: 0,
   notificationList: []

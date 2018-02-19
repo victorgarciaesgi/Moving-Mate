@@ -24,8 +24,6 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
-import { State, namespace } from "vuex-class";
 import { NotificationsStore } from "@modules";
 
 @Component({})
@@ -35,9 +33,6 @@ export default class Alerts extends Vue {
 
   deleteAlert = NotificationsStore.mutations.deleteAlert;
 
-  updateValue(value) {
-    this.$emit("input", value);
-  }
 }
 </script>
 
@@ -51,7 +46,7 @@ ul#alertes-container {
   padding: 10px;
   width: 380px;
   height: auto;
-  z-index: 10005;
+  z-index: 10001;
   display: flex;
   flex-direction: column;
 

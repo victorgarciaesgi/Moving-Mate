@@ -4,6 +4,7 @@ import { RootState } from '../index';
 
 const API_URL = "https://geo.api.gouv.fr/communes?boost=population&nom=";
 
+//State
 const state: ISearchMovingState = {
   formPlace: '',
   formDateStart: '',

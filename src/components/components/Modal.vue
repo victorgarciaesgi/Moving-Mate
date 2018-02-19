@@ -51,7 +51,7 @@ export default class Modal extends Vue {
 <style lang='scss' scoped>
 
 .modal-base{
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100%;
   background-color: transparentize($g20,0.7);
@@ -59,7 +59,7 @@ export default class Modal extends Vue {
   justify-content: center;
   align-items: center;
   align-content: center;
-  z-index: 10001;
+  z-index: 10002;
 
   &.full{
     z-index: 2;
@@ -83,7 +83,7 @@ export default class Modal extends Vue {
     div.header {
       display: flex;
       flex-flow: row wrap;
-      flex: 1;
+      flex: 0 0 auto;
       height: 40px;
       padding-left: 10px;
       font-weight: bold;

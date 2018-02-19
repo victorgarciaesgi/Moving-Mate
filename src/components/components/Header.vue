@@ -7,9 +7,9 @@
         </router-link>
         <ul class='nav-list'>
           <router-link :to='item.link' v-for="item in nav" :key='item.name'>
-            <li class='route' :class='{active: $store.state.route.path === item.link}' :size='26'>
-              <SvgIcon class='tablet' :src='item.icon'></SvgIcon>
-              <span class='not-tablet'>{{item.title}}</span>
+            <li class='route' :size='26'>
+              <!-- <SvgIcon class='tablet' :src='item.icon'></SvgIcon> -->
+              <span>{{item.title}}</span>
             </li>
           </router-link>
         </ul>
@@ -39,22 +39,22 @@
                 <template>
                   <div class="user">
                       <div class="user-picture" :style='getProfileImage'></div>
-                      <div class="user-name">{{loginState.username | capitalize}}</div>
+                      <div class="user-name">{{loginState.userInfos.username | capitalize}}</div>
                   </div>
                   <ul class='user-option-list'>
                       <a href="#"><li class='user-option'>Mon profil</li></a>
-                        <a href="#">
-                          <li id='aide' class='user-option'>
-                            Administration
-                          </li>
-                        </a>
+                      <a href="#" v-if='isAdmin'>
+                        <li class='user-option'>
+                          Administration
+                        </li>
+                      </a>
                       <li class='user-option'>Aide</li>
                       <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
                   </ul>
                 </template>
               </Popup>
               <div class='bouton-data'>
-                <span>{{loginState.username | capitalize}}</span>
+                <span>{{loginState.userInfos.username | capitalize}}</span>
                 <div class='profile-image' :style='getProfileImage'></div>
               </div>
             </li>
@@ -82,25 +82,33 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import {Store} from 'vuex';
+import {RootState} from '@store';
 
 import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
 import { LoginStore, SignupStore } from '@modules'
+import { StringifyOptions } from "querystring";
 
 @Component({
   components: { Connexion, Inscription, Popup, SvgIcon },
 })
 export default class HeaderComponent extends Vue {
-  loginState = LoginStore.state;
-  fullName = LoginStore.getters.fullName;
-  userPicture = LoginStore.getters.userPicture;
-  showLogin = LoginStore.mutations.showLogin;
-  disconnectRequest = LoginStore.actions.disconnectRequest;
 
-  signupState = SignupStore.state;
-  showSignup = SignupStore.mutations.showSignup;
+  private loginState = LoginStore.state;
+  private fullName = LoginStore.getters.fullName;
+  private userPicture = LoginStore.getters.userPicture;
+  private isAdmin = LoginStore.getters.isAdmin;
 
+  private showLogin = LoginStore.mutations.showLogin;
+  private disconnectRequest = LoginStore.actions.disconnectRequest;
+
+  private signupState = SignupStore.state;
+  private showSignup = SignupStore.mutations.showSignup;
+  
+
+  public $store: Store<RootState>;
   public refs = {};
   public popups = [];
 
@@ -112,7 +120,6 @@ export default class HeaderComponent extends Vue {
 
   mounted() {
     this.refs = this.$refs;
-    console.log(this.userPicture)
   }
 
   togglePopup(popupName: string, target?: HTMLElement) {
@@ -179,6 +186,17 @@ div.header-wrapper{
 
         a {
           display: flex;
+          margin-right: 5px;
+
+          &:not(.router-link-active):hover li.route{
+            border-color: $mainStyle;
+            color: $g40;
+          }
+          &.router-link-active li.route{
+            border-color: $mainStyle;
+            color: $g40;
+            /deep/ svg { fill: $mainStyle }
+          }
 
           li.route {
             display: flex;
@@ -189,20 +207,9 @@ div.header-wrapper{
             font-size: 14px;
             padding: 7px 5px 5px 5px;
             font-weight: bold;
-            margin-right: 5px;
             border-bottom: 3px solid transparent;
 
-            &:not(.active):hover {
-              border-color: $mainStyle;
-              color: $g40;
-            }
-            &.active {
-              border-color: $mainStyle;
-              color: $g40;
-              /deep/ svg { fill: $mainStyle }
-            }
-
-            span {margin-left: 5px;}
+            span {padding: 0 5px 0 5px}
 
             /deep/ div, svg {
               fill: $g90;
@@ -229,7 +236,7 @@ div.header-wrapper{
           font-size: 14px;
           font-weight: bold;
           border-radius: 40px;
-          transition: all 0.3s;
+          transition: background-color 0.3s;
           cursor: pointer;
           &:not(.color) {
             // &:hover {background-color: $w230;}
@@ -265,9 +272,6 @@ div.header-wrapper{
           }
 
           &.popup {
-            display: block;
-            height: 100%;
-            width: auto;
             position: relative;
             margin-left: 10px;
             white-space: nowrap;
@@ -338,8 +342,7 @@ div.header-wrapper{
     font-weight: bold;
 
     &:hover{
-      background-color: $w240;
-      color: $mainStyle;
+      background-color: $w245;
     }
 
     &:active{

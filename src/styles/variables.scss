@@ -1,9 +1,6 @@
 // Couleurs
 $mainStyle: #4975BA;
 
-:export {
-  mainColor: $mainStyle;
-}
 
 $yellow1: #f8ab1c;
 $yellow2: rgb(221, 144, 35);
@@ -16,6 +13,12 @@ $red1: #E54C4C;
 $green1: #5cb85c;
 $green2: #CEE8DF;
 $green3: #70BEB1;
+
+:export {
+  mainColor: $mainStyle;
+  red1: $red1;
+}
+
 
 
 $w255: rgb(255, 255, 255);

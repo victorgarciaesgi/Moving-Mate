@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../Api';
 import NotificationsModule from './NotificationsStore';
 import router from '@router';
 import { ActionContext } from 'vuex';
@@ -13,56 +13,61 @@ import { JWT } from '../TokenStore'
 type LoginContext = ActionContext<ILoginState, RootState>;
 const LOGIN_URL = "login_check";
 
+// State
 const state: ILoginState = {
-  name: null,
-  surname: null,
-  username: null,
-  profile: null,
-  id: null,
+  userInfos: {
+    surname: null,
+    username: null,
+    profile: null,
+    name: null,
+    id: null,
+    roles: [],
+    status: null,
+    userToken: null,
+  },
+  sessionChecked: false,
   isLoggedIn: false,
-  roles: [],
-  status: null,
-  userToken: null,
   requesting: false,
   RouteAfter: null,
   showModal: false,
   reset() {
-    this.name = null;
-    this.username = null;
-    this.surname = null;
-    this.id = null;
-    this.profile = null;
+    this.userInfos = {
+      name: null,
+      username: null,
+      surname: null,
+      id: null,
+      profile: null,
+      roles: [],
+      status: null,
+      userToken: null
+    },
+    this.showModal = false,
     this.isLoggedIn = false;
-    this.roles = [];
-    this.status = null;
-    this.showModal = false;
   }
 }
 
-const b = storeBuilder.module<ILoginState>("LoginModule", state);
-const stateGetter = b.state()
+const b = storeBuilder.module<ILoginState>('LoginModule', state);
+const stateGetter = b.state();
 
 
 // Getters
 namespace Getters {
   const fullName = b.read(function fullName(state: ILoginState): string {
-    return capitalize(state.surname) + " " + capitalize(state.name)
+    return capitalize(state.userInfos.surname) + " " + capitalize(state.userInfos.name);
   })
 
   const isAdmin = b.read(function isAdmin(state: ILoginState) : boolean {
-    return state.roles.includes("ROLE_ADMIN");
+    return state.userInfos.roles.includes("ROLE_ADMIN");
   })
 
   const userPicture = b.read(function userPicture(state: ILoginState) : string {
-    let image = state.profile?state.profile: require('@images/user.jpg');
-    console.log(image)
-    return image;
+    return state.userInfos.profile || require('@images/user.jpg');;
   })
 
   export const getters = {
-    get fullName() { return fullName() },
-    get isAdmin() {return isAdmin()},
-    get userPicture() {return userPicture()}
+    get fullName() { return fullName();},
+    get isAdmin() {return isAdmin();},
+    get userPicture() {return userPicture();}
   }
 }
 
@@ -77,16 +82,23 @@ namespace Mutations {
   }
   function closeModal(state: ILoginState) {
     state.showModal = false;
+    state.RouteAfter = null;
   }
-  function connectUser(state: ILoginState, userData: Object) {
-    state = merge(state, userData);
+  function sessionChecked(state: ILoginState) {
+    state.sessionChecked = true;
+  }
+  function connectUser(state: ILoginState, {userData, token}) {
+    state.userInfos = merge(state.userInfos, userData);
+    state.userInfos.userToken = token;
     state.isLoggedIn = true;
+    addAuthHeaders();
     if (state.RouteAfter) {
       router.push(state.RouteAfter);
     }
   }
   function disconnectUser(state: ILoginState) {
     state.reset();
+    removeAuthHeaders();
     router.push('/');
   }
 
@@ -96,6 +108,7 @@ namespace Mutations {
     closeModal: b.commit(closeModal),
     connectUser: b.commit(connectUser),
     disconnectUser: b.commit(disconnectUser),
+    sessionChecked: b.commit(sessionChecked),
   }
 }
 
@@ -120,10 +133,10 @@ namespace Actions {
       }
     }
   }
-  async function connexionSuccess(context: LoginContext, token: string): Promise<void> {
+  async function connexionSuccess(context: LoginContext, token: string) {
     let userData = await jwtDecode(token);
     console.log(userData);
-    LoginModule.mutations.connectUser(userData);
+    LoginModule.mutations.connectUser({userData, token});
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
   }
   function disconnectRequest() {
@@ -131,14 +144,16 @@ namespace Actions {
     LoginModule.mutations.disconnectUser();
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
   }
-  async function checkUserSession() : Promise<void>{
+  async function checkUserSession(){
     let token = JWT.fetch();
     if (!!token) {
       let userData = await jwtDecode(token);
-      LoginModule.mutations.connectUser(userData);
+      LoginModule.mutations.connectUser({userData, token});
     } else {
       console.log('User not logged');
     }
+    LoginModule.mutations.sessionChecked();
+    return;
   }
 
   export const actions = {

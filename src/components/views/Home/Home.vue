@@ -1,11 +1,12 @@
 <template lang='html'>
   <transition name='slide'>
     <div class='home'>
+      
       <section class='image-home'>
         <div class='background-mask'></div>
       </section>
 
-      <section class='help'>
+      <section class='help '>
         <span class='title'>Comment ça marche?</span>
         <ul class='help-wrapper'>
           <li v-for='help in helps'>
@@ -19,9 +20,11 @@
         </ul>
       </section>
 
-      <section class='france-map'>
-        <MapViewer svgPath='departements' />
+      <section class='france-map line-separator'>
+        <MapViewer svgPath='departements' @pathSelected='handlePathSelect' />
       </section>
+
+      
     </div>
   </transition>
 </template>
@@ -30,6 +33,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
+import { svgPath } from '@types';
+import router from '@router';
 import { StarRating, SvgIcon, MapViewer } from '@components';
 const css = require('@css');
 
@@ -47,7 +52,11 @@ export default class Home extends Vue {
     {icon: require('@icons/people.svg'), text:'Des déménageurs répertoriés viendront proposer leur services'},
     {icon: require('@icons/payment.svg'), text:'Je prépaie en ligne. La somme sera verséee une fois le déménagement fini'},
     {icon: require('@icons/star_plain.svg'), text:'Je laisse un avis et une note sur les déménageurs'},
-  ]
+  ];
+
+  handlePathSelect(path: svgPath) {
+    router.push(`/movers/${path.id}`);
+  }
 
 }
 </script>
@@ -98,11 +107,11 @@ section.help {
       display: flex;
       flex: 0 1 auto;
       flex-flow: column nowrap;
-      width: 180px;
+      width: 220px;
       margin: 15px;
       height: 240px;
       padding: 20px 10px 20px 10px;
-      box-shadow: 0 0 10px rgba(10,10,10,0.2);
+      box-shadow: 0 0 20px rgba(10,10,10,0.1);
       border-radius: 5px;
       background-color: white;
 
@@ -132,7 +141,7 @@ section.help {
         text-align: center;
         font-size: 15px;
         font-weight: bold;
-        margin-top: 20px;
+        margin-top: 30px;
       }
     }
   }
@@ -140,8 +149,7 @@ section.help {
 
 
 section.france-map {
-  background-color: $g60;
-  height: 600px;
+  height: auto;
 }
 
 
