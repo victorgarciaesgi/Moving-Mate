@@ -1,3 +1,4 @@
 export interface ISignupState {
-  showModal: boolean
+  showModal: boolean,
+  requesting: boolean,
 }

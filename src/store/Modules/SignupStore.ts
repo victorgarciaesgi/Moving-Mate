@@ -7,9 +7,15 @@ import { storeBuilder } from "./Store/Store";
 
 type SignupContext = ActionContext<ISignupState, RootState>;
 
+<<<<<<< Updated upstream
+=======
+const SIGNUP_URL = 'register';
+
+>>>>>>> Stashed changes
 //State
 const state: ISignupState = {
   showModal: false,
+  requesting: false,
 }
 
 const b = storeBuilder.module<ISignupState>("SignupModule", state);
@@ -40,8 +46,19 @@ namespace Mutations {
 // Actions
 namespace Actions {
   async function signupRequest(context:SignupContext, loginData: Object) {
-    let submitResponse = await Api.post('register', loginData)
-    return submitResponse;
+    let { success, status, data } = await Api.post(SIGNUP_URL, loginData);
+    state.requesting = false
+    if (success) {
+      return new ApiSuccess();
+    } else {
+      if (status === 401) {
+        return new ApiError('Veuillez remplir correctement les champs')
+      } else if (status === 404) {
+        return new ApiWarning(`Une erreur s'est produite`);
+      } else if (status === 0) {
+        return new ApiWarning(`Vérifiez votre connexion internet`);
+      }
+    }
   }
 
   export const actions = {

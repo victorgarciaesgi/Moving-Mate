@@ -2,7 +2,12 @@
   <transition name='hide'>
     <ul id="alertes-container" v-show='notificationList.length'>
       <transition-group name='alert'>
-        <li v-for='alert in notificationList' :key='alert.id' :type='alert.type'>
+        <component :is='isLink(alert)'
+          :to='alert.link'
+          v-for='alert in notificationList' 
+          :key='alert.id' 
+          :type='alert.type'
+          class='alert'>
           <div class='alert-icon'>
             <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
             <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
@@ -12,10 +17,10 @@
           <div class='alert-text'>
             <span>{{alert.message}}</span>
           </div>
-          <div class='alert-quit' @click='deleteAlert(alert)'>
+          <div class='alert-quit' @click.prevent='deleteAlert(alert)'>
             <img src='~@icons/quit.svg'>
           </div>
-        </li>
+        </component>
       </transition-group>
     </ul>
   </transition>
@@ -25,13 +30,26 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { NotificationsStore } from "@modules";
+import { INotification } from '@types';
+import { Get } from '@methods';
 
 @Component({})
 export default class Alerts extends Vue {
-  notificationList = NotificationsStore.state.notificationList;
-  notificationCount = NotificationsStore.state.notificationCount;
+
+  // @Get('test') test; 
+  get notificationList() {return NotificationsStore.state.notificationList}
+  get notificationCount() {return NotificationsStore.state.notificationCount;}
 
   deleteAlert = NotificationsStore.mutations.deleteAlert;
+
+  get isLink() {
+    return (notif: INotification) => {
+      if (notif.link) {
+        return 'router-link';
+      }
+      return 'li';
+    }
+  }
 
 }
 </script>
@@ -50,7 +68,7 @@ ul#alertes-container {
   display: flex;
   flex-direction: column;
 
-  li {
+  .alert {
     position: relative;
     height: auto;
     display: flex;
@@ -67,6 +85,12 @@ ul#alertes-container {
     background-color: white;
     line-height: 17px;
 
+    @at-root {
+      a#{&} {
+          cursor: pointer;
+      }
+    }
+
     div {
       display: flex;
       align-content: center;
@@ -79,12 +103,21 @@ ul#alertes-container {
       &.alert-icon {
         width: 50px;
         flex: 0 0 auto;
+        img {
+          height: 29px;
+          width: 29px;
+        }
       }
       
       &.alert-quit {
         width: 30px;
         cursor: pointer;
         flex: 0 0 auto;
+
+        img {
+          height: 20px;
+          width: 20px;
+        }
       }
     }
 
@@ -104,6 +137,17 @@ ul#alertes-container {
 .alert-enter,
 .alert-leave-to {
   opacity: 0;
+}
+
+.alert-enter {
+  transform: translateX(-100%);
+}
+
+.alert-enter-to {
+  transform: translateX(0);
+}
+
+.alert-leave-to {
   transform: translateY(-30px);
 }
 </style>

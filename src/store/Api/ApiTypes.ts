@@ -1,4 +1,4 @@
-import {NotificationsStore} from '@store';
+import { NotificationsStore } from '@store';
 
 export class AxiosSuccess {
   public success: boolean = true;
@@ -18,12 +18,12 @@ export class AxiosError {
   constructor(status?: number) {
     this.status = status;
     if (status == 0) {
-      NotificationsStore.actions.addNotification({type: 'warning', message: 'Vérifiez votre connexion Internet'})
+      NotificationsStore.actions.addNotification({ type: 'warning', message: 'Vérifiez votre connexion Internet' })
     }
   }
 }
 
-export type ApiResponse = ApiSuccess|ApiError|ApiWarning;
+export type ApiResponse = ApiSuccess | ApiError | ApiWarning;
 
 export class ApiSuccess {
   public success: boolean = true;
@@ -33,7 +33,7 @@ export class ApiSuccess {
 
   constructor(message?: string, data?: any) {
     this.message = message;
-    this.data = data?data:{};
+    this.data = data ? data : {};
   }
 }
 

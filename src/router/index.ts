@@ -20,32 +20,34 @@ const Rooter = new VueRouter({
 
 // Before each route hook test auth
 Rooter.beforeEach(async (to, from, next) => {
-  console.log(from);
-  if (LoginStore.state.sessionChecked) {
-    ProgressBar.mutations.start();
-    if (!to.meta.contentProp) {
-      document.title = `${to.name} - MovingMate`;
-    }
-    if (to.matched.some(m => m.meta.requiresAuth)) {
-      if (LoginStore.state.isLoggedIn) {
-        if (to.meta.asyncData) {
-          await getRouteData(to);
-        }
-        next(ProgressBar.mutations.finish());
-      }
-      else {
-        ProgressBar.mutations.hide();
-        LoginStore.mutations.showLoginRoute(to.fullPath);
-      }
-    } else {
+  console.log(from)
+  if (!LoginStore.state.sessionChecked) {
+    await LoginStore.actions.checkUserSession();
+  } 
+  ProgressBar.mutations.start();
+  if (!to.meta.contentProp) {
+    document.title = `${to.name} - MovingMate`;
+  }
+  if (to.matched.some(m => m.meta.requiresAuth)) {
+    if (LoginStore.state.isLoggedIn) {
       if (to.meta.asyncData) {
         await getRouteData(to);
       }
       next(ProgressBar.mutations.finish());
     }
+    else {
+      LoginStore.mutations.showLoginRoute(to.fullPath);
+      if (from.name) {
+        ProgressBar.mutations.hide();
+      } else {
+        next('/');
+      }
+    }
   } else {
-    await LoginStore.actions.checkUserSession();
-    next();
+    if (to.meta.asyncData) {
+      await getRouteData(to);
+    }
+    next(ProgressBar.mutations.finish());
   }
 })
 

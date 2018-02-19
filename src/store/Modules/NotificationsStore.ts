@@ -49,7 +49,8 @@ namespace Actions {
   async function addNotification(context: NotificationContext, alert: INotification) {
     alert = merge(alert, {
       id: state.notificationCount,
-      isNotif: alert.isNotif || false
+      isNotif: alert.isNotif || false,
+      link: 'zad'
     })
     NotificationsModule.mutations.addAlert(alert);
     await timeout(TIMEOUT);

@@ -3,6 +3,7 @@ const helpers = require('./helpers');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+
 const baseConfig = {
   entry: {
     'bundle': helpers.root('/src/main.ts'),

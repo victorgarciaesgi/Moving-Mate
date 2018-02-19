@@ -1,10 +1,34 @@
 import $ from 'jquery';
+import "reflect-metadata";
 
 export function timeout(duration: number): Promise<{}> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {resolve()}, duration);
   })
 };
+
+export function Get(randomData: string): PropertyDecorator {
+  return (target, propertyKey: string) => {
+    var _val = target[propertyKey];
+
+    // property getter
+    var getter = function () {
+      return "Ragularuban(" + _val + ")";
+    };
+
+    // property setter
+    var setter = function (newVal) {
+      _val = newVal;
+    };
+
+    // Create new property with getter and setter
+    Object.defineProperty(target, propertyKey, {
+      get: getter,
+      set: setter
+    });
+  }
+}
+
 
 export function calculatePopupPosition(origin: HTMLElement, target: HTMLElement) {
   let $origin = $(origin);

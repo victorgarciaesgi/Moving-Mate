@@ -10,6 +10,7 @@ const webpackConfig = require('./webpack.config.base');
 const helpers = require('./helpers');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const env = require('../environment/prod.env');
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
 
 const extractSass = new ExtractTextPlugin({
   filename: 'css/[name].[contenthash].css',
@@ -96,8 +97,16 @@ const configProd = {
         minifyURLs: true
       },
       chunksSortMode: 'dependency',
+      serviceWorker: 'dist/service-worker.js'
     }),
-
+    ,
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'MovingMate',
+      filename: 'service-worker.js',
+      staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      minify: true,
+      stripPrefix: 'dist/'
+    }),
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),
