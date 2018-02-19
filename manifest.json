@@ -1,0 +1,8 @@
+{
+  "name": "Moving Mate",
+  "short_name": "Moving-M",
+  "start_url": "/",
+  "background_color": "#f2f3f5",
+  "display": "standalone",
+  "theme_color": "#4975BA"
+}
