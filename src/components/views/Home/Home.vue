@@ -1,6 +1,6 @@
 <template>
   <div class='home'>
-    <section class='image-home'>
+    <section class='image-home' v-bg-blur:local.jpg="'home_image'">
       <div class='background-mask'></div>
     </section>
 
@@ -67,10 +67,8 @@ section{
 }
 
 section.image-home {
-  background-image: url('~@images/home_image.jpg');
   position: relative;
   height: 500px;
-  @include bg-center;
 
   .background-mask {
     position: absolute;

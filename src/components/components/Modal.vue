@@ -1,13 +1,13 @@
 <template>
   <div v-if='show' class='modal-base' @click='closeModal()' 
     :class='{
-      full: !window
+      full: !isPopup
     }'>
     <div class="modal-window" @click.stop :style='{
         maxHeight: height?`${height}px`:"",
         width: width?`${width}px`:"",
       }'>
-      <div class='header'>
+      <div class='header' v-if='isPopup'>
         <div class='header-slot'>
           <slot name='header'></slot>
         </div>
@@ -35,7 +35,7 @@ import { Prop, Watch } from "vue-property-decorator";
 export default class Modal extends Vue {
   
   @Prop() show: boolean;
-  @Prop() window: boolean;
+  @Prop({required: false, default: true}) isPopup: boolean;
   @Prop({required: false}) height: number;
   @Prop({required: false}) width: number;
 
@@ -63,7 +63,11 @@ export default class Modal extends Vue {
 
   &.full{
     z-index: 2;
-    background-color: $w245
+    background-color: $w245;
+  
+    .modal-window {
+      border-radius: 5px;
+    }
   }
 
   .modal-window{
@@ -122,7 +126,7 @@ export default class Modal extends Vue {
       height: 50px;
       align-items: center;
       align-content: center;
-      justify-content: flex-end;
+      justify-content: center;
     }
 
   }

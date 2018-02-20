@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
-    <Modal :show='show' @close='close()' :width='400' :window='window'>
+    <Modal :show='show' @close='close()' :width='400' :isPopup='isPopup'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 10px 20px 0px 20px'>
         <FormText type='email' placeholder='Adresse mail'
@@ -21,7 +21,7 @@
 
       </div>
       <template slot='footer'>
-        <FormButton @click='close()' v-if='window'>Annuler</FormButton>
+        <FormButton @click='close()' v-if='isPopup'>Annuler</FormButton>
         <FormButton type='submit' :submitting='submitting' :disabled='$v.SignupForm.$invalid' color='blue'>S'inscrire</FormButton>
       </template>
     </Modal>
@@ -62,7 +62,7 @@ export default class Inscription extends Vue {
 
   addNotification;
 
-  @Prop({default: true}) window: boolean;
+  @Prop({default: true}) isPopup: boolean;
   @Prop({required: false, default: true}) show: boolean;
 
   public infoMessage: string = '';
@@ -90,20 +90,20 @@ export default class Inscription extends Vue {
       this.email = '';
       this.username = '';
       this.plainPassword = {
-        first: 'a',
-        second: 'a'
+        first: '',
+        second: ''
       }
     }
   };
 
   close(reset?: boolean) {
-    if (this.window) {
-      this.closeModal();
-      this.SignupForm.reset();
-    } else if (reset) {
+    if (this.isPopup) {
       this.closeModal();
       this.SignupForm.reset();
       this.$v.$reset();
+    } else if (reset) {
+      this.closeModal();
+      this.SignupForm.reset();
     }
   }
 

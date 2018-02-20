@@ -74,7 +74,9 @@ namespace Getters {
 // Mutations
 namespace Mutations {
   function showLogin(state: ILoginState) {
-    state.showModal = true;
+    if(!state.isLoggedIn) {
+      state.showModal = true;
+    }
   }
   function showLoginRoute(state: ILoginState, route: string) {
     state.showModal = true;
@@ -87,13 +89,13 @@ namespace Mutations {
   function sessionChecked(state: ILoginState) {
     state.sessionChecked = true;
   }
-  function connectUser(state: ILoginState, {userData, token}) {
+  function connectUser(state: ILoginState, {userData, token, redirect = null}) {
     state.userInfos = merge(state.userInfos, userData);
     state.userInfos.userToken = token;
     state.isLoggedIn = true;
     addAuthHeaders();
-    if (state.RouteAfter) {
-      router.push(state.RouteAfter);
+    if (state.RouteAfter || redirect) {
+      router.push(state.RouteAfter?state.RouteAfter:redirect);
     }
   }
   function disconnectUser(state: ILoginState) {
@@ -115,12 +117,12 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function connexionRequest(context: LoginContext, loginData: Object): Promise<ApiResponse> {
+  async function connexionRequest(context: LoginContext, {loginData, redirect}): Promise<ApiResponse> {
     try {
       state.requesting = true;
       let { success, status, data } = await Api.post(LOGIN_URL, loginData);
       JWT.set(data.token);
-      LoginModule.actions.connexionSuccess(data.token);
+      LoginModule.actions.connexionSuccess({token: data.token, redirect});
       return new ApiSuccess();
     } catch(err) {
       if (err.status === 401) {
@@ -134,10 +136,10 @@ namespace Actions {
       state.requesting = false;
     }
   }
-  async function connexionSuccess(context: LoginContext, token: string) {
+  async function connexionSuccess(context: LoginContext, {token, redirect}) {
     let userData = await jwtDecode(token);
     console.log(userData);
-    LoginModule.mutations.connectUser({userData, token});
+    LoginModule.mutations.connectUser({userData, token, redirect});
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
   }
   function disconnectRequest() {

@@ -1,13 +1,11 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate>
-    <Modal :show='show' @close='modalClosed' :width='400' :window='window'>
+    <Modal :show='show' @close='modalClosed' :width='400' :isPopup='isPopup'>
         <span slot='header'>Connexion</span>
         <div slot='content' style='padding: 10px 20px 0px 20px'>
-
           <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
             {{infoMessage}}
           </div>
-
           <FormText type='email' placeholder='Adresse mail' :error='false'
             :icon='images._username'  v-model='LoginForm._username' :vl='$v.LoginForm._username'/>
           <FormText type='password' placeholder='Mot de passe' :error='false'
@@ -16,7 +14,7 @@
         </div>
         <template slot='footer'>
           <FormButton @click='modalClosed(true)'>Annuler</FormButton>
-          <FormButton type='submit' :submitting='loginState.requesting' :disabled='$v.LoginForm.$invalid' color='blue'>Valider</FormButton>
+          <FormButton type='submit' :submitting='loginState.requesting' :disabled='$v.LoginForm.$invalid' color='blue'>Se connecter</FormButton>
         </template>
     </Modal>
   </form>
@@ -46,7 +44,8 @@ import { LoginStore, NotificationsStore } from '@modules';
 export default class Connexion extends Vue {
 
   @Prop({required: false, default: true}) show: boolean;
-  @Prop({default: true}) window: boolean;
+  @Prop({default: true}) isPopup: boolean;
+  @Prop({required: false}) redirect: string;
 
   private loginState = LoginStore.state;
   private connexionRequest = LoginStore.actions.connexionRequest;
@@ -83,12 +82,11 @@ export default class Connexion extends Vue {
 
   async submitForm(){
     this.infoMessage = '';
-    let loginResponse = await this.connexionRequest(this.LoginForm);
-    if (!loginResponse.success){
+    let loginResponse = await this.connexionRequest({loginData: this.LoginForm, redirect: this.redirect});
+    if (!loginResponse.success) {
       this.errorType = loginResponse.type;
       this.infoMessage = loginResponse.message;
     }
-    
   }
 }
 </script>

@@ -27,6 +27,7 @@ Rooter.beforeEach(async (to, from, next) => {
   if (!to.meta.contentProp) {
     document.title = `${to.name} - MovingMate`;
   }
+  console.log(to)
   if (to.matched.some(m => m.meta.requiresAuth)) {
     if (LoginStore.state.isLoggedIn) {
       if (to.meta.asyncData) {
@@ -42,6 +43,8 @@ Rooter.beforeEach(async (to, from, next) => {
         next('/');
       }
     }
+  } else if (to.matched.some(m => m.meta.noAuth) && LoginStore.state.isLoggedIn) {
+    next('/');
   } else {
     if (to.meta.asyncData) {
       await getRouteData(to);

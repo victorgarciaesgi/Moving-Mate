@@ -39,12 +39,23 @@ export const routesList: RouteConfig[]  = [
 
   },
   { path: '/inscription', name: 'Inscription', 
-    component: () => import('@components/Inscription.vue'), 
-    props: { window: false },
+    component: () => import('@components/Inscription.vue'),
+    meta: {
+      noAuth: true
+    },
+    props: { 
+      isPopup: false 
+    },
   },
   { path: '/connexion', name: 'Connexion',
-    component: () => import('@components/Connexion.vue'), 
-    props: { window: false },
+    component: () => import('@components/Connexion.vue'),
+    meta: {
+      noAuth: true
+    },
+    props: {
+      isPopup: false,
+      redirect: '/'
+    },
   },
   { path: '/*',
     alias: '404',
