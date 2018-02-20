@@ -69,8 +69,8 @@ export default class MapViewer extends Vue {
     this.$emit("pathSelected", path);
   }
 
-  mouseHoverHandler(path: svgPath, event: MouseEvent) {
-    let pathRect = event.srcElement.getBoundingClientRect();
+  mouseHoverHandler(path: svgPath, event: any) {
+    let pathRect = event.target.getBoundingClientRect();
     let svgRect = this.$refs["svg"].getBoundingClientRect();
     this.infoPath = {
       show: true,

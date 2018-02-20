@@ -7,11 +7,8 @@ import { storeBuilder } from "./Store/Store";
 
 type SignupContext = ActionContext<ISignupState, RootState>;
 
-<<<<<<< Updated upstream
-=======
 const SIGNUP_URL = 'register';
 
->>>>>>> Stashed changes
 //State
 const state: ISignupState = {
   showModal: false,

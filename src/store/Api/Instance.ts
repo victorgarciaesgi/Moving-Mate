@@ -5,15 +5,21 @@ import * as Types from './ApiTypes';
 
 const API_URL = process.env.API_URL;
 
-axios.interceptors.response.use(
-  (response) => {
-    console.log(response)
-    return response
-  },
-  (error) => {
-    return Promise.reject(error)
-  }
-)
+// axios.interceptors.request.use((request) => {
+//   console.log(request);
+//   return request;
+// })
+
+// axios.interceptors.response.use(
+//   (response) => {
+//     console.log(response)
+//     return response
+//   },
+//   (error) => {
+//     console.log(error);
+//     return Promise.reject(error)
+//   }
+// )
 
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -29,12 +35,11 @@ export const addAuthHeaders = () => {
 
 export const removeAuthHeaders = () => {
   delete axiosInstance.defaults.headers.Authorization;
-  console.log(axiosInstance.defaults);
 };
 
 async function Request(type: string, path: string, payload: any): Promise<Types.AxiosSuccess | Types.AxiosError> {
   try {
-    console.log(axiosInstance.defaults)
+    console.log('Axios Headers:',axiosInstance.defaults)
     if (type === 'post' || 'put') {
       let response: AxiosResponse = await axiosInstance[type](path, payload)
       console.log(new Types.AxiosSuccess(response.data))
@@ -47,10 +52,11 @@ async function Request(type: string, path: string, payload: any): Promise<Types.
     }
   }
   catch (error) {
+    console.log('Request Error:', error);
     if (error.response) {
-      return new Types.AxiosError(error.response.status);
+      return Promise.reject(new Types.AxiosError(error.response.status));
     } else {
-      return new Types.AxiosError(0);
+      return Promise.reject(new Types.AxiosError(0));
     }
   }
 }

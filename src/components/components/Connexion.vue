@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <form @submit.prevent='submitForm()' novalidate>
     <Modal :show='show' @close='modalClosed' :width='400' :window='window'>
         <span slot='header'>Connexion</span>

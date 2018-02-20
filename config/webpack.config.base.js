@@ -51,7 +51,7 @@ const baseConfig = {
                 esModule: true
               }
             }],
-            ts: 'ts-loader!tslint-loader',
+            ts: 'ts-loader',
           }
         }
       }

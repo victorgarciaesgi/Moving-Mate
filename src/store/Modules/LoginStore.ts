@@ -116,21 +116,22 @@ namespace Mutations {
 // Actions
 namespace Actions {
   async function connexionRequest(context: LoginContext, loginData: Object): Promise<ApiResponse> {
-    state.requesting = true;
-    let { success, status, data } = await Api.post(LOGIN_URL, loginData);
-    state.requesting = false;
-    if (success) {
+    try {
+      state.requesting = true;
+      let { success, status, data } = await Api.post(LOGIN_URL, loginData);
       JWT.set(data.token);
       LoginModule.actions.connexionSuccess(data.token);
       return new ApiSuccess();
-    } else {
-      if (status === 401) {
+    } catch(err) {
+      if (err.status === 401) {
         return new ApiError('Adresse email ou mot de passe incorrect')
-      } else if (status === 404) {
+      } else if (err.status === 404) {
         return new ApiWarning(`Une erreur s'est produite`);
-      } else if (status === 0) {
+      } else if (err.status === 0) {
         return new ApiWarning(`Vérifiez votre connexion internet`);
       }
+    } finally {
+      state.requesting = false;
     }
   }
   async function connexionSuccess(context: LoginContext, token: string) {

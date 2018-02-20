@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
     <Modal :show='show' @close='close()' :width='400' :window='window'>
       <span slot='header'>Inscription</span>
@@ -10,10 +10,10 @@
             :icon="images.username"  v-model="SignupForm.username" :vl='$v.SignupForm.username'/>
 
         <FormText type='password' placeholder='Mot de passe'
-            :icon="images['plainPassword[first]']"  v-model="SignupForm['plainPassword[first]']" :vl='$v.SignupForm["plainPassword[first]"]'/>
+            :icon="images.plainPassword.first"  v-model="SignupForm.plainPassword.first" :vl='$v.SignupForm.plainPassword.first'/>
 
         <FormText type="password" placeholder='Confirmez le mot de passe'
-            :icon="images['plainPassword[second]']"  v-model="SignupForm['plainPassword[second]']" :vl='$v.SignupForm["plainPassword[second]"]'/>
+            :icon="images.plainPassword.second"  v-model="SignupForm.plainPassword.second" :vl='$v.SignupForm.plainPassword.second'/>
 
         <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
           {{infoMessage}}
@@ -32,17 +32,12 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { Mutation, Action, namespace } from "vuex-class";
 
 import { Modal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
+import { SignupStore, NotificationsStore } from '@store';
 import { IValidator } from 'vuelidate';
-
-
-const SignupActions = namespace('SignupModule', Action);
-const SignupMutation = namespace('SignupModule', Mutation);
-const NotifAction = namespace('NotificationsModule', Action);
 
 @Component({
   components: {
@@ -52,18 +47,20 @@ const NotifAction = namespace('NotificationsModule', Action);
     SignupForm: {
       email: {required, email},
       username: {required, minLength: minLength(4), maxLength: maxLength(20)},
-      "plainPassword[first]": {required},
-      "plainPassword[second]": {required, sameAs: sameAs('fos_user_registration_form[plainPassword][first]')},
+      plainPassword: {
+        first: {required},
+        second: {required, sameAs: sameAs('first')},
+      }
     }
   }
 })
 export default class Inscription extends Vue {
 
-  @SignupActions signupRequest;
-  @SignupMutation showSignup;
-  @SignupMutation closeModal;
+  private signupRequest = SignupStore.actions.signupRequest;
+  private showSignup = SignupStore.mutations.showSignup;
+  private closeModal = SignupStore.mutations.closeModal;
 
-  @NotifAction addNotification;
+  addNotification;
 
   @Prop({default: true}) window: boolean;
   @Prop({required: false, default: true}) show: boolean;
@@ -77,19 +74,25 @@ export default class Inscription extends Vue {
   public images = {
     email: require('@icons/mail.svg'),
     username: require('@icons/surname.svg'),
-    "plainPassword[first]": require('@icons/mail.svg'),
-    "plainPassword[second]": require('@icons/password.svg')
+    plainPassword: {
+      first:require('@icons/mail.svg'),
+      second: require('@icons/password.svg')
+    }
   }
   public SignupForm = {
     email: null,
     username: 'victor2',
-    "plainPassword[first]": 'aaaaa',
-    "plainPassword[second]": 'aaaaa',
+    plainPassword: {
+      first: 'aaaaa',
+      second: 'aaaaa'
+    },
     reset() {
       this.email = '';
       this.username = '';
-      this["plainPassword[first]"] = '';
-      this["plainPassword[second]"] = '';
+      this.plainPassword = {
+        first: 'a',
+        second: 'a'
+      }
     }
   };
 

@@ -46,11 +46,9 @@ export default class SvgIcon extends Vue {
     display: flex;
     flex: 0 0 auto;
 
-    &.relative {
-      /deep/ svg {
-        height: 100%;
-        width: 100%;
-      }
+    &.relative svg {
+      height: 100%;
+      width: 100%;
     }
   }
 </style>

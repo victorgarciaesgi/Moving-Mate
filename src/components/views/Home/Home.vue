@@ -1,32 +1,27 @@
-<template lang='html'>
-  <transition name='slide'>
-    <div class='home'>
-      
-      <section class='image-home'>
-        <div class='background-mask'></div>
-      </section>
+<template>
+  <div class='home'>
+    <section class='image-home'>
+      <div class='background-mask'></div>
+    </section>
 
-      <section class='help '>
-        <span class='title'>Comment ça marche?</span>
-        <ul class='help-wrapper'>
-          <li v-for='help in helps'>
-            <div class='icon'>
-              <div class='icon-circle'>
-                <SvgIcon :src='help.icon' :size='70' color='#FFF'></SvgIcon>
-              </div>
+    <section class='help '>
+      <span class='title'>Comment ça marche?</span>
+      <ul class='help-wrapper'>
+        <li v-for='help in helps' :key='help.text' v-once>
+          <div class='icon'>
+            <div class='icon-circle'>
+              <SvgIcon :src='help.icon' :size='70' color='#FFF'></SvgIcon>
             </div>
-            <div class='text'>{{help.text}}</div>
-          </li>
-        </ul>
-      </section>
+          </div>
+          <div class='text'>{{help.text}}</div>
+        </li>
+      </ul>
+    </section>
 
-      <section class='france-map line-separator'>
-        <MapViewer svgPath='departements' @pathSelected='handlePathSelect' />
-      </section>
-
-      
-    </div>
-  </transition>
+    <section class='france-map line-separator'>
+      <MapViewer svgPath='departements' @pathSelected='handlePathSelect' />
+    </section>
+  </div>
 </template>
 
 <script lang="ts">

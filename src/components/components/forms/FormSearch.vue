@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <div>
     <div class="input-container">
       <input  class='input-form'

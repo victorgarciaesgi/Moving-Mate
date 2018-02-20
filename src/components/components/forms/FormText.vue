@@ -28,7 +28,7 @@
 
         <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
         <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
-        <div v-if='!dirty && vl.required' class="form-valid-icon form-required"></div>
+        <div v-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
 
         <div class='popup-message' v-if='description && popupPosition.display'
             :style='popupPosition'>
@@ -129,6 +129,12 @@ export default class FormText extends Vue {
     }
   }
 
+  mounted() {
+    if (this.value.trim().length) {
+      this.vl.$touch();
+    }
+  }
+
   get filterErrors() {
     return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
   }
@@ -165,6 +171,12 @@ export default class FormText extends Vue {
     }
   }
 
+  &:last-child {
+    .errorMessage {
+      border: none;
+    }
+  }
+
 
   .errorMessage {
     display: flex;
@@ -178,6 +190,8 @@ export default class FormText extends Vue {
     padding-bottom: 10px;
     border-bottom: 1px solid $w220;
     color: $red1;
+
+    
 
     ul {
      display: flex;

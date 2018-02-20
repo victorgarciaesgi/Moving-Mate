@@ -1,11 +1,11 @@
-import { ILoginState, INotificationState, ISearchMovingState, ISignupState,
+import { ILoginState, INotificationState, IMovingState, ISignupState,
 IProgressState, IGlobalState} from '@types';
 import {Route} from 'vue-router'; 
 
 export interface RootState {
   LoginModule: ILoginState,
   NotificationsModule: INotificationState,
-  SearchMovingModule: ISearchMovingState
+  MovingModule: IMovingState,
   SignupModule: ISignupState,
   GlobalModule: IGlobalState,
   route: Route;

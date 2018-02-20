@@ -7,6 +7,7 @@ const css = require('@css');
 const API_URL = "https://geo.api.gouv.fr/communes?boost=population&nom=";
 
 let TIMER = null;
+let TIMEOUT = null;
 let CUT = null;
 
 //State
@@ -33,6 +34,7 @@ namespace Getters {
 // Mutations
 namespace Mutations {
   function start(state: IProgressState) {
+    clearTimeout(TIMEOUT);
     state.show = true
     state.canSuccess = true
     if (TIMER) {
@@ -68,7 +70,7 @@ namespace Mutations {
   function hide(state: IProgressState) {
     clearInterval(TIMER);
     TIMER = null;
-    setTimeout(() => {
+    TIMEOUT = setTimeout(() => {
       state.show = false;
       state.percent = 0;
       Vue.nextTick(() => {

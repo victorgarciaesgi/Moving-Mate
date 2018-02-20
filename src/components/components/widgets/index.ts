@@ -3,3 +3,4 @@ export {default as StarRating} from './StarRating/StarRating.vue';
 export {default as Alerts} from './Alerts.vue';
 export {default as ProgressBarComponent} from './ProgressBar.vue';
 export {default as MapViewer} from './MapViewer/MapViewer.vue';
+export {default as MovingCard} from './MovingCard/MovingCard.vue';

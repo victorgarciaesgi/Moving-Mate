@@ -1,7 +1,5 @@
-<template lang='html'>
-  <transition name='slide'>
-    <h1>Moving</h1>
-  </transition>
+<template>
+
 </template>
 
 <script lang="ts">
@@ -10,7 +8,7 @@ import Component from 'vue-class-component';
 import { State, Getter, Mutation } from 'vuex-class';
 
 @Component({})
-export default class Moving extends Vue {
+export default class MovingList extends Vue {
 
 }
 </script>

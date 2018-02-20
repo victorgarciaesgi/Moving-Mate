@@ -17,8 +17,13 @@ export class AxiosError {
 
   constructor(status?: number) {
     this.status = status;
-    if (status == 0) {
-      NotificationsStore.actions.addNotification({ type: 'warning', message: 'Vérifiez votre connexion Internet' })
+    let message;
+    if (status != 401) {
+      if (status == 0) message = 'Vérifiez votre connexion Internet';
+      else {message = 'Un problème est survenu'}
+      NotificationsStore.actions.addNotification({ type: 'warning', message: message })
+    } else {
+      NotificationsStore.actions.addNotification({ type: 'error', message: `Vous n'avez pas accès à ces informations` })
     }
   }
 }

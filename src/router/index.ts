@@ -20,7 +20,6 @@ const Rooter = new VueRouter({
 
 // Before each route hook test auth
 Rooter.beforeEach(async (to, from, next) => {
-  console.log(from)
   if (!LoginStore.state.sessionChecked) {
     await LoginStore.actions.checkUserSession();
   } 
@@ -57,7 +56,6 @@ const getRouteData = async (to) => {
     await to.meta.asyncData();
   } catch(err) {
     ProgressBar.mutations.fail();
-    console.log(err);
   }
 }
 

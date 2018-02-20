@@ -31,15 +31,11 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { NotificationsStore } from "@modules";
 import { INotification } from '@types';
-import { Get } from '@methods';
 
 @Component({})
 export default class Alerts extends Vue {
 
-  // @Get('test') test; 
   get notificationList() {return NotificationsStore.state.notificationList}
-  get notificationCount() {return NotificationsStore.state.notificationCount;}
-
   deleteAlert = NotificationsStore.mutations.deleteAlert;
 
   get isLink() {

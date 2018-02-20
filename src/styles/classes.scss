@@ -9,7 +9,6 @@
   width: 20px;
   @include translateY(-50%);
   @include bg-center;
-  cursor: pointer;
 
   &.form-valid{
     background-image: url('~@icons/form-valid.svg');
@@ -21,6 +20,8 @@
     background-image: url('~@icons/form-required.svg');
     height: 15px;
     width: 15px;
+    right: 7px;
+    cursor: pointer;
     &:hover:after{
       content:"Champs requis";
       background-color: $g70;
@@ -31,7 +32,7 @@
       left: 50%;
       @include translateX(-50%);
       text-align: center;
-      top: calc(-100% - 20px);
+      top: calc(-100% - 25px);
       border-radius: 3px;
       font-size: 11px;
       opacity: 1;
