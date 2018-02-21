@@ -4,30 +4,23 @@ import router from '@src/router'
 import * as Types from './ApiTypes';
 
 const API_URL = process.env.API_URL;
-
-// axios.interceptors.request.use((request) => {
-//   console.log(request);
-//   return request;
-// })
-
-// axios.interceptors.response.use(
-//   (response) => {
-//     console.log(response)
-//     return response
-//   },
-//   (error) => {
-//     console.log(error);
-//     return Promise.reject(error)
-//   }
-// )
-
-
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
   }
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    console.log(response)
+    return response
+  },
+  (error) => {
+    console.log('Request Error: ', error.response);
+    return Promise.reject(error)
+  }
+)
 
 export const addAuthHeaders = () => {
   axiosInstance.defaults.headers.Authorization = `Bearer ${LoginModule.state.userInfos.userToken}`;
@@ -52,9 +45,8 @@ async function Request(type: string, path: string, payload: any): Promise<Types.
     }
   }
   catch (error) {
-    console.log('Request Error:', error);
     if (error.response) {
-      return Promise.reject(new Types.AxiosError(error.response.status));
+      return Promise.reject(new Types.AxiosError(error.response.status, error.response.data.message));
     } else {
       return Promise.reject(new Types.AxiosError(0));
     }

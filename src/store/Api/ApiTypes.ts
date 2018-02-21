@@ -15,15 +15,13 @@ export class AxiosError {
   public status: number;
   public data: any;
 
-  constructor(status?: number) {
+  constructor(status?: number, message?: string) {
     this.status = status;
-    let message;
     if (status != 401) {
       if (status == 0) message = 'Vérifiez votre connexion Internet';
-      else {message = 'Un problème est survenu'}
       NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } else {
-      NotificationsStore.actions.addNotification({ type: 'error', message: `Vous n'avez pas accès à ces informations` })
+      NotificationsStore.actions.addNotification({ type: 'error', message: message })
     }
   }
 }

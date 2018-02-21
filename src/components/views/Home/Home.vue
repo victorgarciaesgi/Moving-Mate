@@ -74,6 +74,7 @@ section.image-home {
     position: absolute;
     height: 100%;
     width: 100%;
+    z-index: 1;
     background-color: transparentize($g20, 0.7);
   }
 }

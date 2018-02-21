@@ -27,6 +27,7 @@
       "@icons/*": ["./assets/icons/*"],
       "@css": ["./styles/variables.scss"],
       "@utils": ["./utils/index.ts"],
+      "@utils/*": ["./utils/*"],
       "@router": ["./router/index.ts"],
       "@validators": ["./utils/validators.ts"],
       "@methods": ["./utils/methods.ts"],

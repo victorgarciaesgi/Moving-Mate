@@ -61,7 +61,15 @@ const webpackDevConfig = {
     historyApiFallback: true,
     hot: true,
     quiet: true,
-    inline: true
+    inline: true,
+    // https: {
+    //   key: fs.readFileSync(helpers.root('/cert/server.pem')),
+    //   cert: fs.readFileSync(helpers.root('/cert/server.pem'))
+    // },
+    after(app) {
+      console.log(`Server running on port 5000`);
+    }
+
   },
   devtool: 'cheap-module-eval-source-map'
 }

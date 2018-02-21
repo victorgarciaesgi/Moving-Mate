@@ -31,8 +31,13 @@ namespace Getters {
 
 // Mutations
 namespace Mutations {
+  function updateMovingList(state: IMovingState, list: Array<any>) {
+    state.movingList = list;
+  }
+
+
   export const mutations = {
-    
+    updateMovingList: b.commit(updateMovingList)
   }
 }
 
@@ -43,7 +48,7 @@ namespace Actions {
     
     let { data } = await Api.get(MOVING_URL);
     if (data) {
-
+      Mutations.mutations.updateMovingList(data);
     } else {
       return
     }

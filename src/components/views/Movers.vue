@@ -1,7 +1,5 @@
 <template lang='html'>
-  <transition name='slide'>
-    <h1>Movers</h1>
-  </transition>
+  <h1>Movers</h1>
 </template>
 
 <script lang="ts">

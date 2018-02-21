@@ -70,8 +70,8 @@ ul#alertes-container {
     display: flex;
     flex-flow: row nowrap;
     width: 100%;
-    margin-top: 5px;
-    padding: 15px 10px 15px 0px;
+    margin-bottom: 5px;
+    padding: 13px 10px 13px 0px;
     box-shadow: 0 0 10px rgba(20, 20, 20, 0.2);
     font-size: 14px;
     color: $g90;
@@ -83,7 +83,7 @@ ul#alertes-container {
 
     @at-root {
       a#{&} {
-          cursor: pointer;
+        cursor: pointer;
       }
     }
 
@@ -100,8 +100,8 @@ ul#alertes-container {
         width: 50px;
         flex: 0 0 auto;
         img {
-          height: 29px;
-          width: 29px;
+          height: 25px;
+          width: 25px;
         }
       }
       
