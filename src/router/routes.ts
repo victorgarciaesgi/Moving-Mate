@@ -16,7 +16,7 @@ export const routesList: RouteConfig[]  = [
     props: true,
     meta: {
       async asyncData() {
-        await Stores.MovingStore.actions.fetchMoving();
+        await Stores.MovingStore.actions.fetchMoving({});
       }
     }
   },

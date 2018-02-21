@@ -1,4 +1,4 @@
-import { NotificationsStore } from '@store';
+import { NotificationsStore, LoginStore } from '@store';
 
 export class AxiosSuccess {
   public success: boolean = true;
@@ -21,6 +21,7 @@ export class AxiosError {
       if (status == 0) message = 'Vérifiez votre connexion Internet';
       NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } else {
+      LoginStore.actions.disconnectRequest();
       NotificationsStore.actions.addNotification({ type: 'error', message: message })
     }
   }

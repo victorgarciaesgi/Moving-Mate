@@ -5,7 +5,7 @@
     </section>
 
     <section class='help '>
-      <span class='title'>Comment ça marche?</span>
+      <span class='title'>Comment ça marche</span>
       <ul class='help-wrapper'>
         <li v-for='help in helps' :key='help.text' v-once>
           <div class='icon'>

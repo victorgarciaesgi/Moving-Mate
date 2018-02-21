@@ -126,16 +126,19 @@ ul#alertes-container {
   transition: all 0.6s;
 }
 
-.alert-enter-active,
-.alert-leave-active {
+
+
+.alert-enter-active, .alert-leave-active {
   transition: all 0.5s;
 }
-.alert-enter,
+
 .alert-leave-to {
   opacity: 0;
+  transform: translateY(-30px);
 }
 
 .alert-enter {
+  opacity: 0;
   transform: translateX(-100%);
 }
 
@@ -143,8 +146,5 @@ ul#alertes-container {
   transform: translateX(0);
 }
 
-.alert-leave-to {
-  transform: translateY(-30px);
-}
 </style>
 

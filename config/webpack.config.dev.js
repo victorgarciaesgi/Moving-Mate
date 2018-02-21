@@ -6,6 +6,7 @@ const helpers = require('./helpers');
 const merge = require('webpack-merge')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const webpackDashboard = require('webpack-dashboard/plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const autoprefixer = require('autoprefixer');
 
@@ -51,9 +52,10 @@ const webpackDevConfig = {
     new DefinePlugin({
       'process.env': env
     }),
+    new webpackDashboard(),
     new FriendlyErrorsPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NamedModulesPlugin()
+    new webpack.NamedModulesPlugin(),
   ],
   devServer: {
     contentBase: path.join(__dirname, "dist"),
@@ -61,15 +63,7 @@ const webpackDevConfig = {
     historyApiFallback: true,
     hot: true,
     quiet: true,
-    inline: true,
-    // https: {
-    //   key: fs.readFileSync(helpers.root('/cert/server.pem')),
-    //   cert: fs.readFileSync(helpers.root('/cert/server.pem'))
-    // },
-    after(app) {
-      console.log(`Server running on port 5000`);
-    }
-
+    inline: true
   },
   devtool: 'cheap-module-eval-source-map'
 }

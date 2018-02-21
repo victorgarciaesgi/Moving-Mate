@@ -41,12 +41,13 @@ async function Request(type: string, path: string, payload: any): Promise<Types.
       let response: AxiosResponse = await axiosInstance[type](path, {
         params: payload,
       })
-      return new Types.AxiosSuccess(response.data);;
+      return new Types.AxiosSuccess(response.data);
     }
   }
   catch (error) {
     if (error.response) {
-      return Promise.reject(new Types.AxiosError(error.response.status, error.response.data.message));
+      let message = error.response.data.message || error.response.data.error.message;
+      return Promise.reject(new Types.AxiosError(error.response.status, message));
     } else {
       return Promise.reject(new Types.AxiosError(0));
     }
