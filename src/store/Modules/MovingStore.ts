@@ -2,7 +2,7 @@ import { IMovingState } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
 import { RootState } from '../index';
 import { timeout } from '@methods';
-import { flatten } from 'lodash';
+import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import $ from 'jquery';
 import axios from 'axios';
@@ -42,8 +42,8 @@ namespace Mutations {
   }
 
   function updateSearchValue(state: IMovingState, newString: string) {
-    state.formSearchData.formSearchValue = newString;
     state.formSearchData.searchCommited = false;
+    state.formSearchData.formSearchValue = newString;
   }
 
   function updateSearchingState(state: IMovingState) {
@@ -62,14 +62,17 @@ namespace Mutations {
 // Actions
 namespace Actions {
 
-  async function fetchMoving(context, payload: Object) {
+  async function fetchMoving(context, payload: {search?: string}) {
+    if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
-    let { data } = await Api.get(MOVING_URL);
-    if (data) {
+    console.log(payload)
+    try {
+      let { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
+    } finally {
+      Mutations.mutations.updateSearchingState();
     }
-    Mutations.mutations.updateSearchingState();
   }
 
   async function fetchPlaces(context, payload: string) {
@@ -81,7 +84,7 @@ namespace Actions {
     let filteredValues = flatten(searchValues.map(m => m.data))
       .map(m => {
         if (m.codeDepartement && m.codeRegion) {m.type = 'ville';}
-        else if (m.codeRegion) { m.type = 'departement';} 
+        else if (m.codeRegion) { m.type = 'departement';}
         else  {m.type = 'region'}
         return m;
       })

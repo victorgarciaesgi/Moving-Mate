@@ -28,7 +28,7 @@
                   </span>
                 </li>
               </ul>
-              <div v-if='!placesResults.length && !searching' class='no-result'>
+              <div v-if='!placesResults.length && !searching && !searchCommited' class='no-result'>
                 Aucun résultat ☹️
               </div>
             </div>
@@ -78,7 +78,9 @@ import { MovingStore } from '@store';
   directives: {
     focus: {
       inserted(el, binding, vnode) {
-        el.focus();
+        if (!vnode.context['searchCommited']) {
+          el.focus();
+        }
       }
     } 
   },
@@ -113,6 +115,11 @@ export default class SearchMoving extends Vue {
     }
   }
 
+  handleNewSearch() {
+    MovingStore.mutations.updateSearchValue(this.placesResults[0].nom)
+    MovingStore.actions.fetchMoving({});
+  }
+
   getUserLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -123,19 +130,22 @@ export default class SearchMoving extends Vue {
 
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
-    if (newVal.trim().length > 0) {
-      this.searching = true;
-      await MovingStore.actions.fetchPlaces(newVal);
-    } else {
-      MovingStore.mutations.updateSearchList([]);
+    console.log(this.searchCommited)
+    if (!this.searchCommited) {
+      if (newVal.trim().length > 0) {
+        this.searching = true;
+        await MovingStore.actions.fetchPlaces(newVal);
+      } else {
+        MovingStore.mutations.updateSearchList([]);
+      }
+      this.searching = false;
     }
-    this.searching = false;
   }
 
   created() {
     this.handlePlacesSearch = debounce(e => {
       MovingStore.mutations.updateSearchValue(e);
-    }, 500)
+    }, 300)
   }
 
 }

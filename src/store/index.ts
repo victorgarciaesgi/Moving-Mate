@@ -13,7 +13,6 @@ export interface RootState {
 
 // export const DebugMode: boolean = process.env.DEBUG_MODE == true;
 export const DebugMode = false;
-console.log(DebugMode);
 
 export * from './Modules'
 export {default as EventBus} from './EventBus';

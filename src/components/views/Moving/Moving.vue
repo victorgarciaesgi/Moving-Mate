@@ -37,7 +37,7 @@ export default class Moving extends Vue {
 
   mounted() {
     if (this.search) {
-      MovingStore.mutations.updateSearchValue(this.search);
+      // MovingStore.mutations.updateSearchValue(this.search);
     }
   }
 
