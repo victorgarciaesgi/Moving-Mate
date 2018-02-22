@@ -12,9 +12,9 @@ Vue.use(VueRouter);
 const Rooter = new VueRouter({
   mode: 'history',
   fallback: false,
-  scrollBehavior(to, from, savedPosition) {
-    return { x: 0, y: 0 }
-  },
+  // scrollBehavior(to, from, savedPosition) {
+  //   return { x: 0, y: 0 }
+  // },
   routes: routesList
 })
 

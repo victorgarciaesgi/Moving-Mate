@@ -95,9 +95,23 @@ namespace Actions {
     Mutations.mutations.updateSearchList(filteredValues);
   }
 
+  async function fetchUserLocation(context) {
+    return await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(async(position) => {
+        let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+        console.log(data);
+        Mutations.mutations.updateSearchValue(data[0].nom);
+        state.formSearchData.searchCommited = true;
+        resolve();
+      });
+    })
+  }
+
   export const actions = {
     fetchMoving: b.dispatch(fetchMoving),
-    fetchPlaces: b.dispatch(fetchPlaces)
+    fetchPlaces: b.dispatch(fetchPlaces),
+    fetchUserLocation: b.dispatch(fetchUserLocation)
+
   }
 }
 

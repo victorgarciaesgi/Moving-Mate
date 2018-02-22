@@ -189,12 +189,10 @@ div.header-wrapper{
           margin-right: 5px;
 
           &:not(.router-link-active):hover li.route{
-            border-color: $mainStyle;
             color: $g40;
           }
           &.router-link-active li.route{
-            border-color: $mainStyle;
-            color: $g40;
+            color: $mainStyle;
             /deep/ svg { fill: $mainStyle }
           }
 
@@ -204,9 +202,9 @@ div.header-wrapper{
             justify-content: center;
             align-items: center;
             align-content: center;
-            font-size: 14px;
-            padding: 7px 5px 5px 5px;
+            font-size: 15px;
             font-weight: bold;
+            padding: 7px 5px 5px 5px;
             border-bottom: 3px solid transparent;
 
             span {padding: 0 5px 0 5px}
@@ -225,7 +223,7 @@ div.header-wrapper{
         flex-flow: row nowrap;
         flex: 1 0 auto;
         justify-content: flex-end;
-        padding: 8px 15px 8px 15px;
+        padding: 11px 15px 11px 15px;
 
         %header-button {
           display: flex;
@@ -233,24 +231,17 @@ div.header-wrapper{
           justify-content: center;
           align-items: center;
           align-content: center;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: bold;
-          border-radius: 40px;
+          border-radius: 35px;
           transition: background-color 0.3s;
           cursor: pointer;
-          &:not(.color) {
-            // &:hover {background-color: $w230;}
-            // &.active {background-color: $w220;}
-          }
           &.color {
-            // background-color: $mainStyle;
-            color: $mainStyle;
-            // &:hover {background-color: darken($mainStyle, 4%);}
-            // &:active {background-color: darken($mainStyle, 8%);}
+            color: $rose1;
           }
 
-          &:hover {background-color: $w235;}
-          &.active {background-color: $w220;}
+          &:hover {background-color: $w245;}
+          &.active {background-color: $w230;}
 
           span {padding: 7px 15px 8px 15px;}
 

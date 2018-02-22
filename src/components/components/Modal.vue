@@ -126,7 +126,7 @@ export default class Modal extends Vue {
       height: 50px;
       align-items: center;
       align-content: center;
-      justify-content: center;
+      justify-content: flex-end;
     }
 
   }

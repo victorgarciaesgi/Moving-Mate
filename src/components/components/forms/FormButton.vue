@@ -55,6 +55,7 @@ button {
   outline: none;
   border: 1px solid transparent;
   padding: 0px 13px 0px 13px;
+  transition: all 0.3s;
   @include userselect;
 
   span{
@@ -87,7 +88,7 @@ button {
   }
 
   &:hover{
-    background-color: $w230;
+    background-color: $w240;
   }
 
   &:active{

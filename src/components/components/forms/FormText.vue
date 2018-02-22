@@ -61,10 +61,10 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
-import { IValidator } from 'vuelidate';
-import $ from 'jquery';
+import { IValidator } from "vuelidate";
+import $ from "jquery";
 
-import { SvgIcon } from '@components';
+import { SvgIcon } from "@components";
 
 @Component({
   components: {
@@ -72,21 +72,31 @@ import { SvgIcon } from '@components';
   }
 })
 export default class FormText extends Vue {
-
   @Prop() value: string;
-  @Prop({required: false, default: 'text'}) type: string;
-  @Prop({required: false}) placeholder: string;
-  @Prop({required: false}) label: string;
-  @Prop({required: false, default: true}) error: boolean;
-  @Prop({required: false}) disabled: boolean;
-  @Prop({required: false}) description: string;
-  @Prop({required: false, default: true}) required: boolean;
-  @Prop({required: false, default: null}) icon: string;
-  @Prop({required: false, default: true}) inline: boolean;
-  @Prop({required: false}) big: boolean;
-  @Prop({required: false}) design: string;
-  @Prop({required: false}) vl: IValidator;
-
+  @Prop({ required: false, default: "text" })
+  type: string;
+  @Prop({ required: false })
+  placeholder: string;
+  @Prop({ required: false })
+  label: string;
+  @Prop({ required: false, default: true })
+  error: boolean;
+  @Prop({ required: false })
+  disabled: boolean;
+  @Prop({ required: false })
+  description: string;
+  @Prop({ required: false, default: true })
+  required: boolean;
+  @Prop({ required: false, default: null })
+  icon: string;
+  @Prop({ required: false, default: true })
+  inline: boolean;
+  @Prop({ required: false })
+  big: boolean;
+  @Prop({ required: false })
+  design: string;
+  @Prop({ required: false })
+  vl: IValidator;
 
   public popupPosition: any = {
     bottom: null,
@@ -97,36 +107,40 @@ export default class FormText extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
-    minLength: `${this.vl.$params.minLength?this.vl.$params.minLength.min:""} caractères minimum`,
-    maxLength: `${this.vl.$params.maxLength?this.vl.$params.maxLength.max:""} caractères maximum`,
+    minLength: `${
+      this.vl.$params.minLength ? this.vl.$params.minLength.min : ""
+    } caractères minimum`,
+    maxLength: `${
+      this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""
+    } caractères maximum`,
     sameAs: "Les mots de passe doivent être identiques"
-  }
+  };
 
-  updateValue(value){
+  updateValue(value) {
     this.vl.$touch();
-    this.$emit('input', value);
+    this.$emit("input", value);
   }
 
   hidePopup() {
-     Vue.set(this.popupPosition , 'display', false);
+    Vue.set(this.popupPosition, "display", false);
   }
 
   showPopup() {
-    let element = this.$refs['input'];
+    let element = this.$refs["input"];
     let width = $(element).outerWidth();
     let height = $(element).outerHeight() + 12;
     let viewportOffset = element.getBoundingClientRect();
     let windowHeight = $(window).height();
     let position = {
       left: Math.round(viewportOffset.left),
-      bottom: (windowHeight - Math.round(viewportOffset.bottom) + height)
-    }
-    this.popupPosition =  {
+      bottom: windowHeight - Math.round(viewportOffset.bottom) + height
+    };
+    this.popupPosition = {
       bottom: position.bottom + "px",
       left: position.left + "px",
       width: width + "px",
       display: true
-    }
+    };
   }
 
   mounted() {
@@ -139,11 +153,11 @@ export default class FormText extends Vue {
     return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
   }
 
-  get valid(){
+  get valid() {
     return !this.vl.$invalid;
   }
 
-  get dirty(){
+  get dirty() {
     return this.vl.$dirty;
   }
 }
@@ -152,7 +166,6 @@ export default class FormText extends Vue {
 
 
 <style lang='scss' scoped>
-
 .input-box {
   display: block;
   position: relative;
@@ -163,7 +176,7 @@ export default class FormText extends Vue {
 
   label {
     font-weight: bold;
-    color: $g80;
+    color: $w110;
     font-size: 15px;
 
     &.formError {
@@ -176,7 +189,6 @@ export default class FormText extends Vue {
       border: none;
     }
   }
-
 
   .errorMessage {
     display: flex;
@@ -191,18 +203,15 @@ export default class FormText extends Vue {
     border-bottom: 1px solid $w220;
     color: $red1;
 
-    
-
     ul {
-     display: flex;
-     flex-flow: column wrap;
-     align-items: center;
+      display: flex;
+      flex-flow: column wrap;
+      align-items: center;
     }
   }
 }
 
-
-.input-container{
+.input-container {
   display: flex;
   position: relative;
   flex-flow: row wrap;
@@ -221,16 +230,11 @@ export default class FormText extends Vue {
     align-items: center;
     border-right: 1px solid $w190;
 
-
-
-    .input-icon{
+    .input-icon {
       height: 22px;
       width: 22px;
     }
   }
-
-  
-
 
   /deep/ svg {
     fill: $g90;
@@ -238,28 +242,28 @@ export default class FormText extends Vue {
 
   .input-form {
     position: relative;
-    background-color: $w230;
+    background-color: #f0f2f5;
     color: $g70;
-    height: 40px;
+    height: 45px;
     padding: 5px 30px 5px 9px;
     margin: 5px 0 5px 0;
     width: 100%;
     line-height: 30px;
-    font-size: 15px;
+    font-size: 16px;
     border-radius: 3px;
 
-    &.big{
+    &.big {
       height: 50px;
       font-size: 18px;
       border-radius: 5px;
     }
 
-    &:focus{
+    &:focus {
       background-color: $w225;
-      &~ .input-icon-contain .input-icon /deep/ svg {
+      & ~ .input-icon-contain .input-icon /deep/ svg {
         fill: $g60;
       }
-      & + .input-form-result{
+      & + .input-form-result {
         display: block;
       }
     }
@@ -272,7 +276,7 @@ export default class FormText extends Vue {
       fill: $red1;
     }
 
-    &.icon{
+    &.icon {
       padding-left: 50px;
     }
 
@@ -299,14 +303,14 @@ export default class FormText extends Vue {
     align-self: center;
     text-align: center;
 
-    .error{
+    .error {
       color: $red1;
     }
     .info {
       color: $yellow1;
     }
 
-    .triangle{
+    .triangle {
       position: absolute;
       z-index: 10009;
       top: 100%;
@@ -317,7 +321,7 @@ export default class FormText extends Vue {
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
       border-top: 10px solid $w250;
-      filter: drop-shadow(0px 6px 4px rgba(50,50,50, 0.1));
+      filter: drop-shadow(0px 6px 4px rgba(50, 50, 50, 0.1));
     }
   }
 }

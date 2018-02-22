@@ -3,37 +3,7 @@
   <div class='main'>
     <div class='search-container'>
       <div class='search-wrapper'>
-        <!-- <FormButton v-if='isCompatible' 
-          @click='getUserLocation'> 
-            L
-        </FormButton> -->
-        <div class='search-box' :class='{searching}'>
-          <transition name='slide-top'>
-            <div class='searchResults' v-if='placesResultsDisplay && formSearchValue.length > 0 && !searchCommited'>
-              <ul v-if='placesResults.length'>
-                <li v-for='(result, index) in placesResults' 
-                    :key='result.code'
-                    :class='{selected: index == resultSelected}'>
-                  <div class='icon'>
-                    <SvgIcon v-if='result.type =="ville"' 
-                      :src="require('@icons/location.svg')" 
-                      :color="{white: index == resultSelected}"/>
-                    <SvgIcon v-else 
-                      :src="require('@icons/region.svg')" 
-                      :color="{white: index == resultSelected}"/>
-                  </div>
-                  <span class='name'>{{result.nom}}</span>
-                  <span class='code' v-if='result.codesPostaux'>
-                    {{result.codesPostaux[0]}}
-                  </span>
-                </li>
-              </ul>
-              <div v-if='!placesResults.length && !searching && !searchCommited' class='no-result'>
-                Aucun résultat ☹️
-              </div>
-            </div>
-          </transition>
-
+        <div class='search-box' :class='{searching, locationSearching}'>
           <input ref='inputField' type="text"
             class='inputSearchField'
             placeholder="Région, departement, ville"
@@ -46,14 +16,44 @@
             @input="handlePlacesSearch($event.target.value)"
             v-focus>
 
+          <transition name='slide-top'>
+            <div class='searchResults' v-if='placesResultsDisplay && formSearchValue.length > 0 && !searchCommited'>
+              <ul v-if='placesResults.length'>
+                <li v-for='(result, index) in placesResults' 
+                    :key='result.code'
+                    @click='handleNewSearch(result.nom)'
+                    :class='{selected: index == resultSelected}'>
+                  <div class='icon'>
+                    <SvgIcon v-if='result.type =="ville"' 
+                      :src="require('@icons/location.svg')" 
+                      :color="{[css.mainColor]: index == resultSelected}"/>
+                    <SvgIcon v-else 
+                      :src="require('@icons/region.svg')" 
+                      :color="{[css.mainColor]: index == resultSelected}"/>
+                  </div>
+                  <span class='name'>{{result.nom}}</span>
+                  <span class='code' v-if='["ville","departement"].includes(result.type)'>
+                    <span v-if='result.codesPostaux'>{{result.codesPostaux[0]}}</span>
+                    <span v-else>{{result.code}}</span>
+                  </span>
+                </li>
+              </ul>
+              <div v-if='!placesResults.length && !searching && !searchCommited' class='no-result'>
+                Aucun résultat ☹️
+              </div>
+            </div>
+          </transition>
+
           <div class='icon-contain'>
             <SvgIcon :src="require('@icons/search.svg')"/>
           </div>
 
-          <transition name='fade'>
-            <img v-if='searching' class='loading' src='~@images/loading.svg'>
-          </transition>
-
+          <div v-if='isGeoLocationCompatible && !locationSearching' 
+            @click='getUserLocation'
+            class='user-location-ask'>
+              <SvgIcon :src='require("@icons/location_search.svg")'/>
+          </div>
+          <img v-if='searching || locationSearching' class='loading' src='~@images/loading.svg'>
         </div>
       </div>
     </div>
@@ -93,16 +93,17 @@ export default class SearchMoving extends Vue {
   public placesResultsDisplay = false;
   public handlePlacesSearch = null;
   public searching = false;
+  public locationSearching = false;
   public resultSelected = 0;
   public css = require('@css');
 
-  get isCompatible() {
+  get isGeoLocationCompatible() {
     return !!navigator.geolocation;
   }
 
   hideResults() {
     this.placesResultsDisplay = false;
-    this.$refs['inputField'].blur();
+    // this.$refs['inputField'].blur();
   }
   showResults() {
     this.placesResultsDisplay = true;
@@ -115,16 +116,19 @@ export default class SearchMoving extends Vue {
     }
   }
 
-  handleNewSearch() {
-    MovingStore.mutations.updateSearchValue(this.placesResults[0].nom)
+  handleNewSearch(name?: string) {
+    if (this.placesResults.length) {
+      let value = name || this.placesResults[this.resultSelected].nom;
+      MovingStore.mutations.updateSearchValue(value);
+    } 
     MovingStore.actions.fetchMoving({});
   }
 
-  getUserLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position.coords);
-        });
+  async getUserLocation() {
+    if (navigator.geolocation && !this.searching && !this.locationSearching) {
+      this.locationSearching = true;
+      await MovingStore.actions.fetchUserLocation();
+      this.locationSearching = false;
     }
   }
 
@@ -134,6 +138,7 @@ export default class SearchMoving extends Vue {
     if (!this.searchCommited) {
       if (newVal.trim().length > 0) {
         this.searching = true;
+        this.resultSelected = 0;
         await MovingStore.actions.fetchPlaces(newVal);
       } else {
         MovingStore.mutations.updateSearchList([]);
@@ -158,6 +163,7 @@ export default class SearchMoving extends Vue {
   display: flex;
   flex-flow: columns nowrap;
   width: 100%;
+  background-color: $mainStyle;
 
   .search-container {
     position: relative;
@@ -181,7 +187,11 @@ export default class SearchMoving extends Vue {
 
         &.searching {
           .inputSearchField {
-            padding-right: 60px;
+            padding-right: 90px;
+          }
+
+          .loading {
+            right: 45px;
           }
         }
 
@@ -199,7 +209,7 @@ export default class SearchMoving extends Vue {
           height: 100%;
           left: 0;
           bottom: -4px;
-          background-color: #EDEFF5;
+          background-color: $w220;
           position: absolute;
           content: "";
           border-radius: 5px;
@@ -210,13 +220,25 @@ export default class SearchMoving extends Vue {
           background-color: white;
           color: $g70;
           height: 60px;
-          padding: 5px 10px 5px 60px;
+          padding: 5px 60px 5px 60px;
           width: 400px;
           line-height: 30px;
           font-size: 20px;
           border-radius: 4px;
           box-shadow: 0 0 15px rgba(0,0,0,0.15);
+        }
+
+        .user-location-ask {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          right: 15px;
+          cursor: pointer;
           
+          .svg {
+            height: 25px;
+            width: 25px;
+          }
         }
 
         .icon-contain {
@@ -241,7 +263,7 @@ export default class SearchMoving extends Vue {
 
         .searchResults {
           position: absolute;
-          top: calc(100% + 10px);
+          top: calc(100% + 8px);
           left: 0;
           background-color: white;
           display: flex;
@@ -256,7 +278,7 @@ export default class SearchMoving extends Vue {
             left: 0;
             bottom: -4px;
             z-index: 0;
-            background-color: #EDEFF5;
+            background-color: $w210;
             position: absolute;
             content: "";
             border-radius: 5px;
@@ -276,16 +298,17 @@ export default class SearchMoving extends Vue {
               height: 45px;
               align-items: center;
               background-color: white;
+              cursor: pointer;
               &:not(:last-child) {
                 border-bottom: 1px solid $w240;
               }
 
-              &.selected {
-                background-color: $mainStyle;
-                color: white;
-                .code {
-                  color: $w240;
-                }
+              &:hover {
+                background-color: $w250;
+              }
+
+              &.selected:not(:only-child) {
+                background-color: $w245;
               }
 
               .icon {

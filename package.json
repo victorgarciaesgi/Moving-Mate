@@ -7,11 +7,8 @@
   "scripts": {
     "dev": "webpack-dashboard -- webpack-dev-server --inline --progress",
     "dev2": "webpack-dev-server --inline --progress",
-    "start": "npm run clean && npm run build:prod && npm run server:prod",
-    "postinstall": "npm run prod",
-    "heroku-postbuild": "npm run prod",
     "prod": "npm run clean && npm run build:prod && npm run server:prod",
-    "server:prod": "cross-env NODE_ENV=production node Server.js",
+    "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
     "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress",
     "clean": "rimraf dist"
   },
@@ -91,8 +88,5 @@
     "webpack-dev-server": "^2.9.7",
     "webpack-hot-middleware": "^2.21.0",
     "webpack-merge": "^4.1.1"
-  },
-  "engines": {
-    "node": "9.5.x"
   }
 }
