@@ -13,6 +13,14 @@ Vue.use(Vuelidate);
 Vue.use(Vue2Filters);
 Vue.use(MyFilters);
 
+Vue.config['keyCodes'] = {
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40,
+  esc: 27 
+};
+
 Vue.directive('bg-blur',imageBlurAsync);
 
 

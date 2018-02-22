@@ -8,17 +8,19 @@
             L
         </FormButton> -->
         <div class='search-box' :class='{searching}'>
-
           <transition name='slide-top'>
-            <div class='searchResults' v-if='placesResultsDisplay && formSearchValue.length > 0'>
+            <div class='searchResults' v-if='placesResultsDisplay && formSearchValue.length > 0 && !searchCommited'>
               <ul v-if='placesResults.length'>
                 <li v-for='(result, index) in placesResults' 
                     :key='result.code'
                     :class='{selected: index == resultSelected}'>
                   <div class='icon'>
-                    <img v-if='result.type =="ville"' src="~@icons/location.svg">
-                    <img v-else src="~@icons/region.svg">
-
+                    <SvgIcon v-if='result.type =="ville"' 
+                      :src="require('@icons/location.svg')" 
+                      :color="{white: index == resultSelected}"/>
+                    <SvgIcon v-else 
+                      :src="require('@icons/region.svg')" 
+                      :color="{white: index == resultSelected}"/>
                   </div>
                   <span class='name'>{{result.nom}}</span>
                   <span class='code' v-if='result.codesPostaux'>
@@ -26,26 +28,32 @@
                   </span>
                 </li>
               </ul>
-              <div v-else class='no-result'>
-                Aucun résultat
+              <div v-if='!placesResults.length && !searching' class='no-result'>
+                Aucun résultat ☹️
               </div>
             </div>
           </transition>
 
-          <input type="text"
+          <input ref='inputField' type="text"
             class='inputSearchField'
             placeholder="Région, departement, ville"
             :value='formSearchValue'
             @blur='hideResults()'
             @focus='showResults()'
-            @keyup.enter="handle"
+            @keydown.down.up.prevent="modifySelected($event)"
+            @keydown.esc.prevent='hideResults()'
+            @keydown.enter.prevent="handleNewSearch()"
             @input="handlePlacesSearch($event.target.value)"
             v-focus>
+
           <div class='icon-contain'>
             <SvgIcon :src="require('@icons/search.svg')"/>
           </div>
 
-          <img v-if='searching' class='loading' src='~@images/loading.svg'>
+          <transition name='fade'>
+            <img v-if='searching' class='loading' src='~@images/loading.svg'>
+          </transition>
+
         </div>
       </div>
     </div>
@@ -55,8 +63,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component';
+import Vue from 'vue';
+import {Component, Prop} from 'vue-property-decorator'
 import {FormButton, SvgIcon} from '@components';
 import { debounce } from 'lodash';
 import { Watch } from 'vue-property-decorator';
@@ -69,7 +77,7 @@ import { MovingStore } from '@store';
   },
   directives: {
     focus: {
-      inserted(el, binding) {
+      inserted(el, binding, vnode) {
         el.focus();
       }
     } 
@@ -79,10 +87,12 @@ export default class SearchMoving extends Vue {
 
   get formSearchValue() {return MovingStore.state.formSearchData.formSearchValue}
   get placesResults() {return MovingStore.state.formSearchData.placesResults}
+  get searchCommited() {return MovingStore.state.formSearchData.searchCommited}
   public placesResultsDisplay = false;
   public handlePlacesSearch = null;
   public searching = false;
   public resultSelected = 0;
+  public css = require('@css');
 
   get isCompatible() {
     return !!navigator.geolocation;
@@ -90,11 +100,18 @@ export default class SearchMoving extends Vue {
 
   hideResults() {
     this.placesResultsDisplay = false;
+    this.$refs['inputField'].blur();
   }
   showResults() {
     this.placesResultsDisplay = true;
   }
 
+  modifySelected(event: KeyboardEvent) {
+    let touche = event.which - 39;
+    if ((this.resultSelected + touche >= 0 && (this.resultSelected + touche <= (this.placesResults.length - 1)))) {
+      this.resultSelected += touche;
+    }
+  }
 
   getUserLocation() {
     if (navigator.geolocation) {
@@ -167,7 +184,7 @@ export default class SearchMoving extends Vue {
           width: 25px;
         }
 
-        &:after {
+        &:before {
           width: 100%;
           height: 100%;
           left: 0;
@@ -176,7 +193,6 @@ export default class SearchMoving extends Vue {
           position: absolute;
           content: "";
           border-radius: 5px;
-          z-index: -1;
         }
 
         .inputSearchField {
@@ -220,24 +236,46 @@ export default class SearchMoving extends Vue {
           background-color: white;
           display: flex;
           width: 100%;
-          z-index: 0;
           border-radius: 5px;
-          overflow: hidden;
+          z-index: 2;
           box-shadow: 0 0 15px rgba(0,0,0,0.15);
 
+          &:before {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            bottom: -4px;
+            z-index: 0;
+            background-color: #EDEFF5;
+            position: absolute;
+            content: "";
+            border-radius: 5px;
+          }
 
           ul {
             display: flex;
             width: 100%;
+            z-index: 1;
+            border-radius: 5px;
+            overflow: hidden;
             flex-flow: column wrap;
 
             li {
               display: flex;
               flex-flow: row nowrap;
-              align-items: center;
               height: 45px;
+              align-items: center;
+              background-color: white;
               &:not(:last-child) {
                 border-bottom: 1px solid $w240;
+              }
+
+              &.selected {
+                background-color: $mainStyle;
+                color: white;
+                .code {
+                  color: $w240;
+                }
               }
 
               .icon {
@@ -262,10 +300,12 @@ export default class SearchMoving extends Vue {
           }
 
           .no-result {
-            position: relative;
             height: 60px;
+            border-radius: 5px;
             display: flex;
+            background-color: white;
             flex: 1 1 auto;
+            z-index: 2;
             flex-flow: row nowrap;
             justify-content: center;
             align-items: center;

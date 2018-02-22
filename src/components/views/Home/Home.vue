@@ -31,7 +31,6 @@ import { State, Getter, Mutation } from 'vuex-class';
 import { svgPath } from '@types';
 import router from '@router';
 import { StarRating, SvgIcon, MapViewer } from '@components';
-const css = require('@css');
 
 @Component({
   components: {
@@ -40,7 +39,7 @@ const css = require('@css');
 })
 export default class Home extends Vue {
 
-  public css = css;
+  public css = require('@css');
 
   public helps = [
     {icon: require('@icons/annonce.svg'), text:'Je publie une annonce gratuitement sur le site!'},
@@ -50,7 +49,7 @@ export default class Home extends Vue {
   ];
 
   handlePathSelect(path: svgPath) {
-    router.push(`/movers/${path.id}`);
+    router.push(`/moving/${path.title}`);
   }
 
 }

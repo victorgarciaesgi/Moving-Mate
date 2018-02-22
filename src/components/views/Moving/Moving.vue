@@ -23,6 +23,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component';
 import SearchMoving from './SearchMoving.vue';
+import { Prop } from 'vue-property-decorator';
+import { MovingStore } from '@store';
 
 @Component({
   components: {
@@ -30,6 +32,14 @@ import SearchMoving from './SearchMoving.vue';
   }
 })
 export default class Moving extends Vue {
+
+  @Prop({required: false}) search: string;
+
+  mounted() {
+    if (this.search) {
+      MovingStore.mutations.updateSearchValue(this.search);
+    }
+  }
 
 }
 </script>

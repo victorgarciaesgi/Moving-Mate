@@ -44,7 +44,7 @@ namespace Mutations {
     CUT = 20000 / Math.floor(state.duration)
     TIMER = setInterval(() => {
       Mutations.mutations.increase(CUT * Math.random())
-      if (state.percent > 95) {
+      if (state.percent > 80) {
         Mutations.mutations.pause();
       }
     }, 200)

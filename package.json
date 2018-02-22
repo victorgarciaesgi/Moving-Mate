@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "webpack-dashboard -- webpack-dev-server --inline --progress",
-    "dev2": "",
+    "dev2": "webpack-dev-server --inline --progress",
+    "start": "npm run clean && npm run build:prod && npm run server:prod",
     "prod": "npm run clean && npm run build:prod && npm run server:prod",
     "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
     "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress",

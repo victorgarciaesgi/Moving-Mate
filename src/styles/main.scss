@@ -26,20 +26,20 @@
 
 .lazy-blur-background {
   @include bg-center;
-  background-color: $w180;
+  background-color: $w220;
   overflow: hidden;
 
   img {
     position: absolute;
     opacity: 0;
-    left: 50%;
-    top: 50%;
     z-index: 0;
-    @include translate(-50%,-50%);
     width: 100%;
-    transition: opacity 1s linear;
 
     &.loaded {
+      opacity: 1;
+    }
+    &.bigLoaded {
+      transition: opacity 1s linear;
       opacity: 1;
     }
   }

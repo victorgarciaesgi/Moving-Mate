@@ -21,7 +21,7 @@ export const imageBlurAsync = {
     let bigImg = new Image();
     bigImg.src = bigImgSrc;
     bigImg.onload = () => {
-      bigImg.classList.add('loaded');
+      bigImg.classList.add('bigLoaded');
     };
     el.appendChild(bigImg);
   }

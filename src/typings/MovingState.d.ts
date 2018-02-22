@@ -3,8 +3,10 @@ import {IMoverState} from './MoverState'
 export interface IMovingState {
   formSearchData: {
     formSearchValue: string,
-    placesResults: ICity[]
+    placesResults: ICity[],
+    searchCommited: boolean
   },
+  searchingMovingList: boolean,
   movingList: IMovingEvent[],
 }
 

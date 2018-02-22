@@ -14,8 +14,10 @@ const GEO_API = 'https://geo.api.gouv.fr';
 const state: IMovingState = {
   formSearchData: {
     formSearchValue: '',
-    placesResults: []
+    placesResults: [],
+    searchCommited: false
   },
+  searchingMovingList: false,
   movingList: []
 }
 
@@ -41,12 +43,19 @@ namespace Mutations {
 
   function updateSearchValue(state: IMovingState, newString: string) {
     state.formSearchData.formSearchValue = newString;
+    state.formSearchData.searchCommited = false;
+  }
+
+  function updateSearchingState(state: IMovingState) {
+    state.searchingMovingList = !state.searchingMovingList;
   }
 
   export const mutations = {
     updateMovingList: b.commit(updateMovingList),
     updateSearchList: b.commit(updateSearchList),
-    updateSearchValue: b.commit(updateSearchValue)
+    updateSearchValue: b.commit(updateSearchValue),
+    updateSearchingState: b.commit(updateSearchingState)
+
   }
 }
 
@@ -54,12 +63,13 @@ namespace Mutations {
 namespace Actions {
 
   async function fetchMoving(context, payload: Object) {
+    Mutations.mutations.updateSearchingState();
+    state.formSearchData.searchCommited = true;
     let { data } = await Api.get(MOVING_URL);
     if (data) {
       Mutations.mutations.updateMovingList(data);
-    } else {
-      return
     }
+    Mutations.mutations.updateSearchingState();
   }
 
   async function fetchPlaces(context, payload: string) {

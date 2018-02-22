@@ -15,17 +15,22 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import {Prop} from 'vue-property-decorator';
 
-const css = require('@css');
-
 @Component({})
 export default class SvgIcon extends Vue {
 
+  public defaultColor = '#5a5a5a'
   @Prop({required: true}) src: string; // base64 svg
   @Prop({required: false}) size: number;
-  @Prop({required: false, default: 'rgb(130,130,130)'}) color: string;
+  @Prop({required: false, default: '#5a5a5a', type: [String, Object]}) color;
 
   get activeColor() {
-    return this.color + '!important';
+    if (typeof this.color == 'string') {
+      return this.color + '!important';
+    } else {
+      let keys = Object.keys(this.color);
+      let filtered = keys.filter(key => this.color[key]);
+      return filtered[0] || this.defaultColor  + '!important';
+    }
   }
 
   get baseToSvg(): string {
@@ -34,7 +39,7 @@ export default class SvgIcon extends Vue {
       return svg;
     }
     catch {
-      console.error(`Le fichier source passé au composant n'est pas un fichier svg`)
+      console.error(`Le fichier source passé au composant n'est pas une image svg`)
       return;
     }
   }

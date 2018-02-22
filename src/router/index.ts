@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import VueRouter, {Route} from 'vue-router';
 import * as Components from '@components';
 import { LoginStore } from '@modules';
 import { timeout } from '@methods';
@@ -20,46 +20,50 @@ const Rooter = new VueRouter({
 
 // Before each route hook test auth
 Rooter.beforeEach(async (to, from, next) => {
-  if (!LoginStore.state.sessionChecked) {
-    await LoginStore.actions.checkUserSession();
-  } 
-  ProgressBar.mutations.start();
-  if (!to.meta.contentProp) {
-    document.title = `${to.name} - MovingMate`;
-  }
-  console.log(to)
-  if (to.matched.some(m => m.meta.requiresAuth)) {
-    if (LoginStore.state.isLoggedIn) {
+  try {
+    if (!LoginStore.state.sessionChecked) {
+      await LoginStore.actions.checkUserSession();
+    } 
+    ProgressBar.mutations.start();
+    if (!to.meta.contentProp) {
+      document.title = `${to.name} - MovingMate`;
+    } else if (Object.keys(to.params).every(m => !to.params[m])) {
+      document.title = `${to.name} - MovingMate`;
+    }
+    if (to.matched.some(m => m.meta.requiresAuth)) {
+      if (LoginStore.state.isLoggedIn) {
+        if (to.meta.asyncData) {
+          await getRouteData(to);
+        }
+        next(ProgressBar.mutations.finish());
+      }
+      else {
+        LoginStore.mutations.showLoginRoute(to.fullPath);
+        if (from.name) {
+          ProgressBar.mutations.hide();
+        } else {
+          next('/');
+        }
+      }
+    } else if (to.matched.some(m => m.meta.noAuth) && LoginStore.state.isLoggedIn) {
+      next('/');
+    } else {
       if (to.meta.asyncData) {
         await getRouteData(to);
       }
       next(ProgressBar.mutations.finish());
     }
-    else {
-      LoginStore.mutations.showLoginRoute(to.fullPath);
-      if (from.name) {
-        ProgressBar.mutations.hide();
-      } else {
-        next('/');
-      }
-    }
-  } else if (to.matched.some(m => m.meta.noAuth) && LoginStore.state.isLoggedIn) {
-    next('/');
-  } else {
-    if (to.meta.asyncData) {
-      await getRouteData(to);
-    }
-    next(ProgressBar.mutations.finish());
+  } catch(err) {
+    console.log('Route error:', err);
+    ProgressBar.mutations.fail();
+    ProgressBar.mutations.finish();
+    next();
   }
 })
 
-const getRouteData = async (to) => {
+const getRouteData = async (to: Route) => {
   ProgressBar.mutations.start();
-  try {
-    await to.meta.asyncData();
-  } catch(err) {
-    ProgressBar.mutations.fail();
-  }
+  await to.meta.asyncData(to.params);
 }
 
 

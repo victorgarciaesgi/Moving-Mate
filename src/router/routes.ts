@@ -11,11 +11,13 @@ export const routesList: RouteConfig[]  = [
     component: () => import('@views/Home/Home.vue'),
   },
   { 
-    path: '/moving/:search?', name: 'Je déménage',
+    path: '/moving/:search?', name: 'Les déménagements',
     component: () => import('@views/Moving/Moving.vue'),
     props: true,
     meta: {
-      async asyncData() {
+      contentProp: true,
+      async asyncData(params?:any) {
+        console.log(params);
         await Stores.MovingStore.actions.fetchMoving({});
       }
     }
@@ -26,7 +28,7 @@ export const routesList: RouteConfig[]  = [
     props: true,
     meta: {
       contentProp: true,
-      async asyncData() {
+      async asyncData(params) {
         // await timeout(2000);
       }
     }

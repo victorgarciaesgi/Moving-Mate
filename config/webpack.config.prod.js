@@ -99,7 +99,6 @@ const configProd = {
       chunksSortMode: 'dependency',
       serviceWorker: 'dist/service-worker.js'
     }),
-    ,
     new SWPrecacheWebpackPlugin({
       cacheId: 'MovingMate',
       filename: 'service-worker.js',

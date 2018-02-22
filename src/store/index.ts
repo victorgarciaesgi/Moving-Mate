@@ -1,6 +1,6 @@
 import { ILoginState, INotificationState, IMovingState, ISignupState,
 IProgressState, IGlobalState} from '@types';
-import {Route} from 'vue-router'; 
+import {Route} from 'vue-router';
 
 export interface RootState {
   LoginModule: ILoginState,
@@ -11,7 +11,9 @@ export interface RootState {
   route: Route;
 }
 
-export const DebugMode: boolean = process.env.DEBUG_MODE == 'true';
+// export const DebugMode: boolean = process.env.DEBUG_MODE == true;
+export const DebugMode = false;
+console.log(DebugMode);
 
 export * from './Modules'
 export {default as EventBus} from './EventBus';
