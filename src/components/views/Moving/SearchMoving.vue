@@ -1,5 +1,4 @@
 <template>
-
   <div class='main'>
     <div class='search-container'>
       <div class='search-wrapper'>
@@ -34,7 +33,7 @@
                   <span class='name'>{{result.nom}}</span>
                   <span class='code' v-if='["ville","departement"].includes(result.type)'>
                     <span v-if='result.codesPostaux'>{{result.codesPostaux[0]}}</span>
-                    <span v-else>{{result.code}}</span>
+                    <span v-else>{{}}</span>
                   </span>
                 </li>
               </ul>
@@ -134,7 +133,6 @@ export default class SearchMoving extends Vue {
 
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
-    console.log(this.searchCommited)
     if (!this.searchCommited) {
       if (newVal.trim().length > 0) {
         this.searching = true;
@@ -163,7 +161,7 @@ export default class SearchMoving extends Vue {
   display: flex;
   flex-flow: columns nowrap;
   width: 100%;
-  background-color: $mainStyle;
+  background-color:rgb(255, 249, 249);
 
   .search-container {
     position: relative;
@@ -209,7 +207,7 @@ export default class SearchMoving extends Vue {
           height: 100%;
           left: 0;
           bottom: -4px;
-          background-color: $w220;
+          background-color: $w230;
           position: absolute;
           content: "";
           border-radius: 5px;
@@ -278,7 +276,7 @@ export default class SearchMoving extends Vue {
             left: 0;
             bottom: -4px;
             z-index: 0;
-            background-color: $w210;
+            background-color: $w220;
             position: absolute;
             content: "";
             border-radius: 5px;

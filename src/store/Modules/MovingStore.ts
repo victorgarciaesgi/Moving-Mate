@@ -66,7 +66,6 @@ namespace Actions {
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
-    console.log(payload)
     try {
       let { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
@@ -91,7 +90,6 @@ namespace Actions {
       .sort((a, b) => b._score - a._score)
       .filter((item, pos, self) => self.findIndex(elem => elem.nom == item.nom) == pos)
       .slice(0, 4);
-    console.log(filteredValues);
     Mutations.mutations.updateSearchList(filteredValues);
   }
 
@@ -99,7 +97,6 @@ namespace Actions {
     return await new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(async(position) => {
         let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-        console.log(data);
         Mutations.mutations.updateSearchValue(data[0].nom);
         state.formSearchData.searchCommited = true;
         resolve();

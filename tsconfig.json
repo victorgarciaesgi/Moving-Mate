@@ -40,7 +40,7 @@
     },
     "sourceMap": true, 
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
   },
   "exclude": [
     "typings/browser.d.ts",

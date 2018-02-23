@@ -60,6 +60,8 @@ ul, li {
 input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 1000px $w230 inset;
   -webkit-text-fill-color: $g60;
+  font-family: 'Open Sans', sans-serif !important;
+
 }
 
 input, textarea, button {

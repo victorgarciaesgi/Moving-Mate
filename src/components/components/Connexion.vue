@@ -65,8 +65,8 @@ export default class Connexion extends Vue {
     _password: 'aaaaa',
     _souvenir: false,
     reset() {
-      this._username = null;
-      this._password = null;
+      this._username = '';
+      this._password = '';
       this._souvenir = false;
     }
   };

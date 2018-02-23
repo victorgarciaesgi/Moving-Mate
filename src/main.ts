@@ -21,7 +21,7 @@ Vue.config['keyCodes'] = {
   esc: 27 
 };
 
-Vue.directive('bg-blur',imageBlurAsync);
+// Vue.directive('bg-blur',imageBlurAsync);
 
 
 

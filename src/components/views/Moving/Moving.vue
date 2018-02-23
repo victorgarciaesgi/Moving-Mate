@@ -1,34 +1,30 @@
 <template>
   <div class='Moving'>
-
     <section class='searchComponent'>
       <SearchMoving></SearchMoving>
     </section>
     <section class='searchResults'>
       <section class='resultsList'>
-
+        <MovingList/>
       </section>
       <section class='resultsMap'>
 
       </section>
 
     </section>
-    
-    
-
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Component from 'vue-class-component';
 import SearchMoving from './SearchMoving.vue';
-import { Prop } from 'vue-property-decorator';
+import {Component, Prop } from 'vue-property-decorator';
 import { MovingStore } from '@store';
+import MovingList from './MovingList.vue';
 
 @Component({
   components: {
-    SearchMoving
+    SearchMoving, MovingList
   }
 })
 export default class Moving extends Vue {

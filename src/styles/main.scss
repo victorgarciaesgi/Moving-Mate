@@ -24,34 +24,6 @@
 }
 
 
-.lazy-blur-background {
-  @include bg-center;
-  background-color: $w220;
-  overflow: hidden;
-
-  img {
-    position: absolute;
-    opacity: 0;
-    z-index: 0;
-    width: 100%;
-
-    &.loaded {
-      opacity: 1;
-    }
-    &.bigLoaded {
-      transition: opacity 1s linear;
-      opacity: 1;
-    }
-  }
-
-  .img-small {
-    filter: blur(50px);
-    transform: scale(1);
-  }
-}
-
-
-
 
 section.line-separator::before {
   content:'';

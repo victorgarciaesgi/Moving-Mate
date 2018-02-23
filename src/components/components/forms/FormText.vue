@@ -1,60 +1,60 @@
 <template>
-    <div class="input-box">
-      <label v-if='label || placeholder' :class='{formError: (!valid && dirty && error)}'>
-        {{label || placeholder}}
-      </label>
-      <div class="input-container">
-        <input ref='input' class='input-form'
-                :type='type'
-                :value='value'
-                :class='[{
-                  formError: (!valid && dirty && error),
-                  formValid: (valid && dirty && error),
-                  icon,
-                  big: !!big,
-                }, design]'
-                :placeholder="placeholder"
-                :required='required'
-                :disabled='disabled'
-                @blur='hidePopup()'
-                @click='showPopup()'
-                @focus='showPopup()'
-                @input="updateValue($event.target.value)" />
-                
-        <div class='input-icon-contain'>
-          <img class='input-icon' v-if='icon && !inline' :src="icon">
-          <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
-        </div>
-
-        <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
-        <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
-        <div v-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
-
-        <div class='popup-message' v-if='description && popupPosition.display'
-            :style='popupPosition'>
-          <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-          <!-- <ul v-if='!vl.error && dirty && error' class='error'>
-            <li v-for='(key, index) in filterErrors' :key='key'>
-               <span>{{errorMessages[key]}}</span>
-            </li>
-          </ul>
-          <span v-if='vl.$pending' class='info'>Verification...</span> -->
-          <div class='triangle'></div>
-        </div>
-
+  <div class="input-box">
+    <label v-if='label || placeholder' :class='{formError: (!valid && dirty && error)}'>
+      {{label || placeholder}}
+    </label>
+    <div class="input-container">
+      <input ref='input' class='input-form'
+              :type='type'
+              :value='value'
+              :class='[{
+                formError: (!valid && dirty && error),
+                formValid: (valid && dirty && error),
+                icon,
+                big: !!big,
+              }, design]'
+              :placeholder="placeholder"
+              :required='required'
+              :disabled='disabled'
+              @blur='hidePopup()'
+              @click='showPopup()'
+              @focus='showPopup()'
+              @input="updateValue($event.target.value)" />
+              
+      <div class='input-icon-contain'>
+        <img class='input-icon' v-if='icon && !inline' :src="icon">
+        <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
       </div>
 
-      <div class='errorMessage' v-if='(vl.$error && error) || description || vl.$pending'>
+      <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
+      <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
+      <div v-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
+
+      <div class='popup-message' v-if='description && popupPosition.display'
+          :style='popupPosition'>
         <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-        <ul v-if='!vl.error && dirty && error' class='error'>
-          <li v-for='key in filterErrors' :key='key'>
+        <!-- <ul v-if='!vl.error && dirty && error' class='error'>
+          <li v-for='(key, index) in filterErrors' :key='key'>
               <span>{{errorMessages[key]}}</span>
           </li>
         </ul>
-        <span v-if='vl.$pending' class='info'>Verification...</span>
+        <span v-if='vl.$pending' class='info'>Verification...</span> -->
+        <div class='triangle'></div>
       </div>
 
     </div>
+
+    <div class='errorMessage' v-if='(vl.$error && error) || description || vl.$pending'>
+      <span v-if='description && !vl.$error' class='description'>{{description}}</span>
+      <ul v-if='!vl.error && dirty && error' class='error'>
+        <li v-for='key in filterErrors' :key='key'>
+            <span>{{errorMessages[key]}}</span>
+        </li>
+      </ul>
+      <span v-if='vl.$pending' class='info'>Verification...</span>
+    </div>
+
+  </div>
 </template>
 
 <script lang="ts">
@@ -221,14 +221,16 @@ export default class FormText extends Vue {
     position: absolute;
     left: 0;
     top: 0;
-    width: 40px;
+    width: 50px;
     height: calc(100% - 26px);
     margin-top: 13px;
     margin-bottom: 13px;
     display: flex;
+    overflow: hidden;
+    transition: all 0.2s;
     justify-content: center;
     align-items: center;
-    border-right: 1px solid $w190;
+    border-right: 1px solid $w200;
 
     .input-icon {
       height: 22px;
@@ -237,31 +239,34 @@ export default class FormText extends Vue {
   }
 
   /deep/ svg {
-    fill: $g90;
+    fill: $mainColor;
   }
 
   .input-form {
     position: relative;
-    background-color: #f0f2f5;
-    color: $g70;
+    background-color: #e0e1e4;
+    color: $mainColor;
     height: 45px;
     padding: 5px 30px 5px 9px;
     margin: 5px 0 5px 0;
+    transition: padding 0.2s;
     width: 100%;
     line-height: 30px;
     font-size: 16px;
-    border-radius: 3px;
+    border-radius: 5px;
 
-    &.big {
-      height: 50px;
-      font-size: 18px;
-      border-radius: 5px;
+    &.icon {
+      padding-left: 60px;
     }
 
     &:focus {
-      background-color: $w225;
-      & ~ .input-icon-contain .input-icon /deep/ svg {
-        fill: $g60;
+      padding-left: 10px;
+      & ~ .input-icon-contain {
+        width: 0;
+        opacity: 0;
+        .input-icon /deep/ svg {
+        // fill: $g60;
+        }
       }
       & + .input-form-result {
         display: block;
@@ -276,9 +281,7 @@ export default class FormText extends Vue {
       fill: $red1;
     }
 
-    &.icon {
-      padding-left: 50px;
-    }
+    
 
     &.white {
       background-color: white;
