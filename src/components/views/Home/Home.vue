@@ -1,8 +1,7 @@
 <template>
   <div class='home'>
     <section class='image-home'>
-      <BlurLoader smallSrc='https://cdn-images-1.medium.com/freeze/max/30/1*9uJ8XyCr8y3md7Qp_KJtXw.gif?q=20'
-                src='https://cdn-images-1.medium.com/max/1000/1*9uJ8XyCr8y3md7Qp_KJtXw.gif' />
+      <BlurLoader src='home_image' moving />
     </section>
 
     <section class='help '>
@@ -31,8 +30,7 @@ import {Component} from 'vue-property-decorator';
 import { State, Getter, Mutation } from 'vuex-class';
 import { svgPath } from '@types';
 import router from '@router';
-import { StarRating, SvgIcon, MapViewer } from '@components';
-import BlurLoader from 'vue-blur-loader';
+import { StarRating, SvgIcon, MapViewer, BlurLoader } from '@components';
 
 @Component({
   components: {
