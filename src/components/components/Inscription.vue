@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
-    <Modal :show='show' @close='close()' :width='400' :isPopup='isPopup'>
+    <UIModal :show='show' @close='close()' :width='400' :isPopup='isPopup'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 10px 20px 0px 20px'>
         <FormText type='email' placeholder='Adresse mail'
@@ -24,7 +24,7 @@
         <FormButton @click='close()' v-if='isPopup'>Annuler</FormButton>
         <FormButton type='submit' :submitting='submitting' :disabled='$v.SignupForm.$invalid' color='blue'>S'inscrire</FormButton>
       </template>
-    </Modal>
+    </UIModal>
   </form>
 </template>
 
@@ -33,7 +33,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
-import { Modal, FormText, CheckBox, FormButton } from "@components";
+import { UIModal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 import { SignupStore, NotificationsStore } from '@store';
@@ -41,7 +41,7 @@ import { IValidator } from 'vuelidate';
 
 @Component({
   components: {
-    Modal, FormText, CheckBox, FormButton
+    UIModal, FormText, CheckBox, FormButton
   },
   validations: {
     SignupForm: {

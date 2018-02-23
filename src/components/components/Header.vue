@@ -237,7 +237,7 @@ div.header-wrapper{
           transition: background-color 0.3s;
           cursor: pointer;
           &.color {
-            color: $rose1;
+            color: $orange1;
           }
 
           &:hover {background-color: $w245;}

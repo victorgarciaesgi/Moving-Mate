@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate>
-    <Modal :show='show' @close='modalClosed' :width='400' :isPopup='isPopup'>
+    <UIModal :show='show' @close='modalClosed' :width='400' :isPopup='isPopup'>
         <span slot='header'>Connexion</span>
         <div slot='content' style='padding: 10px 20px 0px 20px'>
           <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
@@ -16,23 +16,22 @@
           <FormButton @click='modalClosed(true)'>Annuler</FormButton>
           <FormButton type='submit' :submitting='loginState.requesting' :disabled='$v.LoginForm.$invalid' color='blue'>Se connecter</FormButton>
         </template>
-    </Modal>
+    </UIModal>
   </form>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
-import { Modal, FormText, CheckBox, FormButton } from "@components";
+import { UIModal, FormText, CheckBox, FormButton } from "@components";
 import { timeout } from '@methods';
 import { required, email } from 'vuelidate/lib/validators';
 import { LoginStore, NotificationsStore } from '@modules';
 
 @Component({
   components: {
-    Modal, FormText, CheckBox, FormButton
+    UIModal, FormText, CheckBox, FormButton
   },
   validations: {
     LoginForm: {

@@ -28,11 +28,10 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 
 @Component({})
-export default class Modal extends Vue {
+export default class UIModal extends Vue {
   
   @Prop() show: boolean;
   @Prop({required: false, default: true}) isPopup: boolean;

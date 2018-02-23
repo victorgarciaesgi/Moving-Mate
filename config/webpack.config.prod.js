@@ -99,13 +99,13 @@ const configProd = {
       chunksSortMode: 'dependency',
       serviceWorker: 'dist/service-worker.js'
     }),
-    new SWPrecacheWebpackPlugin({
-      cacheId: 'MovingMate',
-      filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
-      minify: true,
-      stripPrefix: 'dist/'
-    }),
+    // new SWPrecacheWebpackPlugin({
+    //   cacheId: 'MovingMate',
+    //   filename: 'service-worker.js',
+    //   staticFileGlobs: ['dist/**/*.{js,html,css}'],
+    //   minify: true,
+    //   stripPrefix: 'dist/'
+    // }),
     new webpack.HashedModuleIdsPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.AggressiveMergingPlugin(),

@@ -8,6 +8,8 @@
     "experimentalDecorators": true,
     "removeComments": true,
     "noImplicitAny": false,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     "pretty": true,
     "noImplicitThis": true,
     "lib": [
