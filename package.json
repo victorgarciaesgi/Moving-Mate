@@ -1,7 +1,7 @@
 {
   "name": "moving_mate",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "Server.js",
   "author": "Victor Garcia <victorgarciaparis13@gmail.com>",
   "license": "MIT",
   "scripts": {
