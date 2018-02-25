@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import { IProgressState } from '@types';
-import { RootState } from '../index';
-import { storeBuilder } from "./Store/Store";
+import { storeBuilder } from "../Store/Store";
 const css = require('@css');
 
 const API_URL = "https://geo.api.gouv.fr/communes?boost=population&nom=";
@@ -26,9 +25,7 @@ const stateGetter = b.state()
 
 // Getters
 namespace Getters {
-  export const getters = {
-    
-  }  
+  export const getters = {}  
 }
 
 // Mutations
@@ -98,7 +95,6 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  
   export const actions = {
   }
 }

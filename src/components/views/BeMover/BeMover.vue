@@ -7,7 +7,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component} from 'vue-property-decorator';
-import { State, Getter, Mutation } from 'vuex-class';
 
 @Component({})
 export default class BeMover extends Vue {

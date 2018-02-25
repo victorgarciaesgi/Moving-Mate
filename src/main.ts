@@ -13,6 +13,8 @@ Vue.use(Vuelidate);
 Vue.use(Vue2Filters);
 Vue.use(MyFilters);
 
+Vue.config.devtools = true;
+
 Vue.config['keyCodes'] = {
   left: 37,
   up: 38,

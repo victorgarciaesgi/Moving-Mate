@@ -31,7 +31,6 @@ export default class BlurLoader extends Vue {
   }
 
   handleBigLoaded() {
-    console.log('big loaded')
     this.bigImgLoaded = true;
   }
 
@@ -89,7 +88,6 @@ export default class BlurLoader extends Vue {
     align-items: center;
     align-content: center;
     height: 100%;
-    background-color: rgb(60,60,60);
   }
 }
 

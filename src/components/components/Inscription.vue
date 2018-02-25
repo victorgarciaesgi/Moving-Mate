@@ -2,17 +2,23 @@
   <form @submit.prevent='submitForm()' novalidate method='post' action>
     <UIModal :show='show' @close='close()' :width='400' :isPopup='isPopup'>
       <span slot='header'>Inscription</span>
-      <div slot='content' style='padding: 10px 20px 0px 20px'>
-        <FormText type='email' placeholder='Adresse mail'
+      <div slot='content' style='padding: 0 20px 0px 20px'>
+        <div class='moving-logo'>
+          <img src="~@images/logo_truck_M.svg">
+        </div>
+        <SocialButton media='facebook'>Inscription avec Facebook</SocialButton>
+        <SocialButton media='google'>Inscription avec Google</SocialButton>
+        <FormSeparator>Ou inscrivez vous</FormSeparator>
+        <FormText :label='false' type='email' placeholder='Adresse mail'
             :icon="images.email"  v-model="SignupForm.email" :vl='$v.SignupForm.email'/>
         
-        <FormText type='text' placeholder="Nom d'utilisateur"
+        <FormText :label='false' type='text' placeholder="Nom d'utilisateur"
             :icon="images.username"  v-model="SignupForm.username" :vl='$v.SignupForm.username'/>
 
-        <FormText type='password' placeholder='Mot de passe'
+        <FormText :label='false' type='password' placeholder='Mot de passe'
             :icon="images.plainPassword.first"  v-model="SignupForm.plainPassword.first" :vl='$v.SignupForm.plainPassword.first'/>
 
-        <FormText type="password" placeholder='Confirmez le mot de passe'
+        <FormText :label='false' type="password" placeholder='Confirmez le mot de passe'
             :icon="images.plainPassword.second"  v-model="SignupForm.plainPassword.second" :vl='$v.SignupForm.plainPassword.second'/>
 
         <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
@@ -33,7 +39,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 
-import { UIModal, FormText, CheckBox, FormButton } from "@components";
+import { UIModal, FormText, CheckBox, FormButton,FormSeparator, SocialButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 import { SignupStore, NotificationsStore } from '@store';
@@ -41,7 +47,7 @@ import { IValidator } from 'vuelidate';
 
 @Component({
   components: {
-    UIModal, FormText, CheckBox, FormButton
+    UIModal, FormText, CheckBox, FormButton, FormSeparator, SocialButton
   },
   validations: {
     SignupForm: {
@@ -75,12 +81,12 @@ export default class Inscription extends Vue {
     email: require('@icons/mail.svg'),
     username: require('@icons/surname.svg'),
     plainPassword: {
-      first:require('@icons/mail.svg'),
+      first:require('@icons/password.svg'),
       second: require('@icons/password.svg')
     }
   }
   public SignupForm = {
-    email: null,
+    email: 'victor@free.fr',
     username: 'victor2',
     plainPassword: {
       first: 'aaaaa',
@@ -122,6 +128,18 @@ export default class Inscription extends Vue {
 
 
 <style lang='scss'>
+  .moving-logo {
+    padding: 5px 30px 10px 30px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex-flow: column nowrap;
 
+    img {
+      width: 70px;
+      height: auto;
+    }
+  }
 </style>
 

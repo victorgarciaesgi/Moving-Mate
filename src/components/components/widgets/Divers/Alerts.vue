@@ -1,50 +1,24 @@
 <template>
-  <transition name='hide'>
-    <ul id="alertes-container" v-show='notificationList.length'>
-      <transition-group name='alert'>
-        <component :is='isLink(alert)'
-          :to='alert.link'
-          v-for='alert in notificationList' 
-          :key='alert.id' 
-          :type='alert.type'
-          class='alert'>
-          <div class='alert-icon'>
-            <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
-            <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
-            <img src="~@icons/warning.svg" v-else-if='alert.type == "warning"'>
-            <img src="~@icons/infos.svg" v-else-if='alert.type == "alert"'>
-          </div>
-          <div class='alert-text'>
-            <span>{{alert.message}}</span>
-          </div>
-          <div class='alert-quit' @click.prevent='deleteAlert(alert)'>
-            <img src='~@icons/quit.svg'>
-          </div>
-        </component>
-      </transition-group>
-    </ul>
+  <transition name='bounce'>
+    <div v-if='show' class='modal-base' @click='closeModal()'>
+    </div>
   </transition>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { NotificationsStore } from "@modules";
-import { INotification } from '@types';
+import { Component, Prop, Watch } from "vue-property-decorator";
 
 @Component({})
 export default class Alerts extends Vue {
+  
+  @Prop() show: boolean;
+  @Prop({required: false, default: true}) isPopup: boolean;
+  @Prop({required: false}) height: number;
+  @Prop({required: false}) width: number; 
 
-  get notificationList() {return NotificationsStore.state.notificationList}
-  deleteAlert = NotificationsStore.mutations.deleteAlert;
-
-  get isLink() {
-    return (notif: INotification) => {
-      if (notif.link) {
-        return 'router-link';
-      }
-      return 'li';
-    }
+  closeModal(){
+    this.$emit('close');
   }
 
 }
@@ -53,98 +27,134 @@ export default class Alerts extends Vue {
 
 
 <style lang='scss' scoped>
-ul#alertes-container {
+
+.modal-base{
   position: fixed;
-  top: $headerHeight;
-  left: 0;
-  padding: 10px;
-  width: 380px;
-  height: auto;
-  z-index: 10001;
+  height: 100%;
+  width: 100%;
+  background-color: transparentize($g20,0.7);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  z-index: 10002;
 
-  .alert {
-    position: relative;
-    height: auto;
+  &.full{
+    z-index: 2;
+    background-color: $w245;
+  
+    .modal-window {
+      border-radius: 5px;
+    }
+  }
+
+  .modal-window{
     display: flex;
-    flex-flow: row nowrap;
-    width: 100%;
-    margin-bottom: 5px;
-    padding: 13px 10px 13px 0px;
-    box-shadow: 0 0 10px rgba(20, 20, 20, 0.2);
-    font-size: 14px;
-    color: $g90;
-    text-align: center;
-    font-weight: bold;
-    border-radius: 3px;
+    position: relative;
     background-color: white;
-    line-height: 17px;
-
-    @at-root {
-      a#{&} {
-        cursor: pointer;
-      }
-    }
-
-    div {
+    border-radius: 3px;
+    box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
+    height: auto;
+    min-height: 200px;
+    min-width: 300px;
+    max-height: 80vh;
+    max-width: 80vw;
+    flex-flow: column nowrap;
+    overflow: hidden;
+    
+    div.header {
       display: flex;
-      align-content: center;
-      align-items: center;
-      justify-content: center;
+      flex-flow: row wrap;
+      flex: 0 0 auto;
+      height: 40px;
+      padding-left: 10px;
+      font-weight: bold;
+      border-bottom: 1px solid $w230;
 
-      &.alert-text {
-        flex: 1 1 auto;
+      div.header-slot{
+        display: flex;
+        flex: 1;
+        align-items: center;
       }
-      &.alert-icon {
-        width: 50px;
-        flex: 0 0 auto;
-        img {
-          height: 25px;
-          width: 25px;
-        }
-      }
-      
-      &.alert-quit {
-        width: 30px;
+
+      div.close-wrap {
+        display: flex;
+        width: 40px;
         cursor: pointer;
         flex: 0 0 auto;
-
-        img {
-          height: 20px;
-          width: 20px;
-        }
+        justify-content: center;
+        align-items: center;
       }
+
     }
 
+    div.content {
+      display: flex;
+      flex-flow: column wrap;
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 10px;
+    }
 
+    div.footer {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: 0 0 auto;
+      padding: 5px;
+      height: 50px;
+      align-items: center;
+      align-content: center;
+      justify-content: flex-end;
+    }
 
   }
 }
 
-.hide-leave-active {
-  transition: all 0.6s;
+.bounce-enter-active {
+  transition: color 0.5s, opacity 0.2s;
+  .modal-window {
+    animation: bounce-in 0.5s;
+  }
+}
+.bounce-leave-active {
+  transition: color 0.2s, opacity 0.2s;
+  .modal-window {
+    animation: bounce-out 0.2s;
+  }
 }
 
-
-
-.alert-enter-active, .alert-leave-active {
-  transition: all 0.5s;
-}
-
-.alert-leave-to {
+.bounce-enter, .bounce-leave-to {
   opacity: 0;
-  transform: translateY(-30px);
 }
 
-.alert-enter {
-  opacity: 0;
-  transform: translateX(-100%);
+
+
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-.alert-enter-to {
-  transform: translateX(0);
+@keyframes bounce-out {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
 }
+
+
+
+
 
 </style>
 

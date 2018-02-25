@@ -27,7 +27,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component} from 'vue-property-decorator';
-import { State, Getter, Mutation } from 'vuex-class';
 import { svgPath } from '@types';
 import router from '@router';
 import { StarRating, SvgIcon, MapViewer, BlurLoader } from '@components';
@@ -68,7 +67,7 @@ section{
 section.image-home {
   position: relative;
   height: auto;
-  max-height: 500px;
+  max-height: 600px;
 
   .background-mask {
     position: absolute;

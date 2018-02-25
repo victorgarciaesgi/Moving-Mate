@@ -33,7 +33,7 @@
                   <span class='name'>{{result.nom}}</span>
                   <span class='code' v-if='["ville","departement"].includes(result.type)'>
                     <span v-if='result.codesPostaux'>{{result.codesPostaux[0]}}</span>
-                    <span v-else>{{}}</span>
+                    <span v-else>{{result.code}}</span>
                   </span>
                 </li>
               </ul>
@@ -159,9 +159,9 @@ export default class SearchMoving extends Vue {
 
 .main {
   display: flex;
-  flex-flow: columns nowrap;
+  flex-flow: row nowrap;
   width: 100%;
-  background-color:rgb(255, 249, 249);
+  background-color: #f9fbff;
 
   .search-container {
     position: relative;

@@ -3,6 +3,7 @@ import { ProgressBar } from '@store';
 import * as RootStore from '@store';
 import { RouteConfig } from 'vue-router';
 import * as Stores from '@store';
+import {Connexion, Inscription} from '@components';
 
 
 export const routesList: RouteConfig[]  = [
@@ -41,7 +42,7 @@ export const routesList: RouteConfig[]  = [
 
   },
   { path: '/inscription', name: 'Inscription', 
-    component: () => import('@components/Inscription.vue'),
+    component: Inscription,
     meta: {
       noAuth: true
     },
@@ -50,7 +51,7 @@ export const routesList: RouteConfig[]  = [
     },
   },
   { path: '/connexion', name: 'Connexion',
-    component: () => import('@components/Connexion.vue'),
+    component: Connexion,
     meta: {
       noAuth: true
     },

@@ -47,7 +47,7 @@ namespace Actions {
       let response = await axios.get(`maps/${svgPath}.json`);
       if (response.status == 200) {
         console.log(response)
-        context.commit('savePaths', response.data)
+        Mutations.mutations.savePaths(response.data);
       }
     }
   }

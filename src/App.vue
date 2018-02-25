@@ -2,7 +2,7 @@
   <div id='app' @click='closePopups()'>
     <HeaderComponent/>
     <ProgressBarComponent/>
-    <Alerts/>
+    <Notifications/>
     <div class='view'>
       <transition name='fade' mode='out-in'>
         <router-view/>
@@ -19,7 +19,7 @@ import { sync } from 'vuex-router-sync'
 import { Component } from "vue-property-decorator";
 import { EventBus, RootState, storeBuilder, DebugMode } from "@store";
 import router from "./router";
-import { HeaderComponent, Alerts, ProgressBarComponent } from "@components";
+import { HeaderComponent, Notifications, ProgressBarComponent } from "@components";
 import { LoginStore } from "@modules";
 import $ from "jquery";
 
@@ -32,7 +32,7 @@ sync(store, router);
   store: store,
   components: {
     HeaderComponent,
-    Alerts,
+    Notifications,
     ProgressBarComponent
   },
   router

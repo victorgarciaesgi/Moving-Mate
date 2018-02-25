@@ -1,7 +1,7 @@
 <template>
   <div class="input-box">
-    <label v-if='label || placeholder' :class='{formError: (!valid && dirty && error)}'>
-      {{label || placeholder}}
+    <label v-if='label && placeholder' :class='{formError: (!valid && dirty && error)}'>
+      {{placeholder}}
     </label>
     <div class="input-container">
       <input ref='input' class='input-form'
@@ -33,15 +33,8 @@
       <div class='popup-message' v-if='description && popupPosition.display'
           :style='popupPosition'>
         <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-        <!-- <ul v-if='!vl.error && dirty && error' class='error'>
-          <li v-for='(key, index) in filterErrors' :key='key'>
-              <span>{{errorMessages[key]}}</span>
-          </li>
-        </ul>
-        <span v-if='vl.$pending' class='info'>Verification...</span> -->
         <div class='triangle'></div>
       </div>
-
     </div>
 
     <div class='errorMessage' v-if='(vl.$error && error) || description || vl.$pending'>
@@ -53,7 +46,6 @@
       </ul>
       <span v-if='vl.$pending' class='info'>Verification...</span>
     </div>
-
   </div>
 </template>
 
@@ -73,30 +65,18 @@ import { SvgIcon } from "@components";
 })
 export default class FormText extends Vue {
   @Prop() value: string;
-  @Prop({ required: false, default: "text" })
-  type: string;
-  @Prop({ required: false })
-  placeholder: string;
-  @Prop({ required: false })
-  label: string;
-  @Prop({ required: false, default: true })
-  error: boolean;
-  @Prop({ required: false })
-  disabled: boolean;
-  @Prop({ required: false })
-  description: string;
-  @Prop({ required: false, default: true })
-  required: boolean;
-  @Prop({ required: false, default: null })
-  icon: string;
-  @Prop({ required: false, default: true })
-  inline: boolean;
-  @Prop({ required: false })
-  big: boolean;
-  @Prop({ required: false })
-  design: string;
-  @Prop({ required: false })
-  vl: IValidator;
+  @Prop({ required: false, default: "text" }) type: string;
+  @Prop({ required: false }) placeholder: string;
+  @Prop({ required: false, default: true }) label: boolean;
+  @Prop({ required: false, default: true }) error: boolean;
+  @Prop({ required: false }) disabled: boolean;
+  @Prop({ required: false }) description: string;
+  @Prop({ required: false, default: true }) required: boolean;
+  @Prop({ required: false, default: null }) icon: string;
+  @Prop({ required: false, default: true }) inline: boolean;
+  @Prop({ required: false }) big: boolean;
+  @Prop({ required: false }) design: string;
+  @Prop({ required: false }) vl: IValidator;
 
   public popupPosition: any = {
     bottom: null,
@@ -171,7 +151,7 @@ export default class FormText extends Vue {
   position: relative;
   flex: 1 1 auto;
   min-width: 250px;
-  padding: 5px;
+  padding: 5px 0 5px 0;
   max-width: 450px;
 
   label {
@@ -260,7 +240,7 @@ export default class FormText extends Vue {
     }
 
     &:focus {
-      padding-left: 10px;
+      padding-left: 15px;
       & ~ .input-icon-contain {
         width: 0;
         opacity: 0;

@@ -1,11 +1,8 @@
 import {ActionContext  } from 'vuex';
 import { ISignupState } from '@types';
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
-import { RootState } from '../index';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../Api';
 import { timeout } from '@methods';
-import { storeBuilder } from "./Store/Store";
-
-type SignupContext = ActionContext<ISignupState, RootState>;
+import { storeBuilder } from "../Store/Store";
 
 const SIGNUP_URL = 'register';
 
@@ -42,7 +39,7 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function signupRequest(context:SignupContext, loginData: Object) {
+  async function signupRequest(context, loginData: Object) {
     let { success, status, data } = await Api.post(SIGNUP_URL, loginData);
     state.requesting = false
     if (success) {

@@ -32,9 +32,7 @@ export default class Moving extends Vue {
   @Prop({required: false}) search: string;
 
   mounted() {
-    if (this.search) {
-      // MovingStore.mutations.updateSearchValue(this.search);
-    }
+
   }
 
 }

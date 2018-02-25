@@ -73,6 +73,7 @@ button {
    img{
     height: 17px;
     width: 17px;
+    margin-top: 2px;
   }
 
   &.disabled{
@@ -83,7 +84,7 @@ button {
   &.submitting {
     cursor: wait;
     .loading{
-      display: block;
+      display: flex;
     }
   }
 

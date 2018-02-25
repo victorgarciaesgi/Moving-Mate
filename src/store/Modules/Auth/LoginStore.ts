@@ -1,16 +1,14 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../Api';
-import NotificationsModule from './NotificationsStore';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../../Api';
+import NotificationsModule from '../Interface/NotificationsStore';
 import router from '@router';
 import { ActionContext } from 'vuex';
 import { ILoginState } from '@types';
-import { RootState } from '../index';
 import { capitalize } from 'lodash';
-import { storeBuilder } from "./Store/Store";
-import { JWT } from '../TokenStore'
+import { storeBuilder } from "../Store/Store";
+import { JWT } from './TokenStore'
 
-type LoginContext = ActionContext<ILoginState, RootState>;
 const LOGIN_URL = "login_check";
 
 // State
@@ -41,7 +39,6 @@ const state: ILoginState = {
       status: null,
       userToken: null
     },
-    this.showModal = false,
     this.isLoggedIn = false;
   }
 }
@@ -93,6 +90,7 @@ namespace Mutations {
     state.userInfos = merge(state.userInfos, userData);
     state.userInfos.userToken = token;
     state.isLoggedIn = true;
+    state.showModal = false;
     addAuthHeaders();
     if (state.RouteAfter || redirect) {
       router.push(state.RouteAfter?state.RouteAfter:redirect);
@@ -117,7 +115,7 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function connexionRequest(context: LoginContext, {loginData, redirect}): Promise<ApiResponse> {
+  async function connexionRequest(context,{loginData, redirect}): Promise<ApiResponse> {
     try {
       state.requesting = true;
       let { success, status, data } = await Api.post(LOGIN_URL, loginData);
@@ -136,7 +134,8 @@ namespace Actions {
       state.requesting = false;
     }
   }
-  async function connexionSuccess(context: LoginContext, {token, redirect}) {
+  /* */
+  async function connexionSuccess(context, {token, redirect}) {
     let userData = await jwtDecode(token);
     console.log(userData);
     LoginModule.mutations.connectUser({userData, token, redirect});

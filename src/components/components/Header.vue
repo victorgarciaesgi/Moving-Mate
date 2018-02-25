@@ -192,7 +192,8 @@ div.header-wrapper{
             color: $g40;
           }
           &.router-link-active li.route{
-            color: $mainStyle;
+            color: darken($mainStyle, 5%);
+            // span {border-bottom: 2px solid $mainStyle;}
             /deep/ svg { fill: $mainStyle }
           }
 
@@ -207,7 +208,7 @@ div.header-wrapper{
             padding: 7px 5px 5px 5px;
             border-bottom: 3px solid transparent;
 
-            span {padding: 0 5px 0 5px}
+            span {padding: 5px}
 
             /deep/ div, svg {
               fill: $g90;
@@ -241,8 +242,22 @@ div.header-wrapper{
             color: white;
           }
 
-          &:hover {background-color: $w245;}
-          &.active {background-color: $w230;}
+          &:hover {
+            &.color {
+              background-color: darken($mainStyle, 5%);
+            }
+            &:not(.color) {
+              background-color: $w245;
+            }
+          }
+          &:active {
+            &.color {
+              background-color: darken($mainStyle, 10%);
+            }
+            &:not(.color) {
+              background-color: $w230;
+            }
+          }
 
           span {padding: 7px 15px 8px 15px;}
 
@@ -259,7 +274,7 @@ div.header-wrapper{
 
         li.header-button {
           &:not(.popup) {
-            margin-left: 5px;
+            margin-left: 10px;
             @extend %header-button;
           }
 
@@ -267,13 +282,16 @@ div.header-wrapper{
             position: relative;
             margin-left: 10px;
             white-space: nowrap;
-            float: left;
 
             .bouton-data {
               @extend %header-button;
 
               &.image {
-                padding: 5px;
+                padding: 5px 7px 5px 7px;
+                /deep/ svg {
+                  height: 26px;
+                  width: 26px;
+                }
               }
             }
 

@@ -1,29 +1,28 @@
 <template>
-  <div v-if='show' class='modal-base' @click='closeModal()' 
-    :class='{
-      full: !isPopup
-    }'>
-    <div class="modal-window" @click.stop :style='{
-        maxHeight: height?`${height}px`:"",
-        width: width?`${width}px`:"",
-      }'>
-      <div class='header' v-if='isPopup'>
-        <div class='header-slot'>
-          <slot name='header'></slot>
+  <transition name='bounce'>
+    <div v-if='show' class='modal-base' @click='closeModal()'
+      :class='{full: !isPopup}'>
+      <div class="modal-window" @click.stop :style='{
+          maxHeight: height?`${height}px`:"",
+          width: width?`${width}px`:"",
+        }'>
+        <div class='header' v-if='isPopup'>
+          <div class='header-slot'>
+            <slot name='header'></slot>
+          </div>
+          <div class='close-wrap'>
+            <img src='~@icons/quit.svg' @click="closeModal()">
+          </div>
         </div>
-        <div class='close-wrap'>
-          <img src='~@icons/quit.svg' @click="closeModal()">
+        <div class='content'>
+          <slot name='content'></slot>
         </div>
-      </div>
-      <div class='content'>
-        <slot name='content'></slot>
-      </div>
-      <div class='footer' >
-        <slot name='footer'></slot>
+        <div class='footer'>
+          <slot name='footer'></slot>
+        </div>
       </div>
     </div>
-  </div>
-
+  </transition>
 </template>
 
 <script lang="ts">
@@ -130,6 +129,51 @@ export default class UIModal extends Vue {
 
   }
 }
+
+.bounce-enter-active {
+  transition: color 0.5s, opacity 0.2s;
+  .modal-window {
+    animation: bounce-in 0.5s;
+  }
+}
+.bounce-leave-active {
+  transition: color 0.2s, opacity 0.2s;
+  .modal-window {
+    animation: bounce-out 0.2s;
+  }
+}
+
+.bounce-enter, .bounce-leave-to {
+  opacity: 0;
+}
+
+
+
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-out {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+
+
+
 
 
 </style>

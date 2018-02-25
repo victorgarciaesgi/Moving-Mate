@@ -1,12 +1,10 @@
 import { ActionContext  } from 'vuex';
 import { INotificationState, INotification, INotificationType } from '@types';
-import { RootState } from '../index';
 import { timeout } from '@methods';
 import { merge } from 'lodash';
-import { storeBuilder } from "./Store/Store";
+import { storeBuilder } from "../Store/Store";
 
 const TIMEOUT: number = 5000;
-type NotificationContext = ActionContext<INotificationState, RootState>;
 
 
 //State
@@ -46,7 +44,7 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function addNotification(context: NotificationContext, alert: INotification) {
+  async function addNotification(context, alert: INotification) {
     alert = merge(alert, {
       id: state.notificationCount,
       isNotif: alert.isNotif || false,

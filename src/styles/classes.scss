@@ -3,7 +3,7 @@
 
 .form-valid-icon{
   position: absolute;
-  right: 5px;
+  right: 10px;
   top: 50%;
   height: 20px;
   width: 20px;
@@ -20,7 +20,7 @@
     background-image: url('~@icons/form-required.svg');
     height: 15px;
     width: 15px;
-    right: 7px;
+    right: 12px;
     cursor: pointer;
     &:hover:after{
       content:"Champs requis";
