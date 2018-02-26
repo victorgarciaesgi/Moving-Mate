@@ -9,7 +9,8 @@
       <slot></slot>
     </div>
     <div class='loading' v-if='loading'>
-      <img src="~@images/loading.svg" height="24" width="24">
+      <img v-if='media == "google"' src="~@images/loading.svg" height="24" width="24">
+      <img v-if='media == "facebook"' src="~@images/loading_white.svg" height="24" width="24">
     </div>
   </div>
 
@@ -78,6 +79,11 @@ export default class SocialButton extends Vue {
       height: 100%;
       width: auto;
     }
+  }
+
+  .loading {
+    display: flex;
+    align-items: center;
   }
 
   .text {

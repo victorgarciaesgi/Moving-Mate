@@ -49,15 +49,15 @@ const stateGetter = b.state();
 
 // Getters
 namespace Getters {
-  const fullName = b.read(function fullName(state: ILoginState): string {
+  const fullName = b.read(function fullName(state): string {
     return capitalize(state.userInfos.surname) + " " + capitalize(state.userInfos.name);
   })
 
-  const isAdmin = b.read(function isAdmin(state: ILoginState) : boolean {
+  const isAdmin = b.read(function isAdmin(state) : boolean {
     return state.userInfos.roles.includes("ROLE_ADMIN");
   })
 
-  const userPicture = b.read(function userPicture(state: ILoginState) : string {
+  const userPicture = b.read(function userPicture(state) : string {
     return state.userInfos.profile || require('@images/user.jpg');;
   })
 

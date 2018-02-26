@@ -26,8 +26,13 @@ const stateGetter = b.state()
 
 // Getters
 namespace Getters {
+
+  const formatedMovingList = b.read(function formatedMovingList(state) {
+    return state.movingList;
+  })
+
   export const getters = {
-    
+    get formatedMovingList() {return formatedMovingList()}
   }  
 }
 
