@@ -58,7 +58,7 @@ namespace Getters {
   })
 
   const userPicture = b.read(function userPicture(state) : string {
-    return state.userInfos.profile || require('@images/user.jpg');;
+    return state.userInfos.profile || require('@images/user.jpg');
   })
 
   export const getters = {

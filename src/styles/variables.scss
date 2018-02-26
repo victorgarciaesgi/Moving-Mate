@@ -1,5 +1,7 @@
 // Couleurs
 $mainStyle: #4975BA;
+$mainColor: #3c4858;
+
 
 
 $yellow1: #f8ab1c;
@@ -19,6 +21,8 @@ $green3: #70BEB1;
 :export {
   mainColor: $mainStyle;
   red1: $red1;
+  yellow1: $yellow1;
+  fontColor: $mainColor;
 }
 
 
@@ -56,7 +60,6 @@ $g10: rgb(10, 10, 10);
 $g0: rgb(0, 0, 0);
 
 $ombre: rgba(10,10,10,0.2);
-$mainColor: #3c4858;
 
 
 $mainFont: 'Arial, sans-serif';

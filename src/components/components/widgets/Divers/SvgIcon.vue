@@ -14,7 +14,9 @@
 import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
 
-@Component({})
+@Component({
+  name:'SvgIcon'
+})
 export default class SvgIcon extends Vue {
 
   public defaultColor = '#5a5a5a'
@@ -35,6 +37,7 @@ export default class SvgIcon extends Vue {
   get baseToSvg(): string {
     try {
       let svg = window.atob(this.src.split(',')[1]);
+      
       return svg;
     }
     catch {

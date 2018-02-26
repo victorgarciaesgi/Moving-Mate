@@ -1,32 +1,23 @@
 <template>
   <div class='star-component'>
     <div class="star-container" @mouseleave='leave()'>
-      <template v-if='editable'>
-        <div class="starRating" v-for='(index) in starCount' :key='index'  editable 
-            :class='{
-              full: index < hoverCount,
-              half: index == hoverCount - 0.5,
-              empty: index >= hoverCount
-            }' 
-            :color='(!hoverStar && vl?vl.$dirty:false)?"green":"brown"'
-            >
-          <div class="part" @mouseenter="hover(index + 0.5)" @click="set(index + 0.5)"></div>
-          <div class="part" @mouseenter="hover(index + 1)" @click="set(index + 1)"></div>
-        </div>
-      </template>
-      <template v-else>
-        <div class="starRating" v-for='(index) in starCount' :key='index'
-            :class='{
-              full: index + 1 <= hoverCount,
-              half: (index + 1 > hoverCount) && (index + 0.5 <= hoverCount),
-              empty: index + 1 > hoverCount && (index + 0.5 > hoverCount),
-            }'  color='brown'>
-        </div>
-      </template>
+      <div class="starRating"
+          v-for='(index) in starCount' :key='index' 
+          :style='getSize'
+          :class='getActiveClass(index)' 
+          >
+        <SvgIcon :src='getActiveImage(index)' 
+          :color='getActiveColor(index)'
+          :size='size'/>
+        <template v-if='editable'>
+          <div class="part" @mouseenter="hover(index - 0.5)" @click="set(index - 0.5)"></div>
+          <div class="part" @mouseenter="hover(index)" @click="set(index)"></div>
+        </template>
+      </div>
     </div>
 
     <div class="star-displayNumber" v-if='displayNote'>
-      {{ (hoverCount != 0?(hoverCount ):'-') }} / {{starCount}}
+      {{ (hoverCount != 0?(hoverCount):'-') }} / {{starCount}}
     </div>
     <div class="star-displayCount" v-if='displayNote && noteCount'>
       {{noteCount}} {{noteCount > 1?'notes':'note'}}
@@ -37,44 +28,92 @@
       <div v-if='!vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-valid"></div>
       <div v-if='vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-invalid"></div>
     </template>
-
   </div>
- 
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
-import { numberFilter } from "@filters";
+import SvgIcon from '../Divers/SvgIcon.vue';
+const css = require('@css');
 
-@Component({})
+
+@Component({
+  components: {
+    SvgIcon: SvgIcon
+  }
+})
 export default class StarRating extends Vue {
-
-  @Prop() value: number;
+  @Prop({required: false}) value: number;
   @Prop({ default: 5 }) starCount: number;
   @Prop({ default: false }) required: boolean;
-  @Prop() name: string;
+  @Prop({ default: css.fontColor}) baseColor: string;
+  @Prop({ default: css.mainColor}) selectedColor: string;
+  @Prop({ default: 25}) size: number;
   @Prop({ default: true }) editable: boolean;
   @Prop({ default: 0 }) init: number;
-  @Prop() noteCount: number;
+  @Prop({ required: false}) noteCount: number;
   @Prop({ default: false }) displayNote: boolean;
-  @Prop({ default: true }) float: boolean;
-  @Prop() vl: IValidator;
+  @Prop({ required: false}) vl: IValidator;
 
   public rating: number = 0; 
   public hoverCount: number = 0;
-  public hoverStar: boolean = false; 
+  public hoverStar: boolean = false;
+  public rated: boolean = false;
+  public starImages = {
+    empty: require('./assets/star_empty.svg'),
+    half: require('./assets/star_half.svg'),
+    full: require('./assets/star_full.svg'),
+  }
+
+  get getSize() {
+    return {
+      height: `${this.size}px`,
+      width: `${this.size}px`,
+    }
+  }
+
+  get getActiveColor() {
+    return index => {
+      if (this.editable) {
+        return (!this.hoverStar && this.vl?this.vl.$dirty:false)?this.selectedColor:this.baseColor;
+      } else {
+        return this.baseColor;
+      }
+    }
+  }
+
+  get getActiveImage() {
+    return index => {
+      let activeClass = this.getActiveClass(index);
+      let [image] = Object.keys(activeClass).filter(m => activeClass[m]);
+      return this.starImages[image];
+    }
+  }
+
+  get getActiveClass() {
+    return index => {
+      if (this.editable) {
+        return {
+          full: index <= this.hoverCount,
+          half: index == this.hoverCount + 0.5,
+          empty: index > this.hoverCount,
+          editable: this.editable
+        }
+      } else {
+        return {
+          full: index <= this.hoverCount,
+          half: (index > this.hoverCount) && (index + 0.5 <= this.hoverCount),
+          empty: index > this.hoverCount && (index + 0.5 > this.hoverCount),
+          editable: this.editable
+        }
+      }
+    }
+  }
 
   mounted() {
-    this.hoverCount = this.value;
-  }
-  
-
-  updateValue(value) {
-    this.vl.$touch();
-    this.$emit("input", value);
+    this.hoverCount = this.value || this.init;
   }
 
   hover(value) {
@@ -94,15 +133,10 @@ export default class StarRating extends Vue {
   }
 
   set(value) {
-    if (this.editable) {
-      this.hoverStar = false;
-      this.rating = value;
-      this.$emit("input", value);
-    } else {
-      this.hoverStar = false;
-      this.hoverCount = value;
-      this.rating = value;
-    }
+    this.hoverStar = false;
+    this.rating = value;
+    this.$emit("input", value);
+    this.$emit("rate", value);
   }
 }
 </script>
@@ -128,37 +162,20 @@ export default class StarRating extends Vue {
     .starRating {
       position: relative;
       display: flex;
-      height: 25px;
-      width: 25px;
-      background-position: center center;
-      background-size: 30px 30px;
+      flex-flow: row nowrap;
+      margin: -2px;
 
-      &.full[color="brown"] {
-        background-image: url("./assets/star_plain.svg");
-      }
-      &.half[color="brown"] {
-        background-image: url("./assets/star_half.svg");
-      }
-      &.empty[color="brown"] {
-        background-image: url("./assets/star_empty.svg");
-      }
-      &.full[color="green"] {
-        background-image: url("./assets/star_plain_done.svg");
-      }
-      &.half[color="green"] {
-        background-image: url("./assets/star_half_done.svg");
-      }
-      &.empty[color="green"] {
-        background-image: url("./assets/star_empty_done.svg");
+      /deep/ .svg-container {
+        position: absolute;
       }
 
-      &[editable] {
+      &.editable {
         cursor: pointer;
       }
 
       .part {
         position: relative;
-        float: left;
+        flex: 0 0 auto;
         height: 100%;
         width: 50%;
       }
@@ -166,27 +183,25 @@ export default class StarRating extends Vue {
   }
 
   .star-displayNumber {
-    position: absolute;
     color: white;
-    right: 5px;
-    top: 50%;
-    @include translateY(-50%);
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-start;
     padding: 3px 10px 3px 10px;
     border-radius: 30px;
     font-size: 14px;
-    background-color: $yellow1;
+    // background-color: $yellow1;
   }
 
   .star-displayCount {
-    position: absolute;
     color: white;
-    left: 5px;
-    top: 50%;
-    @include translateY(-50%);
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: flex-end;
     padding: 3px 10px 3px 10px;
     border-radius: 30px;
     font-size: 12px;
-    background-color: $yellow1;
+    // background-color: $yellow1;
   }
 }
 

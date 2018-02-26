@@ -67,7 +67,7 @@ namespace Mutations {
 // Actions
 namespace Actions {
 
-  async function fetchMoving(context, payload: {search?: string}) {
+  async function fetchMoving(context, payload?: {search?: string}) {
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
