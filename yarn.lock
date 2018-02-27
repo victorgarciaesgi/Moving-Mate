@@ -9152,10 +9152,6 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-blur-loader@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vue-blur-loader/-/vue-blur-loader-1.0.0.tgz#baab985a524623efff292a6344e4cf3b60e13a94"
-
 vue-class-component@^6.0.0:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-6.1.2.tgz#87ac0265b0db71a3f49f10d90e4f69f9be9c2fbd"

@@ -49,6 +49,7 @@ Rooter.beforeEach(async (to, from, next) => {
         } else {
           next('/');
         }
+        return;
       }
     } else if (to.matched.some(m => m.meta.noAuth) && LoginStore.state.isLoggedIn) {
       next('/');
