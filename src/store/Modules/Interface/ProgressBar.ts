@@ -16,7 +16,7 @@ const state: IProgressState = {
   canSuccess: true,
   duration: 3000,
   height: '2px',
-  color: css.mainColor,
+  color: css.mainStyle,
   failedColor: css.red1,
 }
 

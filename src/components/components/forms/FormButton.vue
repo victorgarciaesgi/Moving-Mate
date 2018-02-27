@@ -1,26 +1,33 @@
 <template>
   <button @click='emitClick($event)' :type='type' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
     <img v-if='!!icon' :src="icon">
-    <span>
+    <span :style='{color}'>
       <slot></slot>
     </span>
-    <img class='loading' src='~@images/loading.svg'>
+    <SvgIcon class='loading' :src='require("@images/loading.svg")' :size='17' />
   </button>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop, Model } from "vue-property-decorator";
+import {Component, Prop, Model } from "vue-property-decorator";
+import { SvgIcon } from '@components';
 
-@Component({})
+@Component({
+  components: {
+    SvgIcon
+  }
+})
 export default class FormButton extends Vue {
 
   @Prop({required: false}) submitting: boolean;
   @Prop({required: false}) disabled: boolean;
   @Prop({required: false, default: 'button'}) type: string;
   @Prop({required: false}) icon: string;
+  @Prop({required: false}) theme: string;
   @Prop({required: false}) color: string;
+  
+  public css = require('@css');
 
   emitClick(event: Event){
     if (!this.submitting && !this.disabled) {
@@ -31,7 +38,7 @@ export default class FormButton extends Vue {
   }
 
   get colorClass(){
-    return this.color?this.color:'';
+    return this.theme?this.theme:'';
   }
 
 }
@@ -68,12 +75,10 @@ button {
   .loading{
     display: none;
     margin-left: 6px;
-  }
 
-   img{
-    height: 17px;
-    width: 17px;
-    margin-top: 2px;
+    /deep/ svg{
+      margin-top: 2px;
+    }
   }
 
   &.disabled{
@@ -88,19 +93,17 @@ button {
     }
   }
 
-  &:hover{
-    background-color: $w240;
-  }
+  &:hover{background-color: $w240;}
 
-  &:active{
-    background-color: $w220;
-  }
+  &:active{background-color: $w220;}
 
-  &.blue span{
-    color: $mainStyle;
+  &.blue {
+    // background: linear-gradient(lighten($mainStyle, 10%), $mainStyle);
+    // background-color: $mainStyle;
+    span{
+      color: $mainStyle;
+    }
   }
-
-  
 }
 
 </style>

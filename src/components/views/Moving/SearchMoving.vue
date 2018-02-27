@@ -25,10 +25,10 @@
                   <div class='icon'>
                     <SvgIcon v-if='result.type =="ville"' 
                       :src="require('@icons/location.svg')" 
-                      :color="{[css.mainColor]: index == resultSelected}"/>
+                      :color="{[css.mainStyle]: index == resultSelected}"/>
                     <SvgIcon v-else 
                       :src="require('@icons/region.svg')" 
-                      :color="{[css.mainColor]: index == resultSelected}"/>
+                      :color="{[css.mainStyle]: index == resultSelected}"/>
                   </div>
                   <span class='name'>{{result.nom}}</span>
                   <span class='code' v-if='["ville","departement"].includes(result.type)'>
@@ -134,6 +134,7 @@ export default class SearchMoving extends Vue {
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
     if (!this.searchCommited) {
+      this.placesResultsDisplay = true;
       if (newVal.trim().length > 0) {
         this.searching = true;
         this.resultSelected = 0;
@@ -161,7 +162,7 @@ export default class SearchMoving extends Vue {
   display: flex;
   flex-flow: row nowrap;
   width: 100%;
-  background-color: #f9fbff;
+  background-color: white;
 
   .search-container {
     position: relative;

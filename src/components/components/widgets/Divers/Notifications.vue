@@ -9,10 +9,10 @@
           :type='alert.type'
           class='alert'>
           <div class='alert-icon'>
-            <img src="~@icons/form-valid.svg" v-if='alert.type == "success"'>
-            <img src="~@icons/form-invalid.svg" v-else-if='alert.type == "error"'>
-            <img src="~@icons/warning.svg" v-else-if='alert.type == "warning"'>
-            <img src="~@icons/infos.svg" v-else-if='alert.type == "alert"'>
+            <img src="~@icons/notifs/success.svg" v-if='alert.type == "success"'>
+            <img src="~@icons/notifs/error.svg" v-else-if='alert.type == "error"'>
+            <img src="~@icons/notifs/warning.svg" v-else-if='alert.type == "warning"'>
+            <img src="~@icons/notifs/infos.svg" v-else-if='alert.type == "alert"'>
           </div>
           <div class='alert-text'>
             <span>{{alert.message}}</span>

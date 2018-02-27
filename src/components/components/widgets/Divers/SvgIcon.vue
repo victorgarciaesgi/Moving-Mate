@@ -21,7 +21,7 @@ export default class SvgIcon extends Vue {
 
   public defaultColor = '#5a5a5a'
   @Prop({required: true}) src: string; // base64 svg
-  @Prop({required: false}) size: number;
+  @Prop({required: false, default: 24}) size: number;
   @Prop({required: false, default: '#5a5a5a', type: [String, Object]}) color;
 
   get activeColor() {

@@ -11,13 +11,13 @@
   @include bg-center;
 
   &.form-valid{
-    background-image: url('~@icons/form-valid.svg');
+    background-image: url('~@icons/forms/form-valid.svg');
   }
   &.form-invalid{
-    background-image: url('~@icons/form-invalid.svg');
+    background-image: url('~@icons/forms/form-invalid.svg');
   }
   &.form-required{
-    background-image: url('~@icons/form-required.svg');
+    background-image: url('~@icons/forms/form-required.svg');
     height: 15px;
     width: 15px;
     right: 12px;

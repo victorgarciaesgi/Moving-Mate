@@ -16,6 +16,7 @@ export const routesList: RouteConfig[]  = [
     component: () => import('@views/Moving/Moving.vue'),
     props: true,
     meta: {
+      headerShadow: true,
       contentProp: true,
       async asyncData(params?:any) {
         Stores.MovingStore.mutations.updateSearchValue(params.search || '');
@@ -25,7 +26,7 @@ export const routesList: RouteConfig[]  = [
   },
   {
     path: '/movers/:region?', name: 'Les déménageurs',
-    component: () => import('@views/Movers.vue'),
+    component: () => import('@views/Movers/Movers.vue'),
     props: true,
     meta: {
       contentProp: true,

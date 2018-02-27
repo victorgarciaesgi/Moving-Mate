@@ -40,6 +40,20 @@ export default class MovingList extends Vue {
 
 <style lang="scss" scoped>
 
+.moving-list-root {
+  display: flex;
+  position: relative;
+
+  ul.moving-list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: center;
+    padding: 10px;
+
+  }
+}
 
 
 

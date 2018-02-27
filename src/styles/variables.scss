@@ -19,10 +19,10 @@ $green2: #CEE8DF;
 $green3: #70BEB1;
 
 :export {
-  mainColor: $mainStyle;
+  mainStyle: $mainStyle;
   red1: $red1;
   yellow1: $yellow1;
-  fontColor: $mainColor;
+  mainColor: $mainColor;
 }
 
 

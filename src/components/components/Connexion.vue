@@ -28,7 +28,12 @@
       </div>
       <template slot='footer'>
         <FormButton @click='modalClosed(true)'>Annuler</FormButton>
-        <FormButton type='submit' :submitting='loginState.requesting' :disabled='$v.LoginForm.$invalid' color='blue'>Se connecter</FormButton>
+        <FormButton type='submit' 
+          :submitting='loginState.requesting' 
+          :disabled='$v.LoginForm.$invalid'
+          theme='blue'>
+            Se connecter
+        </FormButton>
       </template>
     </UIModal>
   </form>

@@ -21,8 +21,10 @@ export class AxiosError {
       if (status == 0) message = 'Vérifiez votre connexion Internet';
       NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } else {
-      LoginStore.actions.disconnectRequest();
-      NotificationsStore.actions.addNotification({ type: 'error', message: message })
+      if (message !== 'Bad credentials') {
+        LoginStore.actions.disconnectRequest();
+        NotificationsStore.actions.addNotification({ type: 'error', message: message })
+      }
     }
   }
 }

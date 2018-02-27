@@ -1,6 +1,6 @@
 <template>
   <div class='header-wrapper'>
-    <header>
+    <header :class='{shadow: headerBox}'>
       <nav>
         <router-link to='/' class='logo'>
           <img src="~@images/logo_banniere.svg" alt="">
@@ -88,7 +88,7 @@ import {RootState} from '@store';
 import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
-import { LoginStore, SignupStore } from '@modules'
+import { LoginStore, SignupStore, GlobalStore } from '@modules'
 import { StringifyOptions } from "querystring";
 
 @Component({
@@ -96,10 +96,11 @@ import { StringifyOptions } from "querystring";
 })
 export default class HeaderComponent extends Vue {
 
-  private loginState = LoginStore.state;
+  get loginState() {return LoginStore.state}
   private fullName = LoginStore.getters.fullName;
   private userPicture = LoginStore.getters.userPicture;
   private isAdmin = LoginStore.getters.isAdmin;
+  get headerBox() {return GlobalStore.state.headerBoxShadow};
 
   private showLogin = LoginStore.mutations.showLogin;
   private disconnectRequest = LoginStore.actions.disconnectRequest;
@@ -109,7 +110,6 @@ export default class HeaderComponent extends Vue {
   
 
   public $store: Store<RootState>;
-  public refs = {};
   public popups = [];
 
   get getProfileImage() {
@@ -119,7 +119,7 @@ export default class HeaderComponent extends Vue {
   }
 
   mounted() {
-    this.refs = this.$refs;
+    
   }
 
   togglePopup(popupName: string, target?: HTMLElement) {
@@ -158,7 +158,15 @@ div.header-wrapper{
     z-index: 10000;
     flex-flow: row nowrap;
     justify-content: flex-start;
-    box-shadow: 0 0 5px transparentize($g20, 0.8);
+    border-bottom: 1px solid transparent;
+
+    &.shadow {
+      box-shadow: 0 0 5px transparentize($g20, 0.8);
+    }
+
+    &:not(.shadow) {
+      border-bottom: 1px solid $w230;
+    }
 
     .logo {
       display: flex;

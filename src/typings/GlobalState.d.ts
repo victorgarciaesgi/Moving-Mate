@@ -1,5 +1,6 @@
 export interface IGlobalState {
-  svgMapPaths: Array<svgPath>
+  svgMapPaths: Array<svgPath>,
+  headerBoxShadow: boolean,
 }
 
 interface svgPath {

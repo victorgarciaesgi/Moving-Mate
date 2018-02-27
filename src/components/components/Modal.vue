@@ -125,6 +125,7 @@ export default class UIModal extends Vue {
       align-items: center;
       align-content: center;
       justify-content: flex-end;
+      // border-top: 1px solid $w230;
     }
 
   }

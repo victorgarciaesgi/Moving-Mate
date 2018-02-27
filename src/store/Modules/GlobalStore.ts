@@ -12,7 +12,8 @@ type GlobalContext = ActionContext<IGlobalState, RootState>;
 
 //State
 const state: IGlobalState = {
-  svgMapPaths: []
+  svgMapPaths: [],
+  headerBoxShadow: true,
 }
 
 const b = storeBuilder.module<IGlobalState>("GlobalModule", state);

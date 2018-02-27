@@ -15,7 +15,6 @@
         </template>
       </div>
     </div>
-
     <div class="star-displayNumber" v-if='displayNote'>
       {{ (hoverCount != 0?(hoverCount):'-') }} / {{starCount}}
     </div>
@@ -48,7 +47,7 @@ export default class StarRating extends Vue {
   @Prop({required: false}) value: number;
   @Prop({ default: 5 }) starCount: number;
   @Prop({ default: false }) required: boolean;
-  @Prop({ default: css.fontColor}) baseColor: string;
+  @Prop({ default: css.mainStyle}) baseColor: string;
   @Prop({ default: css.mainColor}) selectedColor: string;
   @Prop({ default: 25}) size: number;
   @Prop({ default: true }) editable: boolean;
@@ -104,8 +103,8 @@ export default class StarRating extends Vue {
       } else {
         return {
           full: index <= this.hoverCount,
-          half: (index > this.hoverCount) && (index + 0.5 <= this.hoverCount),
-          empty: index > this.hoverCount && (index + 0.5 > this.hoverCount),
+          half: (index > this.hoverCount) && (index - 0.5 <= this.hoverCount),
+          empty: index > this.hoverCount && (index - 0.5 > this.hoverCount),
           editable: this.editable
         }
       }

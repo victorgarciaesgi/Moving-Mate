@@ -50,9 +50,10 @@ export default class Moving extends Vue {
 
   section.searchComponent {
     display: flex;
-    height: 150px;
     flex: 0 0 auto;
-    border-bottom: 1px solid $w210;
+    z-index: 10;
+    box-shadow: 0 0 10px transparentize($g20, 0.8);
+
   }
 
   section.searchResults {
@@ -64,6 +65,8 @@ export default class Moving extends Vue {
     section.resultsList {
       display: flex;
       flex: 1 1 auto;
+      background-color: $w245;
+
     }
 
     section.resultsMap {
