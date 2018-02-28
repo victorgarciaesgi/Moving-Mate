@@ -43,6 +43,9 @@ export default class MovingList extends Vue {
 .moving-list-root {
   display: flex;
   position: relative;
+  flex-flow: row nowrap;
+  flex: 1 1 auto;
+
 
   ul.moving-list {
     display: flex;
@@ -50,6 +53,7 @@ export default class MovingList extends Vue {
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
+    flex: 1 1 auto;
     padding: 10px;
 
   }

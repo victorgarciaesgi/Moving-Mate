@@ -5,7 +5,7 @@
         <div class='profil-bg' :style='profilePic'></div>
       </div>
       <div class='infos'>
-        <div class='name'>Victor Garcia</div>
+        <div class='name'>{{chance.name()}}</div>
         <!-- <div class='inscrit'>Inscrit depuis 2 semaines</div>
         <div class='note'>
           <StarRating :editable='false' :size='23' :init='2.6'/>
@@ -13,7 +13,6 @@
       </div>
     </div>
     <div class='content'>
-      <div class='description'></div>
       <div class='moving-infos'>
         <div class='movers info'>
           <SvgIcon :src='require("@icons/moving/people.svg")' :size='22' :color='iconColor' />
@@ -21,29 +20,35 @@
         </div>
         <div class='price info'>
           <SvgIcon :src='require("@icons/moving/euro.svg")' :size='22' :color='iconColor' />
-          <span>10</span>
+          <span>10/pers</span>
         </div>
         <div class='elevator info'>
-          <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='22' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='18' :color='css.green1' /></span>
+          <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='20' :color='iconColor' />
+          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='20' :color='css.green1' /></span>
         </div>
         <div class='parking info'>
           <SvgIcon :src='require("@icons/moving/parking.svg")' :size='22' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/no.svg")' :size='18' :color='css.red1' /></span>
+          <span><SvgIcon :src='require("@icons/moving/no.svg")' :size='20' :color='css.red1' /></span>
         </div>
       </div>
       <div class='moving-places'>
         <div class='depart element'>
+          <div class='icon black'></div>
           <span>{{getDepart}}</span>
         </div>
-        <div class='arrow'></div>
+        <!-- <div class='arrow'>→</div> -->
         <div class='arrivee element'>
+          <div class='icon blue'></div>
           <span>{{getArrivee}}</span>
         </div>
       </div>
+      <div class='description'>
+        {{getDescription}}
+      </div>
+
     </div>
     <div class='footer'>
-      <div class='begin'></div>
+      <div class='begin'>Mercredi 7 mars 2018</div>
     </div>
   </li>
   
@@ -54,6 +59,8 @@ import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMovingEvent} from '@types';
 import { StarRating, SvgIcon } from '@components';
+import * as Chance from 'chance';
+import axios from 'axios';
 
 @Component({
   components: {
@@ -65,8 +72,17 @@ export default class MovingCard extends Vue {
   @Prop({required: true}) moving: IMovingEvent;
   public css = require('@css');
   public note = 3;
-  public iconColor = "#555";
+  public iconColor = "#888";
+  public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
+
+  get getDescription() {
+    return this.chance.paragraph().slice(0,100) + '...';
+  }
+  
+  get chance() {
+    return new Chance();
+  }
 
   get getDepart() {
     let [number,road,town,code] = this.moving.addressIn.split('|');
@@ -84,8 +100,10 @@ export default class MovingCard extends Vue {
     }
   }
 
-  get profilePic() {
-    return {backgroundImage: `url("${require('@images/user.jpg')}")`};
+  async mounted () {
+    let {data} = await axios.get('https://randomuser.me/api/?inc=picture');
+    console.log(data);
+    this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
 
 }
@@ -147,6 +165,7 @@ export default class MovingCard extends Vue {
         &.name {
           font-weight: bold;
           align-items: center;
+          justify-content: flex-start;
         }
 
         &.inscrit {
@@ -198,36 +217,79 @@ export default class MovingCard extends Vue {
     .moving-places {
       display: flex;
       flex-flow: column nowrap;
-      flex: 1 1 auto;
-      padding: 10px;
+      flex: 0 0 auto;
+      margin: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      background-color:$w250;
+      box-shadow: 0 0 10px rgba(10,10,10,0.05);
+      border: 1px solid $w230;
 
       .element {
         display: flex;
         flex-flow: row nowrap;
-        justify-content: center;
-        color: $g60;
+        color: $g90;
+        padding: 5px 0 5px 0;
+        background-color:white;
         flex: 0 0 auto;
         font-size: 14px;
+        font-weight: bold;
+
+        &:last-child {
+          border-top: 1px solid $w230;
+        }
 
         span {
-          padding: 3px 10px 3px 10px;
-          border-radius: 3px;
-          background-color: $mainStyle;
-          color: white;
+          flex: 1 1 auto;
+          text-align: center;
+        }
+
+        .icon {
+          display: flex;
+          flex: 0 0 auto;
+          justify-content: center;
+          align-items: center;
+          width: 40px;
+
+          &::after {
+            content:'';
+            height: 8px;
+            width: 8px;
+            border-radius: 100%;
+            background-color:$w130;
+          }
+
+          &.blue:after {
+            background-color: $mainStyle;
+          }
         }
       }
 
       .arrow {
         display: flex;
         flex: 1 1 auto;
+        color: $mainStyle
       }
+    }
+
+    .description {
+      flex: 1 1 auto;
+      display:flex;
+      overflow: hidden;
+      font-size: 13px;
+      margin: 0 10px 10px 10px;
+      color: $g90;
     }
   }
 
   .footer {
     display: flex;
-    height: 30px;
+    height: 40px;
     flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    color: $mainStyle;
+    border-top: 1px solid $w230;
   }
 }
 
