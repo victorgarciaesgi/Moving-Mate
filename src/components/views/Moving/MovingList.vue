@@ -47,9 +47,9 @@ export default class MovingList extends Vue {
   ul.moving-list {
     display: flex;
     flex-flow: row wrap;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: flex-start;
-    align-content: center;
+    align-content: flex-start;
     padding: 10px;
 
   }
