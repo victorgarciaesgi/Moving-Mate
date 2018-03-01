@@ -6,4 +6,6 @@ export {default as MovingStore} from './MovingStore';
 export {default as ProgressBar} from './Interface/ProgressBar';
 export {default as GlobalStore} from './GlobalStore';
 export {default as GoogleStore} from './Auth/GoogleAuth';
+export {default as GoogleMaps} from './Interface/GoogleMaps';
+
 

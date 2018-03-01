@@ -1,5 +1,5 @@
 import { timeout } from '@methods';
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../../Api';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../Api';
 import { storeBuilder } from "../Store/Store";
 
 //State
@@ -7,7 +7,7 @@ const state: any = {}
 
 declare var gapi: any;
 
-const b = storeBuilder.module<any>("GoogleModule", state);
+const b = storeBuilder.module<any>("GoogleAuthModule", state);
 const stateGetter = b.state()
 
 // Getters
@@ -77,7 +77,7 @@ namespace Actions {
 }
 
 // Module
-const GoogleModule = {
+const GoogleAuthModule = {
   get state() { return stateGetter()},
   getters: Getters.getters,
   mutations: Mutations.mutations,
@@ -85,5 +85,5 @@ const GoogleModule = {
 }
 
 
-export default GoogleModule;
+export default GoogleAuthModule;
 

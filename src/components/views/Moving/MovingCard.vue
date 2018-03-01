@@ -23,12 +23,12 @@
           <span>10/pers</span>
         </div>
         <div class='elevator info'>
-          <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='20' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='20' :color='css.green1' /></span>
+          <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='19' :color='iconColor' />
+          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='22' :color='css.green1' /></span>
         </div>
         <div class='parking info'>
           <SvgIcon :src='require("@icons/moving/parking.svg")' :size='22' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/no.svg")' :size='20' :color='css.red1' /></span>
+          <span><SvgIcon :src='require("@icons/moving/no.svg")' :size='22' :color='css.red1' /></span>
         </div>
       </div>
       <div class='moving-places'>
@@ -36,14 +36,16 @@
           <div class='icon black'></div>
           <span>{{getDepart}}</span>
         </div>
-        <!-- <div class='arrow'>→</div> -->
         <div class='arrivee element'>
           <div class='icon blue'></div>
           <span>{{getArrivee}}</span>
         </div>
+        <div class='liaison'></div>
       </div>
       <div class='description'>
-        {{getDescription}}
+        <p>
+          {{getDescription}}
+        </p>
       </div>
 
     </div>
@@ -77,7 +79,7 @@ export default class MovingCard extends Vue {
 
 
   get getDescription() {
-    return this.chance.paragraph().slice(0,100) + '...';
+    return this.chance.paragraph()
   }
   
   get chance() {
@@ -105,7 +107,6 @@ export default class MovingCard extends Vue {
     console.log(data);
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
-
 }
 </script>
 
@@ -116,8 +117,8 @@ export default class MovingCard extends Vue {
   display: flex;
   position: relative;
   flex-flow: column nowrap;
-  width: 270px;
-  height: 320px;
+  width: 350px;
+  height: 420px;
   border-radius: 5px;
   border: 1px solid $w240;
   box-shadow: 0 0 10px rgba(10,10,10,0.1);
@@ -178,7 +179,6 @@ export default class MovingCard extends Vue {
           /deep/ .star-container {
             align-self: flex-start !important;
 
-
           }
         }
       }
@@ -194,14 +194,14 @@ export default class MovingCard extends Vue {
       display: flex;
       flex-flow: row nowrap;
       flex: 0 0 auto;
-      border-bottom: 1px solid $w230;
+      // border-bottom: 1px solid $w230;
 
       div.info {
         display: flex;
         flex-flow: column nowrap;
         flex: 1 1 auto;
         justify-content: center;
-        padding: 5px;
+        padding: 10px 5px 5px 5px;
         align-items: center;
         align-content: center;
         text-align: center;
@@ -215,6 +215,7 @@ export default class MovingCard extends Vue {
     }
 
     .moving-places {
+      position: relative;
       display: flex;
       flex-flow: column nowrap;
       flex: 0 0 auto;
@@ -226,16 +227,17 @@ export default class MovingCard extends Vue {
       border: 1px solid $w230;
 
       .element {
+        position: relative;
         display: flex;
         flex-flow: row nowrap;
         color: $g90;
-        padding: 5px 0 5px 0;
+        padding: 10px 0 10px 0;
         background-color:white;
         flex: 0 0 auto;
-        font-size: 14px;
+        font-size: 16px;
         font-weight: bold;
 
-        &:last-child {
+        &.arrivee {
           border-top: 1px solid $w230;
         }
 
@@ -265,20 +267,47 @@ export default class MovingCard extends Vue {
         }
       }
 
-      .arrow {
-        display: flex;
-        flex: 1 1 auto;
-        color: $mainStyle
+      .liaison {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        width: 4px;
+        height: 45px;
+        background: linear-gradient(to bottom, $w130, $mainStyle);
+        z-index: 3;
       }
     }
 
     .description {
+      position: relative;
+      text-align: left;
       flex: 1 1 auto;
-      display:flex;
+      text-align: justify;
+      display: flex;
       overflow: hidden;
       font-size: 13px;
-      margin: 0 10px 10px 10px;
-      color: $g90;
+      padding: 0 15px 5px 15px;
+      color: $w110;
+
+      &:before {
+        content: ' ';
+        position: absolute;
+        right: 15px;
+        bottom: 4px;
+        height: 1.5em;
+        width: 30px;
+        text-align: right;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.342), #FFF);
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        right: 0;
+        width: 10px;
+        height: 10px;
+        margin-top: 2px;
+        background: white;
+      }
     }
   }
 
@@ -292,7 +321,6 @@ export default class MovingCard extends Vue {
     border-top: 1px solid $w230;
   }
 }
-
 
 </style>
 

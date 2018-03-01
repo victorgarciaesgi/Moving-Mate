@@ -8,7 +8,7 @@
         <MovingList/>
       </section>
       <section class='resultsMap'>
-
+        <MovingMap/>
       </section>
 
     </section>
@@ -17,14 +17,17 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import SearchMoving from './SearchMoving.vue';
 import {Component, Prop } from 'vue-property-decorator';
 import { MovingStore } from '@store';
+
 import MovingList from './MovingList.vue';
+import SearchMoving from './SearchMoving.vue';
+import MovingMap from './MovingMap.vue';
+
 
 @Component({
   components: {
-    SearchMoving, MovingList
+    SearchMoving, MovingList, MovingMap
   }
 })
 export default class Moving extends Vue {
@@ -72,7 +75,7 @@ export default class Moving extends Vue {
     section.resultsMap {
       display: flex;
       flex: 0 0 auto;
-      width: 300px;
+      width: 500px;
       border-left: 1px solid $w210;
     }
   }

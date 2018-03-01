@@ -4,6 +4,8 @@ export * from './MovingState';
 export * from './Notifications';
 export * from './ProgressBar.d';
 export * from './GlobalState.d';
+export * from './GoogleMaps.d';
+
 
 
 export interface IResponse<T> {

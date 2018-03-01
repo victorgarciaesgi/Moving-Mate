@@ -4,7 +4,7 @@ export interface IMovingState {
   formSearchData: {
     formSearchValue: string,
     placesResults: ICity[],
-    searchCommited: boolean
+    searchCommited: boolean,
   },
   searchingMovingList: boolean,
   movingList: IMovingEvent[],
@@ -39,4 +39,8 @@ export interface ICity {
   codeDepartement: string;
   codeRegion: string;
   codePostaux: string[],
+  centre: {
+    type: string,
+    coordinates: [number, number]
+  }
 }

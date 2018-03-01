@@ -13,6 +13,8 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@types/google-maps": "^3.2.0",
+    "@types/googlemaps": "^3.30.7",
     "axios": "^0.16.2",
     "chance": "^1.0.13",
     "element-ui": "^2.2.0",
