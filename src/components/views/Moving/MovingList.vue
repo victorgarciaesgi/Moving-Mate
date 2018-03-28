@@ -1,6 +1,9 @@
 <template>
   <div class="moving-list-root">
-    <ul class='moving-list'>
+    <div class='loader' v-if='searching'>
+      <img src="~@images/loading.svg">
+    </div>
+    <ul class='moving-list' v-else>
       <MovingCard v-for='moving in movingList' 
                   :key='moving.id'
                   :moving='moving'>
@@ -17,11 +20,13 @@ import { MovingStore } from '@store';
 import MovingCard from './MovingCard.vue';
 
 @Component({
-  components: {MovingCard}
+  components: { MovingCard }
 })
 export default class MovingList extends Vue {
 
   get movingList() {return MovingStore.getters.formatedMovingList}
+  get searching() {return MovingStore.state.searchingMovingList}
+
 
   get formatedAddress() {
     return address => {
@@ -40,11 +45,13 @@ export default class MovingList extends Vue {
 
 <style lang="scss" scoped>
 
+
 .moving-list-root {
   display: flex;
   position: relative;
   flex-flow: row nowrap;
-  flex: 1 1 auto;
+  min-height: 100%;
+  width: 100%;
 
 
   ul.moving-list {
@@ -55,11 +62,21 @@ export default class MovingList extends Vue {
     align-content: flex-start;
     flex: 1 1 auto;
     padding: 10px;
+  }
 
+  .loader {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 50px;
+      height: 50px;
+    }
   }
 }
-
-
 
 </style>
 

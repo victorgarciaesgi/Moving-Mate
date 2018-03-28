@@ -12,9 +12,9 @@ Vue.use(VueRouter);
 const Rooter = new VueRouter({
   mode: 'history',
   fallback: false,
-  // scrollBehavior(to, from, savedPosition) {
-  //   return { x: 0, y: 0 }
-  // },
+  scrollBehavior(to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  },
   routes: routesList
 })
 
@@ -26,7 +26,9 @@ Rooter.beforeEach(async (to, from, next) => {
     if (!LoginStore.state.sessionChecked) {
       await LoginStore.actions.checkUserSession();
     } 
-    ProgressBar.mutations.start();
+    if (!to.meta.transparent) {
+      ProgressBar.mutations.start();
+    }
 
     // Check content prop
     if (!to.meta.contentProp) {

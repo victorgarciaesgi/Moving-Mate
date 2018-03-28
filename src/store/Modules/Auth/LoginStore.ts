@@ -99,7 +99,7 @@ namespace Mutations {
   function disconnectUser(state: ILoginState) {
     state.reset();
     removeAuthHeaders();
-    router.push('/');
+    window.location.reload();
   }
 
   export const mutations = {

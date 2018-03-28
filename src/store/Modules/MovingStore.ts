@@ -4,11 +4,12 @@ import { RootState } from '../index';
 import { timeout } from '@methods';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
-import {GoogleMaps} from '@store';
-import axios from 'axios';
+import Router from '@router';
+import { GoogleMaps } from '@store';
 
 const MOVING_URL = 'announcements';
 const GEO_API = 'https://geo.api.gouv.fr';
+const fields = '&fields=centre,codeDepartement,codeVille,codeRegion,nom'
 
 //State
 const state: IMovingState = {
@@ -51,6 +52,11 @@ namespace Mutations {
     state.formSearchData.formSearchValue = newString;
   }
 
+  function updateSearchRoute(state: IMovingState, newString: string) {
+    Router.replace(`/moving/search/${newString}`);
+    Mutations.mutations.updateSearchValue(newString);
+  }
+
   function updateSearchingState(state: IMovingState) {
     state.searchingMovingList = !state.searchingMovingList;
   }
@@ -59,6 +65,7 @@ namespace Mutations {
     updateMovingList: b.commit(updateMovingList),
     updateSearchList: b.commit(updateSearchList),
     updateSearchValue: b.commit(updateSearchValue),
+    updateSearchRoute: b.commit(updateSearchRoute),
     updateSearchingState: b.commit(updateSearchingState),
   }
 }
@@ -69,12 +76,12 @@ namespace Actions {
   async function fetchMoving(context, payload?: {search?: string}) {
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     GoogleMaps.actions.reCenterMap(payload.search);
+    state.movingList = [];
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
     try {
       let { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
-      // GoogleMaps.actions.
     } finally {
       Mutations.mutations.updateSearchingState();
     }
@@ -82,9 +89,9 @@ namespace Actions {
 
   async function fetchPlaces(context, payload: string) {
     let searchValues = await Promise.all([
-      axios.get(`${GEO_API}/communes?nom=${payload}&boost=population&fields=centre`),
-      axios.get(`${GEO_API}/departements?nom=${payload}&fields=centre`),
-      axios.get(`${GEO_API}/regions?nom=${payload}&fields=centre`),
+      Api.get(`${GEO_API}/communes?nom=${payload}&boost=population${fields}`),
+      Api.get(`${GEO_API}/departements?nom=${payload}${fields}`),
+      Api.get(`${GEO_API}/regions?nom=${payload}${fields}`),
     ])
     let filteredValues = flatten(searchValues.map(m => m.data))
       .map(m => {
@@ -101,12 +108,20 @@ namespace Actions {
 
   async function fetchUserLocation(context) {
     return await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(async(position) => {
-        let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-        Mutations.mutations.updateSearchValue(data[0].nom);
-        Actions.actions.fetchMoving({});
-        resolve();
-      });
+      try {
+        navigator.geolocation.getCurrentPosition(async(position) => {
+          console.log('ok')
+          let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+          Mutations.mutations.updateSearchRoute(data[0].nom);
+          Actions.actions.fetchMoving({});
+          resolve();
+        }, (err) => {
+          console.log(err);
+          reject();
+        }, {maximumAge: 0});
+      } catch(e) {
+        reject(e);
+      }
     })
   }
 

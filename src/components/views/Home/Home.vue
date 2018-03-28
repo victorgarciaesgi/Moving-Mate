@@ -48,7 +48,7 @@ export default class Home extends Vue {
   ];
 
   handlePathSelect(path: svgPath) {
-    router.push(`/moving/${path.title}`);
+    router.push(`/moving/search/${path.title}`);
   }
 
 }

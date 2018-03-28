@@ -1,7 +1,8 @@
 import { timeout } from '@methods';
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../Api';
-import { storeBuilder } from "../Store/Store";
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../../Api';
+import { storeBuilder } from "../../Store/Store";
 import {IGoogleMapsState} from '@types';
+import { Style1 } from './Styles';
 import {MovingStore} from '@store'
 
 
@@ -42,9 +43,9 @@ module Mutations {
   async function renderMap(state: IGoogleMapsState, {mapElement, location}) {
     mapInstance = new google.maps.Map(mapElement, {
       center: location.location,
-      zoom: 10
+      styles: Style1
     });
-    // mapInstance.fitBounds(location.bounds);
+    mapInstance.fitBounds(location.bounds);
   }
   async function reloadMap(state: IGoogleMapsState, {location}) {
 

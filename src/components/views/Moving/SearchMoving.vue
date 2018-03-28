@@ -33,7 +33,7 @@
                   <span class='name'>{{result.nom}}</span>
                   <span class='code' v-if='["ville","departement"].includes(result.type)'>
                     <span v-if='result.codesPostaux'>{{result.codesPostaux[0]}}</span>
-                    <span v-else>{{result.code}}</span>
+                    <span v-else>{{result.codeDepartement}}</span>
                   </span>
                 </li>
               </ul>
@@ -63,8 +63,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {Component, Prop} from 'vue-property-decorator'
-import {FormButton, SvgIcon} from '@components';
+import { Component, Prop } from 'vue-property-decorator'
+import { FormButton, SvgIcon } from '@components';
 import { debounce } from 'lodash';
 import { Watch } from 'vue-property-decorator';
 import axios from 'axios';
@@ -118,7 +118,7 @@ export default class SearchMoving extends Vue {
   handleNewSearch(name?: string) {
     if (this.placesResults.length) {
       let value = name || this.placesResults[this.resultSelected].nom;
-      MovingStore.mutations.updateSearchValue(value);
+      MovingStore.mutations.updateSearchRoute(value);
     } 
     MovingStore.actions.fetchMoving({});
   }
@@ -134,6 +134,7 @@ export default class SearchMoving extends Vue {
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
     if (!this.searchCommited) {
+      this.searching = false;
       this.placesResultsDisplay = true;
       if (newVal.trim().length > 0) {
         this.searching = true;
@@ -141,6 +142,7 @@ export default class SearchMoving extends Vue {
         await MovingStore.actions.fetchPlaces(newVal);
       } else {
         MovingStore.mutations.updateSearchList([]);
+        MovingStore.mutations.updateSearchRoute(newVal);
       }
       this.searching = false;
     }

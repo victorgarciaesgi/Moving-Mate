@@ -1,7 +1,7 @@
 import { timeout } from '@methods';
 import { ProgressBar } from '@store';
 import * as RootStore from '@store';
-import { RouteConfig } from 'vue-router';
+import { RouteConfig } from 'vue-router/types';
 import * as Stores from '@store';
 import {Connexion, Inscription} from '@components';
 
@@ -12,17 +12,30 @@ export const routesList: RouteConfig[]  = [
     component: () => import('@views/Home/Home.vue'),
   },
   { 
-    path: '/moving/:search?', name: 'Les déménagements',
+    path: '/moving', name: 'Les déménagements',
     component: () => import('@views/Moving/Moving.vue'),
-    props: true,
     meta: {
       headerShadow: true,
       contentProp: true,
-      async asyncData(params?:any) {
-        Stores.MovingStore.mutations.updateSearchValue(params.search || '');
-        await Stores.MovingStore.actions.fetchMoving(params);
+      async asyncData() {
+        await Stores.MovingStore.actions.fetchMoving({});
       }
-    }
+    },
+    children: [
+      {
+        path: '/moving/search/:search?',
+        meta: {
+          contentProp: true,
+          transparent: true
+        },
+        async beforeEnter(to, from, next) {
+          console.log('lol')
+          Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
+          await Stores.MovingStore.actions.fetchMoving(to.params);
+          next();
+        }
+      }
+    ]
   },
   {
     path: '/movers/:region?', name: 'Les déménageurs',

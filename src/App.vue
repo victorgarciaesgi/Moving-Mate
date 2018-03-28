@@ -4,9 +4,7 @@
     <ProgressBarComponent/>
     <Notifications/>
     <div class='view'>
-      <transition name='fade' mode='out-in'>
-        <router-view/>
-      </transition>
+      <router-view/>
     </div>
   </div>
 </template>

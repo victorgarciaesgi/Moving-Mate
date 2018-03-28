@@ -195,15 +195,7 @@ div.header-wrapper{
         a {
           display: flex;
           margin-right: 5px;
-
-          &:not(.router-link-active):hover li.route{
-            color: $g40;
-          }
-          &.router-link-active li.route{
-            color: darken($mainStyle, 5%);
-            // span {border-bottom: 2px solid $mainStyle;}
-            /deep/ svg { fill: $mainStyle }
-          }
+          color: $mainStyle;
 
           li.route {
             display: flex;
@@ -215,8 +207,11 @@ div.header-wrapper{
             font-weight: bold;
             padding: 7px 5px 5px 5px;
             border-bottom: 3px solid transparent;
-
-            span {padding: 5px}
+            transition: all 0.3s;
+            span{ 
+              padding: 8px 10px 8px 10px;
+              border-radius: 5px;
+            }
 
             /deep/ div, svg {
               fill: $g90;
@@ -224,6 +219,19 @@ div.header-wrapper{
               width: 25px;
             }
           }
+
+          &:not(.router-link-active):hover li.route {
+            span{background-color: $w240;}
+          }
+          &.router-link-active li.route {
+            span {
+              background-color: $w245;
+              color: $g90;
+            }
+            /deep/ svg { fill: $mainStyle }
+          }
+
+          
         }
       }
 
