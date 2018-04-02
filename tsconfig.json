@@ -16,7 +16,8 @@
       "dom",
       "es5",
       "es2015",
-      "es2015.promise"
+      "es2015.promise",
+      "es7"
     ],
     "baseUrl": "./src",
     "paths": {

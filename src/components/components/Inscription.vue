@@ -28,7 +28,12 @@
       </div>
       <template slot='footer'>
         <FormButton @click='close()' v-if='isPopup'>Annuler</FormButton>
-        <FormButton type='submit' :submitting='submitting' :disabled='$v.SignupForm.$invalid' color='blue'>S'inscrire</FormButton>
+        <FormButton type='submit' 
+          :submitting='submitting' 
+          :disabled='$v.SignupForm.$invalid' 
+          theme='blue'>
+          S'inscrire
+        </FormButton>
       </template>
     </UIModal>
   </form>
@@ -36,13 +41,12 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
 import { UIModal, FormText, CheckBox, FormButton,FormSeparator, SocialButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
-import { SignupStore, NotificationsStore } from '@store';
+import { SignupStore, LoginStore, NotificationsStore, AlertsStore } from '@store';
 import { IValidator } from 'vuelidate';
 
 @Component({
@@ -62,11 +66,9 @@ import { IValidator } from 'vuelidate';
 })
 export default class Inscription extends Vue {
 
-  private signupRequest = SignupStore.actions.signupRequest;
-  private showSignup = SignupStore.mutations.showSignup;
-  private closeModal = SignupStore.mutations.closeModal;
-
-  addNotification;
+  get signupRequest() { return SignupStore.actions.signupRequest};
+  get showSignup() { return SignupStore.mutations.showSignup};
+  get closeModal() { return SignupStore.mutations.closeModal};
 
   @Prop({default: true}) isPopup: boolean;
   @Prop({required: false, default: true}) show: boolean;
@@ -111,6 +113,7 @@ export default class Inscription extends Vue {
       this.closeModal();
       this.SignupForm.reset();
     }
+    this.submitting = false;
   }
 
   async submitForm() {
@@ -120,7 +123,33 @@ export default class Inscription extends Vue {
     if (!submitResponse.success){
       this.errorType = submitResponse.type;
       this.infoMessage = submitResponse.message;
+    } else {
+      this.close(true);
+      AlertsStore.actions.addAlert({
+        type: "success",
+        title: 'Inscription réussie',
+        message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
+        actions: [
+          { type: "action", 
+            text: 'Se connecter',
+            triggers: [
+              LoginStore.mutations.showLogin,
+              AlertsStore.actions.hideAlert
+            ]
+          },
+          { type: "confirm",
+            text: 'Ça marche!',
+            trigger() {
+              return AlertsStore.actions.hideAlert(true);
+            }}
+        ]
+      })
     }
+  }
+
+
+  async mounted() {
+    
   }
 }
 </script>
@@ -139,6 +168,25 @@ export default class Inscription extends Vue {
     img {
       width: 70px;
       height: auto;
+    }
+  }
+
+  .infoMessage {
+    border: 1px solid $w210;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 5px;
+    padding: 10px 10px 10px 10px;
+    text-align: center;
+    border: 1px solid $w230;
+    
+    &.error {
+      color: $red1;
+    }
+
+    &.warning {
+      color: $yellow2;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class='map-container'>
-    <svg v-if='ready' ref='svg' width="500" height="500" viewBox="0 0 620 600">
+    <svg v-if='ready' ref='svg' :width="size" :height="size" viewBox="0 0 620 600">
       <g x=''>
         <path v-for='path in paths' :key='path.id'
           :id='path.id'
@@ -14,7 +14,7 @@
       </g>
     </svg>
 
-    <div class='path-info' v-show='infoPath.show'
+    <div v-if='showInfos' class='path-info' v-show='infoPath.show'
       :style='infoPath.style'>
       <span>{{infoPath.data.title}}</span>
       <span>{{infoPath.data.info}}</span>
@@ -38,7 +38,9 @@ import { globalAgent } from "http";
 
 @Component({})
 export default class MapViewer extends Vue {
-  @Prop({ required: true }) svgPath: string;
+  @Prop({ required: true, default: 'departements'}) svgPath: string;
+  @Prop({default: 500}) size: number;
+  @Prop({default: true}) showInfos: boolean;
 
   infoPath = {
     data: {
@@ -105,7 +107,8 @@ export default class MapViewer extends Vue {
   height: auto;
   justify-content: center;
   align-items: center;
-  padding: 30px;
+  padding: 10px;
+
   svg {
     display: flex;
     justify-content: center;

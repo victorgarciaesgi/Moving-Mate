@@ -229,36 +229,41 @@ export default class FormText extends Vue {
     height: 45px;
     padding: 5px 30px 5px 9px;
     margin: 5px 0 5px 0;
-    transition: padding 0.2s;
+    transition: all 0.2s;
     width: 100%;
     line-height: 30px;
     font-size: 16px;
     border-radius: 5px;
+    border: 1px solid transparent;
 
     &.icon {
       padding-left: 60px;
     }
 
     &:focus {
-      padding-left: 15px;
-      & ~ .input-icon-contain {
-        width: 0;
-        opacity: 0;
-        .input-icon /deep/ svg {
-        // fill: $g60;
-        }
-      }
+      border-color: $g90;
+      background-color: $w245;
       & + .input-form-result {
         display: block;
       }
     }
 
-    &.formValid ~ .input-icon-contain .input-icon /deep/ svg {
-      fill: $mainStyle;
+    &.formValid {
+      &:focus {
+        border-color: lighten($mainStyle, 10%);
+      }
+      ~ .input-icon-contain .input-icon /deep/ svg {
+        fill: $mainStyle;
+      }
     }
 
-    &.formError ~ .input-icon-contain .input-icon /deep/ svg {
-      fill: $red1;
+    &.formError {
+      &:focus {
+        border-color: lighten($red1, 10%);
+      }
+      ~ .input-icon-contain .input-icon /deep/ svg {
+        fill: $red1;
+      }
     }
 
     

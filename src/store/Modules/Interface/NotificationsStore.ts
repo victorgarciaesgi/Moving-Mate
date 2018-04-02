@@ -1,7 +1,6 @@
 import { ActionContext  } from 'vuex';
 import { INotificationState, INotification, INotificationType } from '@types';
 import { timeout } from '@methods';
-import { merge } from 'lodash';
 import { storeBuilder } from "../Store/Store";
 
 const TIMEOUT: number = 5000;
@@ -45,11 +44,11 @@ namespace Mutations {
 // Actions
 namespace Actions {
   async function addNotification(context, alert: INotification) {
-    alert = merge(alert, {
+    alert = {...alert, 
       id: state.notificationCount,
       isNotif: alert.isNotif || false,
       link: 'zad'
-    })
+    };
     NotificationsModule.mutations.addAlert(alert);
     await timeout(TIMEOUT);
     NotificationsModule.mutations.deleteAlert(alert);

@@ -1,9 +1,18 @@
 <template>
-  <div ref='popup' v-show='show' @click.stop class="popup-box" :style='popupStyles'
-    :class='{active: show}'>
-    <slot></slot>
+  <div class='popup-root'>
+    <div v-show='show'
+      @click.stop
+      ref='popup'
+      class="popup-box"
+      :style='popupStyles'
+      :class='{active: show}'>
+        <div class='triangle top' v-if='show'></div>
+        <slot name='popup' />
+    </div>
+    <div class='bouton-popup' @click.stop="togglePopup()" ref='button'>
+      <slot name='button'/>
+    </div>
   </div>
-  
 </template>
 
 
@@ -25,7 +34,6 @@ export default class Popup extends Vue {
   @Prop({default: false}) absolute: boolean;
 
   public show: boolean = false;
-  public origin: HTMLElement;
   public popupPosition = {
     bottom: null,
     left: null,
@@ -41,25 +49,29 @@ export default class Popup extends Vue {
   }
   
 
-  togglePopup(origin?: HTMLElement) {
+  togglePopup() {
     if (!this.show) {
       if (this.absolute) {
-        this.origin = origin;
+        let origin = this.$refs['button'];
+        console.log(origin)
         let positions = calculatePopupPosition(origin, this.$refs['popup']);
-        this.popupPosition = merge(this.popupPosition, positions);
-      } 
+        this.popupPosition = {...this.popupPosition, ...positions};
+        // merge(this.popupPosition, positions);
+      }
+      EventBus.$emit('closePopups', this);
       this.show = true;
     } 
     else {
       this.show = false;
     }
-    
   }
 
   created(){
-    EventBus.$on('closePopups', () => {
-      this.show = false;
-      this.$emit('close');
+    EventBus.$on('closePopups', (element?) => {
+      if (element !== this) {
+        this.show = false;
+        this.$emit('close');
+      }
     })
   }
 
@@ -69,6 +81,60 @@ export default class Popup extends Vue {
 
 
 <style lang='scss' scoped>
+
+.popup-root {
+  position: relative;
+  &.right {
+    .popup-box{
+      left: auto;
+      right: 0px;
+    }
+    .triangle {
+      top: -25px;
+      right: 20px;
+      left: auto;
+    }
+  }
+
+  &.center {
+    .popup-box{
+      left: 50%;
+    }
+    .triangle {
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  $triangleSize: 13px;
+  $triangleColor: #FFF;
+
+  .triangle{
+    position: absolute;
+    z-index: 10009;
+    top: 100%;
+    left: 50%;
+    @include translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: $triangleSize solid transparent;
+    border-right: $triangleSize solid transparent;
+    border-top: $triangleSize solid $triangleColor;
+    filter: drop-shadow(0px -6px 4px rgba(50,50,50, 0.1));
+
+    &.top {
+      border-bottom: $triangleSize solid $triangleColor;
+      border-top: $triangleSize solid transparent;
+    }
+
+    &.left {
+      border-left: $triangleSize solid transparent;
+      border-right: $triangleSize solid transparent;
+      border-top: $triangleSize solid $triangleColor;
+    }
+  }
+}
 
 .popup-box{
   position: absolute;
@@ -83,13 +149,7 @@ export default class Popup extends Vue {
   max-height: 80vh;
   max-width: 80vw;
   flex-flow: column nowrap;
-  overflow: hidden;
   z-index: 10011;
-
-  &.right {
-    left: auto;
-    right: 0px;
-  }
 
   div.header {
     display: flex;
@@ -120,30 +180,6 @@ export default class Popup extends Vue {
     align-items: center;
     align-content: center;
     justify-content: flex-end;
-  }
-
-  .triangle{
-    position: absolute;
-    z-index: 10009;
-    top: 100%;
-    left: 50%;
-    @include translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid $w250;
-    filter: drop-shadow(0px 6px 4px rgba(50,50,50, 0.1));
-
-    &.top {
-      border-bottom: 10px solid $w250;
-    }
-
-    &.left {
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 10px solid $w250;
-    }
   }
 }
 

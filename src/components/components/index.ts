@@ -1,4 +1,4 @@
-export * from './widgets'
+export * from './widgets';
 export * from './forms';
 export {default as Popup} from './Popup.vue';
 export {default as UIModal} from './Modal.vue';

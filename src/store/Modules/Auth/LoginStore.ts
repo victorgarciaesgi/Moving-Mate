@@ -19,6 +19,12 @@ const state: ILoginState = {
     profile: null,
     name: null,
     id: null,
+    avatar: null,
+    avatarName: null,
+    birthdate: null,
+    description: null,
+    firstname: null,
+    lastname: null,
     roles: [],
     status: null,
     userToken: null,
@@ -29,7 +35,7 @@ const state: ILoginState = {
   RouteAfter: null,
   showModal: false,
   reset() {
-    this.userInfos = {
+    this.userInfos = {...this.userInfos,
       name: null,
       username: null,
       surname: null,

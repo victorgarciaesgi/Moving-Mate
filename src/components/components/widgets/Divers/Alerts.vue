@@ -1,6 +1,34 @@
 <template>
   <transition name='bounce'>
-    <div v-if='show' class='modal-base' @click='closeModal()'>
+    <div v-if='alertState.alertShow' class='alert-base' @click='closeAlert(false)'>
+      <div class="alert-window" @click.stop>
+        <div class='content'>
+          <div class='alert-icon' :class='[alertState.alertData.type]'>
+            <img src="~@icons/notifs/success.svg" v-if='alertState.alertData.type == "success"'>
+            <img src="~@icons/notifs/error.svg" v-else-if='alertState.alertData.type == "error"'>
+            <img src="~@icons/notifs/warning.svg" v-else-if='alertState.alertData.type == "warning"'>
+            <img src="~@icons/notifs/infos.svg" v-else-if='alertState.alertData.type == "alert"'>
+          </div>
+          <div class='title'>
+            {{alertState.alertData.title}}
+          </div>
+          <span>{{alertState.alertData.message}}</span>
+        </div>
+        <div class='footer'>
+          <template v-if='alertState.alertData.actions'>
+            <FormButton v-for="action in alertState.alertData.actions" :key='action.text'
+              @click='executeAction(action)'
+              :theme='getTheme(action.type)'>
+              {{action.text}}
+            </FormButton>
+          </template>
+          <template v-else>
+            <FormButton type='submit' theme='blue' @click='validAlert()'>
+              Ça marche!
+            </FormButton>
+          </template>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -8,18 +36,49 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import FormButton from '@components/forms/FormButton.vue';
+import { AlertsStore } from '@store';
+import { IAlertAction } from '@types';
 
-@Component({})
-export default class Alerts extends Vue {
-  
-  @Prop() show: boolean;
-  @Prop({required: false, default: true}) isPopup: boolean;
-  @Prop({required: false}) height: number;
-  @Prop({required: false}) width: number; 
-
-  closeModal(){
-    this.$emit('close');
+@Component({
+  components: {
+    FormButton
   }
+})
+export default class Alerts extends Vue {
+
+  get alertState() { return AlertsStore.state}
+
+  get getTheme() {
+    return type => {
+      switch(type) {
+        case "confirm":
+          return "blue"
+        default: 
+          return undefined
+      }
+    }
+  }
+  
+  closeAlert(exter: boolean) {
+    if (!this.alertState.alertData.strict && !exter) {
+      AlertsStore.actions.hideAlert(false);
+    }
+  }
+
+  validAlert() {
+    AlertsStore.actions.hideAlert(true);
+  }
+
+  executeAction(action: IAlertAction) {
+    if (action.trigger) {
+      action.trigger();
+    } else {
+      action.triggers.forEach(m => m())
+    }
+  }
+
+  
 
 }
 </script>
@@ -28,7 +87,7 @@ export default class Alerts extends Vue {
 
 <style lang='scss' scoped>
 
-.modal-base{
+.alert-base {
   position: fixed;
   height: 100%;
   width: 100%;
@@ -39,61 +98,52 @@ export default class Alerts extends Vue {
   align-content: center;
   z-index: 10002;
 
-  &.full{
-    z-index: 2;
-    background-color: $w245;
-  
-    .modal-window {
-      border-radius: 5px;
-    }
-  }
-
-  .modal-window{
+  .alert-window{
     display: flex;
     position: relative;
     background-color: white;
     border-radius: 3px;
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
     height: auto;
-    min-height: 200px;
+    width: 400px;
+    min-height: 100px;
     min-width: 300px;
     max-height: 80vh;
     max-width: 80vw;
     flex-flow: column nowrap;
     overflow: hidden;
-    
-    div.header {
-      display: flex;
-      flex-flow: row wrap;
-      flex: 0 0 auto;
-      height: 40px;
-      padding-left: 10px;
-      font-weight: bold;
-      border-bottom: 1px solid $w230;
-
-      div.header-slot{
-        display: flex;
-        flex: 1;
-        align-items: center;
-      }
-
-      div.close-wrap {
-        display: flex;
-        width: 40px;
-        cursor: pointer;
-        flex: 0 0 auto;
-        justify-content: center;
-        align-items: center;
-      }
-
-    }
 
     div.content {
       display: flex;
       flex-flow: column wrap;
+      justify-content: center;
+      align-items: center;
       flex: 1 1 auto;
       overflow: auto;
-      padding: 10px;
+      text-align: center;
+      padding: 20px 30px 20px 30px;
+
+      .alert-icon {
+        display: flex;
+        padding: 5px;
+        border-radius: 100%;
+        border: 5px solid transparent;
+
+        &.success {border-color: $mainStyle}
+        &.error {border-color: $red1}
+
+        img {
+          height: 50px;
+          width: 50px;
+        }
+      }
+
+      .title {
+        display: flex;
+        font-weight: bold;
+        font-size: 20px;
+        padding: 20px;
+      }
     }
 
     div.footer {
@@ -105,6 +155,7 @@ export default class Alerts extends Vue {
       align-items: center;
       align-content: center;
       justify-content: flex-end;
+      border-top: 1px solid $w230;
     }
 
   }
@@ -112,13 +163,13 @@ export default class Alerts extends Vue {
 
 .bounce-enter-active {
   transition: color 0.5s, opacity 0.2s;
-  .modal-window {
+  .alert-window {
     animation: bounce-in 0.5s;
   }
 }
 .bounce-leave-active {
   transition: color 0.2s, opacity 0.2s;
-  .modal-window {
+  .alert-window {
     animation: bounce-out 0.2s;
   }
 }

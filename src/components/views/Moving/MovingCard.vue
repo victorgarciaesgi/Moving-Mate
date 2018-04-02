@@ -88,18 +88,19 @@ export default class MovingCard extends Vue {
   }
 
   get getDepart() {
-    let [number,road,town,code] = this.moving.addressIn.split('|');
-    return town;
+    return this.moving.addressIn.addressCity;
+  }
+
+  get getArrivee() {
+    return this.moving.addressOut.addressCity;
+    
   }
 
   get getBegin() {
     return {hour: '15:00', number: '27', mounth:'Avril'};
   }
 
-  get getArrivee() {
-    let [number,road,town,code] = this.moving.addressOut.split('|');
-    return town;
-  }
+  
 
   get formatedAddress() {
     return address => {
@@ -193,7 +194,7 @@ export default class MovingCard extends Vue {
             }
 
             .number {
-              background-color: $red1;
+              background-color: transparentize($red1, 0.2);
               color: white;
               font-weight: bold;
             }

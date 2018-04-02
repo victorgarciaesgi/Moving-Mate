@@ -18,8 +18,8 @@ export interface IMovingEvent {
   pricePerHourPerUser: number,
   description: string,
   enabled: true,
-  addressIn: string,
-  addressOut: string,
+  addressIn: IAddress,
+  addressOut: IAddress,
   elevatorOut: boolean,
   volumeOut: number,
   volumeScaleOut: string,
@@ -31,6 +31,20 @@ export interface IMovingEvent {
   dealDays: string,
   createdAt: Date,
   updatedAt: Date
+}
+
+export interface IAddress {
+  id: number,
+  addressCity: string,
+  addressZip: string,
+  addressCountry: string,
+  addressAdditional: string,
+  volume: number,
+  floor: string,
+  elevator: boolean,
+  houseType: string,
+  createdAt: number,
+  updatedAt: number
 }
 
 export interface ICity {

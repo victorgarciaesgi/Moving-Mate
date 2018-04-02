@@ -110,7 +110,6 @@ namespace Actions {
     return await new Promise((resolve, reject) => {
       try {
         navigator.geolocation.getCurrentPosition(async(position) => {
-          console.log('ok')
           let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
           Mutations.mutations.updateSearchRoute(data[0].nom);
           Actions.actions.fetchMoving({});

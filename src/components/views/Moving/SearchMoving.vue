@@ -43,16 +43,31 @@
             </div>
           </transition>
 
-          <div class='icon-contain'>
+          <div class='icon-search'>
             <SvgIcon :src="require('@icons/search.svg')"/>
           </div>
 
-          <div v-if='isGeoLocationCompatible && !locationSearching' 
-            @click='getUserLocation'
-            class='user-location-ask'>
-              <SvgIcon :src='require("@icons/location_search.svg")'/>
+          <div class='icons-container'>
+            <div v-if='isGeoLocationCompatible && !locationSearching' 
+              @click='getUserLocation'
+              class='user-location-ask icon'>
+                <SvgIcon :src='require("@icons/location_search.svg")'/>
+            </div>
+            <img v-if='locationSearching' class='loading icon' src='~@images/loading.svg'>
+            <div class='france-map-selector'>
+              <Popup class='center' :width='300' absolute>
+                <template slot='popup'>
+                  <MapViewer svgPath='departements' @pathSelected='handlePathSelect' 
+                    :size='250' :showInfos='false' />
+                </template>
+                <div class='icon-map' slot='button'>
+                  <img src="~@icons/moving/france.svg"/>
+                </div>
+              </Popup>
+              
+            </div>
+            <img v-if='searching' class='loading icon' src='~@images/loading.svg'>
           </div>
-          <img v-if='searching || locationSearching' class='loading' src='~@images/loading.svg'>
         </div>
       </div>
     </div>
@@ -64,15 +79,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator'
-import { FormButton, SvgIcon } from '@components';
+import { FormButton, SvgIcon, Popup, MapViewer } from '@components';
 import { debounce } from 'lodash';
+import { svgPath } from '@types';
 import { Watch } from 'vue-property-decorator';
 import axios from 'axios';
 import { MovingStore } from '@store';
 
 @Component({
   components: {
-    FormButton, SvgIcon
+    FormButton, SvgIcon, Popup, MapViewer
   },
   directives: {
     focus: {
@@ -106,6 +122,14 @@ export default class SearchMoving extends Vue {
   }
   showResults() {
     this.placesResultsDisplay = true;
+  }
+
+  togglePopup(popupName: string, target?: HTMLElement) {
+    this.$refs[popupName].togglePopup(target);
+  }
+
+  handlePathSelect(path: svgPath) {
+
   }
 
   modifySelected(event: KeyboardEvent) {
@@ -171,7 +195,7 @@ export default class SearchMoving extends Vue {
     display: flex;
     width: 100%;
     flex-flow: row wrap;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 15px 20px 15px 20px;
     align-items: center;
     color: $g70;
@@ -196,13 +220,57 @@ export default class SearchMoving extends Vue {
           }
         }
 
-        .loading {
+        .icons-container {
           position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
           right: 15px;
-          height: 25px;
-          width: 25px;
+          top: 0;
+          height: 100%;
+          display: flex;
+          flex-flow: row-reverse wrap;
+          justify-content: center;
+          align-items: center;
+
+          .icon {
+            margin-left: 10px;
+            height: 26px;
+            width: 26px;
+            cursor: pointer;
+            
+            /deep/ svg {
+              fill: $g90;
+              height: 26px;
+              width: 26px;
+            }
+          }
+
+          .france-map-selector {
+            height: 26px;
+            width: 26px;
+            margin-left: 10px;
+            .icon-map, img {
+              height: 26px;
+              width: 26px;
+              cursor: pointer;
+            }
+
+            .popup-box.active ~.icon-map {
+              background-color: $w240;
+              border-radius: 4px;
+            }
+          }
+
+          .loading {
+            height: 25px;
+            width: 25px;
+          }
+
+          .user-location-ask {
+            cursor: pointer;
+            .svg {
+              height: 25px;
+              width: 25px;
+            }
+          }
         }
 
         &:before {
@@ -222,27 +290,14 @@ export default class SearchMoving extends Vue {
           color: $g70;
           height: 60px;
           padding: 5px 60px 5px 60px;
-          width: 400px;
+          width: 450px;
           line-height: 30px;
           font-size: 20px;
           border-radius: 4px;
           box-shadow: 0 0 15px rgba(0,0,0,0.15);
         }
 
-        .user-location-ask {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          right: 15px;
-          cursor: pointer;
-          
-          .svg {
-            height: 25px;
-            width: 25px;
-          }
-        }
-
-        .icon-contain {
+        .icon-search {
           position: absolute;
           left: 0;
           top: 0;

@@ -1,16 +1,16 @@
 <template>
   <div class='Moving'>
-    <section class='searchComponent'>
-      <SearchMoving></SearchMoving>
-    </section>
     <section class='searchResults'>
       <section class='resultsList'>
         <MovingList/>
       </section>
-      <section class='resultsMap'>
-        <MovingMap/>
+      <section class='searchComponent'>
+        <SearchMoving></SearchMoving>
       </section>
+    </section>
 
+    <section class='resultsMap'>
+      <MovingMap/>
     </section>
   </div>
 </template>
@@ -47,44 +47,45 @@ export default class Moving extends Vue {
 .Moving {
   display: flex;
   position: relative;
-  flex-flow: column nowrap;
+  flex-flow: row nowrap;
   height: 100%;
   width: 100%;
+  background-color: white;
 
-  section.searchComponent {
+
+
+  section.resultsMap {
     position: fixed;
     top: $headerHeight;
-    left: 0;
+    height: calc(100% - #{$headerHeight});
+    left: calc(100% - 500px);
     display: flex;
-    width: 100%;
-    z-index: 10;
-    box-shadow: 0 0 10px transparentize($g20, 0.8);
-
+    width: 500px;
+    border-left: 1px solid $w210;
   }
-
+  
   section.searchResults {
     margin-top: 90px;
     display: flex;
     flex-flow: row nowrap;
     width: calc(100% - 500px);
-    height: calc(100% - 90px);
+    height: 100%;
     background-color: white;
 
     section.resultsList {
       display: flex;
       flex: 1 1 auto;
-      background-color: $w245;
-      height: 100%;
+      height: calc(100% - 90px);
     }
 
-    section.resultsMap {
+    section.searchComponent {
       position: fixed;
-      top: 0;
-      height: 100%;
-      left: calc(100% - 500px);
+      top: $headerHeight;
+      left: 0;
       display: flex;
-      width: 500px;
-      border-left: 1px solid $w210;
+      width: calc(100% - 500px);
+      z-index: 10;
+      box-shadow: 0 0 10px transparentize($g20, 0.8);
     }
   }
 }

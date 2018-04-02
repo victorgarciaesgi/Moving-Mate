@@ -3,7 +3,7 @@ import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../../Api
 import { storeBuilder } from "../../Store/Store";
 import {IGoogleMapsState} from '@types';
 import { Style1 } from './Styles';
-import {MovingStore} from '@store'
+import { MovingStore } from '@store'
 
 
 let mapInstance: google.maps.Map;
@@ -31,7 +31,7 @@ const state: IGoogleMapsState = {
 }
 
 const b = storeBuilder.module<any>("GoogleMapsModule", state);
-const stateGetter = b.state()
+const stateGetter = b.state();
 
 // Getters
 namespace Getters {

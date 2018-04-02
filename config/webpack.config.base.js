@@ -68,7 +68,7 @@ const baseConfig = {
       use: 'base64-inline-loader?limit=1000&name=[name].[ext]'
     },{
       test: /\.(svg)(\?[a-z0-9=&.]+)?$/,
-      use: 'base64-inline-loader?limit=2000&name=[name].[ext]'
+      use: 'base64-inline-loader?limit=4000&name=[name].[ext]'
     }
   ]
   },

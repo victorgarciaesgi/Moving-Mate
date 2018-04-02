@@ -143,6 +143,7 @@ section.help {
 
 section.france-map {
   height: auto;
+  padding: 30px;
 }
 
 

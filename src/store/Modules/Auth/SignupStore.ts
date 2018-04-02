@@ -1,10 +1,9 @@
-import {ActionContext  } from 'vuex';
 import { ISignupState } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../Api';
 import { timeout } from '@methods';
 import { storeBuilder } from "../Store/Store";
 
-const SIGNUP_URL = 'register';
+const SIGNUP_URL = 'register/';
 
 //State
 const state: ISignupState = {
@@ -39,19 +38,24 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function signupRequest(context, loginData: Object) {
-    let { success, status, data } = await Api.post(SIGNUP_URL, loginData);
-    state.requesting = false
-    if (success) {
-      return new ApiSuccess();
-    } else {
-      if (status === 401) {
-        return new ApiError('Veuillez remplir correctement les champs')
-      } else if (status === 404) {
+  async function signupRequest(context, loginData: Object): Promise<ApiResponse> {
+    try {
+      let { success, status, data } = await Api.post(SIGNUP_URL, loginData);
+      state.requesting = false
+      if (success) {
+        return new ApiSuccess();
+      }
+    } catch(err) {
+      console.log(err)
+      if (err.status === 403) {
+        return new ApiError('Adresse mail déjà utilisée');
+      } else if (err.status === 500) {
         return new ApiWarning(`Une erreur s'est produite`);
-      } else if (status === 0) {
+      } else if (err.status === 0) {
         return new ApiWarning(`Vérifiez votre connexion internet`);
       }
+    } finally {
+      state.requesting = false;
     }
   }
 

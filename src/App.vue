@@ -3,6 +3,7 @@
     <HeaderComponent/>
     <ProgressBarComponent/>
     <Notifications/>
+    <Alerts/>
     <div class='view'>
       <router-view/>
     </div>
@@ -17,7 +18,7 @@ import { sync } from 'vuex-router-sync'
 import { Component } from "vue-property-decorator";
 import { EventBus, RootState, storeBuilder, DebugMode } from "@store";
 import router from "./router";
-import { HeaderComponent, Notifications, ProgressBarComponent } from "@components";
+import { HeaderComponent, Notifications, ProgressBarComponent, Alerts } from "@components";
 import { LoginStore } from "@modules";
 import $ from "jquery";
 
@@ -31,7 +32,8 @@ sync(store, router);
   components: {
     HeaderComponent,
     Notifications,
-    ProgressBarComponent
+    ProgressBarComponent,
+    Alerts
   },
   router
 })

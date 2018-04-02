@@ -34,9 +34,9 @@
               </div>
             </li>
 
-            <li for='user-menu' class="header-button popup" @click.stop="togglePopup('profile')">
-              <Popup ref='profile' class='right' v-if='loginState.isLoggedIn' :width='250'>
-                <template>
+            <li for='user-menu' class="header-button popup">
+              <Popup class='right' v-if='loginState.isLoggedIn' :width='250'>
+                <template slot='popup'>
                   <div class="user">
                       <div class="user-picture" :style='getProfileImage'></div>
                       <div class="user-name">{{loginState.userInfos.username | capitalize}}</div>
@@ -52,11 +52,11 @@
                       <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
                   </ul>
                 </template>
+                <div class='bouton-data' slot='button'>
+                  <span>{{loginState.userInfos.username | capitalize}}</span>
+                  <div class='profile-image' :style='getProfileImage'></div>
+                </div>
               </Popup>
-              <div class='bouton-data'>
-                <span>{{loginState.userInfos.username | capitalize}}</span>
-                <div class='profile-image' :style='getProfileImage'></div>
-              </div>
             </li>
           </template>
 
@@ -311,7 +311,7 @@ div.header-wrapper{
               }
             }
 
-            .popup-box.active ~ .bouton-data{
+            .popup-box.active ~ .bouton-popup .bouton-data{
               background-color: $w220;
             }
 
