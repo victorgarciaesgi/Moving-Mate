@@ -5,21 +5,21 @@
     </label>
     <div class="input-container">
       <input ref='input' class='input-form'
-              :type='type'
-              :value='value'
-              :class='[{
-                formError: (!valid && dirty && error),
-                formValid: (valid && dirty && error),
-                icon,
-                big: !!big,
-              }, design]'
-              :placeholder="placeholder"
-              :required='required'
-              :disabled='disabled'
-              @blur='hidePopup()'
-              @click='showPopup()'
-              @focus='showPopup()'
-              @input="updateValue($event.target.value)" />
+        :type='type'
+        :value='value'
+        :class='[{
+          formError: (!valid && dirty && error),
+          formValid: (valid && dirty && error),
+          icon,
+          big: !!big,
+        }, design]'
+        :placeholder="placeholder"
+        :required='required'
+        :disabled='disabled'
+        @blur='hidePopup()'
+        @click='showPopup()'
+        @focus='showPopup()'
+        @input="updateValue($event.target.value)" />
               
       <div class='input-icon-contain'>
         <img class='input-icon' v-if='icon && !inline' :src="icon">
@@ -55,6 +55,7 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
 import $ from "jquery";
+export {default as FormTextElement} from './FormText';
 
 import { SvgIcon } from "@components";
 

@@ -10,16 +10,24 @@
         <SocialButton media='google'>Inscription avec Google</SocialButton>
         <FormSeparator>Ou inscrivez vous</FormSeparator>
         <FormText :label='false' type='email' placeholder='Adresse mail'
-            :icon="images.email"  v-model="SignupForm.email" :vl='$v.SignupForm.email'/>
+            :icon="images.email"  
+            v-model="SignupForm.email" 
+            :vl='$v.SignupForm.email'/>
         
         <FormText :label='false' type='text' placeholder="Nom d'utilisateur"
-            :icon="images.username"  v-model="SignupForm.username" :vl='$v.SignupForm.username'/>
+            :icon="images.username"  
+            v-model="SignupForm.username" 
+            :vl='$v.SignupForm.username'/>
 
         <FormText :label='false' type='password' placeholder='Mot de passe'
-            :icon="images.plainPassword.first"  v-model="SignupForm.plainPassword.first" :vl='$v.SignupForm.plainPassword.first'/>
+            :icon="images.plainPassword.first"  
+            v-model="SignupForm.plainPassword.first" 
+            :vl='$v.SignupForm.plainPassword.first'/>
 
         <FormText :label='false' type="password" placeholder='Confirmez le mot de passe'
-            :icon="images.plainPassword.second"  v-model="SignupForm.plainPassword.second" :vl='$v.SignupForm.plainPassword.second'/>
+            :icon="images.plainPassword.second"  
+            v-model="SignupForm.plainPassword.second" 
+            :vl='$v.SignupForm.plainPassword.second'/>
 
         <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
           {{infoMessage}}

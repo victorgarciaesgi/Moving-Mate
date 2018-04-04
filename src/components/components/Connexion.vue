@@ -14,10 +14,16 @@
         <SocialButton media='facebook'>Connexion avec Facebook</SocialButton>
         <SocialButton media='google'>Connexion avec Google</SocialButton>
         <FormSeparator>Ou connectez vous</FormSeparator>
-        <FormText type='email' placeholder='Adresse mail' :error='false'
-          :icon='images._username'  v-model='LoginForm._username' :vl='$v.LoginForm._username'/>
-        <FormText type='password' placeholder='Mot de passe' :error='false'
-          :icon='images._password' v-model='LoginForm._password' :vl='$v.LoginForm._password'/>
+        <FormText type='email' placeholder='Adresse mail'
+          v-model='LoginForm._username' 
+          :error='false'
+          :icon='images._username'  
+          :vl='$v.LoginForm._username'/>
+        <FormText type='password' placeholder='Mot de passe' 
+          v-model='LoginForm._password' 
+          :error='false'
+          :icon='images._password' 
+          :vl='$v.LoginForm._password'/>
         <div class='form-option'>
           <span class='form-link'>Mot de passe oublié?</span>
         </div>
@@ -65,9 +71,9 @@ export default class Connexion extends Vue {
   @Prop({default: true}) isPopup: boolean;
   @Prop({required: false}) redirect: string;
 
-  private loginState = LoginStore.state;
-  private connexionRequest = LoginStore.actions.connexionRequest;
-  private closeModal = LoginStore.mutations.closeModal;
+  get loginState() { return LoginStore.state;}
+  get connexionRequest() { return LoginStore.actions.connexionRequest;}
+  get closeModal() { return LoginStore.mutations.closeModal;}
 
   private addNotification = NotificationsStore.actions.addNotification;
 

@@ -4,11 +4,8 @@ import { IGlobalState, svgPath } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
 import { RootState } from '../index';
 import { timeout } from '@methods';
-import { merge } from 'lodash';
 import axios from 'axios';
 import { storeBuilder } from "./Store/Store";
-
-type GlobalContext = ActionContext<IGlobalState, RootState>;
 
 //State
 const state: IGlobalState = {
@@ -43,7 +40,7 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function fetchPaths(context: GlobalContext, svgPath: string) {
+  async function fetchPaths(context, svgPath: string) {
     if (!context.state.svgMapPaths.length) {
       let response = await axios.get(`maps/${svgPath}.json`);
       if (response.status == 200) {
