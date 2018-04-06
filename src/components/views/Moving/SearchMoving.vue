@@ -55,7 +55,7 @@
             </div>
             <img v-if='locationSearching' class='loading icon' src='~@images/loading.svg'>
             <div class='france-map-selector'>
-              <Popup class='center' :width='300' absolute>
+              <Popup class='center' :width='260'>
                 <template slot='popup'>
                   <MapViewer svgPath='departements' @pathSelected='handlePathSelect' 
                     :size='250' :showInfos='false' />
@@ -64,7 +64,6 @@
                   <img src="~@icons/moving/france.svg"/>
                 </div>
               </Popup>
-              
             </div>
             <img v-if='searching' class='loading icon' src='~@images/loading.svg'>
           </div>
@@ -84,6 +83,8 @@ import { debounce } from 'lodash';
 import { svgPath } from '@types';
 import { Watch } from 'vue-property-decorator';
 import axios from 'axios';
+import router from '@router';
+import { EventBus } from '@store';
 import { MovingStore } from '@store';
 
 @Component({
@@ -129,7 +130,8 @@ export default class SearchMoving extends Vue {
   }
 
   handlePathSelect(path: svgPath) {
-
+    router.push(`/moving/search/${path.title}`);
+    EventBus.$emit('closePopups');
   }
 
   modifySelected(event: KeyboardEvent) {
@@ -253,8 +255,8 @@ export default class SearchMoving extends Vue {
               cursor: pointer;
             }
 
-            .popup-box.active ~.icon-map {
-              background-color: $w240;
+            /deep/ .bouton-popup.active {
+              background-color: $w220;
               border-radius: 4px;
             }
           }

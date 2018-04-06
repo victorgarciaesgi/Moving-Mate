@@ -11,8 +11,7 @@ import { JWT } from './TokenStore'
 
 const LOGIN_URL = "login_check";
 
-// State
-const state: ILoginState = {
+const initialState: ILoginState = {
   userInfos: {
     surname: null,
     username: null,
@@ -33,21 +32,11 @@ const state: ILoginState = {
   isLoggedIn: false,
   requesting: false,
   RouteAfter: null,
-  showModal: false,
-  reset() {
-    this.userInfos = {...this.userInfos,
-      name: null,
-      username: null,
-      surname: null,
-      id: null,
-      profile: null,
-      roles: [],
-      status: null,
-      userToken: null
-    },
-    this.isLoggedIn = false;
-  }
+  showModal: false
 }
+
+// State
+const state = initialState;
 
 const b = storeBuilder.module<ILoginState>('LoginModule', state);
 const stateGetter = b.state();
@@ -103,7 +92,7 @@ namespace Mutations {
     }
   }
   function disconnectUser(state: ILoginState) {
-    state.reset();
+    state = initialState;
     removeAuthHeaders();
     // window.location.reload();
   }
@@ -151,7 +140,7 @@ namespace Actions {
   function disconnectRequest() {
     JWT.clear();
     LoginModule.mutations.disconnectUser();
-    // NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
+    NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
   }
   async function checkUserSession(){
     let token = JWT.fetch();

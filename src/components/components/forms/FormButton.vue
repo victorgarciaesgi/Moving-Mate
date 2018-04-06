@@ -1,5 +1,5 @@
 <template>
-  <button @click='emitClick($event)' :type='type' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
+  <button @mousedown.prevent='emitClick($event)'  @click='emitClick($event)' :type='type' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
     <img v-if='!!icon' :src="icon">
     <span :style='{color}'>
       <slot></slot>
@@ -29,7 +29,7 @@ export default class FormButton extends Vue {
   
   public css = require('@css');
 
-  emitClick(event: Event){
+  emitClick(event: Event) {
     if (!this.submitting && !this.disabled) {
       this.$emit('click');
     } else{

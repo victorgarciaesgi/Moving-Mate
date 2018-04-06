@@ -4,13 +4,19 @@
       @click.stop
       ref='popup'
       class="popup-box"
-      :style='popupStyles'
-      :class='{active: show}'>
+      :class='[
+        PopupXYTypes.XType,
+        PopupXYTypes.YType,
+        {active: show}
+      ]'>
         <div class='triangle top' v-if='show'></div>
         <slot name='popup' />
     </div>
-    <div class='bouton-popup' @click.stop="togglePopup()" ref='button'>
-      <slot name='button'/>
+    <div class='bouton-popup' 
+        @click.stop="togglePopup()"
+        :class='{active: show}'
+        ref='button'>
+      <slot name='button' />
     </div>
   </div>
 </template>
@@ -23,41 +29,28 @@ import Component from "vue-class-component";
 import { merge } from 'lodash'
 
 import { EventBus } from '@store';
-import { calculatePopupPosition } from '@methods';
+import { calculatePopupRelativePosition } from '@methods';
 import { Prop } from "vue-property-decorator";
 import { relative, isAbsolute } from "path";
 
 @Component({})
 export default class Popup extends Vue {
 
-  @Prop() width: number;
-  @Prop({default: false}) absolute: boolean;
+  @Prop({default: 300}) width: number;
+  @Prop({required: false}) container: HTMLElement;
 
   public show: boolean = false;
-  public popupPosition = {
-    bottom: null,
-    left: null,
-    top: null,
-    width: this.width + "px"
-  };
 
-  get popupStyles() {
-    if (this.absolute) {
-      return this.popupPosition;
-    }
-    return;
+  public PopupXYTypes = {
+    XType: null,
+    YType: null
   }
-  
 
   togglePopup() {
     if (!this.show) {
-      if (this.absolute) {
-        let origin = this.$refs['button'];
-        console.log(origin)
-        let positions = calculatePopupPosition(origin, this.$refs['popup']);
-        this.popupPosition = {...this.popupPosition, ...positions};
-        // merge(this.popupPosition, positions);
-      }
+      const origin = this.$refs['button'];
+      const Types = calculatePopupRelativePosition(origin, this.$refs['popup']);
+      this.PopupXYTypes = Types;
       EventBus.$emit('closePopups', this);
       this.show = true;
     } 
@@ -84,17 +77,7 @@ export default class Popup extends Vue {
 
 .popup-root {
   position: relative;
-  &.right {
-    .popup-box{
-      left: auto;
-      right: 0px;
-    }
-    .triangle {
-      top: -25px;
-      right: 20px;
-      left: auto;
-    }
-  }
+
 
   &.center {
     .popup-box{
@@ -106,6 +89,60 @@ export default class Popup extends Vue {
       transform: translateX(-50%);
     }
   }
+
+    
+  .popup-box{
+    position: absolute;
+    background-color: white;
+    left: 0px;
+    top: calc(100% + 15px);
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(10,10,10,0.2);
+    height: auto;
+    min-height: 200px;
+    min-width: 250px;
+    max-height: 80vh;
+    max-width: 80vw;
+    flex-flow: column nowrap;
+    z-index: 10011;
+
+    &.center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+
+    div.header {
+      display: flex;
+      flex-flow: column wrap;
+      flex: 0 0 auto;
+      height: 40px;
+      padding-left: 10px;
+      font-weight: bold;
+      justify-content: center;
+      border-bottom: 1px solid $w230;
+    }
+
+    div.content {
+      display: flex;
+      flex-flow: column wrap;
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 10px;
+    }
+
+    div.footer {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: 0 0 auto;
+      padding: 5px;
+      height: 50px;
+      align-items: center;
+      align-content: center;
+      justify-content: flex-end;
+    }
+  }
+
 
   $triangleSize: 13px;
   $triangleColor: #FFF;
@@ -136,52 +173,6 @@ export default class Popup extends Vue {
   }
 }
 
-.popup-box{
-  position: absolute;
-  background-color: white;
-  left: 0px;
-  top: calc(100% + 15px);
-  border-radius: 5px;
-  box-shadow: 0 0 20px rgba(10,10,10,0.2);
-  height: auto;
-  min-height: 200px;
-  min-width: 250px;
-  max-height: 80vh;
-  max-width: 80vw;
-  flex-flow: column nowrap;
-  z-index: 10011;
-
-  div.header {
-    display: flex;
-    flex-flow: column wrap;
-    flex: 0 0 auto;
-    height: 40px;
-    padding-left: 10px;
-    font-weight: bold;
-    justify-content: center;
-    border-bottom: 1px solid $w230;
-
-  }
-
-  div.content {
-    display: flex;
-    flex-flow: column wrap;
-    flex: 1 1 auto;
-    overflow: auto;
-    padding: 10px;
-  }
-
-  div.footer {
-    display: flex;
-    flex-flow: row nowrap;
-    flex: 0 0 auto;
-    padding: 5px;
-    height: 50px;
-    align-items: center;
-    align-content: center;
-    justify-content: flex-end;
-  }
-}
 
 </style>
 

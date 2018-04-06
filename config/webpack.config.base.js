@@ -25,6 +25,7 @@ const baseConfig = {
       '@src': helpers.root('src'),
       '@icons': helpers.root('src/assets/icons'),
       '@images': helpers.root('src/assets/images'),
+      '@classes': helpers.root('src/classes/index.ts'),
       '@fonts': helpers.root('src/assets/fonts'),
       '@utils': helpers.root('src/utils/index.ts'),
       '@utils': helpers.root('src/utils'),

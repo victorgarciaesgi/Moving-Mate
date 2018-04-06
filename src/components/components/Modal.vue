@@ -11,7 +11,7 @@
             <slot name='header'></slot>
           </div>
           <div class='close-wrap'>
-            <img src='~@icons/quit.svg' @click="closeModal()">
+            <img src='~@icons/quit.svg' @mousedown.prevent="closeModal()">
           </div>
         </div>
         <div class='content'>
@@ -38,7 +38,7 @@ export default class UIModal extends Vue {
   @Prop({required: false}) width: number;
 
   closeModal(){
-    this.$emit('close');
+    this.$emit('close', true);
   }
 
 }
@@ -55,8 +55,10 @@ export default class UIModal extends Vue {
   background-color: transparentize($g20,0.7);
   display: flex;
   justify-content: center;
+  flex-flow: row wrap;
   align-items: center;
   align-content: center;
+  overflow-y: auto;
   z-index: 10002;
 
   &.full{
@@ -68,6 +70,18 @@ export default class UIModal extends Vue {
     }
   }
 
+  &:before {
+    content: '';
+    height: 30px;
+    width: 100%;
+  }
+
+  &:after {
+    content: '';
+    height: 30px;
+    width: 100%;
+  }
+
   .modal-window{
     display: flex;
     position: relative;
@@ -77,10 +91,11 @@ export default class UIModal extends Vue {
     height: auto;
     min-height: 200px;
     min-width: 300px;
-    max-height: 80vh;
     max-width: 80vw;
     flex-flow: column nowrap;
     overflow: hidden;
+
+    
     
     div.header {
       display: flex;
@@ -112,7 +127,6 @@ export default class UIModal extends Vue {
       display: flex;
       flex-flow: column wrap;
       flex: 1 1 auto;
-      overflow: auto;
       padding: 10px;
     }
 

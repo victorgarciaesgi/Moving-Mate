@@ -28,6 +28,7 @@
       "@views/*": ["./components/views/*"],
       "@images/*": ["./assets/images/*"],
       "@icons/*": ["./assets/icons/*"],
+      "@classes": ["./classes/index.ts"],
       "@css": ["./styles/variables.scss"],
       "@utils": ["./utils/index.ts"],
       "@utils/*": ["./utils/*"],

@@ -6,7 +6,6 @@ export interface ILoginState {
   showModal: boolean,
   RouteAfter: string,
   init?: void,
-  reset: () => void
 }
 
 

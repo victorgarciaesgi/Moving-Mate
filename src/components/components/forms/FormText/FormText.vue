@@ -16,9 +16,8 @@
         :placeholder="placeholder"
         :required='required'
         :disabled='disabled'
-        @blur='hidePopup()'
-        @click='showPopup()'
-        @focus='showPopup()'
+        @blur='hideError()'
+        @focus='displayError()'
         @input="updateValue($event.target.value)" />
               
       <div class='input-icon-contain'>
@@ -37,7 +36,7 @@
       </div>
     </div>
 
-    <div class='errorMessage' v-if='(vl.$error && error) || description || vl.$pending'>
+    <div class='errorMessage' v-if='((vl.$error && error) || description || vl.$pending) && showError'>
       <span v-if='description && !vl.$error' class='description'>{{description}}</span>
       <ul v-if='!vl.error && dirty && error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
@@ -88,40 +87,23 @@ export default class FormText extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
-    minLength: `${
-      this.vl.$params.minLength ? this.vl.$params.minLength.min : ""
-    } caractères minimum`,
-    maxLength: `${
-      this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""
-    } caractères maximum`,
+    minLength: `${this.vl.$params.minLength ? this.vl.$params.minLength.min : ""} caractères minimum`,
+    maxLength: `${this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""} caractères maximum`,
     sameAs: "Les mots de passe doivent être identiques"
   };
+  public showError = false;
 
   updateValue(value) {
     this.vl.$touch();
     this.$emit("input", value);
   }
 
-  hidePopup() {
-    Vue.set(this.popupPosition, "display", false);
+  hideError() {
+    this.showError = false;
   }
 
-  showPopup() {
-    let element = this.$refs["input"];
-    let width = $(element).outerWidth();
-    let height = $(element).outerHeight() + 12;
-    let viewportOffset = element.getBoundingClientRect();
-    let windowHeight = $(window).height();
-    let position = {
-      left: Math.round(viewportOffset.left),
-      bottom: windowHeight - Math.round(viewportOffset.bottom) + height
-    };
-    this.popupPosition = {
-      bottom: position.bottom + "px",
-      left: position.left + "px",
-      width: width + "px",
-      display: true
-    };
+  displayError() {
+    this.showError = true;
   }
 
   mounted() {
@@ -181,7 +163,7 @@ export default class FormText extends Vue {
     font-weight: bold;
     margin-top: 5px;
     padding-bottom: 10px;
-    border-bottom: 1px solid $w220;
+    border-bottom: 1px solid $w240;
     color: $red1;
 
     ul {
@@ -242,26 +224,19 @@ export default class FormText extends Vue {
     }
 
     &:focus {
-      border-color: $g90;
-      background-color: $w245;
+      background-color: #d8d9dd;
       & + .input-form-result {
         display: block;
       }
     }
 
     &.formValid {
-      &:focus {
-        border-color: lighten($mainStyle, 10%);
-      }
       ~ .input-icon-contain .input-icon /deep/ svg {
         fill: $mainStyle;
       }
     }
 
     &.formError {
-      &:focus {
-        border-color: lighten($red1, 10%);
-      }
       ~ .input-icon-contain .input-icon /deep/ svg {
         fill: $red1;
       }

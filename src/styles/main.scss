@@ -23,6 +23,19 @@
   opacity: 0;
 }
 
+.flexy {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex: 1 1 auto;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-content: space-around;
+  align-items: center;
+}
+
+
+
 
 
 section.line-separator::before {

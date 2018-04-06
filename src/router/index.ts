@@ -77,7 +77,7 @@ Rooter.beforeEach(async (to, from, next) => {
 
 const getRouteData = async (to: Route) => {
   ProgressBar.mutations.start();
-  await to.meta.asyncData(to.params);
+  await to.meta.asyncData(to);
 }
 
 

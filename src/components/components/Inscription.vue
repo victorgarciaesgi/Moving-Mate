@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
-    <UIModal :show='show' @close='close()' :width='450' :isPopup='isPopup'>
+    <UIModal :show='show' @close='close' :width='450' :isPopup='isPopup'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 0 20px 0px 20px'>
         <div class='moving-logo'>
@@ -29,13 +29,13 @@
             v-model="SignupForm.plainPassword.second" 
             :vl='$v.SignupForm.plainPassword.second'/>
 
-        <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
-          {{infoMessage}}
+        <div class='infoMessage' v-if='formError.infoMessage.length' :class='[formError.errorType]'>
+          {{formError.infoMessage}}
         </div>
 
       </div>
       <template slot='footer'>
-        <FormButton @click='close()' v-if='isPopup'>Annuler</FormButton>
+        <FormButton @click='close(true)' v-if='isPopup'>Annuler</FormButton>
         <FormButton type='submit' 
           :submitting='submitting' 
           :disabled='$v.SignupForm.$invalid' 
@@ -81,9 +81,11 @@ export default class Inscription extends Vue {
   @Prop({default: true}) isPopup: boolean;
   @Prop({required: false, default: true}) show: boolean;
 
-  public infoMessage: string = '';
   public submitting: boolean = false;
-  public errorType: string = '';
+  public formError = {
+    infoMessage: '',
+    errorType: ''
+  }
   public $v: IValidator;
 
   public images = {
@@ -114,11 +116,13 @@ export default class Inscription extends Vue {
   close(reset?: boolean) {
     if (this.isPopup) {
       this.closeModal();
-      this.SignupForm.reset();
       if (reset) {
+        this.SignupForm.reset();
         this.$v.$reset();
-        this.errorType = '';
-        this.infoMessage = '';
+        this.formError = {
+          errorType: '',
+          infoMessage: ''
+        }
       }
     }
     this.submitting = false;
@@ -129,8 +133,10 @@ export default class Inscription extends Vue {
     const submitResponse = await this.signupRequest(this.SignupForm);
     
     if (!submitResponse.success){
-      this.errorType = submitResponse.type;
-      this.infoMessage = submitResponse.message;
+      this.formError = {
+        errorType: submitResponse.type,
+        infoMessage: submitResponse.message
+      }
     } else {
       this.close(true);
       AlertsStore.actions.addAlert({

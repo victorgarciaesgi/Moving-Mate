@@ -1,14 +1,19 @@
 <template>
   <div class="moving-list-root">
-    <div class='loader' v-if='searching'>
+    <div v-if='searching' class='loader' >
       <img src="~@images/loading.svg">
     </div>
-    <ul class='moving-list' v-else>
+    <ul v-else-if='movingList.length' class='moving-list' >
       <MovingCard v-for='moving in movingList' 
                   :key='moving.id'
                   :moving='moving'>
       </MovingCard>
     </ul>
+    <div v-else class='no-result flexy'>
+      <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
+        :size='50' color='#5a5a5a'/>
+      Aucune annonce trouvée
+    </div>
   </div>
 
 </template>
@@ -18,21 +23,16 @@ import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
 import { MovingStore } from '@store';
 import MovingCard from './MovingCard.vue';
+import { SvgIcon } from '@components';
 
 @Component({
-  components: { MovingCard }
+  components: { MovingCard, SvgIcon}
 })
 export default class MovingList extends Vue {
 
   get movingList() {return MovingStore.getters.formatedMovingList}
   get searching() {return MovingStore.state.searchingMovingList}
 
-
-  get formatedAddress() {
-    return address => {
-      return address.replace(/|/gi, ' ');
-    }
-  }
 
   mounted() {
     console.log(this.movingList);
@@ -68,6 +68,10 @@ export default class MovingList extends Vue {
     align-content: flex-start;
     flex: 1 1 auto;
     padding: 10px;
+  }
+
+  .no-result {
+    font-weight: bold;
   }
 
   .loader {

@@ -63,7 +63,11 @@ namespace Actions {
     let location;
     let formSearch = MovingStore.state.formSearchData.formSearchValue;
     if (formSearch) {
-      location = await geoLocate(formSearch + ', France');
+      try {
+        location = await geoLocate(formSearch + ', France');
+      } catch(e) {
+        location = await geoLocate('France');
+      }
     } 
     else {
       location = await geoLocate('France');

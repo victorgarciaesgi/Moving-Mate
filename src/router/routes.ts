@@ -1,9 +1,9 @@
 import { timeout } from '@methods';
 import { ProgressBar } from '@store';
 import * as RootStore from '@store';
-import { RouteConfig } from 'vue-router/types';
+import { RouteConfig, Route } from 'vue-router/types';
 import * as Stores from '@store';
-import {Connexion, Inscription} from '@components';
+import { Connexion, Inscription } from '@components';
 
 
 export const routesList: RouteConfig[]  = [
@@ -26,13 +26,13 @@ export const routesList: RouteConfig[]  = [
         path: '/moving/search/:search?',
         meta: {
           contentProp: true,
-          transparent: true
+          transparent: true,
+          async asyncData(to: Route) {
+            Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
+            await Stores.MovingStore.actions.fetchMoving(to.params);
+          }
         },
-        async beforeEnter(to, from, next) {
-          Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
-          await Stores.MovingStore.actions.fetchMoving(to.params);
-          next();
-        }
+        
       }
     ]
   },
