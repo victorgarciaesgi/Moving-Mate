@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate method='post' action>
-    <UIModal :show='show' @close='close()' :width='400' :isPopup='isPopup'>
+    <UIModal :show='show' @close='close()' :width='450' :isPopup='isPopup'>
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 0 20px 0px 20px'>
         <div class='moving-logo'>
@@ -75,15 +75,14 @@ import { IValidator } from 'vuelidate';
 export default class Inscription extends Vue {
 
   get signupRequest() { return SignupStore.actions.signupRequest};
-  get showSignup() { return SignupStore.mutations.showSignup};
-  get closeModal() { return SignupStore.mutations.closeModal};
+  showSignup = SignupStore.mutations.showSignup;
+  closeModal = SignupStore.mutations.closeModal;
 
   @Prop({default: true}) isPopup: boolean;
   @Prop({required: false, default: true}) show: boolean;
 
   public infoMessage: string = '';
   public submitting: boolean = false;
-  public error: boolean = true;
   public errorType: string = '';
   public $v: IValidator;
 
@@ -116,18 +115,19 @@ export default class Inscription extends Vue {
     if (this.isPopup) {
       this.closeModal();
       this.SignupForm.reset();
-      this.$v.$reset();
-    } else if (reset) {
-      this.closeModal();
-      this.SignupForm.reset();
+      if (reset) {
+        this.$v.$reset();
+        this.errorType = '';
+        this.infoMessage = '';
+      }
     }
     this.submitting = false;
   }
 
   async submitForm() {
     this.submitting = true;
-    let submitResponse = await this.signupRequest(this.SignupForm);
-    this.submitting = false;
+    const submitResponse = await this.signupRequest(this.SignupForm);
+    
     if (!submitResponse.success){
       this.errorType = submitResponse.type;
       this.infoMessage = submitResponse.message;
@@ -153,6 +153,7 @@ export default class Inscription extends Vue {
         ]
       })
     }
+    this.submitting = false;
   }
 
 

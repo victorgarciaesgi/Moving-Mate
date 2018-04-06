@@ -15,15 +15,17 @@ export class AxiosError {
   public status: number;
   public data: any;
 
-  constructor(status?: number, message?: string) {
+  constructor(status: number, data?: any) {
     this.status = status;
+    this.data = data;
     if (status != 401) {
-      if (status == 0) message = 'Vérifiez votre connexion Internet';
-      NotificationsStore.actions.addNotification({ type: 'warning', message: message })
-    } else {
-      if (message !== 'Bad credentials') {
+      // if (status == 0) message = 'Vérifiez votre connexion Internet';
+      // NotificationsStore.actions.addNotification({ type: 'warning', message: message })
+    } 
+    else {
+      if (data.message !== 'Bad credentials') {
         LoginStore.actions.disconnectRequest();
-        NotificationsStore.actions.addNotification({ type: 'error', message: message })
+        // NotificationsStore.actions.addNotification({ type: 'error', message: message })
       }
     }
   }

@@ -77,9 +77,6 @@ export default class Alerts extends Vue {
       action.triggers.forEach(m => m())
     }
   }
-
-  
-
 }
 </script>
 

@@ -195,7 +195,7 @@ export default class SearchMoving extends Vue {
     display: flex;
     width: 100%;
     flex-flow: row wrap;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 15px 20px 15px 20px;
     align-items: center;
     color: $g70;

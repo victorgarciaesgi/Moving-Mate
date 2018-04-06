@@ -29,7 +29,6 @@ export const routesList: RouteConfig[]  = [
           transparent: true
         },
         async beforeEnter(to, from, next) {
-          console.log('lol')
           Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
           await Stores.MovingStore.actions.fetchMoving(to.params);
           next();

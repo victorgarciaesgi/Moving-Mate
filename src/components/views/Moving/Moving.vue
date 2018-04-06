@@ -4,7 +4,7 @@
       <section class='resultsList'>
         <MovingList/>
       </section>
-      <section class='searchComponent'>
+      <section class='searchComponent' :class='{shadow}'>
         <SearchMoving></SearchMoving>
       </section>
     </section>
@@ -24,6 +24,8 @@ import MovingList from './MovingList.vue';
 import SearchMoving from './SearchMoving.vue';
 import MovingMap from './MovingMap.vue';
 
+import $ from 'jquery';
+
 
 @Component({
   components: {
@@ -34,8 +36,18 @@ export default class Moving extends Vue {
 
   @Prop({required: false}) search: string;
 
-  mounted() {
+  public shadow = false;
 
+  handleBodyScroll() {
+    if ($(document).scrollTop() === 0) {
+      this.shadow = false;
+    } else {
+      this.shadow = true;
+    }
+  }
+
+  created() {
+    $(document).scroll(this.handleBodyScroll)
   }
 
 }
@@ -62,6 +74,7 @@ export default class Moving extends Vue {
     display: flex;
     width: 500px;
     border-left: 1px solid $w210;
+    z-index: 11;
   }
   
   section.searchResults {
@@ -69,7 +82,7 @@ export default class Moving extends Vue {
     display: flex;
     flex-flow: row nowrap;
     width: calc(100% - 500px);
-    height: 100%;
+    height: calc(100% - 90px);
     background-color: white;
 
     section.resultsList {
@@ -85,7 +98,11 @@ export default class Moving extends Vue {
       display: flex;
       width: calc(100% - 500px);
       z-index: 10;
-      box-shadow: 0 0 10px transparentize($g20, 0.8);
+      transition: box-shadow 0.3s;
+
+      &.shadow {
+        box-shadow: 0 0 10px transparentize($g0, 0.8);
+      }
     }
   }
 }

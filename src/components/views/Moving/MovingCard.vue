@@ -5,7 +5,7 @@
         <div class='profil-bg' :style='profilePic'></div>
       </div>
       <div class='infos'>
-        <div class='name item'>{{chance.name()}}</div>
+        <div class='name item'>{{userName}}</div>
         <div class='begin item'>
           <!-- <span class='day'>{{getBegin.day}}</span> -->
           <div class='date'>
@@ -24,11 +24,11 @@
         </div>
         <div class='price info'>
           <SvgIcon :src='require("@icons/moving/euro.svg")' :size='22' :color='iconColor' />
-          <span>10/pers</span>
+          <span>{{moving.pricePerHourPerUser}}/pers</span>
         </div>
         <div class='elevator info'>
           <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='19' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='22' :color='css.green1' /></span>
+          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='22' :color='css.mainStyle' /></span>
         </div>
         <div class='parking info'>
           <SvgIcon :src='require("@icons/moving/parking.svg")' :size='22' :color='iconColor' />
@@ -79,26 +79,12 @@ export default class MovingCard extends Vue {
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
 
-  get getDescription() {
-    return this.chance.paragraph()
-  }
-  
-  get chance() {
-    return new Chance();
-  }
-
-  get getDepart() {
-    return this.moving.addressIn.addressCity;
-  }
-
-  get getArrivee() {
-    return this.moving.addressOut.addressCity;
-    
-  }
-
-  get getBegin() {
-    return {hour: '15:00', number: '27', mounth:'Avril'};
-  }
+  get getDescription() { return this.chance.paragraph(); }
+  get chance() { return new Chance(); }
+  get userName() { return this.moving.user.username }
+  get getDepart() { return this.moving.addressIn.addressCity; }
+  get getArrivee() { return this.moving.addressOut.addressCity;}
+  get getBegin() { return {hour: '15:00', number: '27', mounth:'Avril'}; }
 
   
 
@@ -109,6 +95,7 @@ export default class MovingCard extends Vue {
   }
 
   async mounted () {
+    console.log(new Date(this.moving.dealDays))
     let {data} = await axios.get('https://randomuser.me/api/?inc=picture');
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
@@ -126,7 +113,7 @@ export default class MovingCard extends Vue {
   height: 410px;
   border-radius: 5px;
   border: 1px solid $w240;
-  box-shadow: 0 0 10px rgba(10,10,10,0.1);
+  box-shadow: 0 0 20px rgba(30,30,30,0.15);
   background-color: white;
   overflow: hidden;
   margin: 10px;
@@ -137,7 +124,9 @@ export default class MovingCard extends Vue {
     flex-flow: row nowrap;
     flex: 0 0 auto;
     height: 80px;
-    border-bottom: 1px solid $w230;
+    color: $w240;
+    // border-bottom: 1px solid $w230;
+    background-color: $mainStyle;
 
     .profil {
       display: flex;
@@ -152,7 +141,7 @@ export default class MovingCard extends Vue {
         border-radius: 100%;
         width: 60px;
         height: 60px;
-        border: 2px solid $mainStyle;
+        border: 2px solid white;
       }
     }
 
@@ -201,14 +190,16 @@ export default class MovingCard extends Vue {
 
             .mounth {
               color: $g90;
-              border: 1px solid $w220;
+              border: 1px solid $w240;
+              background-color: $w240;
               border-left: none;
               border-radius: 0 4px 4px 0;
             }
 
             .hour {
               color: $g90;
-              border: 1px solid $w220;
+              border: 1px solid $w240;
+              background-color: $w240;
               margin-left: 10px;
               border-radius: 4px;
               

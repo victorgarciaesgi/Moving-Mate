@@ -74,11 +74,11 @@ ul#alertes-container {
     padding: 13px 10px 13px 0px;
     box-shadow: 0 0 10px rgba(20, 20, 20, 0.2);
     font-size: 14px;
-    color: $g90;
+    color: white;
     text-align: center;
     font-weight: bold;
     border-radius: 3px;
-    background-color: white;
+    background-color: $g50;
     line-height: 17px;
 
     @at-root {

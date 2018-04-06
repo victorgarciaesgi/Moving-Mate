@@ -32,7 +32,7 @@ export const removeAuthHeaders = () => {
 
 async function Request(type: string, path: string, payload: any): Promise<Types.AxiosSuccess | Types.AxiosError> {
   try {
-    console.log('Axios Headers:', axiosInstance.defaults, type)
+    console.log(`Axios Request [${type}]:`, axiosInstance.defaults, type)
     if (type === 'post' || type === 'put') {
       let response: AxiosResponse = await axiosInstance[type](path, payload);
       console.log(new Types.AxiosSuccess(response.data));
@@ -46,9 +46,7 @@ async function Request(type: string, path: string, payload: any): Promise<Types.
   }
   catch (error) {
     if (error.response) {
-      console.log(error.response.data);
-      let message = error.response.data.message || error.response.data.error?error.response.data.error.message:undefined || error.response.data;
-      return Promise.reject(new Types.AxiosError(error.response.status, message));
+      return Promise.reject(new Types.AxiosError(error.response.status, error.response.data));
     } else {
       return Promise.reject(new Types.AxiosError(0));
     }

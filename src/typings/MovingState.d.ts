@@ -12,7 +12,7 @@ export interface IMovingState {
 
 export interface IMovingEvent {
   id: number,
-  user: Object,
+  user: IMovingUser,
   participations: IMoverState[],
   label: string,
   pricePerHourPerUser: number,
@@ -31,6 +31,19 @@ export interface IMovingEvent {
   dealDays: string,
   createdAt: Date,
   updatedAt: Date
+}
+
+export interface IMovingUser {
+  id: string,
+  name: string,
+  username: string,
+  surname: string,
+  profile: string,
+  avatar: string,
+  avatarName: string,
+  description: string,
+  lastname: string,
+  firstname: string,
 }
 
 export interface IAddress {

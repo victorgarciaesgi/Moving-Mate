@@ -48,10 +48,8 @@ module Mutations {
     mapInstance.fitBounds(location.bounds);
   }
   async function reloadMap(state: IGoogleMapsState, {location}) {
-
     mapInstance.setCenter(location.location);
     mapInstance.fitBounds(location.bounds);
-
   }
   export const mutations = {
     renderMap: b.commit(renderMap),
@@ -75,6 +73,7 @@ namespace Actions {
 
   async function reCenterMap(context, ville: string) {
     let location = await geoLocate(ville + ', France');
+    console.log(location);
     Mutations.mutations.reloadMap({location});
   }
 

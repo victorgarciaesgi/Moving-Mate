@@ -105,7 +105,7 @@ namespace Mutations {
   function disconnectUser(state: ILoginState) {
     state.reset();
     removeAuthHeaders();
-    window.location.reload();
+    // window.location.reload();
   }
 
   export const mutations = {
@@ -129,6 +129,7 @@ namespace Actions {
       LoginModule.actions.connexionSuccess({token: data.token, redirect});
       return new ApiSuccess();
     } catch(err) {
+      console.log(err)
       if (err.status === 401) {
         return new ApiError('Adresse email ou mot de passe incorrect')
       } else if (err.status === 404) {

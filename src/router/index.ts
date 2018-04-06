@@ -21,7 +21,6 @@ const Rooter = new VueRouter({
 // Before each route hook test auth
 Rooter.beforeEach(async (to, from, next) => {
   try {
-
     // Check session
     if (!LoginStore.state.sessionChecked) {
       await LoginStore.actions.checkUserSession();

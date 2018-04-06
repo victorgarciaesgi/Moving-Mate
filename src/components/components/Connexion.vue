@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent='submitForm()' novalidate>
-    <UIModal :show='show' @close='modalClosed' :width='400' :isPopup='isPopup'>
+    <UIModal :show='show' @close='modalClosed' :width='450' :isPopup='isPopup'>
       <span slot='header'>Connexion</span>
       
       <div slot='content' style='padding: 0px 20px 0px 20px'>
@@ -72,8 +72,8 @@ export default class Connexion extends Vue {
   @Prop({required: false}) redirect: string;
 
   get loginState() { return LoginStore.state;}
-  get connexionRequest() { return LoginStore.actions.connexionRequest;}
-  get closeModal() { return LoginStore.mutations.closeModal;}
+  connexionRequest = LoginStore.actions.connexionRequest;
+  closeModal = LoginStore.mutations.closeModal;
 
   private addNotification = NotificationsStore.actions.addNotification;
 
@@ -86,7 +86,7 @@ export default class Connexion extends Vue {
     _password: require('@icons/password.svg')
   }
   public LoginForm = {
-    _username: 'victor@free.fr',
+    _username: 'victorgarciaparis13@gmail.com',
     _password: 'aaaaa',
     _souvenir: false,
     reset() {
@@ -111,7 +111,10 @@ export default class Connexion extends Vue {
 
   async submitForm(){
     this.infoMessage = '';
-    let loginResponse = await this.connexionRequest({loginData: this.LoginForm, redirect: this.redirect});
+    const loginResponse = await this.connexionRequest({
+      loginData: this.LoginForm, 
+      redirect: this.redirect
+    });
     if (!loginResponse.success) {
       this.errorType = loginResponse.type;
       this.infoMessage = loginResponse.message;
