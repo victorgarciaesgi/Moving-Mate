@@ -81,9 +81,9 @@ export default class MovingCard extends Vue {
 
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
-  get userName() { return this.moving.user.username }
-  get getDepart() { return this.moving.addressIn.addressCity; }
-  get getArrivee() { return this.moving.addressOut.addressCity;}
+  get userName() { return this.moving.username; }
+  get getDepart() { return this.moving.addressIn; }
+  get getArrivee() { return this.moving.addressOut;}
   get getBegin() { return {hour: '15:00', number: '27', mounth:'Avril'}; }
 
   

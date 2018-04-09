@@ -12,14 +12,17 @@ export interface IMovingState {
 
 export interface IMovingEvent {
   id: number,
-  user: IMovingUser,
+  username: string;
+  userId: number;
   participations: IMoverState[],
   label: string,
   pricePerHourPerUser: number,
   description: string,
   enabled: true,
-  addressIn: IAddress,
-  addressOut: IAddress,
+  addressIn: string,
+  addressInZip: string,
+  addressOut: string,
+  addressOutZip: string,
   elevatorOut: boolean,
   volumeOut: number,
   volumeScaleOut: string,

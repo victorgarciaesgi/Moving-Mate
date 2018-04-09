@@ -19,7 +19,7 @@
     </section>
 
     <section class='france-map line-separator'>
-      <h1>Voir les déménagements en france</h1>
+      <h1>Voir les déménagements en France!</h1>
       <MapViewer svgPath='departements' @pathSelected='handlePathSelect' />
     </section>
 
@@ -36,6 +36,8 @@ import { svgPath } from '@types';
 import router from '@router';
 import FooterComponent from './Footer.vue';
 import { StarRating, SvgIcon, MapViewer, BlurLoader } from '@components';
+import { LoginStore, AlertsStore } from '@store';
+import {AlertsElement, ActionsElements} from '@classes';
 
 @Component({
   components: {
@@ -55,6 +57,10 @@ export default class Home extends Vue {
 
   handlePathSelect(path: svgPath) {
     router.push(`/moving/search/${path.title}`);
+  }
+
+  async mounted() {
+    
   }
 
 }

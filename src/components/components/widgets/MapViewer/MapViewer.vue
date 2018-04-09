@@ -72,21 +72,23 @@ export default class MapViewer extends Vue {
   }
 
   mouseHoverHandler(path: svgPath, event: any) {
-    const pathRect = event.target.getBoundingClientRect();
-    const svgRect = this.$refs["svg"].getBoundingClientRect();
-    const infosRect = this.$refs["infos"].getBoundingClientRect();
+    if (this.showInfos) {
+      const pathRect = event.target.getBoundingClientRect();
+      const svgRect = this.$refs["svg"].getBoundingClientRect();
+      const infosRect = this.$refs["infos"].getBoundingClientRect();
 
-    this.infoPath = {
-      show: true,
-      data: {
-        title: path.title,
-        info: '15 déménageurs disponibles'
-      },
-      style: {
-        left: pathRect.left + pathRect.width + 10 + 'px',
-        top: pathRect.top + (pathRect.height / 2) - (infosRect.height / 2) +'px'
-      }
-    };
+      this.infoPath = {
+        show: true,
+        data: {
+          title: path.title,
+          info: '15 déménageurs disponibles'
+        },
+        style: {
+          left: pathRect.left + pathRect.width + 10 + 'px',
+          top: pathRect.top + (pathRect.height / 2) - (infosRect.height / 2) +'px'
+        }
+      };
+    }
     // console.log(pathRect);
     this.$emit("mouseover", path);
   }

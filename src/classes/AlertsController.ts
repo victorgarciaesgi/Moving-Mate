@@ -1,22 +1,17 @@
 import { AlertsStore } from '@store';
 
-export namespace Alerts {
+export namespace AlertsElement {
 
   type AlertType = "success" | "warning" | "error" | "info";
-  interface AlertsPayload {
-    type?: AlertType,
-    title?: string,
-    message?: string,
-    actions?: Actions.Action[]
-  }
 
   export class Alert {
     public type: AlertType;
     public title: string;
     public message: string;
-    public actions: Actions.Action[]
+    public strict?: boolean;
+    public actions: ActionsElements.Action[]
 
-    constructor({actions, message, title, type}: AlertsPayload) {
+    constructor({actions, message, title, type}: Alert) {
       this.actions = actions;
       this.message = message;
       this.title = title;
@@ -24,35 +19,29 @@ export namespace Alerts {
     }
   }
 
-  export class SuccessAlert extends Alert {
-    constructor(args: AlertsPayload) {
-      super(args);
+  // export class SuccessAlert extends Alert {
+  //   constructor({}) {
+  //     super();
       
-    }
-  }
+  //   }
+  // }
 }
 
 
 
 
 
-export namespace Actions {
+export namespace ActionsElements {
 
-  type ActionType = "confirm" | "action" | "cancel";
-  interface ActionPayload {
-    type?: ActionType,
-    text?: string,
-    trigger?: Function | void | Promise<void | Function>,
-    triggers?:(Function | void | Promise<any>)[],
-  }
-  
+  type ActionType = "confirm" | "action" | "cancel" | "link";
+
   export class Action {
     public type: ActionType;
     public text: string;
-    public trigger?: Function | void | Promise<void | Function>;
-    public triggers?: (Function | void | Promise<any>)[];
+    public trigger?: Function;
+    public triggers?: Function[];
 
-    constructor({type, text, trigger, triggers}: ActionPayload) {
+    constructor({type, text, trigger, triggers}: Action) {
       this.text = text;
       this.type = type;
       this.trigger = trigger;
@@ -61,22 +50,20 @@ export namespace Actions {
   }
 
   export class ConfirmAction extends Action {
-    constructor(args: ActionPayload) {
-      super(args);
-      this.text = args.text ||  "Ça marche!";
+    constructor({text, triggers}: {text?: string, triggers?: Function[]}) {
+      super({
+        text: text ||  "Ça marche!",
+        type: "confirm",
+      });
       this.type = "confirm";
-      if (args.triggers) {
+      if (triggers) {
         this.triggers = [
-          AlertsStore.actions.hideAlert(true),
-          ...args.triggers
+          AlertsStore.mutations.hideAlert,
+          ...triggers
         ];
       } else {
-        this.trigger = this.trigger = AlertsStore.actions.hideAlert(true);
+        this.trigger = this.trigger = AlertsStore.mutations.hideAlert;
       }
     }
   }
 }
-
-const test = Promise.all([
-
-])

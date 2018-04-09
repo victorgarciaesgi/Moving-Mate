@@ -38,7 +38,7 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import FormButton from '@components/forms/FormButton.vue';
 import { AlertsStore } from '@store';
-import { IAlertAction } from '@types';
+import {AlertsElement, ActionsElements} from '@classes';
 
 @Component({
   components: {
@@ -54,6 +54,8 @@ export default class Alerts extends Vue {
       switch(type) {
         case "confirm":
           return "blue"
+        case "cancel":
+          return "red";
         default: 
           return undefined
       }
@@ -62,20 +64,16 @@ export default class Alerts extends Vue {
   
   closeAlert(exter: boolean) {
     if (!this.alertState.alertData.strict && !exter) {
-      AlertsStore.actions.hideAlert(false);
+      AlertsStore.mutations.confirmAlert;
     }
   }
 
   validAlert() {
-    AlertsStore.actions.hideAlert(true);
+    AlertsStore.mutations.cancelAlert;
   }
 
-  executeAction(action: IAlertAction) {
-    if (action.trigger) {
-      action.trigger();
-    } else {
-      action.triggers.forEach(m => m())
-    }
+  executeAction(action: ActionsElements.Action) {
+    AlertsStore.actions.executeAction(action);
   }
 }
 </script>

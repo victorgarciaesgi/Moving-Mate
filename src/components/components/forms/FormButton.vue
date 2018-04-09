@@ -97,12 +97,11 @@ button {
 
   &:active{background-color: $w220;}
 
-  &.blue {
-    // background: linear-gradient(lighten($mainStyle, 10%), $mainStyle);
-    // background-color: $mainStyle;
-    span{
-      color: $mainStyle;
-    }
+  &.blue span{
+    color: $mainStyle;
+  }
+  &.red span{
+    color: $red1;
   }
 }
 

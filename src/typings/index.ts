@@ -8,8 +8,6 @@ export * from './GoogleMaps.d';
 export * from './AlertState.d';
 
 
-
-
 export interface IResponse<T> {
   success?: boolean,
   message?: string,
