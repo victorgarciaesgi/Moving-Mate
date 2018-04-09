@@ -51,8 +51,20 @@ export default class BlurLoader extends Vue {
 <style lang="scss" scoped>
 
 .lazy-blur-background {
+  position: relative;
   display: flex;
-  overflow: hidden;
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  flex-flow: column wrap;
+
+  img.imgPlaceHolder {
+    width: 100%;
+    object-fit: cover;
+    max-height: 500px;
+    height: auto;
+    opacity: 0;
+  }
 
   img.lazy {
     position: absolute;
@@ -68,10 +80,7 @@ export default class BlurLoader extends Vue {
     }
   }
 
-  img.imgPlaceHolder {
-    width: 100%;
-    opacity: 0;
-  }
+  
 
   .img-small {
     filter: blur(50px);

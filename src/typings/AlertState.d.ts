@@ -1,3 +1,6 @@
+import { Actions } from '@classes';
+
+
 export interface IAlertsState {
   alertShow: boolean;
   alertData: IAlert;
@@ -9,7 +12,7 @@ export interface IAlert {
   message: string,
   title?: string,
   strict?: boolean,
-  actions?: IAlertAction[];
+  actions?: Actions.Action[];
 }
 
 export interface IAlertAction {
@@ -17,9 +20,6 @@ export interface IAlertAction {
   text: string;
   trigger?: Function;
   triggers?: Function[];
-  onSuccess?: Function;
-  onError?: Function;
-  async?: boolean;
 }
 
 export type IAlertType = "success"| "error" | "warning" | "alert";

@@ -87,7 +87,7 @@ export default class MapViewer extends Vue {
         top: pathRect.top + (pathRect.height / 2) - (infosRect.height / 2) +'px'
       }
     };
-    console.log(pathRect);
+    // console.log(pathRect);
     this.$emit("mouseover", path);
   }
 
