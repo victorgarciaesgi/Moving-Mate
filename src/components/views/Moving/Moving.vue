@@ -59,12 +59,10 @@ export default class Moving extends Vue {
 .Moving {
   display: flex;
   position: relative;
-  flex-flow: row nowrap;
-  height: 100%;
+  flex-flow: row wrap;
+  min-height: 100%;
   width: 100%;
   background-color: white;
-
-
 
   section.resultsMap {
     position: fixed;
@@ -80,15 +78,15 @@ export default class Moving extends Vue {
   section.searchResults {
     margin-top: 90px;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     width: calc(100% - 500px);
-    height: calc(100% - 90px);
     background-color: white;
 
     section.resultsList {
       display: flex;
-      flex: 1 1 auto;
-      height: calc(100% - 90px);
+      flex-flow: row wrap;
+      width: 100%;
+      height: auto;
     }
 
     section.searchComponent {

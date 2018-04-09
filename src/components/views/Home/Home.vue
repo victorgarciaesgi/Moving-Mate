@@ -1,5 +1,5 @@
 <template>
-  <div class='home'>
+  <div class='Home'>
     <section class='image-home'>
       <BlurLoader src='home_image' moving />
     </section>
@@ -57,6 +57,8 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 
+.Home {
+
 section{
   display: flex;
   flex-flow: column nowrap;
@@ -68,6 +70,8 @@ section.image-home {
   position: relative;
   height: auto;
   max-height: 600px;
+  min-height: 0;
+  overflow: hidden;
 
   .background-mask {
     position: absolute;
@@ -144,6 +148,7 @@ section.help {
 section.france-map {
   height: auto;
   padding: 30px;
+}
 }
 
 

@@ -14,10 +14,10 @@
       </g>
     </svg>
 
-    <div v-if='showInfos' class='path-info' v-show='infoPath.show'
+    <div ref='infos' v-if='showInfos' class='path-info' v-show='infoPath.show'
       :style='infoPath.style'>
-      <span>{{infoPath.data.title}}</span>
-      <span>{{infoPath.data.info}}</span>
+      <span class='title'>{{infoPath.data.title}}</span>
+      <span class='info'>{{infoPath.data.info}}</span>
       <div class='triangle'></div>
     </div>
 
@@ -72,8 +72,10 @@ export default class MapViewer extends Vue {
   }
 
   mouseHoverHandler(path: svgPath, event: any) {
-    let pathRect = event.target.getBoundingClientRect();
-    let svgRect = this.$refs["svg"].getBoundingClientRect();
+    const pathRect = event.target.getBoundingClientRect();
+    const svgRect = this.$refs["svg"].getBoundingClientRect();
+    const infosRect = this.$refs["infos"].getBoundingClientRect();
+
     this.infoPath = {
       show: true,
       data: {
@@ -82,9 +84,10 @@ export default class MapViewer extends Vue {
       },
       style: {
         left: pathRect.left + pathRect.width + 10 + 'px',
-        top: (pathRect.top - svgRect.top) + (pathRect.height / 2) +'px'
+        top: pathRect.top + (pathRect.height / 2) - (infosRect.height / 2) +'px'
       }
     };
+    console.log(pathRect);
     this.$emit("mouseover", path);
   }
 
@@ -131,7 +134,7 @@ export default class MapViewer extends Vue {
 }
 
 .path-info {
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-flow: column wrap;
   background-color: white;
@@ -142,6 +145,13 @@ export default class MapViewer extends Vue {
   box-shadow: 0 0 10px rgba(10,10,10,0.2);
   // @include translateY(-50%);
 
+  .title {
+    font-weight: bold;
+  }
+
+  .info {
+    font-size: 15px;
+  }
   
   .triangle {
     position: absolute;

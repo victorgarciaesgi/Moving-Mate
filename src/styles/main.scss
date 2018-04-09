@@ -12,7 +12,7 @@
   min-width: 100%;
   max-width: 100%;
   display: flex;
-  height: calc(100% - #{$headerHeight});
+  min-height: calc(100% - #{$headerHeight});
 }
 
 .fade-enter-active, .fade-leave-active {

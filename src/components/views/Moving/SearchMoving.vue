@@ -130,7 +130,8 @@ export default class SearchMoving extends Vue {
   }
 
   handlePathSelect(path: svgPath) {
-    router.push(`/moving/search/${path.title}`);
+    MovingStore.mutations.updateSearchValue(path.title || '');
+    MovingStore.actions.fetchMoving({search: path.title});
     EventBus.$emit('closePopups');
   }
 

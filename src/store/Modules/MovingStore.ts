@@ -119,6 +119,7 @@ namespace Actions {
           reject();
         }, {maximumAge: 0});
       } catch(e) {
+        console.log(e)
         reject(e);
       }
     })

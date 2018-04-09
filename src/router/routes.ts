@@ -29,7 +29,7 @@ export const routesList: RouteConfig[]  = [
           transparent: true,
           async asyncData(to: Route) {
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
-            await Stores.MovingStore.actions.fetchMoving(to.params);
+            Stores.MovingStore.actions.fetchMoving(to.params);
           }
         },
         

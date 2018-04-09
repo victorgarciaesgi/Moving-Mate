@@ -36,7 +36,7 @@ const initialState: ILoginState = {
 }
 
 // State
-const state = initialState;
+const state = {...initialState};
 
 const b = storeBuilder.module<ILoginState>('LoginModule', state);
 const stateGetter = b.state();
@@ -92,8 +92,14 @@ namespace Mutations {
     }
   }
   function disconnectUser(state: ILoginState) {
-    state = initialState;
+    Object.keys(initialState).forEach(key => {
+      state[key] = initialState[key]
+    });
     removeAuthHeaders();
+    if (router.currentRoute.meta.requiresAuth) {
+      router.push('/');
+      mutations.showLoginRoute(router.currentRoute.fullPath);
+    }
     // window.location.reload();
   }
 

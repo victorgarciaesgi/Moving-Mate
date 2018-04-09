@@ -4,7 +4,7 @@
       <slot></slot>
     </div>
     <img :src='smallImgSrc' class='imgPlaceHolder'>
-    <img class='img-small lazy' :class='{loaded: smallImgLoaded}' :src='smallImgSrc' @load='handleSmallLoaded()'>
+    <img class='img-small lazy' :class='{loaded: bigImgLoaded}' :src='smallImgSrc' @load='handleSmallLoaded()'>
     <img :class='{loaded: bigImgLoaded}' :src='bigImgSrc' @load='handleBigLoaded()' class='lazy'>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default class BlurLoader extends Vue {
 <style lang="scss" scoped>
 
 .lazy-blur-background {
-  position: relative;
+  display: flex;
   overflow: hidden;
 
   img.lazy {
@@ -69,15 +69,17 @@ export default class BlurLoader extends Vue {
   }
 
   img.imgPlaceHolder {
-    position: relative;
     width: 100%;
-    height: auto;
     opacity: 0;
   }
 
   .img-small {
     filter: blur(50px);
     transform: scale(1);
+
+    &.loaded {
+      display: none;
+    }
   }
 
   .placeholder {

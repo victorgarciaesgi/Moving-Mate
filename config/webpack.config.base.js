@@ -75,7 +75,7 @@ const baseConfig = {
   },
   plugins: [
     new FaviconsWebpackPlugin({
-      logo: helpers.root('src/assets/images/logo_M.svg'),
+      logo: helpers.root('src/assets/images/logo_M.png'),
       persistentCache: true,
       inject: true,
       background: '#fff',

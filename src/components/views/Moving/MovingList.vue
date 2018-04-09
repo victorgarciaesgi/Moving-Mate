@@ -49,8 +49,9 @@ export default class MovingList extends Vue {
 .moving-list-root {
   display: flex;
   position: relative;
-  flex-flow: column nowrap;
+  flex-flow: column wrap;
   min-height: 100%;
+  height: auto;
   width: 100%;
 
   div.list-filter-container {
@@ -62,12 +63,15 @@ export default class MovingList extends Vue {
 
   ul.moving-list {
     display: flex;
+    position: relative;
     flex-flow: row wrap;
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
-    flex: 1 1 auto;
+    width: 100%;
+    flex: 0 0 auto;
     padding: 10px;
+    
   }
 
   .no-result {

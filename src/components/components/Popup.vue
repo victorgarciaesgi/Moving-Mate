@@ -9,7 +9,12 @@
         PopupXYTypes.YType,
         {active: show}
       ]'>
-        <div class='triangle top' v-if='show'></div>
+        <div class='triangle up' v-if='show'
+          :class='[
+            PopupXYTypes.XType,
+            PopupXYTypes.YType,
+            {active: show}
+          ]'></div>
         <slot name='popup' />
     </div>
     <div class='bouton-popup' 
@@ -94,7 +99,6 @@ export default class Popup extends Vue {
   .popup-box{
     position: absolute;
     background-color: white;
-    left: 0px;
     top: calc(100% + 15px);
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(10,10,10,0.2);
@@ -110,6 +114,10 @@ export default class Popup extends Vue {
       left: 50%;
       transform: translateX(-50%);
     }
+
+    &.left { left: 0 }
+
+    &.right { right: 0 }
 
 
     div.header {
@@ -150,9 +158,6 @@ export default class Popup extends Vue {
   .triangle{
     position: absolute;
     z-index: 10009;
-    top: 100%;
-    left: 50%;
-    @include translateX(-50%);
     width: 0;
     height: 0;
     border-left: $triangleSize solid transparent;
@@ -160,7 +165,7 @@ export default class Popup extends Vue {
     border-top: $triangleSize solid $triangleColor;
     filter: drop-shadow(0px -6px 4px rgba(50,50,50, 0.1));
 
-    &.top {
+    &.up {
       border-bottom: $triangleSize solid $triangleColor;
       border-top: $triangleSize solid transparent;
     }
@@ -169,6 +174,14 @@ export default class Popup extends Vue {
       border-left: $triangleSize solid transparent;
       border-right: $triangleSize solid transparent;
       border-top: $triangleSize solid $triangleColor;
+    }
+
+    &.bottom {bottom: 100%;}
+    &.top {top: 100%}
+    &.right { right: 15px;}
+    &.center {
+      left: 50%;
+      @include translateX(-50%);
     }
   }
 }

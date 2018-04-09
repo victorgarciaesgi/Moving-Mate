@@ -24,18 +24,18 @@
 
           <template v-if='loginState.isLoggedIn' >
             <li for='user-notifications' class='header-button popup'>
-              <Popup ref='profile' class='right' v-if='loginState.isLoggedIn' :width='250'>
-                <template>
-                  
+              <Popup v-if='loginState.isLoggedIn' :width='250'>
+                <template slot='popup'>
                 </template>
+                <div slot='button' class='bouton-data image' >
+                  <SvgIcon :src="require('@icons/notification_none.svg')" :size='24'></SvgIcon>
+                </div>
               </Popup>
-              <div class='bouton-data image'>
-                <SvgIcon :src="require('@icons/notification_none.svg')"></SvgIcon>
-              </div>
+              
             </li>
 
             <li for='user-menu' class="header-button popup">
-              <Popup class='right' v-if='loginState.isLoggedIn' :width='250'>
+              <Popup :width='250'>
                 <template slot='popup'>
                   <div class="user">
                       <div class="user-picture" :style='getProfileImage'></div>
@@ -52,7 +52,7 @@
                       <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
                   </ul>
                 </template>
-                <div class='bouton-data' slot='button'>
+                <div slot='button' class='bouton-data' >
                   <span>{{loginState.userInfos.username | capitalize}}</span>
                   <div class='profile-image' :style='getProfileImage'></div>
                 </div>
@@ -97,15 +97,15 @@ import { StringifyOptions } from "querystring";
 export default class HeaderComponent extends Vue {
 
   get loginState() {return LoginStore.state}
-  private fullName = LoginStore.getters.fullName;
-  private userPicture = LoginStore.getters.userPicture;
-  private isAdmin = LoginStore.getters.isAdmin;
+  get fullName() {return LoginStore.getters.fullName};
+  get userPicture(){return LoginStore.getters.userPicture};
+  get isAdmin() {return LoginStore.getters.isAdmin};
   get headerBox() {return GlobalStore.state.headerBoxShadow};
 
   private showLogin = LoginStore.mutations.showLogin;
   private disconnectRequest = LoginStore.actions.disconnectRequest;
 
-  private signupState = SignupStore.state;
+  get signupState() {return SignupStore.state}
   private showSignup = SignupStore.mutations.showSignup;
   
 
@@ -303,11 +303,7 @@ div.header-wrapper{
               @extend %header-button;
 
               &.image {
-                padding: 5px 7px 5px 7px;
-                /deep/ svg {
-                  height: 26px;
-                  width: 26px;
-                }
+                padding: 5px;
               }
             }
 

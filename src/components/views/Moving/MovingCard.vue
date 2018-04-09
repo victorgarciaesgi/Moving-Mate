@@ -190,16 +190,16 @@ export default class MovingCard extends Vue {
 
             .mounth {
               color: $g90;
-              border: 1px solid $w240;
-              background-color: $w240;
+              border: 1px solid white;
+              background-color: white;
               border-left: none;
               border-radius: 0 4px 4px 0;
             }
 
             .hour {
               color: $g90;
-              border: 1px solid $w240;
-              background-color: $w240;
+              border: 1px solid white;
+              background-color: white;
               margin-left: 10px;
               border-radius: 4px;
               

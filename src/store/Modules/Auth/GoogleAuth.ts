@@ -36,9 +36,8 @@ namespace Actions {
       await actions.initGapi();
       await gapi.auth2.getAuthInstance().signIn();
       try {
-        await actions.verifyToken();
-        // Sign in mutation
-        console.log('connected');
+        const token = await actions.verifyToken();
+        
         resolve();
       } catch(e) {
         console.log(e)
@@ -47,24 +46,22 @@ namespace Actions {
     })
   }
   async function verifyToken() {
-    console.log('verifying token...');
-    await new Promise((resolve, reject) => {
+    console.log('Verifying Google token...');
+    return await new Promise((resolve, reject) => {
       let token = null;
       try { 
         token = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token 
-      } catch (e) { reject(); }
+      } catch { reject(); }
+
       if (!token) { reject(); }
       else {
-        console.log(token);
-        // Api.verify(token).then(res => {
-        //   console.log('token verified', res);
-        //   if (res && res.data && res.data.token_valid) { resolve(res.data.profile); }
-        //   else { reject(); }
-        // }).catch(err => {
-        //   console.log(err);
-        //   reject(err);
-        // })
-        resolve();
+        try {
+          const response = Api.post('login_check', {token});
+          console.log(response);
+          resolve(token);
+        } catch {
+          reject(token);
+        }
       }
     });
   }

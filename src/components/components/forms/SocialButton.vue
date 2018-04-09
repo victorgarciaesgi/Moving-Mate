@@ -39,14 +39,14 @@ export default class SocialButton extends Vue {
 
   async handleClick() {
     this.$emit('click');
+    this.loading = true;
     switch (this.media) {
       case 'google':
-        this.loading = true;
         await GoogleStore.actions.signIn();
-        this.loading = false;
       case 'facebook': 
       default: 
     }
+    this.loading = false;
 
   }
 
