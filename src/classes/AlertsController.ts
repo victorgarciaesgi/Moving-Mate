@@ -1,17 +1,33 @@
 import { AlertsStore } from '@store';
 
 export namespace Alerts {
-  class Alert {
-    public type: "success" | "warning" | "error" | "info";
+
+  type AlertType = "success" | "warning" | "error" | "info";
+  interface AlertsPayload {
+    type?: AlertType,
+    title?: string,
+    message?: string,
+    actions?: Actions.Action[]
+  }
+
+  export class Alert {
+    public type: AlertType;
     public title: string;
-    public message?: string;
-    public actions;
+    public message: string;
+    public actions: Actions.Action[]
+
+    constructor({actions, message, title, type}: AlertsPayload) {
+      this.actions = actions;
+      this.message = message;
+      this.title = title;
+      this.type = type;
+    }
   }
 
   export class SuccessAlert extends Alert {
-    constructor() {
-      super();
-
+    constructor(args: AlertsPayload) {
+      super(args);
+      
     }
   }
 }
