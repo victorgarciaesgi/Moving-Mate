@@ -112,7 +112,6 @@ namespace Actions {
         navigator.geolocation.getCurrentPosition(async(position) => {
           let {data} = await Api.get(`${GEO_API}/communes?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
           Mutations.mutations.updateSearchRoute(data[0].nom);
-          Actions.actions.fetchMoving({});
           resolve();
         }, (err) => {
           console.log(err);
