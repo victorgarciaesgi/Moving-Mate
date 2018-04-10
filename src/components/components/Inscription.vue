@@ -56,7 +56,7 @@ import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 import { SignupStore, LoginStore, NotificationsStore, AlertsStore } from '@store';
 import { IValidator } from 'vuelidate';
-import { ActionsElements } from '@classes';
+import { ActionsElements, AlertsElement } from '@classes';
 
 @Component({
   components: {
@@ -140,20 +140,11 @@ export default class Inscription extends Vue {
       }
     } else {
       this.close(true);
-      AlertsStore.actions.addAlert({
-        type: "success",
-        title: 'Inscription réussie',
+      new AlertsElement.SuccessAlert({
+        title: "Inscription réussie",
         message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
         actions: [
-          new ActionsElements.Action({
-            type: "action",
-            text: "Se connecter",
-            triggers: [
-              LoginStore.mutations.showLogin,
-              AlertsStore.actions.hideAlert
-            ]
-          }),
-          new ActionsElements.ConfirmAction({})
+          new ActionsElements.LoginAction()
         ]
       })
     }

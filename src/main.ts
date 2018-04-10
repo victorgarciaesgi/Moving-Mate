@@ -13,7 +13,7 @@ Vue.use(Vuelidate);
 Vue.use(Vue2Filters);
 Vue.use(MyFilters);
 
-Vue.config.devtools = true;
+// Vue.config.devtools = true;
 
 Vue.config['keyCodes'] = {
   left: 37,
@@ -22,11 +22,5 @@ Vue.config['keyCodes'] = {
   down: 40,
   esc: 27 
 };
-
-// Vue.directive('bg-blur',imageBlurAsync);
-
-
-
-
 
 new App().$mount('#app');

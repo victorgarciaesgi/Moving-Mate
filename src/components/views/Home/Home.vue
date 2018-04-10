@@ -33,7 +33,7 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import { svgPath } from '@types';
-import router from '@router';
+import router, {routesNames} from '@router';
 import FooterComponent from './Footer.vue';
 import { StarRating, SvgIcon, MapViewer, BlurLoader } from '@components';
 import { LoginStore, AlertsStore } from '@store';
@@ -45,8 +45,6 @@ import {AlertsElement, ActionsElements} from '@classes';
   }
 })
 export default class Home extends Vue {
-
-  public css = require('@css');
 
   public helps = [
     {icon: require('@icons/annonce.svg'), text:'Je publie une annonce gratuitement sur le site!'},
@@ -60,7 +58,23 @@ export default class Home extends Vue {
   }
 
   async mounted() {
-    
+    // let response = await new AlertsElement.SuccessAlert({
+    //   title: "Test d'une alerte",
+    //   message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
+    //   actions: [
+    //     new ActionsElements.CancelAction(),
+    //     new ActionsElements.Action({
+    //       type: "action",
+    //       text: "Faire un truc",
+    //       triggers: [
+    //         ActionsElements.triggers.close,
+    //         () => router.push({name: routesNames.movers}),
+    //       ]
+    //     }),
+    //   ]
+    // }).waitResponse();
+
+    // console.log(response);
   }
 
 }

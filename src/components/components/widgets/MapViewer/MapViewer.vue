@@ -62,7 +62,7 @@ export default class MapViewer extends Vue {
     return GlobalStore.getters.svgMapReady;
   }
 
-  async created() {
+  async mounted() {
     GlobalStore.actions.fetchPaths(this.svgPath);
   }
 

@@ -38,7 +38,7 @@ export default class FormButton extends Vue {
   }
 
   get colorClass(){
-    return this.theme?this.theme:'';
+    return this.theme || '';
   }
 
 }
@@ -54,6 +54,7 @@ button {
   justify-content: center;
   align-items: center;
   align-content: center;
+  flex: 0 0 auto;
   height: 33px;
   border-radius: 4px;
   margin: 0 5px 0 5px;

@@ -7,6 +7,7 @@ import { storeBuilder } from "../Store/Store";
 const state: any = {}
 
 declare var gapi: any;
+const VERIF_URL = 'login_check';
 
 const b = storeBuilder.module<any>("GoogleAuthModule", state);
 const stateGetter = b.state()
@@ -46,7 +47,8 @@ namespace Actions {
   }
 
   async function verifyToken(context, token: string): Promise<any> {
-    let decodedToken = await jwtDecode(token);
+    const decodedToken = await jwtDecode(token);
+    const response = await Api.post(VERIF_URL, {token});
     console.log(decodedToken);
   }
   

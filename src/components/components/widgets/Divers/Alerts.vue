@@ -12,15 +12,27 @@
           <div class='title'>
             {{alertState.alertData.title}}
           </div>
-          <span>{{alertState.alertData.message}}</span>
+          <span class='message'>{{alertState.alertData.message}}</span>
         </div>
         <div class='footer'>
           <template v-if='alertState.alertData.actions'>
-            <FormButton v-for="action in alertState.alertData.actions" :key='action.text'
-              @click='executeAction(action)'
-              :theme='getTheme(action.type)'>
-              {{action.text}}
-            </FormButton>
+            
+            <div class='align-left'>
+              <FormButton  v-for="action in leftButtons" :key='action.text'
+                @click='executeAction(action)'
+                :theme='getTheme(action.type)'>
+                {{action.text}}
+              </FormButton>
+            </div>
+            <div class='align-right'>
+              <FormButton v-for="action in rightButtons" :key='action.text'
+                @click='executeAction(action)'
+                :theme='getTheme(action.type)'>
+                {{action.text}}
+              </FormButton>
+            </div>
+            
+            
           </template>
           <template v-else>
             <FormButton type='submit' theme='blue' @click='validAlert()'>
@@ -61,15 +73,23 @@ export default class Alerts extends Vue {
       }
     }
   }
+
+  get rightButtons() {
+    return this.alertState.alertData.actions.filter(m => m.type !== "cancel");
+  }
+
+  get leftButtons() {
+    return this.alertState.alertData.actions.filter(m => m.type === "cancel");
+  }
   
   closeAlert(exter: boolean) {
     if (!this.alertState.alertData.strict && !exter) {
-      AlertsStore.mutations.confirmAlert;
+      AlertsStore.mutations.confirmAlert();
     }
   }
 
   validAlert() {
-    AlertsStore.mutations.cancelAlert;
+    AlertsStore.mutations.cancelAlert();
   }
 
   executeAction(action: ActionsElements.Action) {
@@ -97,12 +117,12 @@ export default class Alerts extends Vue {
     display: flex;
     position: relative;
     background-color: white;
-    border-radius: 3px;
+    border-radius: 5px;
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
     height: auto;
-    width: 400px;
+    width: auto;
     min-height: 100px;
-    min-width: 300px;
+    min-width: 400px;
     max-height: 80vh;
     max-width: 80vw;
     flex-flow: column nowrap;
@@ -110,10 +130,10 @@ export default class Alerts extends Vue {
 
     div.content {
       display: flex;
-      flex-flow: column wrap;
+      flex-flow: column nowrap;
       justify-content: center;
       align-items: center;
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       overflow: auto;
       text-align: center;
       padding: 20px 30px 20px 30px;
@@ -139,18 +159,36 @@ export default class Alerts extends Vue {
         font-size: 20px;
         padding: 20px;
       }
+
+      .message {
+        max-width: 400px;
+      }
     }
 
     div.footer {
       display: flex;
       flex-flow: row nowrap;
       flex: 0 0 auto;
+      min-width: 100%;
       padding: 5px;
       height: 50px;
       align-items: center;
       align-content: center;
-      justify-content: flex-end;
       border-top: 1px solid $w230;
+
+      .align-left {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: row wrap;
+      }
+
+      .align-right {
+        flex: 1 1 auto;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: flex-end;
+      }
+
     }
 
   }

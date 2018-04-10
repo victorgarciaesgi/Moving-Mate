@@ -64,7 +64,7 @@ namespace Actions {
   async function executeAction(contect, action: ActionsElements.Action) {
     if (action.trigger) {
       action.trigger();
-    } else {
+    } else if (action.triggers) {
       action.triggers.forEach(m => m())
     }
   }

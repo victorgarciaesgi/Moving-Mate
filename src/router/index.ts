@@ -3,13 +3,13 @@ import VueRouter, {Route} from 'vue-router';
 import * as Components from '@components';
 import { LoginStore } from '@modules';
 import { timeout } from '@methods';
-import {routesList} from './routes';
+import { routesList, MyRoute } from './routes';
 import { ProgressBar, GlobalStore } from '@store';
 
 Vue.use(VueRouter);
 
 
-const Rooter = new VueRouter({
+const Router = new VueRouter({
   mode: 'history',
   fallback: false,
   scrollBehavior(to, from, savedPosition) {
@@ -18,22 +18,22 @@ const Rooter = new VueRouter({
   routes: routesList
 })
 
-// Before each route hook test auth
-Rooter.beforeEach(async (to, from, next) => {
+Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
   try {
     // Check session
     if (!LoginStore.state.sessionChecked) {
       await LoginStore.actions.checkUserSession();
-    } 
+    }
+
     if (!to.meta.transparent) {
       ProgressBar.mutations.start();
     }
 
     // Check content prop
     if (!to.meta.contentProp) {
-      document.title = `${to.name} - MovingMate`;
+      document.title = `${to.meta.title} - MovingMate`;
     } else if (Object.keys(to.params).every(m => !to.params[m])) {
-      document.title = `${to.name} - MovingMate`;
+      document.title = `${to.meta.title} - MovingMate`;
     }
 
     // Check requires auth
@@ -45,7 +45,7 @@ Rooter.beforeEach(async (to, from, next) => {
       }
       else {
         LoginStore.mutations.showLoginRoute(to.fullPath);
-        if (from.name) {
+        if (from.meta.title) {
           ProgressBar.mutations.hide();
         } else {
           next('/');
@@ -75,12 +75,11 @@ Rooter.beforeEach(async (to, from, next) => {
   }
 })
 
-const getRouteData = async (to: Route) => {
+const getRouteData = async (to: MyRoute) => {
   ProgressBar.mutations.start();
-  await to.meta.asyncData(to);
+  return await to.meta.asyncData(to);
 }
 
 
-
-
-export default Rooter;
+export {routesNames} from './routes';
+export default Router;

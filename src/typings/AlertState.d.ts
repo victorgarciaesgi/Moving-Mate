@@ -1,7 +1,7 @@
-import { Actions, Alerts } from '@classes';
+import { ActionsElements, AlertsElement } from '@classes';
 
 
 export interface IAlertsState {
   alertShow: boolean;
-  alertData: Alerts.Alert;
+  alertData: AlertsElement.Alert;
 }

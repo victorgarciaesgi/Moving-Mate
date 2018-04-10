@@ -1,31 +1,44 @@
-import { AlertsStore } from '@store';
+import { AlertsStore, LoginStore } from '@store';
 
 export namespace AlertsElement {
 
   type AlertType = "success" | "warning" | "error" | "info";
+  type Diff<T extends string, U extends string> = ({[P in T]: P } & {[P in U]: never } & { [x: string]: never })[T];  
+  type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>;
 
-  export class Alert {
+
+  export class Alert{
     public type: AlertType;
     public title: string;
     public message: string;
     public strict?: boolean;
     public actions: ActionsElements.Action[]
 
-    constructor({actions, message, title, type}: Alert) {
-      this.actions = actions;
-      this.message = message;
-      this.title = title;
-      this.type = type;
+    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[]}) {
+      Object.assign(this, fields);
+      AlertsStore.actions.addAlert(this);
+    }
+
+    async waitResponse() {
+      return AlertsStore.actions.addAlert(this);
     }
   }
 
-  // export class SuccessAlert extends Alert {
-  //   constructor({}) {
-  //     super();
-      
-  //   }
-  // }
+  export class SuccessAlert extends Alert {
+    constructor(fields?: {title: string, message: string, strict?: boolean, actions: ActionsElements.Action[]}) {
+      super({
+        title: fields.title || 'Opération réussie',
+        type: 'success',
+        message: fields.message,
+        actions: [
+          ...fields.actions,
+          new ActionsElements.ConfirmAction({}),
+        ]
+      });
+    }
+  }
 }
+
 
 
 
@@ -55,15 +68,42 @@ export namespace ActionsElements {
         text: text ||  "Ça marche!",
         type: "confirm",
       });
-      this.type = "confirm";
       if (triggers) {
         this.triggers = [
-          AlertsStore.mutations.hideAlert,
+          AlertsStore.mutations.confirmAlert,
           ...triggers
         ];
       } else {
-        this.trigger = this.trigger = AlertsStore.mutations.hideAlert;
+        this.trigger = this.trigger = AlertsStore.mutations.confirmAlert;
       }
+    }
+  }
+
+  export class LoginAction extends Action {
+    constructor() {
+      super({
+        text: "Se connecter",
+        type: "action",
+        triggers: [
+          LoginStore.mutations.showLogin,
+          AlertsStore.actions.hideAlert
+        ]
+      });
+    }
+  }
+  export class CancelAction extends Action {
+    constructor() {
+      super({
+        text: "Annuler",
+        type: "cancel",
+        trigger: AlertsStore.mutations.cancelAlert
+      });
+    }
+  }
+
+  export const triggers = {
+    close() {
+      return AlertsStore.mutations.hideAlert()
     }
   }
 }
