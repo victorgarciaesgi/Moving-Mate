@@ -13,7 +13,6 @@ export const routesNames = {
   connexion: 'Connexion',
   inscription: "Inscription",
   becomeMover: "BecomeMover",
-
 }
 
 interface MyMeta {

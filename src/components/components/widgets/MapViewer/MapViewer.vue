@@ -54,15 +54,10 @@ export default class MapViewer extends Vue {
     }
   };
 
-  get paths() {
-    return GlobalStore.state.svgMapPaths
-  }
+  get paths() {return GlobalStore.state.svgMapPaths}
+  get ready() {return GlobalStore.getters.svgMapReady;}
 
-  get ready() {
-    return GlobalStore.getters.svgMapReady;
-  }
-
-  async mounted() {
+  mounted() {
     GlobalStore.actions.fetchPaths(this.svgPath);
   }
 

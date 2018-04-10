@@ -147,7 +147,6 @@ export default class SearchMoving extends Vue {
       let value = name || this.placesResults[this.resultSelected].nom;
       MovingStore.mutations.updateSearchRoute(value);
     } 
-    MovingStore.actions.fetchMoving({});
   }
 
   async getUserLocation() {
@@ -160,6 +159,7 @@ export default class SearchMoving extends Vue {
 
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
+    console.log(newVal);
     if (!this.searchCommited) {
       this.searching = false;
       this.placesResultsDisplay = true;

@@ -54,7 +54,7 @@ namespace Mutations {
 
   function updateSearchRoute(state: IMovingState, newString: string) {
     Router.replace(`/moving/search/${newString}`);
-    Mutations.mutations.updateSearchValue(newString);
+    // Mutations.mutations.updateSearchValue(newString);
   }
 
   function updateSearchingState(state: IMovingState) {
@@ -74,11 +74,11 @@ namespace Mutations {
 namespace Actions {
 
   async function fetchMoving(context, payload?: {search?: string}) {
-    if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
-    GoogleMaps.actions.reCenterMap(payload.search);
-    state.movingList = [];
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
+    if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
+    GoogleMaps.actions.reCenterMap(payload.search);
+    Mutations.mutations.updateMovingList([]);
     try {
       let { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
