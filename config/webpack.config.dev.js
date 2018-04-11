@@ -44,7 +44,8 @@ const webpackDevConfig = {
     new HtmlWebpackPlugin({
       inject: true,
       template: helpers.root('/src/index.html'),
-      filename: 'index.html'
+      filename: 'index.html',
+      favicon: helpers.root('/src/assets/images/logo_M.png')
     }),
     new DefinePlugin({
       'process.env': env
