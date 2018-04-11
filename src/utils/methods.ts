@@ -7,6 +7,10 @@ export function timeout(duration: number): Promise<{}> {
   })
 };
 
+export function randomNumber(min: number, max: number) : number {
+  return Math.floor((Math.random() * max) + min);
+}
+
 
 export function calculatePopupPosition(origin: HTMLElement, target: HTMLElement) {
   let $origin = $(origin);

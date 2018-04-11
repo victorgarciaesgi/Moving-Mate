@@ -1,10 +1,8 @@
 <template>
   <div class="input-box">
-    <label v-if='label && placeholder' :class='{formError: (!valid && dirty && error)}'>
-      {{placeholder}}
-    </label>
     <div class="input-container">
       <input ref='input' class='input-form'
+        :id='formId'
         :type='type'
         :value='value'
         :class='[{
@@ -13,17 +11,20 @@
           icon,
           big: !!big,
         }, design]'
-        :placeholder="placeholder"
         :required='required'
         :disabled='disabled'
-        @blur='hideError()'
-        @focus='displayError()'
+        @focus='handleFocus()'
+        @blur='handleBlur()'
         @input="updateValue($event.target.value)" />
               
       <div class='input-icon-contain'>
         <img class='input-icon' v-if='icon && !inline' :src="icon">
         <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
       </div>
+
+      <label :for='formId' class='input-placeholder' :class='{top: isPlaceholderHere}'>
+        {{placeholder}}
+      </label>
 
       <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
       <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
@@ -54,7 +55,8 @@ import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
 import $ from "jquery";
-export {default as FormTextElement} from './FormText';
+import shortId from 'shortid';
+import {timeout} from '@methods';
 
 import { SvgIcon } from "@components";
 
@@ -78,6 +80,8 @@ export default class FormText extends Vue {
   @Prop({ required: false }) design: string;
   @Prop({ required: false }) vl: IValidator;
 
+  public formId = shortId.generate();
+
   public popupPosition: any = {
     bottom: null,
     left: null,
@@ -92,18 +96,22 @@ export default class FormText extends Vue {
     sameAs: "Les mots de passe doivent être identiques"
   };
   public showError = false;
+  public isFocused = false;
 
   updateValue(value) {
     this.vl.$touch();
     this.$emit("input", value);
   }
 
-  hideError() {
+  async handleBlur() {
+    this.isFocused = false;
+    await timeout(100);
     this.showError = false;
   }
 
-  displayError() {
+  handleFocus() {
     this.showError = true;
+    this.isFocused = true;
   }
 
   mounted() {
@@ -114,6 +122,10 @@ export default class FormText extends Vue {
 
   get filterErrors() {
     return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
+  }
+
+  get isPlaceholderHere() {
+    return (this.value.length > 0 || this.isFocused);
   }
 
   get valid() {
@@ -178,7 +190,67 @@ export default class FormText extends Vue {
   display: flex;
   position: relative;
   flex-flow: row wrap;
-  justify-content: center;
+
+  .input-form {
+    position: relative;
+    display: block;
+    background-color: #e0e1e4;
+    color: $mainColor;
+    height: 45px;
+    padding: 15px 30px 0 0;
+    margin: 5px 0 5px 0;
+    transition: all 0.2s;
+    width: 100%;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+
+    &.icon {
+      padding-left: 60px;
+    }
+
+    &:focus {
+      background-color: #d8d9dd;
+    }
+
+    &.formValid {
+      ~ .input-icon-contain .input-icon /deep/ svg {
+        fill: $mainStyle;
+      }
+    }
+
+    &.formError {
+      ~ .input-icon-contain .input-icon /deep/ svg {
+        fill: $red1;
+      }
+    }
+
+    &.white {
+      background-color: white;
+      box-shadow: 0 0 10px $ombre;
+    }
+  }
+
+  .input-placeholder {
+    position: absolute;
+    display: flex;
+    align-content: center;
+    justify-content: flex-start;
+    transition: all 0.2s;
+    font-size: 16px;
+    font-weight: normal;
+    left: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $w150;
+    cursor: text;
+    
+    &.top {
+      font-size: 12px;
+      top: 16px;
+      cursor: default;
+    }
+  }
 
   .input-icon-contain {
     position: absolute;
@@ -203,51 +275,6 @@ export default class FormText extends Vue {
 
   /deep/ svg {
     fill: $mainColor;
-  }
-
-  .input-form {
-    position: relative;
-    background-color: #e0e1e4;
-    color: $mainColor;
-    height: 45px;
-    padding: 5px 30px 5px 9px;
-    margin: 5px 0 5px 0;
-    transition: all 0.2s;
-    width: 100%;
-    line-height: 30px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid transparent;
-
-    &.icon {
-      padding-left: 60px;
-    }
-
-    &:focus {
-      background-color: #d8d9dd;
-      & + .input-form-result {
-        display: block;
-      }
-    }
-
-    &.formValid {
-      ~ .input-icon-contain .input-icon /deep/ svg {
-        fill: $mainStyle;
-      }
-    }
-
-    &.formError {
-      ~ .input-icon-contain .input-icon /deep/ svg {
-        fill: $red1;
-      }
-    }
-
-    
-
-    &.white {
-      background-color: white;
-      box-shadow: 0 0 10px $ombre;
-    }
   }
 
   .popup-message {

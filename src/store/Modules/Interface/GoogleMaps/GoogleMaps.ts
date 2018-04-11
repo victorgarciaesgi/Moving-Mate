@@ -1,15 +1,20 @@
 import { timeout } from '@methods';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../../Api';
 import { storeBuilder } from "../../Store/Store";
-import {IGoogleMapsState} from '@types';
+import { IGoogleMapsState, IMarker } from '@types';
 import { Style1 } from './Styles';
-import { MovingStore } from '@store'
+import { MovingStore } from '@store';
+import Marker from './Markers';
 
 
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
 
-const geoLocate = (address) : Promise<any> => {
+export const getMapInstance= () => {
+  return mapInstance;
+}
+
+const geoLocate = (address: string) : Promise<any> => {
   return new Promise((resolve, reject) => {
     geocoder.geocode({address: address}, (results, status) => {
       if (status == google.maps.GeocoderStatus.OK) {
@@ -23,14 +28,13 @@ const geoLocate = (address) : Promise<any> => {
   })
 }
 
-
-
 //State
 const state: IGoogleMapsState = {
-  mapInstance: null
+  mapInstance: null,
+  markers: []
 }
 
-const b = storeBuilder.module<any>("GoogleMapsModule", state);
+const b = storeBuilder.module<IGoogleMapsState>("GoogleMapsModule", state);
 const stateGetter = b.state();
 
 // Getters
@@ -40,8 +44,9 @@ namespace Getters {
 
 // Mutations
 module Mutations {
+
   async function renderMap(state: IGoogleMapsState, {mapElement, location}) {
-    mapInstance = new google.maps.Map(mapElement, {
+     mapInstance = await new google.maps.Map(mapElement, {
       center: location.location,
       styles: Style1
     });
@@ -51,14 +56,23 @@ module Mutations {
     mapInstance.setCenter(location.location);
     mapInstance.fitBounds(location.bounds);
   }
+
+  async function updateMarkers(state: IGoogleMapsState, markers: IMarker[]) {
+    state.markers = markers;
+  }
+
+
+
   export const mutations = {
     renderMap: b.commit(renderMap),
-    reloadMap: b.commit(reloadMap)
+    reloadMap: b.commit(reloadMap),
+    updateMarkers: b.commit(updateMarkers)
   }
 }
 
 // Actions
 namespace Actions {
+
   async function initMap(context, mapElement: HTMLElement) {
     let location;
     let formSearch = MovingStore.state.formSearchData.formSearchValue;
@@ -76,11 +90,25 @@ namespace Actions {
   }
 
   async function reCenterMap(context, ville: string) {
-    let location = await geoLocate(ville + ', France');
-    console.log(location);
+    let location;
+    if (ville) {
+      location = await geoLocate(ville + ', France');
+    } else {
+      location = await geoLocate('France');
+    }
     Mutations.mutations.reloadMap({location});
+    const markers = [
+      new Marker(location.bounds),
+      new Marker(location.bounds),
+      new Marker(location.bounds),
+    ];
+    Mutations.mutations.updateMarkers(markers);
+    console.log(location);
+    return location.bounds;
   }
 
+
+  
   export const actions = {
     initMap: b.dispatch(initMap),
     reCenterMap: b.dispatch(reCenterMap)

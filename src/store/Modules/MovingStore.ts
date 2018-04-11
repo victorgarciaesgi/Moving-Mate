@@ -77,8 +77,9 @@ namespace Actions {
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
-    GoogleMaps.actions.reCenterMap(payload.search);
     Mutations.mutations.updateMovingList([]);
+    GoogleMaps.actions.reCenterMap(payload.search);
+
     try {
       let { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
@@ -93,6 +94,7 @@ namespace Actions {
       Api.get(`${GEO_API}/departements?nom=${payload}${fields}`),
       Api.get(`${GEO_API}/regions?nom=${payload}${fields}`),
     ])
+    console.log(searchValues);
     let filteredValues = flatten(searchValues.map(m => m.data))
       .map(m => {
         if (m.codeDepartement && m.codeRegion) {m.type = 'ville';}

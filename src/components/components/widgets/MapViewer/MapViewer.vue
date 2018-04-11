@@ -27,8 +27,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Prop, Component } from "vue-property-decorator";
 import axios from "axios";
 import $ from "jquery";
 import { timeout } from "@methods";

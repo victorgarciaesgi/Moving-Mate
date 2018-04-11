@@ -1,6 +1,11 @@
 <template>
-  <div ref="movingmap" class="moving-map-root">
-    
+  <div class="moving-map-root">
+    <GoogleMapsRoot>
+      <MarkerElement v-for='marker in getMarkers' 
+        :key='marker.id'
+        :markerData='marker' > 
+      </MarkerElement>
+    </GoogleMapsRoot>
   </div>
 
 </template>
@@ -8,27 +13,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
-import { MovingStore, GoogleMaps } from '@store';
-import MovingCard from './MovingCard.vue';
+import { GoogleMapsRoot, MarkerElement } from '@components';
+import {GoogleMaps} from '@store'
 
 @Component({
-  components: {MovingCard}
+  components: {
+    GoogleMapsRoot, MarkerElement
+  }
 })
-export default class MovingList extends Vue {
+export default class MovingMap extends Vue {
 
-  get movingList() {return MovingStore.getters.formatedMovingList}
-
-  get formatedAddress() {
-    return address => {
-      return address.replace(/|/gi, ' ');
-    }
-  }
-
-  mounted() {
-    let mapElement: HTMLElement = this.$refs['movingmap'];
-    GoogleMaps.actions.initMap(mapElement);
-  }
-
+  get getMarkers() { return GoogleMaps.state.markers}
 
 }
 </script>
