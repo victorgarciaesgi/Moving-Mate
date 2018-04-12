@@ -1,6 +1,6 @@
 <template>
   <div class='popup-root'>
-    <div v-show='show'
+    <div v-if='show'
       @click.stop
       ref='popup'
       class="popup-box"
