@@ -28,7 +28,7 @@ namespace Actions {
       await gapi.auth2.getAuthInstance().signIn();
       try {
         const token = await actions.getToken();
-        const tokenVerified = await actions.verifyToken(token)
+        const tokenVerified = await actions.verifyToken(token);
         resolve();
       } catch(e) {
         console.log(e)
@@ -48,8 +48,9 @@ namespace Actions {
 
   async function verifyToken(context, token: string): Promise<any> {
     const decodedToken = await jwtDecode(token);
-    const response = await Api.post(VERIF_URL, {token});
+    console.log(token);
     console.log(decodedToken);
+    const response = await Api.post(VERIF_URL, {token});
   }
   
   export const actions = {

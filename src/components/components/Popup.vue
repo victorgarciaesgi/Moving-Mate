@@ -1,6 +1,6 @@
 <template>
   <div class='popup-root'>
-    <div v-if='show'
+    <div v-show='show'
       @click.stop
       ref='popup'
       class="popup-box"
@@ -54,7 +54,8 @@ export default class Popup extends Vue {
   togglePopup() {
     if (!this.show) {
       const origin = this.$refs['button'];
-      const Types = calculatePopupRelativePosition(origin, this.$refs['popup']);
+      const target = this.$refs['popup'];
+      const Types = calculatePopupRelativePosition(origin, target);
       this.PopupXYTypes = Types;
       EventBus.$emit('closePopups', this);
       this.show = true;

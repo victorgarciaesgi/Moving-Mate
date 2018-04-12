@@ -4,7 +4,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import {VNode} from 'vue/types';
-import Vue$ from 'vue/dist/vue.esm.js';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import { GoogleMaps, getMapInstance } from '@store';
 import { IMovingEvent, IMarker } from '@types';

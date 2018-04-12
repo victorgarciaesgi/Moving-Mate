@@ -94,7 +94,6 @@ export function calculatePopupRelativePosition(origin: HTMLElement, target: HTML
   let XType;
   let YType;
   
-
   if ((outputLeft + popupWidth) > (containerWidth - 15)) {
     XType = 'right';
   } else if ((outputLeft < 15) ) {
