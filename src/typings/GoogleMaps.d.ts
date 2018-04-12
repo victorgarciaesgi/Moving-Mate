@@ -12,5 +12,7 @@ export interface IMarker {
     lng: number
   },
   title: string,
-  infos: IMovingEvent
+  infos: IMovingEvent,
+  marker: google.maps.Marker,
+  infoBox: google.maps.InfoWindow,
 }

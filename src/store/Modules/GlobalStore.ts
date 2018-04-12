@@ -42,7 +42,7 @@ namespace Mutations {
 namespace Actions {
   async function fetchPaths(context, svgPath: string) {
     if (!context.state.svgMapPaths.length) {
-      const response = await axios.get(`maps/${svgPath}.json`);
+      const response = await axios.get(`/maps/${svgPath}.json`);
       if (response.status == 200) {
         console.log(response)
         Mutations.mutations.savePaths(response.data);

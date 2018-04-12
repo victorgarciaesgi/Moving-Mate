@@ -57,8 +57,10 @@
             <div class='france-map-selector'>
               <Popup class='center' :width='260'>
                 <template slot='popup'>
-                  <MapViewer svgPath='departements' @pathSelected='handlePathSelect' 
-                    :size='250' :showInfos='false' />
+                  <MapViewer svgPath='departements' 
+                    @pathSelected='handlePathSelect' 
+                    :size='250' 
+                    :showInfos='false' />
                 </template>
                 <div class='icon-map' slot='button'>
                   <img src="~@icons/moving/france.svg"/>

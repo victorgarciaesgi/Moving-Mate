@@ -201,7 +201,7 @@ export default class FormText extends Vue {
     margin: 5px 0 5px 0;
     transition: all 0.2s;
     width: 100%;
-    font-size: 14px;
+    font-size: 15px;
     border-radius: 5px;
     border: 1px solid transparent;
 

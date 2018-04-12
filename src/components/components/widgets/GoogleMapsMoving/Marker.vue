@@ -11,14 +11,12 @@ import { IMovingEvent, IMarker } from '@types';
 import { CreateElement } from 'vue/types/vue';
 import { timeout } from '@methods';
 
-declare var InfoBox;
 
 @Component({})
 export default class MarkerElement extends Vue {
 
   @Prop() markerData: IMarker;
 
-  public marker: google.maps.Marker;
   public $slots;
   public $scopedSlots;
 
@@ -30,20 +28,12 @@ export default class MarkerElement extends Vue {
       </div>`;
     const mapInstance = await getMapInstance();
 
-
-    this.marker = new google.maps.Marker({
-      position: this.markerData.position,
-      map: mapInstance,
-      title: this.markerData.title,
-    })
-    const infoBox: google.maps.InfoWindow = new InfoBox({
-      content: templateInfo
-    })
-    this.marker.addListener('click', async () => {
-      infoBox.open(mapInstance, this.marker);
-      mapInstance.panTo(infoBox.getPosition())
+    this.markerData.marker.addListener('click', async () => {
+      GoogleMaps.mutations.closeMarkers();
+      this.markerData.infoBox.open(mapInstance, this.markerData.marker);
+      mapInstance.panTo(this.markerData.infoBox.getPosition())
       const _this = this;
-      google.maps.event.addListener(infoBox, 'domready', () => {
+      google.maps.event.addListener(this.markerData.infoBox, 'domready', () => {
         new Vue({
           el: `#marker${this.markerData.id}`,
           render(h: CreateElement): VNode {
@@ -54,6 +44,9 @@ export default class MarkerElement extends Vue {
         })
       })      
     });
+    google.maps.event.addListener(mapInstance, 'click', () => {
+      this.markerData.infoBox.close()
+    })
 
   }
 
@@ -62,7 +55,7 @@ export default class MarkerElement extends Vue {
   }
 
   destroyed() {
-    this.marker.setMap(null);
+    this.markerData.marker.setMap(null);
   }
 }
 </script>

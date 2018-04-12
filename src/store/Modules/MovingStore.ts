@@ -1,11 +1,11 @@
-import { IMovingState, ICity, IMarker } from '@types';
+import { IMovingState, ICity, IMarker, IMovingEvent } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
 import { RootState } from '../index';
 import { timeout } from '@methods';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
-import { GoogleMaps } from '@store';
+import { GoogleMaps, getMapInstance } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 
 
@@ -84,17 +84,23 @@ namespace Actions {
     try {
       const { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
-      const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
-      let markers: IMarker[] = [];
-      console.log(data)
-      for (let moving of data) {
-        markers.push(new Marker(bounds, moving))
-      }
-      GoogleMaps.mutations.updateMarkers(markers);
+      actions.createMarkers({annoucements: data, payload})
+      
     } finally {
       Mutations.mutations.updateSearchingState();
     }
   }
+
+  async function createMarkers(context, {annoucements, payload}) {
+    console.log(annoucements)
+    let markers: IMarker[] = [];
+    const mapInstance = await getMapInstance();
+    const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
+    for (let moving of annoucements) {
+      markers.push(new Marker(bounds, moving, mapInstance))
+    }
+    GoogleMaps.mutations.updateMarkers(markers);
+  } 
 
   async function fetchPlaces(context, payload: string) {
     let searchValues = await Promise.all([
@@ -137,8 +143,8 @@ namespace Actions {
   export const actions = {
     fetchMoving: b.dispatch(fetchMoving),
     fetchPlaces: b.dispatch(fetchPlaces),
-    fetchUserLocation: b.dispatch(fetchUserLocation)
-
+    fetchUserLocation: b.dispatch(fetchUserLocation),
+    createMarkers: b.dispatch(createMarkers),
   }
 }
 

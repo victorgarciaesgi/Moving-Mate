@@ -5,7 +5,7 @@
         <div class='profil-bg' :style='profilePic'></div>
       </div>
       <div class='infos'>
-        <div class='name item'>{{userName}}</div>
+        <div class='name item'>{{userName | capitalize}}</div>
         <div class='begin item'>
           <!-- <span class='day'>{{getBegin.day}}</span> -->
           <div class='date'>
@@ -46,13 +46,13 @@
         </div>
         <div class='liaison'></div>
       </div>
-      <div class='description'>
+      <div class='description' v-if='!onMap'>
         <p>
           {{getDescription}}
         </p>
       </div>
-
     </div>
+    <div class='triangle' v-if='onMap'></div>
   </li>
   
 </template>
@@ -111,19 +111,41 @@ export default class MovingCard extends Vue {
   position: relative;
   flex-flow: column nowrap;
   width: 350px;
-  height: 409px;
+  height: 406px;
   border-radius: 5px;
-  border: 1px solid $w240;
   box-shadow: 0 0 20px rgba(30,30,30,0.15);
   background-color: white;
   overflow: hidden;
   margin: 10px;
+  font-size: 16px;
+  font-weight: normal;
+  font-family: 'Open Sans', sans-serif;
+
 
   &.onMap {
     position: absolute;
     margin: 0;
     left: 50%;
+    bottom: 50px;
     transform: translateX(-50%);
+    height: auto;
+    overflow: initial;
+
+    $triangleSize: 13px;
+
+    .triangle{
+      position: absolute;
+      z-index: 10009;
+      width: 0;
+      height: 0;
+      border-left: $triangleSize solid transparent;
+      border-right: $triangleSize solid transparent;
+      border-top: $triangleSize solid white;
+      filter: drop-shadow(0px 6px 4px rgba(50,50,50, 0.1));
+      left: 50%;
+      @include translateX(-50%);
+      top: 100%;
+    }
   }
 
   .header {
@@ -135,6 +157,7 @@ export default class MovingCard extends Vue {
     color: $w240;
     // border-bottom: 1px solid $w230;
     background-color: $mainStyle;
+    border-radius: 5px 5px 0 0;
 
     .profil {
       display: flex;

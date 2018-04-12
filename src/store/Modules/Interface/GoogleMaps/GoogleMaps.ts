@@ -72,12 +72,19 @@ module Mutations {
     state.markers = markers;
   }
 
+  function closeMarkers(state: IGoogleMapsState) {
+    state.markers.forEach(marker => {
+      marker.infoBox.close();
+    })
+  }
+
 
 
   export const mutations = {
     renderMap: b.commit(renderMap),
     reloadMap: b.commit(reloadMap),
-    updateMarkers: b.commit(updateMarkers)
+    updateMarkers: b.commit(updateMarkers),
+    closeMarkers: b.commit(closeMarkers),
   }
 }
 
