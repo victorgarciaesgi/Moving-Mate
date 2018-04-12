@@ -3,7 +3,8 @@
     <GoogleMapsRoot>
       <MarkerElement v-for='marker in getMarkers' 
         :key='marker.id'
-        :markerData='marker' > 
+        :markerData='marker'>
+            <MovingCard :moving='marker.infos' onMap/>
       </MarkerElement>
     </GoogleMapsRoot>
   </div>
@@ -14,16 +15,19 @@
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
 import { GoogleMapsRoot, MarkerElement } from '@components';
-import {GoogleMaps} from '@store'
+import {GoogleMaps} from '@store';
+import MovingCard from './MovingCard.vue';
 
 @Component({
   components: {
-    GoogleMapsRoot, MarkerElement
+    GoogleMapsRoot, MarkerElement, MovingCard
   }
 })
 export default class MovingMap extends Vue {
 
   get getMarkers() { return GoogleMaps.state.markers}
+
+  public salut = 'loool';
 
 }
 </script>

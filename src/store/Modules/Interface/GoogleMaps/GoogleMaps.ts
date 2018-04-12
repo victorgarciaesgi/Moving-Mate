@@ -4,17 +4,28 @@ import { storeBuilder } from "../../Store/Store";
 import { IGoogleMapsState, IMarker } from '@types';
 import { Style1 } from './Styles';
 import { MovingStore } from '@store';
-import Marker from './Markers';
 
 
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
 
-export const getMapInstance= () => {
+export const getMapInstance = async () => {
+  if (!mapInstance) {
+    await mapPromise;
+  }
   return mapInstance;
 }
+let mapResolver = null;
+let mapPromise = new Promise((resolve) => {
+  mapResolver = resolve;
+});
 
-const geoLocate = (address: string) : Promise<any> => {
+interface geoLocateResult {
+  location: google.maps.LatLng, 
+  bounds: google.maps.LatLngBounds
+}
+
+const geoLocate = (address: string) : Promise<geoLocateResult> => {
   return new Promise((resolve, reject) => {
     geocoder.geocode({address: address}, (results, status) => {
       if (status == google.maps.GeocoderStatus.OK) {
@@ -30,29 +41,29 @@ const geoLocate = (address: string) : Promise<any> => {
 
 //State
 const state: IGoogleMapsState = {
-  mapInstance: null,
   markers: []
 }
 
 const b = storeBuilder.module<IGoogleMapsState>("GoogleMapsModule", state);
 const stateGetter = b.state();
 
-// Getters
-namespace Getters {
-  export const getters = {}  
-}
 
 // Mutations
 module Mutations {
 
   async function renderMap(state: IGoogleMapsState, {mapElement, location}) {
-     mapInstance = await new google.maps.Map(mapElement, {
-      center: location.location,
-      styles: Style1
-    });
-    mapInstance.fitBounds(location.bounds);
+      mapInstance = new google.maps.Map(mapElement, {
+        center: location.location,
+        styles: Style1,
+        fullscreenControl: false,
+        streetViewControl: false,
+        mapTypeControl: false
+      });
+      mapInstance.fitBounds(location.bounds);
+      mapResolver();
   }
   async function reloadMap(state: IGoogleMapsState, {location}) {
+    await mapPromise;
     mapInstance.setCenter(location.location);
     mapInstance.fitBounds(location.bounds);
   }
@@ -74,7 +85,7 @@ module Mutations {
 namespace Actions {
 
   async function initMap(context, mapElement: HTMLElement) {
-    let location;
+    let location: geoLocateResult;
     let formSearch = MovingStore.state.formSearchData.formSearchValue;
     if (formSearch) {
       try {
@@ -89,21 +100,15 @@ namespace Actions {
     Mutations.mutations.renderMap({mapElement, location});
   }
 
-  async function reCenterMap(context, ville: string) {
-    let location;
+  async function reCenterMap(context, ville: string): Promise<google.maps.LatLngBounds>{
+    let location: geoLocateResult;
+    Mutations.mutations.updateMarkers([]);
     if (ville) {
       location = await geoLocate(ville + ', France');
     } else {
       location = await geoLocate('France');
     }
     Mutations.mutations.reloadMap({location});
-    const markers = [
-      new Marker(location.bounds),
-      new Marker(location.bounds),
-      new Marker(location.bounds),
-    ];
-    Mutations.mutations.updateMarkers(markers);
-    console.log(location);
     return location.bounds;
   }
 
@@ -118,7 +123,7 @@ namespace Actions {
 // Module
 const GoogleMapsModule = {
   get state() { return stateGetter()},
-  getters: Getters.getters,
+  // getters: Getters.getters,
   mutations: Mutations.mutations,
   actions: Actions.actions
 }

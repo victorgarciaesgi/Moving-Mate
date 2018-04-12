@@ -1,5 +1,5 @@
 <template>
-  <li class='moving-card'>
+  <li class='moving-card' :class='{onMap}'>
     <div class='header'>
       <div class='profil'>
         <div class='profil-bg' :style='profilePic'></div>
@@ -73,6 +73,7 @@ import axios from 'axios';
 export default class MovingCard extends Vue {
 
   @Prop({required: true}) moving: IMovingEvent;
+  @Prop({required: false}) onMap: boolean;
   public css = require('@css');
   public note = 3;
   public iconColor = "#888";
@@ -110,13 +111,20 @@ export default class MovingCard extends Vue {
   position: relative;
   flex-flow: column nowrap;
   width: 350px;
-  height: 410px;
+  height: 409px;
   border-radius: 5px;
   border: 1px solid $w240;
   box-shadow: 0 0 20px rgba(30,30,30,0.15);
   background-color: white;
   overflow: hidden;
   margin: 10px;
+
+  &.onMap {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
   .header {
     display: flex;
@@ -263,6 +271,7 @@ export default class MovingCard extends Vue {
         display: flex;
         flex-flow: row nowrap;
         color: $g90;
+        height: 42px;
         padding: 10px 0 10px 0;
         background-color:white;
         flex: 0 0 auto;
@@ -276,6 +285,9 @@ export default class MovingCard extends Vue {
         span {
           flex: 1 1 auto;
           margin-left: 5px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .icon {

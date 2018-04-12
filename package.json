@@ -42,6 +42,7 @@
     "@types/jquery": "^3.2.18",
     "@types/lodash": "^4.14.76",
     "@types/node": "^8.0.30",
+    "@types/shortid": "0.0.29",
     "@types/vue": "^2.0.0",
     "@types/vue-resource": "^0.9.33",
     "@types/vue-router": "^2.0.0",

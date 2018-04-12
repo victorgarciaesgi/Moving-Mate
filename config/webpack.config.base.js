@@ -50,7 +50,7 @@ const baseConfig = {
               loader: 'sass-resources-loader',
               options: {
                 resources: helpers.root('src/styles/variables.scss'),
-                esModule: true
+                esModule: true,
               }
             }],
             ts: 'ts-loader',

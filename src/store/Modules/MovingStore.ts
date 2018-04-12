@@ -1,4 +1,4 @@
-import { IMovingState, ICity } from '@types';
+import { IMovingState, ICity, IMarker } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
 import { RootState } from '../index';
 import { timeout } from '@methods';
@@ -6,6 +6,8 @@ import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
 import { GoogleMaps } from '@store';
+import Marker from './Interface/GoogleMaps/Markers';
+
 
 const MOVING_URL = 'announcements';
 const GEO_API = 'https://geo.api.gouv.fr';
@@ -78,11 +80,17 @@ namespace Actions {
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateMovingList([]);
-    GoogleMaps.actions.reCenterMap(payload.search);
 
     try {
-      let { data } = await Api.get(MOVING_URL, payload);
+      const { data } = await Api.get(MOVING_URL, payload);
       Mutations.mutations.updateMovingList(data);
+      const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
+      let markers: IMarker[] = [];
+      console.log(data)
+      for (let moving of data) {
+        markers.push(new Marker(bounds, moving))
+      }
+      GoogleMaps.mutations.updateMarkers(markers);
     } finally {
       Mutations.mutations.updateSearchingState();
     }
