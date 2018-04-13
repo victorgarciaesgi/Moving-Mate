@@ -16,20 +16,28 @@ export default class MarkerElement extends Vue {
 
   @Prop() markerData: IMarker;
 
+  public marker: google.maps.Marker = null;
   public $slots;
   public $scopedSlots;
 
   async mounted() {
+    const mapInstance = await getMapInstance();
+    google.maps.event.addDomListenerOnce(mapInstance, 'idle', this.renderMarker)
+  }
 
-    const templateInfo = `
-      <div id='markerRoot${this.markerData.id}'>
-        <div id='marker${this.markerData.id}'></div>
-      </div>`;
+  async renderMarker() {
     const mapInstance = await getMapInstance();
 
-    this.markerData.marker.addListener('click', async () => {
+    this.marker = new google.maps.Marker({
+      position: this.markerData.position,
+      map: mapInstance,
+      animation: google.maps.Animation.DROP,
+      title: this.markerData.title,
+    })
+    GoogleMaps.mutations.addMarkersFromMap(this.marker);
+    this.marker.addListener('click', async () => {
       GoogleMaps.mutations.closeMarkers();
-      this.markerData.infoBox.open(mapInstance, this.markerData.marker);
+      this.markerData.infoBox.open(mapInstance, this.marker);
       mapInstance.panTo(this.markerData.infoBox.getPosition())
       const _this = this;
       google.maps.event.addListener(this.markerData.infoBox, 'domready', () => {
@@ -46,15 +54,13 @@ export default class MarkerElement extends Vue {
     google.maps.event.addListener(mapInstance, 'click', () => {
       this.markerData.infoBox.close()
     })
-
   }
 
-  createInfoBox(infoBox) {
-    
-  }
-
-  destroyed() {
-    this.markerData.marker.setMap(null);
+  beforeDestroy() {
+    if (this.marker) {
+      this.marker.setMap(null);
+      this.markerData.infoBox.close();
+    }
   }
 }
 </script>

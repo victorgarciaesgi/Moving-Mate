@@ -14,9 +14,13 @@ import { GoogleMaps } from '@store';
 })
 export default class GoogleMapsRoot extends Vue {
 
-  async mounted() {
+  mounted() {
     const mapElement: HTMLElement = this.$refs['googlemap'];
-    await GoogleMaps.actions.initMap(mapElement);
+    GoogleMaps.actions.initMap(mapElement);
+  }
+
+  beforeDestroy() {
+    GoogleMaps.mutations.deleteMarkersFromMap();
   }
 }
 </script>

@@ -8,6 +8,7 @@ import { Connexion, Inscription } from '@components';
 export const routesNames = {
   home: 'HomeRoute',
   moving: 'MovingRoute',
+  movingDetail: 'MovingDetail',
   searchMoving: 'SearchMovingRoute',
   movers: 'MoversRoute',
   connexion: 'Connexion',
@@ -63,6 +64,15 @@ export const routesList: MyRouteConfig[]  = [
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
             Stores.MovingStore.actions.fetchMoving(to.params);
           }
+        },
+      },
+      {
+        path: '/moving/detail/:movingId',
+        name: routesNames.movingDetail,
+        component: () => import('@views/Moving/MovingDetail.vue'),
+        props: true,
+        meta: {
+          contentProp: true,
         },
       }
     ]

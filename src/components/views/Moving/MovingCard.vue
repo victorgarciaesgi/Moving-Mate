@@ -1,5 +1,5 @@
 <template>
-  <li class='moving-card' :class='{onMap}'>
+  <li class='moving-card' :class='{onMap}' @click.prevent='redirectToDetail'>
     <div class='header'>
       <div class='profil'>
         <div class='profil-bg' :style='profilePic'></div>
@@ -17,24 +17,6 @@
       </div>
     </div>
     <div class='content'>
-      <div class='moving-infos'>
-        <div class='movers info'>
-          <SvgIcon :src='require("@icons/moving/people.svg")' :size='22' :color='iconColor' />
-          <span>2</span>
-        </div>
-        <div class='price info'>
-          <SvgIcon :src='require("@icons/moving/euro.svg")' :size='22' :color='iconColor' />
-          <span>{{moving.pricePerHourPerUser}}/pers</span>
-        </div>
-        <div class='elevator info'>
-          <SvgIcon :src='require("@icons/moving/elevator.svg")' :size='19' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/yes.svg")' :size='22' :color='css.mainStyle' /></span>
-        </div>
-        <div class='parking info'>
-          <SvgIcon :src='require("@icons/moving/parking.svg")' :size='22' :color='iconColor' />
-          <span><SvgIcon :src='require("@icons/moving/no.svg")' :size='22' :color='css.red1' /></span>
-        </div>
-      </div>
       <div class='moving-places'>
         <div class='depart element'>
           <div class='icon black'></div>
@@ -46,15 +28,36 @@
         </div>
         <div class='liaison'></div>
       </div>
-      <div class='description' v-if='!onMap'>
-        <p>
-          {{getDescription}}
-        </p>
+      <div class='moving-infos'>
+        <div class='movers info'>
+          <div class='info-content'>
+            <strong>2</strong>
+            <span>déménageurs</span>
+          </div>
+        </div>
+        <div class='price info'>
+          <div class='info-content'>
+            <strong>{{moving.pricePerHourPerUser}}€</strong>
+            <span>par pers.</span>
+          </div>
+        </div>
+        <div class='elevator info'>
+          <div class='info-content'>
+            <strong><SvgIcon :src='require("@icons/moving/present.svg")' :color='css.mainStyle'/></strong>
+            <span>Ascenseur</span>
+          </div>
+        </div>
+        <div class='parking info'>
+          <div class='info-content'>
+            <strong><SvgIcon :src='require("@icons/moving/not_present.svg")' :color='css.red1'/></strong>
+            <span>Parking</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class='triangle' v-if='onMap'></div>
   </li>
-  
+
 </template>
 
 <script lang="ts">
@@ -64,6 +67,7 @@ import {IMovingEvent} from '@types';
 import { StarRating, SvgIcon } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
+import Router from '@router';
 
 @Component({
   components: {
@@ -80,6 +84,9 @@ export default class MovingCard extends Vue {
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
 
+  // get profilePic() {
+  //   return {backgroundImage: `url("${require('@images/user.jpg')}")`}
+  // };
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
   get userName() { return this.moving.username; }
@@ -87,17 +94,19 @@ export default class MovingCard extends Vue {
   get getArrivee() { return this.moving.addressOut;}
   get getBegin() { return {hour: '15:00', number: '27', mounth:'Avril'}; }
 
-  
+  get getMovingUri() {
+    return '/moving';
+  }
 
-  get formatedAddress() {
-    return address => {
-      return address.replace(/|/gi, ' ');
-    }
+  redirectToDetail() {
+    Router.push('/');
   }
 
   async mounted () {
-    console.log(new Date(this.moving.dealDays))
-    let {data} = await axios.get('https://randomuser.me/api/?inc=picture');
+    // console.log(new Date(this.moving.dealDays))
+    // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
+    let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
+
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
 }
@@ -106,27 +115,31 @@ export default class MovingCard extends Vue {
 
 <style lang="scss" scoped>
 
+$radius: 8px;
+
 .moving-card {
   display: flex;
   position: relative;
   flex-flow: column nowrap;
+  flex: 0 0 auto;
   width: 350px;
-  height: 406px;
+  height: auto;
   border-radius: 5px;
-  box-shadow: 0 0 20px rgba(30,30,30,0.15);
+  box-shadow: 0 0 25px rgba(30,30,30,0.18);
   background-color: white;
   overflow: hidden;
   margin: 10px;
   font-size: 16px;
   font-weight: normal;
   font-family: 'Open Sans', sans-serif;
+  cursor: pointer;
 
 
   &.onMap {
     position: absolute;
     margin: 0;
     left: 50%;
-    bottom: 50px;
+    bottom: 55px;
     transform: translateX(-50%);
     height: auto;
     overflow: initial;
@@ -193,6 +206,7 @@ export default class MovingCard extends Vue {
         &.name {
           font-weight: bold;
           align-items: flex-end;
+          margin-bottom: 3px;
           justify-content: flex-start;
         }
 
@@ -250,29 +264,47 @@ export default class MovingCard extends Vue {
 
   .content {
     display: flex;
+    position: relative;
     flex-flow: column nowrap;
     flex: 1 1 auto;
 
     .moving-infos {
       display: flex;
-      flex-flow: row nowrap;
-      flex: 0 0 auto;
-      // border-bottom: 1px solid $w230;
+      width: 100%;
+      flex-flow: row wrap;
+      position: relative;
+      padding: 0 5px 5px 5px;
 
       div.info {
         display: flex;
-        flex-flow: column nowrap;
-        flex: 1 1 auto;
-        justify-content: center;
-        padding: 10px 5px 5px 5px;
-        align-items: center;
-        align-content: center;
-        text-align: center;
+        flex-flow: column wrap;
+        flex: 1 0 50%;
+        height: 60px;
+        padding: 5px;
+        
 
-        span {
-          margin-top: 2px;
+        .info-content {
+          display: flex;
+          flex: 0 0 auto;
+          flex-flow: row nowrap;
+          border-radius: 8px;
+          border: 1px solid $w230;
+          height: 100%;
+          align-items: center;
+          align-content: center;
+          color: $w120;
           font-size: 15px;
-          font-weight: bold;
+
+          strong {
+            display: flex;
+            justify-content: center;
+            margin-right: 8px;
+            font-size: 20px;
+            color: $mainStyle;
+            flex: 0 0 auto;
+            width: 45px;
+            border-right: 1px solid $w220;
+          }
         }
       }
     }
@@ -283,7 +315,7 @@ export default class MovingCard extends Vue {
       flex-flow: column nowrap;
       flex: 0 0 auto;
       margin: 10px;
-      border-radius: 5px;
+      border-radius: 8px;
       overflow: hidden;
       background-color: $w250;
       box-shadow: 0 0 10px rgba(10,10,10,0.05);

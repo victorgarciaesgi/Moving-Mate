@@ -76,6 +76,7 @@ namespace Mutations {
 namespace Actions {
 
   async function fetchMoving(context, payload?: {search?: string}) {
+    GoogleMaps.mutations.updateMarkers([]);
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
@@ -92,12 +93,11 @@ namespace Actions {
   }
 
   async function createMarkers(context, {annoucements, payload}) {
-    console.log(annoucements)
+    console.log(annoucements);
     let markers: IMarker[] = [];
-    const mapInstance = await getMapInstance();
     const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
     for (let moving of annoucements) {
-      markers.push(new Marker(bounds, moving, mapInstance))
+      markers.push(new Marker(bounds, moving))
     }
     GoogleMaps.mutations.updateMarkers(markers);
   } 

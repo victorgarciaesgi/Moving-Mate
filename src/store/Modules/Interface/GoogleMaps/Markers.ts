@@ -11,10 +11,9 @@ export default class Marker {
   public id: string;
   public title: string;
   public infos: IMovingEvent;
-  public marker: google.maps.Marker;
   public infoBox: google.maps.InfoWindow;
 
-  constructor(bounds: any, infos: IMovingEvent, mapInstance: google.maps.Map) {
+  constructor(bounds: any, infos: IMovingEvent) {
     let lng = Math.random() * (bounds.b.f - bounds.b.b) + bounds.b.b;
     let lat = Math.random() * (bounds.f.f - bounds.f.b) + bounds.f.b;
     this.position = {lat, lng};
@@ -26,11 +25,7 @@ export default class Marker {
         <div id='marker${this.id}'></div>
       </div>`;
 
-    this.marker = new google.maps.Marker({
-      position: this.position,
-      map: mapInstance,
-      title: this.title,
-    })
+    
     this.infoBox = new InfoBox({
       content: templateInfo,
       disableAutoPan: false,

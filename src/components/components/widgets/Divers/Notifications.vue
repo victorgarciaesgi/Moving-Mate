@@ -18,7 +18,7 @@
             <span>{{alert.message}}</span>
           </div>
           <div class='alert-quit' @click.prevent='deleteAlert(alert)'>
-            <img src='~@icons/quit.svg'>
+            <img src='~@icons/quit_white.svg'>
           </div>
         </component>
       </transition-group>
@@ -78,7 +78,7 @@ ul#alertes-container {
     text-align: center;
     font-weight: bold;
     border-radius: 3px;
-    background-color: $g50;
+    background-color: $g70;
     line-height: 17px;
 
     @at-root {
@@ -100,8 +100,8 @@ ul#alertes-container {
         width: 50px;
         flex: 0 0 auto;
         img {
-          height: 25px;
-          width: 25px;
+          height: 27px;
+          width: 27px;
         }
       }
       

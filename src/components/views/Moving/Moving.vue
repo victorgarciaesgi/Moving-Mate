@@ -12,6 +12,8 @@
     <section class='resultsMap'>
       <MovingMap/>
     </section>
+
+    <router-view></router-view>
   </div>
 </template>
 

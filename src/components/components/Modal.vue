@@ -6,20 +6,27 @@
           maxHeight: height?`${height}px`:"",
           width: width?`${width}px`:"",
         }'>
-        <div class='header' v-if='isPopup'>
-          <div class='header-slot'>
-            <slot name='header'></slot>
+        <template v-if='!onlyContent'>
+          <div class='header' v-if='isPopup'>
+            <div class='header-slot' >
+              <slot name='header'></slot>
+            </div>
+            <div class='close-wrap'>
+              <img src='~@icons/quit.svg' @mousedown.prevent="closeModal()">
+            </div>
           </div>
-          <div class='close-wrap'>
-            <img src='~@icons/quit.svg' @mousedown.prevent="closeModal()">
+          <div class='content'>
+            <slot name='content'></slot>
           </div>
-        </div>
-        <div class='content'>
-          <slot name='content'></slot>
-        </div>
-        <div class='footer'>
-          <slot name='footer'></slot>
-        </div>
+          <div class='footer' >
+            <slot name='footer'></slot>
+          </div>
+        </template>
+
+        <template v-else>
+          <slot></slot>
+        </template>
+
       </div>
     </div>
   </transition>
@@ -36,9 +43,16 @@ export default class UIModal extends Vue {
   @Prop({required: false, default: true}) isPopup: boolean;
   @Prop({required: false}) height: number;
   @Prop({required: false}) width: number;
+  @Prop({requried: false}) onlyContent: boolean
+
+  $slots;
 
   closeModal(){
     this.$emit('close', true);
+  }
+
+  mounted() {
+    console.log(this.$slots);
   }
 
 }
@@ -51,6 +65,8 @@ export default class UIModal extends Vue {
 .modal-base{
   position: fixed;
   height: 100%;
+  left: 0;
+  top: 0;
   width: 100%;
   background-color: transparentize($g20,0.7);
   display: flex;

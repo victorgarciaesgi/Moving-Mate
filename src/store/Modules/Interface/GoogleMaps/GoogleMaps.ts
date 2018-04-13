@@ -41,7 +41,8 @@ const geoLocate = (address: string) : Promise<geoLocateResult> => {
 
 //State
 const state: IGoogleMapsState = {
-  markers: []
+  markers: [],
+  googleMarkerList: [],
 }
 
 const b = storeBuilder.module<IGoogleMapsState>("GoogleMapsModule", state);
@@ -52,15 +53,16 @@ const stateGetter = b.state();
 module Mutations {
 
   async function renderMap(state: IGoogleMapsState, {mapElement, location}) {
-      mapInstance = new google.maps.Map(mapElement, {
+    mapInstance = new google.maps.Map(mapElement, {
         center: location.location,
         styles: Style1,
         fullscreenControl: false,
         streetViewControl: false,
-        mapTypeControl: false
+        mapTypeControl: false,
+        scrollwheel: false
       });
-      mapInstance.fitBounds(location.bounds);
-      mapResolver();
+    mapInstance.fitBounds(location.bounds);
+    mapResolver();
   }
   async function reloadMap(state: IGoogleMapsState, {location}) {
     await mapPromise;
@@ -78,6 +80,14 @@ module Mutations {
     })
   }
 
+  function deleteMarkersFromMap(state: IGoogleMapsState) {
+    state.googleMarkerList.forEach(m => m.setMap(null))
+  }
+
+  function addMarkersFromMap(state: IGoogleMapsState, marker: google.maps.Marker) {
+    state.googleMarkerList.push(marker);
+  }
+
 
 
   export const mutations = {
@@ -85,6 +95,8 @@ module Mutations {
     reloadMap: b.commit(reloadMap),
     updateMarkers: b.commit(updateMarkers),
     closeMarkers: b.commit(closeMarkers),
+    deleteMarkersFromMap: b.commit(deleteMarkersFromMap),
+    addMarkersFromMap: b.commit(addMarkersFromMap),
   }
 }
 

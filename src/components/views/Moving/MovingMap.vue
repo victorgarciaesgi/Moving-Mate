@@ -27,7 +27,6 @@ export default class MovingMap extends Vue {
 
   get getMarkers() { return GoogleMaps.state.markers}
 
-  public salut = 'loool';
 
 }
 </script>

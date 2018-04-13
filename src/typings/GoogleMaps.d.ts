@@ -2,7 +2,8 @@ import {google} from '@types/google-maps';
 import {IMovingEvent} from '@types';
 
 export interface IGoogleMapsState {
-  markers: IMarker[]
+  markers: IMarker[],
+  googleMarkerList: google.maps.Marker[]
 }
 
 export interface IMarker {
@@ -13,6 +14,5 @@ export interface IMarker {
   },
   title: string,
   infos: IMovingEvent,
-  marker: google.maps.Marker,
   infoBox: google.maps.InfoWindow,
 }
