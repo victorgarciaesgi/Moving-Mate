@@ -83,7 +83,7 @@ namespace Actions {
     Mutations.mutations.updateMovingList([]);
 
     try {
-      const { data } = await Api.get(MOVING_URL, payload);
+      const { data } = await Api.get(MOVING_URL, payload, true);
       Mutations.mutations.updateMovingList(data);
       actions.createMarkers({annoucements: data, payload})
       

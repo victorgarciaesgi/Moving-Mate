@@ -11,7 +11,7 @@ export interface IMovingState {
 }
 
 export interface IMovingEvent {
-  id: number,
+  announcementId: number,
   username: string;
   userId: number;
   participations: IMoverState[],

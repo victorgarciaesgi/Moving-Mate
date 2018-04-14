@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueRouter, {Route} from 'vue-router';
+import VueRouter, {Route, RouteRecord} from 'vue-router';
 import * as Components from '@components';
 import { LoginStore } from '@modules';
 import { timeout } from '@methods';
@@ -25,9 +25,45 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       await LoginStore.actions.checkUserSession();
     }
 
-    if (!to.meta.transparent) {
-      ProgressBar.mutations.start();
+    // Check if route come from child
+    console.log(to, from);
+    if (from.name && from.matched[0].name == to.name) {
+      console.log('lol1')
+
+      next();
+      return;
+    } 
+    else if (from.name == to.name){
+      console.log('lol4')
+      next()
     }
+    else if (to.matched && from.name && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
+      console.log('lol2')
+
+      next();
+      return;
+    }
+    else {
+      console.log('lol3')
+
+      if (!to.meta.transparent && !to.meta.isModal) {
+        ProgressBar.mutations.start();
+      } 
+      else if (to.meta.transparent && !from.name) {
+        ProgressBar.mutations.start();
+      }
+
+      // If page is initialazed on child
+      else if (to.matched[0] && to.meta.isModal) {
+        if (!from.name) {
+          await getRouteData(to.matched[0]);
+          GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);
+        } else {
+          GlobalStore.mutations.setPreviousModalRoute(from.fullPath);
+        }
+      }
+    }
+    
 
     // Check content prop
     if (!to.meta.contentProp) {
@@ -75,9 +111,14 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
   }
 })
 
-const getRouteData = async (to: MyRoute) => {
-  ProgressBar.mutations.start();
-  return await to.meta.asyncData(to);
+const getRouteData = async (to: MyRoute | RouteRecord) => {
+  if (!to.meta.transparent) {
+    ProgressBar.mutations.start();
+  }
+  const titleToDisplay = await to.meta.asyncData(to);
+  if (to.meta.contentProp) {
+    document.title = `${titleToDisplay || to.meta.title} - MovingMate`;
+  }
 }
 
 

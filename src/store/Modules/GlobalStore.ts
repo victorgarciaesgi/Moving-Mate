@@ -11,6 +11,7 @@ import { storeBuilder } from "./Store/Store";
 const state: IGlobalState = {
   svgMapPaths: [],
   headerBoxShadow: true,
+  previousModalRoute: null
 }
 
 const b = storeBuilder.module<IGlobalState>("GlobalModule", state);
@@ -33,8 +34,13 @@ namespace Mutations {
     state.svgMapPaths = paths;
   }
 
+  function setPreviousModalRoute(state: IGlobalState, path: string) {
+    state.previousModalRoute = path;
+  }
+
   export const mutations = {
     savePaths: b.commit(savePaths),
+    setPreviousModalRoute: b.commit(setPreviousModalRoute)
   }
 }
 

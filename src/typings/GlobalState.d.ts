@@ -1,6 +1,8 @@
+
 export interface IGlobalState {
   svgMapPaths: Array<svgPath>,
   headerBoxShadow: boolean,
+  previousModalRoute: string
 }
 
 interface svgPath {

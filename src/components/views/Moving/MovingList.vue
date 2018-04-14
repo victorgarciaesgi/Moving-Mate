@@ -5,7 +5,7 @@
     </div>
     <ul v-else-if='movingList.length' class='moving-list' >
       <MovingCard v-for='moving in movingList' 
-                  :key='moving.id'
+                  :key='moving.announcementId'
                   :moving='moving'>
       </MovingCard>
     </ul>

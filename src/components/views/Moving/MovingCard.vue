@@ -67,7 +67,7 @@ import {IMovingEvent} from '@types';
 import { StarRating, SvgIcon } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
-import Router from '@router';
+import Router, {routesNames} from '@router';
 
 @Component({
   components: {
@@ -80,7 +80,6 @@ export default class MovingCard extends Vue {
   @Prop({required: false}) onMap: boolean;
   public css = require('@css');
   public note = 3;
-  public iconColor = "#888";
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
 
@@ -94,12 +93,10 @@ export default class MovingCard extends Vue {
   get getArrivee() { return this.moving.addressOut;}
   get getBegin() { return {hour: '15:00', number: '27', mounth:'Avril'}; }
 
-  get getMovingUri() {
-    return '/moving';
-  }
 
   redirectToDetail() {
-    Router.push('/');
+    // A changer vers id
+    Router.push({name: routesNames.movingDetail, params: {movingId: this.moving.announcementId.toString()}});
   }
 
   async mounted () {

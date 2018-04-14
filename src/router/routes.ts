@@ -1,7 +1,7 @@
 import { timeout } from '@methods';
 import { ProgressBar } from '@store';
 import * as RootStore from '@store';
-import { RouteConfig, Route } from 'vue-router/types';
+import { RouteConfig, Route, RouteRecord } from 'vue-router/types';
 import * as Stores from '@store';
 import { Connexion, Inscription } from '@components';
 
@@ -21,6 +21,7 @@ interface MyMeta {
   headerShadow?: boolean,
   contentProp?: boolean,
   transparent?: boolean,
+  isModal?: boolean,
   requiresAuth?: boolean,
   noAuth?: boolean,
   asyncData?: (to?: MyRoute) => Promise<any>
@@ -28,6 +29,10 @@ interface MyMeta {
 
 export interface MyRoute extends Route {
   meta?: MyMeta
+}
+
+export interface MyRouteRecord extends RouteRecord {
+  meta: MyMeta
 }
 
 export interface MyRouteConfig extends RouteConfig {
@@ -58,11 +63,13 @@ export const routesList: MyRouteConfig[]  = [
         path: '/moving/search/:search?',
         name: routesNames.searchMoving,
         meta: {
+          title: 'Les déménagements',
           contentProp: true,
           transparent: true,
           async asyncData(to: Route) {
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
             Stores.MovingStore.actions.fetchMoving(to.params);
+            return to.params.search;
           }
         },
       },
@@ -73,6 +80,7 @@ export const routesList: MyRouteConfig[]  = [
         props: true,
         meta: {
           contentProp: true,
+          isModal: true
         },
       }
     ]

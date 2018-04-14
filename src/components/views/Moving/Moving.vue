@@ -49,7 +49,7 @@ export default class Moving extends Vue {
   }
 
   created() {
-    $(document).scroll(this.handleBodyScroll)
+    $(document).scroll(this.handleBodyScroll);
   }
 
 }
