@@ -136,7 +136,8 @@ const configProd = {
       threshold: 10240,
       minRatio: 0.8
     }),
-  ]
+  ],
+  devTool: 'hidden-source-map'
 }
 
 module.exports = merge(webpackConfig, configProd);

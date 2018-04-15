@@ -80,7 +80,7 @@ const webpackDevConfig = {
       publicPath: false
     }
   },
-  devtool: 'cheap-module-eval-source-map'
+  devtool: 'cheap-module-source-map'
 }
 
 const devExport = merge(webpackBaseConfig, webpackDevConfig);
