@@ -233,7 +233,7 @@ declare module "vuelidate/lib/validators" {
   /**
    * Checks for equality with a given property. Locator might be either a sibling property name or a function, that will get your component as this and nested model which sibling properties under second parameter.
   */
-  function sameAs(locator: string): (value: any, vm?: any) => boolean;
+  function sameAs(locator: any): (value: any, vm?: any) => boolean;
   /**
    * Passes when at least one of provided validators passes.
    */

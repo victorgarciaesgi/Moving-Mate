@@ -9,27 +9,10 @@
         <SocialButton media='facebook'>Inscription avec Facebook</SocialButton>
         <SocialButton media='google'>Inscription avec Google</SocialButton>
         <FormSeparator>Ou inscrivez vous</FormSeparator>
-        <FormText type='email' placeholder='Adresse mail'
-            :debounce='500'
-            :icon="images.email"  
-            v-model="SignupForm.email" 
-            :vl='$v.SignupForm.email'/>
-        
-        <FormText type='text' placeholder="Nom d'utilisateur"
-            :icon="images.username"
-            :debounce='500'
-            v-model="SignupForm.username" 
-            :vl='$v.SignupForm.username'/>
-
-        <FormText type='password' placeholder='Mot de passe'
-            :icon="images.plainPassword.first"  
-            v-model="SignupForm.plainPassword.first" 
-            :vl='$v.SignupForm.plainPassword.first'/>
-
-        <FormText type="password" placeholder='Confirmez le mot de passe'
-            :icon="images.plainPassword.second"  
-            v-model="SignupForm.plainPassword.second" 
-            :vl='$v.SignupForm.plainPassword.second'/>
+        <FormText v-model="SignupForm.email" :vl='$v.SignupForm.email' :data='SignupForm.fieldsData.email'/>
+        <FormText v-model="SignupForm.username" :vl='$v.SignupForm.username' :data='SignupForm.fieldsData.username'/>
+        <FormText v-model="SignupForm.plainPassword.first" :vl='$v.SignupForm.plainPassword.first' :data='SignupForm.fieldsData.plainPassword.first'/>
+        <FormText v-model="SignupForm.plainPassword.second" :vl='$v.SignupForm.plainPassword.second' :data='SignupForm.fieldsData.plainPassword.second'/>
 
         <div class='infoMessage' v-if='formError.infoMessage.length' :class='[formError.errorType]'>
           {{formError.infoMessage}}
@@ -57,15 +40,16 @@ import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 import { SignupStore, LoginStore, NotificationsStore, AlertsStore } from '@store';
 import { Vuelidate } from 'vuelidate';
-import { ActionsElements, AlertsElement } from '@classes';
+import { ActionsElements, AlertsElement, Forms } from '@classes';
 import Api from '@api';
+
 @Component({
   components: {
     UIModal, FormText, CheckBox, FormButton, FormSeparator, SocialButton
   },
   validations: {
     SignupForm: {
-      email: {required, email, 
+      email:{required, email,
         async isMailUnique(value) {
           if (email(value) && value.length > 0) {
             return await Api.get('check_credentials', {email: value});
@@ -73,7 +57,7 @@ import Api from '@api';
           return true;
         }
       },
-      username: {
+      username:{
         required,
         async isNameUnique(value) {
           if (value.length > 0) {
@@ -103,32 +87,33 @@ export default class Inscription extends Vue {
     infoMessage: '',
     errorType: ''
   }
-  public $v: Vuelidate<any>;
+  public $v;
 
-  public images = {
-    email: require('@icons/mail.svg'),
-    username: require('@icons/surname.svg'),
-    plainPassword: {
-      first:require('@icons/password.svg'),
-      second: require('@icons/password.svg')
+  public SignupForm = new Forms.Form({
+    email: new Forms.TextForm({
+      type: 'email',
+      placeholder: 'Adresse email',
+      icon: require('@icons/mail.svg'),
+      debounce: 300
+    }),
+    username: new Forms.TextForm({
+      placeholder: `Nom d'utilisateur`,
+      icon: require('@icons/surname.svg'),
+      debounce: 300
+    }),
+    plainPassword:{
+      first:  new Forms.TextForm({
+        type: 'password',
+        placeholder: 'Mot de passe',
+        icon: require('@icons/password.svg')
+      }),
+      second: new Forms.TextForm({
+        type: 'password',
+        icon: require('@icons/password.svg'),
+        placeholder: 'Confirmation du mot de passe'
+      })
     }
-  }
-  public SignupForm = {
-    email: 'victor@free.fr',
-    username: 'victor2',
-    plainPassword: {
-      first: 'aaaaa',
-      second: 'aaaaa'
-    },
-    reset() {
-      this.email = '';
-      this.username = '';
-      this.plainPassword = {
-        first: '',
-        second: ''
-      }
-    }
-  };
+  })
 
   close(reset?: boolean) {
     if (this.isPopup) {
@@ -147,7 +132,7 @@ export default class Inscription extends Vue {
 
   async submitForm() {
     this.submitting = true;
-    const submitResponse = await this.signupRequest(this.SignupForm);
+    const submitResponse = await this.signupRequest(this.SignupForm.getData());
     
     if (!submitResponse.success){
       this.formError = {
@@ -169,7 +154,7 @@ export default class Inscription extends Vue {
 
 
   async mounted() {
-    
+    console.log(this.SignupForm)
   }
 }
 </script>

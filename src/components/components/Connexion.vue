@@ -14,16 +14,9 @@
         <SocialButton media='facebook'>Connexion avec Facebook</SocialButton>
         <SocialButton media='google'>Connexion avec Google</SocialButton>
         <FormSeparator>Ou connectez vous</FormSeparator>
-        <FormText type='email' placeholder='Adresse mail'
-          v-model='LoginForm._username' 
-          :error='false'
-          :icon='images._username'  
-          :vl='$v.LoginForm._username'/>
-        <FormText type='password' placeholder='Mot de passe' 
-          v-model='LoginForm._password' 
-          :error='false'
-          :icon='images._password' 
-          :vl='$v.LoginForm._password'/>
+        <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>
+        <FormText v-model="LoginForm._password" :vl='$v.LoginForm._password' :data='LoginForm.fieldsData._password'/>
+
         <div class='form-option'>
           <span class='form-link'>Mot de passe oublié?</span>
         </div>
@@ -82,25 +75,22 @@ export default class Connexion extends Vue {
   public error: boolean = true;
   public errorType: string = '';
 
-  public images = {
-    _username: require('@icons/mail.svg'),
-    _password: require('@icons/password.svg')
-  }
 
-  public testForm = new Forms.Form({
-    test: 123
+  public LoginForm = new Forms.Form({
+    _username: new Forms.TextForm({
+      value: 'victor@gmail.com',
+      error: false,
+      placeholder: 'Adresse email',
+      icon: require('@icons/mail.svg')
+    }),
+    _password: new Forms.TextForm({
+      value: '1234',
+      error: false,
+      type: 'password',
+      placeholder: 'Mot de passe',
+      icon: require('@icons/password.svg')
+    }),
   })
-
-  public LoginForm = {
-    _username: 'victor@gmail.com',
-    _password: '1234',
-    _souvenir: false,
-    reset() {
-      this._username = '';
-      this._password = '';
-      this._souvenir = false;
-    }
-  };
 
   modalClosed(empty: boolean) {
     this.infoMessage = '';
@@ -118,7 +108,7 @@ export default class Connexion extends Vue {
   async submitForm(){
     this.infoMessage = '';
     const loginResponse = await this.connexionRequest({
-      loginData: this.LoginForm, 
+      loginData: this.LoginForm.getData(), 
       redirect: this.redirect
     });
     if (!loginResponse.success) {

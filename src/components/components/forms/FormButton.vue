@@ -1,5 +1,6 @@
 <template>
-  <button @mousedown.prevent='emitClick($event)'  @click='emitClick($event)' :type='type' :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
+  <button @mousedown.prevent.stop='emitClick($event)' :type='type' 
+    :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
     <img v-if='!!icon' :src="icon">
     <span :style='{color}'>
       <slot></slot>

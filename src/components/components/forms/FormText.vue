@@ -3,44 +3,38 @@
     <div class="input-container">
       <input ref='input' class='input-form'
         :id='formId'
-        :type='type'
+        :type='data.type'
         :value='value'
-        :class='[{
-          formError: (!valid && dirty && error && !vl.$pending),
-          formValid: (valid && dirty && error && !vl.$pending),
-          icon,
-          big: !!big,
-        }, design]'
-        :disabled='disabled'
+        :class='{
+          formError: (!valid && dirty && data.error && !vl.$pending),
+          formValid: (valid && dirty && data.error && !vl.$pending),
+          icon: data.icon,
+        }'
+        :disabled='data.disabled'
+        :required='data.required'
         @focus='handleFocus()'
         @blur='handleBlur()'
         @input="updateValue($event.target.value)" />
               
-      <div class='input-icon-contain'>
-        <img class='input-icon' v-if='icon && !inline' :src="icon">
-        <SvgIcon class='input-icon' v-if='icon && inline' :src="icon" />
+      <div class='input-icon-contain' v-if='data.icon'>
+        <img class='input-icon' v-if='data.icon && data.inlineIcon' :src="data.icon">
+        <SvgIcon class='input-icon' v-if='data.icon && !data.inlineIcon' :src="data.icon" />
       </div>
 
       <label :for='formId' class='input-placeholder' :class='{top: isPlaceholderHere}'>
-        {{placeholder}}
+        {{data.placeholder}}
       </label>
 
       <img v-if='vl.$pending' class='form-valid-icon' src='~@images/loading.svg'>
-      <div v-else-if='valid && dirty && error && !vl.$pending' class="form-valid-icon form-valid"></div>
-      <div v-else-if='!valid && dirty && error && !vl.$pending' class="form-valid-icon form-invalid"></div>
+      <div v-else-if='valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-valid"></div>
+      <div v-else-if='!valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-invalid"></div>
       <div v-else-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
 
-      <div class='popup-message' v-if='description && popupPosition.display'
-          :style='popupPosition'>
-        <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-        <div class='triangle'></div>
-      </div>
     </div>
 
-    <div class='errorMessage' v-if='((vl.$error && error) || description || vl.$pending) && showError'>
-      <span v-if='description && !vl.$error' class='description'>{{description}}</span>
+    <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
       <span v-if='vl.$pending' class='pending'>Verification...</span>
-      <ul v-else-if='!vl.error && dirty && error' class='error'>
+      <ul v-else-if='!vl.error && dirty && data.error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
             <span>{{errorMessages[key]}}</span>
         </li>
@@ -67,28 +61,13 @@ import { SvgIcon } from "@components";
   }
 })
 export default class FormText extends Vue {
-  @Prop() value: string;
-  @Prop({ required: false, default: "text" }) type: string;
-  @Prop({ required: false }) placeholder: string;
-  @Prop({ required: false, default: true }) label: boolean;
-  @Prop({ required: false, default: true }) error: boolean;
-  @Prop({ required: false }) disabled: boolean;
-  @Prop({ required: false }) description: string;
-  @Prop({ required: false, default: true }) required: boolean;
-  @Prop({ required: false, default: null }) icon: string;
-  @Prop({ required: false, default: true }) inline: boolean;
-  @Prop({ required: false}) debounce: number;
-  @Prop({ required: false }) big: boolean;
-  @Prop({ required: false }) design: string;
+  @Prop({required: true}) value: string;
   @Prop({ required: false }) vl: IValidator;
 
-  public formId = shortid.generate();
-  public popupPosition: any = {
-    bottom: null,
-    left: null,
-    width: null,
-    display: false
-  };
+  @Prop({required: true}) data: any;
+  
+
+  public formId = null;
   public errorMessages = {
     required: "Ce champs est requis",
     email: "L'adresse mail doit être valide",
@@ -96,10 +75,10 @@ export default class FormText extends Vue {
     maxLength: `${this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""} caractères maximum`,
     sameAs: "Les mots de passe doivent être identiques",
     isMailUnique: 'Cet email est déjà utilisé',
-    isNameUnique: 'Ce username est déjà utilisé'
+    isNameUnique: 'Ce nom est déjà utilisé',
+    phone: 'Le numéro de téléphone doit être valide'
   };
 
-  public showError = true;
   public isFocused = false;
   public debounceValue = null;
 
@@ -110,28 +89,25 @@ export default class FormText extends Vue {
 
   async handleBlur() {
     this.isFocused = false;
-    await timeout(100);
-    // this.showError = false;
   }
 
   handleFocus() {
-    // this.showError = true;
     this.isFocused = true;
   }
 
   mounted() {
+    this.formId = shortid.generate();
     if (this.value.trim().length) {
       this.vl.$touch();
     }
   }
 
   created() {
-    if (this.debounce) {
-      console.log(this.debounce);
+    if (this.data.debounce) {
       this.updateValue = debounce(e => {
         this.vl.$touch();
         this.$emit("input", e);
-      }, this.debounce)
+      }, this.data.debounce)
     }
   }
 
@@ -139,9 +115,7 @@ export default class FormText extends Vue {
     this.$emit('input', '');
   }
 
-  get filterErrors() {
-    console.log(this.vl);
-    return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
+  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
   get isPlaceholderHere() {return (this.value.length > 0 || this.isFocused);}
   get valid() {return !this.vl.$invalid}
   get dirty() {return this.vl.$dirty;}
@@ -156,9 +130,9 @@ export default class FormText extends Vue {
   position: relative;
   flex: 1 1 auto;
   min-width: 250px;
+  width: 100%;
   padding: 5px 0 5px 0;
-  max-width: 450px;
-
+  
   label {
     font-weight: bold;
     color: $w110;
@@ -179,7 +153,7 @@ export default class FormText extends Vue {
     color: $red1;
 
     .pending {
-      color: $green1;
+      color: $yellow1;
     }
 
     ul {
@@ -200,7 +174,7 @@ export default class FormText extends Vue {
     background-color: #e0e1e4;
     color: $mainColor;
     height: 45px;
-    padding: 15px 30px 0 0;
+    padding: 15px 30px 0 15px;
     margin: 5px 0 5px 0;
     transition: all 0.2s;
     width: 100%;
@@ -210,6 +184,10 @@ export default class FormText extends Vue {
 
     &.icon {
       padding-left: 60px;
+
+      & ~ .input-placeholder {
+        left: 60px;
+      }
     }
 
     &:focus {
@@ -237,7 +215,7 @@ export default class FormText extends Vue {
     transition: all 0.2s;
     font-size: 16px;
     font-weight: normal;
-    left: 60px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
     color: $w150;

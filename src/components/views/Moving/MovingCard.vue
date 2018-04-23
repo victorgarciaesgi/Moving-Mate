@@ -34,13 +34,13 @@
         </div>
         <div class='movers info'>
           <div class='info-content'>
-            <strong>2</strong>
+            <strong>{{getMenNumber}}</strong>
             <span>déménageurs</span>
           </div>
         </div>
         <div class='price info'>
           <div class='info-content'>
-            <strong>{{moving.pricePerHourPerUser}}€</strong>
+            <strong>{{getPrice}}€</strong>
             <span>par pers.</span>
           </div>
         </div>
@@ -98,6 +98,8 @@ export default class MovingCard extends Vue {
   get userName() { return this.moving.user.username; }
   get getDepart() { return this.moving.addressIn.city; }
   get getArrivee() { return this.moving.addressOut.city;}
+  get getMenNumber() {return this.moving.menRequired};
+  get getPrice() {return this.moving.pricePerHourPerUser};
   get getBegin() {
     const date = new DateMoving(this.moving.dealDate);
     return date;

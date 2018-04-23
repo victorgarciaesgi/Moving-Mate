@@ -35,7 +35,9 @@ export default class UISteps extends Vue {
   ]
 
   emitClick(index: number) {
-    this.$emit('click', index);
+    if (index < this.step) {
+      this.$emit('click', index);
+    }
   }
 
   get isActive() {return index => index === this.step;}
@@ -94,12 +96,15 @@ export default class UISteps extends Vue {
         }
       }
 
+      &.passed .icon {
+        cursor: pointer;
+      }
+
       .icon {
         flex: 0 0 auto;
         border-radius: 100%;
         background-color: $w230;
         padding: 10px;
-        cursor: pointer;
         transition: background-color 0.2s;
       }
 
