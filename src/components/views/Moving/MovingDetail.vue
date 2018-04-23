@@ -14,7 +14,7 @@ import { UIModal } from "@components";
 import { timeout } from '@methods';
 import { required, email } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
-import {GlobalStore} from '@store';
+import { GlobalStore } from '@store';
 @Component({
   components: {
     UIModal
@@ -24,13 +24,18 @@ export default class MovingDetail extends Vue {
 
   public show = true;
   public previousRouteName
-  @Prop({required: true}) movingId: number;
+  @Prop({required: true}) movingId: string;
 
 
 
   modalClosed(empty: boolean) {
     this.show = false;
-    Router.push(GlobalStore.state.previousModalRoute || {name: routesNames.moving});
+    if (GlobalStore.state.previousModalRoute) {
+      Router.push(GlobalStore.state.previousModalRoute)
+    } else {
+      Router.push(GlobalStore.state.previousModalRoute || {name: routesNames.moving});
+    }
+    GlobalStore.mutations.setPreviousModalRoute(null);
   }
 
 }

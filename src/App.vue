@@ -1,12 +1,20 @@
 <template>
   <div id='app' @click='closePopups()'>
-    <HeaderComponent/>
-    <ProgressBarComponent/>
-    <Notifications/>
-    <Alerts/>
-    <div class='view'>
-      <router-view/>
-    </div>
+    <template>
+      <HeaderComponent/>
+      <ProgressBarComponent/>
+      <Notifications/>
+      <Alerts/>
+      <div class='view'>
+        <router-view/>
+      </div>
+    </template>
+    <!-- <template>
+      <div class='loader-login'>
+        <img src="~@images/loading_white.svg" height="60" width="60">
+        <span>Chargement</span>
+      </div>
+    </template> -->
   </div>
 </template>
 
@@ -38,6 +46,9 @@ sync(store, router);
   router
 })
 export default class App extends Vue {
+
+  get sessionChecked() { return LoginStore.state.sessionChecked};
+
   created() {
     document.addEventListener("touchstart", () => {}, <any>{ passive: true });
     $(window).resize(() => {
@@ -49,4 +60,29 @@ export default class App extends Vue {
     EventBus.$emit("closePopups");
   }
 }
-</script> 
+</script>
+
+
+<style lang='scss' scoped>
+
+#app {
+  height: 100%;
+  width: 100%;
+  .loader-login {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: $mainStyle;
+    color: white;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    img {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+</style>

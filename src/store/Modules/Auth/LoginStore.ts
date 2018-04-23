@@ -7,7 +7,8 @@ import { ActionContext } from 'vuex';
 import { ILoginState } from '@types';
 import { capitalize } from 'lodash';
 import { storeBuilder } from "../Store/Store";
-import { JWT } from './TokenStore'
+import { JWT } from './TokenStore';
+import {timeout} from '@methods'
 
 const LOGIN_URL = "login_check";
 
@@ -95,6 +96,8 @@ namespace Mutations {
     Object.keys(initialState).forEach(key => {
       state[key] = initialState[key]
     });
+    state.isLoggedIn = false;
+    state.sessionChecked = true;
     removeAuthHeaders();
     if (router.currentRoute.meta.requiresAuth) {
       router.push('/');
@@ -127,7 +130,7 @@ namespace Actions {
       console.log(err)
       if (err.status === 401) {
         return new ApiError('Adresse email ou mot de passe incorrect')
-      } else if (err.status === 404) {
+      } else if (err.status === 404 || err.status === 500) {
         return new ApiWarning(`Une erreur s'est produite`);
       } else if (err.status === 0) {
         return new ApiWarning(`Vérifiez votre connexion internet`);

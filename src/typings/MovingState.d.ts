@@ -11,30 +11,22 @@ export interface IMovingState {
 }
 
 export interface IMovingEvent {
-  announcementId: number,
-  username: string;
-  userId: number;
-  participations: IMoverState[],
+  id: number,
+  user: IMovingUser,
+  participations: IMovingUser[],
   label: string,
+  addressIn: IAddress,
+  addressOut: IAddress,
   pricePerHourPerUser: number,
+  menRequired: number,
   description: string,
-  enabled: true,
-  addressIn: string,
-  addressInZip: string,
-  addressOut: string,
-  addressOutZip: string,
-  elevatorOut: boolean,
-  volumeOut: number,
-  volumeScaleOut: string,
-  parkingOut: true,
-  elevatorIn: true,
-  volumeIn: number,
-  volumeScaleIn: string,
-  parkingIn: true,
-  dealDays: string,
+  enabled: boolean,
+  volume: number,
+  dealDate: number,
   createdAt: Date,
-  updatedAt: Date
 }
+
+
 
 export interface IMovingUser {
   id: string,
@@ -50,17 +42,13 @@ export interface IMovingUser {
 }
 
 export interface IAddress {
-  id: number,
-  addressCity: string,
-  addressZip: string,
-  addressCountry: string,
-  addressAdditional: string,
-  volume: number,
-  floor: string,
-  elevator: boolean,
-  houseType: string,
-  createdAt: number,
-  updatedAt: number
+  type: "Maison" | "Appartement",
+  value: string,
+  city: string,
+  zip: number,
+  additional: string,
+  floor: number,
+  elevator: boolean
 }
 
 export interface ICity {

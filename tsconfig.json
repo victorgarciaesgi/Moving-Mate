@@ -38,6 +38,7 @@
       "@filters": ["./utils/filters.ts"],
       "@types": ["./typings/index.ts"],
       "@store": ["./store/index.ts"],
+      "@api": ["./store/Api/index.ts"],
       "@modules": ["./store/Modules/index.ts"]
     },
     "sourceMap": true, 

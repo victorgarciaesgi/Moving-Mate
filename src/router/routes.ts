@@ -9,6 +9,7 @@ export const routesNames = {
   home: 'HomeRoute',
   moving: 'MovingRoute',
   movingDetail: 'MovingDetail',
+  movingCreate: 'MovingCreate',
   searchMoving: 'SearchMovingRoute',
   movers: 'MoversRoute',
   connexion: 'Connexion',
@@ -82,7 +83,17 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isModal: true
         },
-      }
+      },
+      {
+        path: '/moving/create',
+        name: routesNames.movingCreate,
+        component: () => import('@views/Moving/CreateMoving.vue'),
+        meta: {
+          title: 'Créer une annonce',
+          requiresAuth: true,
+          isModal: true
+        }
+      },
     ]
   },
   {

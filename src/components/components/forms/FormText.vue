@@ -6,12 +6,11 @@
         :type='type'
         :value='value'
         :class='[{
-          formError: (!valid && dirty && error),
-          formValid: (valid && dirty && error),
+          formError: (!valid && dirty && error && !vl.$pending),
+          formValid: (valid && dirty && error && !vl.$pending),
           icon,
           big: !!big,
         }, design]'
-        :required='required'
         :disabled='disabled'
         @focus='handleFocus()'
         @blur='handleBlur()'
@@ -26,9 +25,10 @@
         {{placeholder}}
       </label>
 
-      <div v-if='valid && dirty && error' class="form-valid-icon form-valid"></div>
-      <div v-if='!valid && dirty && error' class="form-valid-icon form-invalid"></div>
-      <div v-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
+      <img v-if='vl.$pending' class='form-valid-icon' src='~@images/loading.svg'>
+      <div v-else-if='valid && dirty && error && !vl.$pending' class="form-valid-icon form-valid"></div>
+      <div v-else-if='!valid && dirty && error && !vl.$pending' class="form-valid-icon form-invalid"></div>
+      <div v-else-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
 
       <div class='popup-message' v-if='description && popupPosition.display'
           :style='popupPosition'>
@@ -39,14 +39,15 @@
 
     <div class='errorMessage' v-if='((vl.$error && error) || description || vl.$pending) && showError'>
       <span v-if='description && !vl.$error' class='description'>{{description}}</span>
-      <ul v-if='!vl.error && dirty && error' class='error'>
+      <span v-if='vl.$pending' class='pending'>Verification...</span>
+      <ul v-else-if='!vl.error && dirty && error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
             <span>{{errorMessages[key]}}</span>
         </li>
       </ul>
-      <span v-if='vl.$pending' class='info'>Verification...</span>
     </div>
   </div>
+
 </template>
 
 <script lang="ts">
@@ -54,9 +55,9 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import { Prop } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
-import $ from "jquery";
-import shortId from 'shortid';
+import shortid from 'shortid';
 import {timeout} from '@methods';
+import {debounce} from 'lodash';
 
 import { SvgIcon } from "@components";
 
@@ -76,12 +77,12 @@ export default class FormText extends Vue {
   @Prop({ required: false, default: true }) required: boolean;
   @Prop({ required: false, default: null }) icon: string;
   @Prop({ required: false, default: true }) inline: boolean;
+  @Prop({ required: false}) debounce: number;
   @Prop({ required: false }) big: boolean;
   @Prop({ required: false }) design: string;
   @Prop({ required: false }) vl: IValidator;
 
-  public formId = shortId.generate();
-
+  public formId = shortid.generate();
   public popupPosition: any = {
     bottom: null,
     left: null,
@@ -93,10 +94,14 @@ export default class FormText extends Vue {
     email: "L'adresse mail doit être valide",
     minLength: `${this.vl.$params.minLength ? this.vl.$params.minLength.min : ""} caractères minimum`,
     maxLength: `${this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""} caractères maximum`,
-    sameAs: "Les mots de passe doivent être identiques"
+    sameAs: "Les mots de passe doivent être identiques",
+    isMailUnique: 'Cet email est déjà utilisé',
+    isNameUnique: 'Ce username est déjà utilisé'
   };
-  public showError = false;
+
+  public showError = true;
   public isFocused = false;
+  public debounceValue = null;
 
   updateValue(value) {
     this.vl.$touch();
@@ -106,11 +111,11 @@ export default class FormText extends Vue {
   async handleBlur() {
     this.isFocused = false;
     await timeout(100);
-    this.showError = false;
+    // this.showError = false;
   }
 
   handleFocus() {
-    this.showError = true;
+    // this.showError = true;
     this.isFocused = true;
   }
 
@@ -120,21 +125,26 @@ export default class FormText extends Vue {
     }
   }
 
+  created() {
+    if (this.debounce) {
+      console.log(this.debounce);
+      this.updateValue = debounce(e => {
+        this.vl.$touch();
+        this.$emit("input", e);
+      }, this.debounce)
+    }
+  }
+
+  destroyed() {
+    this.$emit('input', '');
+  }
+
   get filterErrors() {
-    return Object.keys(this.vl.$params).filter(key => !this.vl[key]);
-  }
-
-  get isPlaceholderHere() {
-    return (this.value.length > 0 || this.isFocused);
-  }
-
-  get valid() {
-    return !this.vl.$invalid;
-  }
-
-  get dirty() {
-    return this.vl.$dirty;
-  }
+    console.log(this.vl);
+    return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
+  get isPlaceholderHere() {return (this.value.length > 0 || this.isFocused);}
+  get valid() {return !this.vl.$invalid}
+  get dirty() {return this.vl.$dirty;}
 }
 </script>
 
@@ -159,29 +169,22 @@ export default class FormText extends Vue {
     }
   }
 
-  &:last-child {
-    .errorMessage {
-      border: none;
-    }
-  }
-
   .errorMessage {
     display: flex;
     position: relative;
-    flex-flow: row wrap;
-    justify-content: center;
-    text-align: center;
-    font-size: 13px;
+    flex-flow: columns wrap;
+    justify-content: flex-start;
+    font-size: 11px;
     font-weight: bold;
-    margin-top: 5px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid $w240;
     color: $red1;
+
+    .pending {
+      color: $green1;
+    }
 
     ul {
       display: flex;
       flex-flow: column wrap;
-      align-items: center;
     }
   }
 }
@@ -223,11 +226,6 @@ export default class FormText extends Vue {
       ~ .input-icon-contain .input-icon /deep/ svg {
         fill: $red1;
       }
-    }
-
-    &.white {
-      background-color: white;
-      box-shadow: 0 0 10px $ombre;
     }
   }
 

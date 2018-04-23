@@ -19,6 +19,9 @@
 /dist
 /cert
 
+/.vscode/chrome
+/remote-profile
+
 # Logs
 logs
 *.log

@@ -7,7 +7,7 @@
           width: width?`${width}px`:"",
         }'>
         <template v-if='!onlyContent'>
-          <div class='header' v-if='isPopup'>
+          <div class='header' v-if='isPopup && $slots.header'>
             <div class='header-slot' >
               <slot name='header'></slot>
             </div>
@@ -18,7 +18,7 @@
           <div class='content'>
             <slot name='content'></slot>
           </div>
-          <div class='footer' >
+          <div class='footer' v-if='$slots.footer' :class='{footerShadow}'>
             <slot name='footer'></slot>
           </div>
         </template>
@@ -44,6 +44,7 @@ export default class UIModal extends Vue {
   @Prop({required: false}) height: number;
   @Prop({required: false}) width: number;
   @Prop({requried: false}) onlyContent: boolean
+  @Prop({}) footerShadow: boolean;
 
   $slots;
 
@@ -110,9 +111,8 @@ export default class UIModal extends Vue {
     max-width: 80vw;
     flex-flow: column nowrap;
     overflow: hidden;
+    transition: height 0.2s;
 
-    
-    
     div.header {
       display: flex;
       flex-flow: row wrap;
@@ -141,9 +141,9 @@ export default class UIModal extends Vue {
 
     div.content {
       display: flex;
+      position: relative;
       flex-flow: column wrap;
       flex: 1 1 auto;
-      padding: 10px;
     }
 
     div.footer {
@@ -156,6 +156,10 @@ export default class UIModal extends Vue {
       align-content: center;
       justify-content: flex-end;
       // border-top: 1px solid $w230;
+
+      &.footerShadow {
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      }
     }
 
   }

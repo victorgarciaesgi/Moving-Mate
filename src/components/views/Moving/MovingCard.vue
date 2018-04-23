@@ -10,7 +10,7 @@
           <!-- <span class='day'>{{getBegin.day}}</span> -->
           <div class='date'>
             <span class='number'>{{getBegin.number}}</span>
-            <span class='mounth'>{{getBegin.mounth}}</span>
+            <span class='mounth'>{{getBegin.month}}</span>
             <span class='hour'>{{getBegin.hour}}</span>     
           </div>       
         </div>
@@ -29,6 +29,9 @@
         <div class='liaison'></div>
       </div>
       <div class='moving-infos'>
+        <div class='switch-place'>
+          <UISwitch :options="['Départ', 'Arrivée']" />
+        </div>
         <div class='movers info'>
           <div class='info-content'>
             <strong>2</strong>
@@ -43,7 +46,10 @@
         </div>
         <div class='elevator info'>
           <div class='info-content'>
-            <strong><SvgIcon :src='require("@icons/moving/present.svg")' :color='css.mainStyle'/></strong>
+            <strong>
+              <SvgIcon v-if='moving.addressIn.elevator' :src='require("@icons/moving/present.svg")' :color='css.mainStyle'/>
+              <SvgIcon v-else :src='require("@icons/moving/not_present.svg")' :color='css.red1'/>
+            </strong>
             <span>Ascenseur</span>
           </div>
         </div>
@@ -64,14 +70,15 @@
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMovingEvent} from '@types';
-import { StarRating, SvgIcon } from '@components';
+import { StarRating, SvgIcon, UISwitch } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
 import Router, {routesNames} from '@router';
+import {DateMoving} from '@classes';
 
 @Component({
   components: {
-    StarRating, SvgIcon
+    StarRating, SvgIcon, UISwitch
   }
 })
 export default class MovingCard extends Vue {
@@ -88,15 +95,18 @@ export default class MovingCard extends Vue {
   // };
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
-  get userName() { return this.moving.username; }
-  get getDepart() { return this.moving.addressIn; }
-  get getArrivee() { return this.moving.addressOut;}
-  get getBegin() { return {hour: '15:00', number: '27', mounth:'Avril'}; }
+  get userName() { return this.moving.user.username; }
+  get getDepart() { return this.moving.addressIn.city; }
+  get getArrivee() { return this.moving.addressOut.city;}
+  get getBegin() {
+    const date = new DateMoving(this.moving.dealDate);
+    return date;
+  }
 
 
   redirectToDetail() {
     // A changer vers id
-    Router.push({name: routesNames.movingDetail, params: {movingId: this.moving.announcementId.toString()}});
+    Router.push({name: routesNames.movingDetail, params: {movingId: this.moving.id.toString()}});
   }
 
   async mounted () {
@@ -228,6 +238,7 @@ $radius: 8px;
               background-color: transparentize($red1, 0.2);
               color: white;
               font-weight: bold;
+              font-size: 14px;
             }
 
             .mounth {
@@ -272,6 +283,13 @@ $radius: 8px;
       position: relative;
       padding: 0 5px 5px 5px;
 
+      .switch-place {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        padding: 5px;
+      }
+
       div.info {
         display: flex;
         flex-flow: column wrap;
@@ -279,7 +297,6 @@ $radius: 8px;
         height: 60px;
         padding: 5px;
         
-
         .info-content {
           display: flex;
           flex: 0 0 auto;

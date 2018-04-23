@@ -16,28 +16,27 @@ const webpackDevConfig = {
       test: /\.s?css$/,
       use: [{
         loader: 'style-loader'
-      }, {
+        }, {
         loader: 'css-loader',
         options: {
           minimize: false,
           sourceMap: true,
           importLoaders: 2
         }
-      }, {
+        }, {
         loader: 'postcss-loader',
         options: {
           plugins: () => [autoprefixer],
           sourceMap: true
         }
-      }, {
+        }, {
         loader: 'sass-loader',
         options: {
           outputStyle: 'expanded',
           sourceMap: true,
           sourceMapContents: true
         }
-      }
-      ],
+      }],
     }]
   },
   plugins: [
@@ -80,7 +79,7 @@ const webpackDevConfig = {
       publicPath: false
     }
   },
-  devtool: 'cheap-module-source-map'
+  devtool: 'cheap-module-eval-source-map'
 }
 
 const devExport = merge(webpackBaseConfig, webpackDevConfig);

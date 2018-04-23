@@ -22,6 +22,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
   try {
     // Check session
     if (!LoginStore.state.sessionChecked) {
+      console.log('ok')
       await LoginStore.actions.checkUserSession();
     }
 
@@ -54,7 +55,8 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       }
 
       // If page is initialazed on child
-      else if (to.matched[0] && to.meta.isModal) {
+      if (to.matched[0] && to.meta.isModal) {
+        console.log('lol6')
         if (!from.name) {
           await getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);
@@ -62,14 +64,6 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
           GlobalStore.mutations.setPreviousModalRoute(from.fullPath);
         }
       }
-    }
-    
-
-    // Check content prop
-    if (!to.meta.contentProp) {
-      document.title = `${to.meta.title} - MovingMate`;
-    } else if (Object.keys(to.params).every(m => !to.params[m])) {
-      document.title = `${to.meta.title} - MovingMate`;
     }
 
     // Check requires auth
@@ -94,6 +88,12 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       if (to.meta.asyncData) {
         await getRouteData(to);
       }
+    }
+    // Check content prop
+    if (!to.meta.contentProp) {
+      document.title = `${to.meta.title} - MovingMate`;
+    } else if (Object.keys(to.params).every(m => !to.params[m])) {
+      document.title = `${to.meta.title} - MovingMate`;
     }
 
     // Check header state

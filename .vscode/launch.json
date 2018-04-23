@@ -1,13 +1,16 @@
 {
   "version": "0.2.0",
   "configurations": [
-    {
-      "type": "chrome",
-      "request": "attach",
-      "name": "Attach to Chrome",
-      "url": "http://localhost:5000",
-      "webRoot": "${workspaceFolder}/src"
-    },
-
+      {
+          "name": "Launch Chrome",
+          "type": "chrome",
+          "request": "launch",
+          "sourceMaps": true,
+          "webRoot": "${workspaceRoot}/src",
+          "url": "http://localhost:5000",
+          "sourceMapPathOverrides": {
+            "webpack:///*": "/*"
+          }
+      }
   ]
 }

@@ -3,12 +3,14 @@
     <div v-if='searching' class='loader' >
       <img src="~@images/loading.svg">
     </div>
-    <ul v-else-if='movingList.length' class='moving-list' >
+    <template v-else-if='movingList.length'>
+      <ul  class='moving-list' >
       <MovingCard v-for='moving in movingList' 
-                  :key='moving.announcementId'
+                  :key='moving.id'
                   :moving='moving'>
       </MovingCard>
     </ul>
+    </template>
     <div v-else class='no-result flexy'>
       <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
         :size='50' color='#5a5a5a'/>
@@ -69,7 +71,7 @@ export default class MovingList extends Vue {
     align-items: flex-start;
     align-content: flex-start;
     width: 100%;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     padding: 10px;
     
   }

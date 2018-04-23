@@ -72,7 +72,14 @@
         </div>
       </div>
     </div>
-    <div class='search-options'></div>
+    <div class='search-options'>
+      <router-link to='/moving/create'>
+        <FormButton>
+          <SvgIcon :src="require('@icons/add_circle.svg')" />
+          Créer une annonce
+        </FormButton>
+      </router-link>
+    </div>
   </div>
 
 </template>
@@ -190,14 +197,23 @@ export default class SearchMoving extends Vue {
 
 .main {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   width: 100%;
   background-color: white;
+  justify-content: center;
+  padding-bottom: 10px;
+
+  .search-options {
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
 
   .search-container {
     position: relative;
     display: flex;
-    width: 100%;
+    flex: 0 0 auto;
     flex-flow: row wrap;
     justify-content: center;
     padding: 15px 20px 15px 20px;

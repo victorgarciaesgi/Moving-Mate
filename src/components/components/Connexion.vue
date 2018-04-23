@@ -3,7 +3,7 @@
     <UIModal :show='show' @close='modalClosed' :width='450' :isPopup='isPopup'>
       <span slot='header'>Connexion</span>
       
-      <div slot='content' style='padding: 0px 20px 0px 20px'>
+      <div slot='content' style='padding: 10px 30px 10px 30px'>
         <div class='moving-logo'>
           <!-- <img src="~@images/logo_truck_M.svg"> -->
           <span class='form-option'>
@@ -53,6 +53,7 @@ import { UIModal, FormText, CheckBox, FormButton, FormSeparator, SocialButton } 
 import { timeout } from '@methods';
 import { required, email } from 'vuelidate/lib/validators';
 import { LoginStore, NotificationsStore, SignupStore } from '@modules';
+import { Forms } from '@classes'
 
 @Component({
   components: {
@@ -72,8 +73,8 @@ export default class Connexion extends Vue {
   @Prop({required: false}) redirect: string;
 
   get loginState() { return LoginStore.state;}
-  connexionRequest = LoginStore.actions.connexionRequest;
-  closeModal = LoginStore.mutations.closeModal;
+  private connexionRequest = LoginStore.actions.connexionRequest;
+  private closeModal = LoginStore.mutations.closeModal;
 
   private addNotification = NotificationsStore.actions.addNotification;
 
@@ -85,9 +86,14 @@ export default class Connexion extends Vue {
     _username: require('@icons/mail.svg'),
     _password: require('@icons/password.svg')
   }
+
+  public testForm = new Forms.Form({
+    test: 123
+  })
+
   public LoginForm = {
-    _username: 'victorgarciaparis13@gmail.com',
-    _password: 'aaaaa',
+    _username: 'victor@gmail.com',
+    _password: '1234',
     _souvenir: false,
     reset() {
       this._username = '';

@@ -1,11 +1,11 @@
 <template>
   <div class='Moving'>
     <section class='searchResults'>
-      <section class='resultsList'>
-        <MovingList/>
-      </section>
       <section class='searchComponent' :class='{shadow}'>
         <SearchMoving></SearchMoving>
+      </section>
+      <section class='resultsList'>
+        <MovingList/>
       </section>
     </section>
 
@@ -78,9 +78,10 @@ export default class Moving extends Vue {
   }
   
   section.searchResults {
-    margin-top: 90px;
+    position: relative;
     display: flex;
     flex-flow: row wrap;
+    min-height: 100%;
     width: calc(100% - 500px);
     background-color: white;
 
@@ -88,16 +89,24 @@ export default class Moving extends Vue {
       display: flex;
       flex-flow: row wrap;
       width: 100%;
+      min-height: 100%;
+      flex: 1 1 auto;
       height: auto;
+      align-self: flex-start;
+      background-color: white;
+
     }
 
     section.searchComponent {
-      position: fixed;
-      top: $headerHeight;
+      position: sticky;
+      align-self: flex-start;
       left: 0;
+      top: $headerHeight;
+      height: auto;
       display: flex;
-      width: calc(100% - 500px);
       z-index: 10;
+      width: 100%;
+      flex: 0 0 auto;
       transition: box-shadow 0.3s;
 
       &.shadow {

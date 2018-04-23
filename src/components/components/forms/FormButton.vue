@@ -55,22 +55,30 @@ button {
   align-items: center;
   align-content: center;
   flex: 0 0 auto;
-  height: 33px;
+  height: auto;
   border-radius: 4px;
   margin: 0 5px 0 5px;
   text-align: center;
   cursor: pointer;
   outline: none;
   border: 1px solid transparent;
-  padding: 0px 13px 0px 13px;
+  padding: 6px 13px 6px 13px;
   transition: all 0.3s;
   @include userselect;
 
   span{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     font-size: 15px;
     color: $mainColor;
     font-weight: bold;
     text-transform: uppercase;
+
+    /deep/ img, .svg-container {
+      margin-right: 5px;
+    }
   }
 
   .loading{

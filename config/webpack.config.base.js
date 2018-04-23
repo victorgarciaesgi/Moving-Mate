@@ -1,7 +1,12 @@
 const path = require('path');
 const helpers = require('./helpers');
+const webpack = require('webpack')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const cssNext = require('postcss-cssnext');
+const postcssImport = require('postcss-import');
+
 
 
 const baseConfig = {
@@ -11,7 +16,7 @@ const baseConfig = {
   output: {
     filename: '[name].js',
     publicPath: '/',
-    path: helpers.root('dist')
+    path: helpers.root('dist'),
   },
   resolve: {
     extensions: [
@@ -34,6 +39,7 @@ const baseConfig = {
       '@validators': helpers.root('src/utils/validators.ts'),
       '@methods': helpers.root('src/utils/methods.ts'),
       '@filters': helpers.root('src/utils/filters.ts'),
+      '@api': helpers.root('src/store/Api/index.ts'),
       '@types': helpers.root('src/typings/index.ts'),
       '@store': helpers.root('src/store/index.ts'),
       '@modules': helpers.root('src/store/Modules/index.ts'),
@@ -45,8 +51,15 @@ const baseConfig = {
       use: {
         loader: 'vue-loader',
         options: {
+          postcss: {
+            plugins: [cssNext()],
+            options: {
+              sourceMap: true,
+            }
+          },
+          cssSourceMap: true,
           loaders: {
-            scss: ['vue-style-loader', 'css-loader', 'postcss-loader', 'sass-loader', {
+            scss: ['vue-style-loader', 'css-loader','sass-loader', {
               loader: 'sass-resources-loader',
               options: {
                 resources: helpers.root('src/styles/variables.scss'),
@@ -55,7 +68,7 @@ const baseConfig = {
             }],
             ts: 'ts-loader',
           }
-        }
+        },
       }
     }, {
       test: /\.ts$/,

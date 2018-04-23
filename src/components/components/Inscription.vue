@@ -9,22 +9,24 @@
         <SocialButton media='facebook'>Inscription avec Facebook</SocialButton>
         <SocialButton media='google'>Inscription avec Google</SocialButton>
         <FormSeparator>Ou inscrivez vous</FormSeparator>
-        <FormText :label='false' type='email' placeholder='Adresse mail'
+        <FormText type='email' placeholder='Adresse mail'
+            :debounce='500'
             :icon="images.email"  
             v-model="SignupForm.email" 
             :vl='$v.SignupForm.email'/>
         
-        <FormText :label='false' type='text' placeholder="Nom d'utilisateur"
-            :icon="images.username"  
+        <FormText type='text' placeholder="Nom d'utilisateur"
+            :icon="images.username"
+            :debounce='500'
             v-model="SignupForm.username" 
             :vl='$v.SignupForm.username'/>
 
-        <FormText :label='false' type='password' placeholder='Mot de passe'
+        <FormText type='password' placeholder='Mot de passe'
             :icon="images.plainPassword.first"  
             v-model="SignupForm.plainPassword.first" 
             :vl='$v.SignupForm.plainPassword.first'/>
 
-        <FormText :label='false' type="password" placeholder='Confirmez le mot de passe'
+        <FormText type="password" placeholder='Confirmez le mot de passe'
             :icon="images.plainPassword.second"  
             v-model="SignupForm.plainPassword.second" 
             :vl='$v.SignupForm.plainPassword.second'/>
@@ -50,22 +52,36 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-
 import { UIModal, FormText, CheckBox, FormButton,FormSeparator, SocialButton } from "@components";
 import { timeout } from '@methods';
 import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
 import { SignupStore, LoginStore, NotificationsStore, AlertsStore } from '@store';
-import { IValidator } from 'vuelidate';
+import { Vuelidate } from 'vuelidate';
 import { ActionsElements, AlertsElement } from '@classes';
-
+import Api from '@api';
 @Component({
   components: {
     UIModal, FormText, CheckBox, FormButton, FormSeparator, SocialButton
   },
   validations: {
     SignupForm: {
-      email: {required, email},
-      username: {required, minLength: minLength(4), maxLength: maxLength(20)},
+      email: {required, email, 
+        async isMailUnique(value) {
+          if (email(value) && value.length > 0) {
+            return await Api.get('check_credentials', {email: value});
+          }
+          return true;
+        }
+      },
+      username: {
+        required,
+        async isNameUnique(value) {
+          if (value.length > 0) {
+            return await Api.get('check_credentials', {username: value});
+          }
+          return true;
+        },
+      },
       plainPassword: {
         first: {required},
         second: {required, sameAs: sameAs('first')},
@@ -75,9 +91,9 @@ import { ActionsElements, AlertsElement } from '@classes';
 })
 export default class Inscription extends Vue {
 
-  get signupRequest() { return SignupStore.actions.signupRequest};
-  showSignup = SignupStore.mutations.showSignup;
-  closeModal = SignupStore.mutations.closeModal;
+  private signupRequest = SignupStore.actions.signupRequest;
+  private showSignup = SignupStore.mutations.showSignup;
+  private closeModal = SignupStore.mutations.closeModal;
 
   @Prop({default: true}) isPopup: boolean;
   @Prop({required: false, default: true}) show: boolean;
@@ -87,7 +103,7 @@ export default class Inscription extends Vue {
     infoMessage: '',
     errorType: ''
   }
-  public $v: IValidator;
+  public $v: Vuelidate<any>;
 
   public images = {
     email: require('@icons/mail.svg'),
