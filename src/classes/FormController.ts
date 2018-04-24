@@ -18,7 +18,9 @@ export namespace Forms {
     }
   }
 
-  export class Form {
+
+
+  export class Form{
     public initialState: any;
     public fieldsData = {};
 
@@ -43,7 +45,8 @@ export namespace Forms {
     }
   }
 
-  type FormType = 'text' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel'
+  type FormType = 'text' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time';
+  type IOptions = {value: any, text: string};
 
   interface FormPayload {
     value?: any;
@@ -55,6 +58,7 @@ export namespace Forms {
     required?: boolean;
     inlineIcon?: boolean;
     debounce?: number;
+    options?: IOptions[];
     
   }
   class DefaultFormElement {
@@ -67,9 +71,10 @@ export namespace Forms {
     disabled?: boolean;
     inlineIcon?: boolean;
     debounce?: number;
+    options?: IOptions[];
 
     constructor({error = true, required = true, ...fields}: FormPayload) {
-      this.value = fields.value || '';
+      this.value = fields.value != undefined ? fields.value : '';
       this.icon = fields.icon || null;
       this.type = fields.type || 'text';
       this.placeholder = fields.placeholder || `${this.type} input`;
@@ -78,6 +83,7 @@ export namespace Forms {
       this.inlineIcon = fields.inlineIcon || false;
       this.debounce = fields.debounce || null;
       this.required = required;
+      this.options = fields.options;
     }
 
     reset() {
@@ -88,6 +94,12 @@ export namespace Forms {
   export class TextForm extends DefaultFormElement {
     constructor(fields: FormPayload) {
       super(fields);
+    }
+  }
+
+  export class Radio extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, type: 'radio'});
     }
   }
 }

@@ -61,7 +61,7 @@ import { SvgIcon } from "@components";
   }
 })
 export default class FormText extends Vue {
-  @Prop({required: true}) value: string;
+  @Prop({required: true}) value: string | null;
   @Prop({ required: false }) vl: IValidator;
 
   @Prop({required: true}) data: any;
@@ -97,7 +97,7 @@ export default class FormText extends Vue {
 
   mounted() {
     this.formId = shortid.generate();
-    if (this.value.trim().length) {
+    if (this.value && this.value.trim().length) {
       this.vl.$touch();
     }
   }
@@ -112,7 +112,7 @@ export default class FormText extends Vue {
   }
 
   destroyed() {
-    this.$emit('input', '');
+    // this.$emit('input', '');
   }
 
   get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}

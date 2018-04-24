@@ -7,4 +7,5 @@ export {default as SocialButton} from './SocialButton.vue';
 export {default as UISwitch} from './Switch.vue';
 export {default as UISteps} from './Steps.vue';
 export {default as FormMessage} from './FormMessage.vue';
+export {default as Radio} from './Radio.vue';
 

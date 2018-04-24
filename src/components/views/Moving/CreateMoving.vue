@@ -7,24 +7,27 @@
             <UISteps :step='countStep' @click='updateStep'/>
           </div>
           <ul class='create-views-list'>
-           <transition name='slide'>
-              <li v-if='countStep === 0' class='create-view'>
-                <FormMessage>
-                  <template slot='title'>Pourquoi vérifier mes informations ?</template>
-                  Indiquer une adresse email et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la réservation effectuée.
-                </FormMessage>
-                <FormText v-model="CreateMovingForm[0].email" :vl='$v.CreateMovingForm[0].email' :data='CreateMovingForm[0].fieldsData.email'/>
-                <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/>
-              </li>
-              <li v-if='countStep === 1' class='create-view'>
-                <FormText v-model="CreateMovingForm[0].email" :vl='$v.CreateMovingForm[0].email' :data='CreateMovingForm[0].fieldsData.email'/>
-                <!-- <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/> -->
-              </li>
-              <li v-if='countStep === 2' class='create-view'>
-                <!-- <FormText v-model="CreateMovingForm[0].email" :vl='$v.CreateMovingForm[0].email' :data='CreateMovingForm[0].fieldsData.email'/> -->
-                <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/>
-              </li>
-           </transition>
+            <li v-if='countStep == 0' class='create-view' key='userInfos'>
+              <FormMessage>
+                <template slot='title'>Pourquoi vérifier mes informations ?</template>
+                Indiquer une adresse email et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la réservation effectuée.
+              </FormMessage>
+              <FormText v-model="CreateMovingForm[0].email" :vl='$v.CreateMovingForm[0].email' :data='CreateMovingForm[0].fieldsData.email'/>
+              <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/>
+            </li>
+            <li v-if='countStep == 1' class='create-view' key='movingInfos'>
+              <Radio v-model='CreateMovingForm[1].type' :data='CreateMovingForm[1].fieldsData.type' />
+              <FormText v-if='typeDepart || typeBoth' 
+                v-model="CreateMovingForm[1].addressIn" 
+                :vl='$v.CreateMovingForm[1].addressIn' :data='CreateMovingForm[1].fieldsData.addressIn'/>
+              <FormText v-if='typeArrivee || typeBoth' 
+                v-model="CreateMovingForm[1].addressOut"
+                :vl='$v.CreateMovingForm[1].addressOut' :data='CreateMovingForm[1].fieldsData.addressOut'/>
+
+            </li>
+            <li v-if='countStep == 2' class='create-view' key='confirm'>
+              <span>lol</span>
+            </li>
           </ul>
         </div>
       </template>
@@ -37,18 +40,18 @@
           étape précédente
         </FormButton>
         <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
-        <FormButton theme='blue' @click='crementCount(1)'>
+        <FormButton theme='blue' :disabled='$v.CreateMovingForm[countStep].$invalid' @click='crementCount(1)'>
           Étape suivante
         </FormButton>
       </template>
-    </UIModal>
+    </UIModal>²
   </form>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { UIModal, FormButton, FormText, UISteps, FormMessage } from "@components";
+import { UIModal, FormButton, FormText, UISteps, FormMessage, Radio } from "@components";
 import { timeout } from '@methods';
 import { required, email, } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
@@ -58,19 +61,38 @@ import { Forms } from '@classes';
 
 @Component({
   components: {
-    UIModal, FormButton, FormText, UISteps, FormMessage
+    UIModal, FormButton, FormText, UISteps, FormMessage, Radio
   },
-  validations: {
-    CreateMovingForm: {
-      "0": {
-        email: {email, required},
-        phone: {required, phone(value) {
-          if (required(value)) {
-            const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
-            return regex.test(value);
+  validations() {
+    const _this = this;
+    return {
+      CreateMovingForm: {
+        "0": {
+          email: {email, required},
+          phone: {required, phone(value) {
+            if (required(value)) {
+              const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
+              return regex.test(value);
+            }
+            return true;
+          }}
+        },
+        get "1"() {
+          let baseValidations: any = {
+            type: {required},
+            addressIn: {required},
+            addressOut: {required}
           }
-          return true;
-        }}
+          if (_this.currentFormType == 0) {
+            const {addressOut, ...rest} = baseValidations;
+            baseValidations = rest;
+          } else if (_this.currentFormType == 1) {
+            const {addressIn, ...rest} = baseValidations;
+            baseValidations = rest;
+          }
+          return baseValidations;
+        },
+        "2": false
       }
     }
   }
@@ -93,7 +115,38 @@ export default class CreateMoving extends Vue {
         type: 'tel',
         placeholder: 'Votre numéro de téléphone'
       })
+    }),
+    "1": new Forms.Form({
+      type: new Forms.Radio({
+        placeholder: `J'ai besoin d'aide:`,
+        value: 0,
+        options: [
+          {value: 0, text: 'Au départ'},
+          {value: 1, text: `A l'arrivée`},
+          {value: 2, text: 'Les deux'}
+        ]
+      }),
+      addressIn: new Forms.TextForm({
+        placeholder: 'Votre adresse de départ'
+      }),
+      addressOut: new Forms.TextForm({
+        placeholder: `Votre adresse d'arrivée`
+      })
     })
+  }
+
+  get currentFormType() {
+    return this.CreateMovingForm[1]['type'];
+  }
+
+  get typeDepart() {
+    return this.CreateMovingForm[1]['type'] == 0;
+  }
+  get typeArrivee() {
+    return this.CreateMovingForm[1]['type'] == 1;
+  }
+  get typeBoth() {
+    return this.CreateMovingForm[1]['type'] == 2;
   }
 
 
@@ -126,16 +179,6 @@ export default class CreateMoving extends Vue {
 
 <style lang='scss' scoped>
 
-.slide-leave-active, .slide-enter-active {
-  transition: transform 0.5s;
-}
-.slide-enter {
-  transform: translateX(100%);
-}
-.slide-leave-to {
-  transform: translateY(-100%);
-}
-
 
 .content-root {
   display: flex;
@@ -151,14 +194,15 @@ export default class CreateMoving extends Vue {
   ul.create-views-list {
     display: flex;
     position: relative;
-    flex-flow: row wrap;
-    justify-content: center;
+    flex-flow: row nowrap;
+    overflow: hidden;
     padding: 10px 30px 10px 30px;
 
     li.create-view {
       display: flex;
       position: relative;
       width: 100%;
+      flex: 0 0 auto;
       flex-flow: column wrap;
       justify-content: center;
       align-items: center;
