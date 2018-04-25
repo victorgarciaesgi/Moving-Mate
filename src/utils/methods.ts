@@ -26,7 +26,7 @@ export function calculatePopupPosition(origin: HTMLElement, target: HTMLElement)
 
   let popupWidth: number = $target.width();
   let outputLeft: number | string = position.left + originWidth / 2 - popupWidth / 2;
-  let outputTop: number | string = position.top + originHeight + 15;
+  let outputTop: number | string = position.top + originHeight;
   let outputBottom: number | string = 'auto';
   let windowWidth: number = $(window).width();
 
@@ -37,7 +37,7 @@ export function calculatePopupPosition(origin: HTMLElement, target: HTMLElement)
   }
   if ((outputTop + 300) > $(window).height()){
     outputTop = 'auto';
-    outputBottom = $(window).height() - position.top + 15 + "px";
+    outputBottom = $(window).height() - position.top + "px";
   } else {
     outputTop = outputTop + "px";
   }
@@ -46,6 +46,7 @@ export function calculatePopupPosition(origin: HTMLElement, target: HTMLElement)
     left: outputLeft,
     top: outputTop ,
     bottom: outputBottom,
+    width: originWidth + 'px'
   }
 }
 

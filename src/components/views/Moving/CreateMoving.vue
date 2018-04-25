@@ -17,13 +17,16 @@
             </li>
             <li v-if='countStep == 1' class='create-view' key='movingInfos'>
               <Radio v-model='CreateMovingForm[1].type' :data='CreateMovingForm[1].fieldsData.type' />
-              <FormText v-if='typeDepart || typeBoth' 
-                v-model="CreateMovingForm[1].addressIn" 
+              <FormText v-if='typeDepart || typeBoth' v-model="CreateMovingForm[1].addressIn"  key='depart'
                 :vl='$v.CreateMovingForm[1].addressIn' :data='CreateMovingForm[1].fieldsData.addressIn'/>
-              <FormText v-if='typeArrivee || typeBoth' 
-                v-model="CreateMovingForm[1].addressOut"
+              <FormText v-if='typeArrivee || typeBoth' v-model="CreateMovingForm[1].addressOut"  key='arrivee'
                 :vl='$v.CreateMovingForm[1].addressOut' :data='CreateMovingForm[1].fieldsData.addressOut'/>
+              <FormText v-model="CreateMovingForm[1].dealDate" :vl='$v.CreateMovingForm[1].dealDate' :data='CreateMovingForm[1].fieldsData.dealDate'/>
 
+              <div class='form-split two'>
+                <FormSelect v-model="CreateMovingForm[1].estimatedTime" :vl='$v.CreateMovingForm[1].estimatedTime' :data='CreateMovingForm[1].fieldsData.estimatedTime'/>
+                <FormSelect v-model="CreateMovingForm[1].menRequired" :vl='$v.CreateMovingForm[1].menRequired' :data='CreateMovingForm[1].fieldsData.menRequired'/>
+              </div>
             </li>
             <li v-if='countStep == 2' class='create-view' key='confirm'>
               <span>lol</span>
@@ -40,7 +43,10 @@
           étape précédente
         </FormButton>
         <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
-        <FormButton theme='blue' :disabled='$v.CreateMovingForm[countStep].$invalid' @click='crementCount(1)'>
+        <FormButton theme='blue' 
+        :disabled='$v.CreateMovingForm[countStep].$invalid' 
+        @click='crementCount(1)'
+        @disabledClick='touchForm()'>
           Étape suivante
         </FormButton>
       </template>
@@ -51,9 +57,10 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { UIModal, FormButton, FormText, UISteps, FormMessage, Radio } from "@components";
+import { UIModal, FormButton, FormText, UISteps, FormMessage, Radio, FormSelect } from "@components";
 import { timeout } from '@methods';
-import { required, email, } from 'vuelidate/lib/validators';
+import { required, email, numeric } from 'vuelidate/lib/validators';
+import {} from ''
 import Router, {routesNames} from '@router';
 import { GlobalStore, LoginStore } from '@store';
 import { Forms } from '@classes';
@@ -61,7 +68,7 @@ import { Forms } from '@classes';
 
 @Component({
   components: {
-    UIModal, FormButton, FormText, UISteps, FormMessage, Radio
+    UIModal, FormButton, FormText, UISteps, FormMessage, Radio, FormSelect
   },
   validations() {
     const _this = this;
@@ -81,7 +88,10 @@ import { Forms } from '@classes';
           let baseValidations: any = {
             type: {required},
             addressIn: {required},
-            addressOut: {required}
+            addressOut: {required},
+            dealDate: {required},
+            estimatedTime: {required},
+            menRequired: {required, numeric}
           }
           if (_this.currentFormType == 0) {
             const {addressOut, ...rest} = baseValidations;
@@ -100,7 +110,8 @@ import { Forms } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 0;
+  public countStep = 1;
+  public $v;
 
 
   public CreateMovingForm = {
@@ -127,29 +138,40 @@ export default class CreateMoving extends Vue {
         ]
       }),
       addressIn: new Forms.TextForm({
+        icon: require('@icons/moving/arrow_up.svg'),
         placeholder: 'Votre adresse de départ'
       }),
       addressOut: new Forms.TextForm({
+        icon: require('@icons/moving/arrow_down.svg'),
         placeholder: `Votre adresse d'arrivée`
-      })
+      }),
+      dealDate: new Forms.TextForm({
+        icon: require('@icons/date.svg'),
+        placeholder: 'Date et heure de votre déménagement',
+      }),
+      estimatedTime: new Forms.Select({
+        placeholder: 'Durée du déménagement',
+        options: Array.from(Array(10)).map((val, index) => {
+          return {value: index + 1, text: index + 1 + 'h'}
+        })
+      }),
+      menRequired: new Forms.Select({
+        placeholder: 'Nombre de persones requises',
+        options: Array.from(Array(15)).map((val, index) => {
+          return {value: index + 1, text: index + 1 + ' personnes'}
+        })
+      }),
     })
   }
 
-  get currentFormType() {
-    return this.CreateMovingForm[1]['type'];
-  }
+  get currentFormType() {return this.CreateMovingForm[1]['type'];}
+  get typeDepart() {return this.CreateMovingForm[1]['type'] == 0;}
+  get typeArrivee() {return this.CreateMovingForm[1]['type'] == 1;}
+  get typeBoth() {return this.CreateMovingForm[1]['type'] == 2;}
 
-  get typeDepart() {
-    return this.CreateMovingForm[1]['type'] == 0;
+  touchForm() {
+    this.$v.CreateMovingForm[this.countStep].$touch();
   }
-  get typeArrivee() {
-    return this.CreateMovingForm[1]['type'] == 1;
-  }
-  get typeBoth() {
-    return this.CreateMovingForm[1]['type'] == 2;
-  }
-
-
 
   updateStep(index: number) {
     this.countStep = index;
@@ -157,7 +179,6 @@ export default class CreateMoving extends Vue {
 
   crementCount(value: number) {
     if (this.countStep + value < 3 && this.countStep + value >= 0) {
-      console.log(this.countStep + value)
       this.countStep += value;
     }
   }
@@ -195,7 +216,7 @@ export default class CreateMoving extends Vue {
     display: flex;
     position: relative;
     flex-flow: row nowrap;
-    overflow: hidden;
+    overflow: auto;
     padding: 10px 30px 10px 30px;
 
     li.create-view {

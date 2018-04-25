@@ -22,7 +22,6 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
   try {
     // Check session
     if (!LoginStore.state.sessionChecked) {
-      console.log('ok')
       await LoginStore.actions.checkUserSession();
     }
 
@@ -58,7 +57,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       if (to.matched[0] && to.meta.isModal) {
         console.log('lol6')
         if (!from.name) {
-          await getRouteData(to.matched[0]);
+          getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);
         } else {
           GlobalStore.mutations.setPreviousModalRoute(from.fullPath);

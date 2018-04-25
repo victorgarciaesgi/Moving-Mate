@@ -2,7 +2,7 @@
   <transition name='bounce'>
     <div v-if='show' class='modal-base' @click='closeModal()'
       :class='{full: !isPopup}'>
-      <div class="modal-window" @click.stop :style='{
+      <div class="modal-window" @click.stop='emitClosePopup()' :style='{
           maxHeight: height?`${height}px`:"",
           width: width?`${width}px`:"",
         }'>
@@ -35,6 +35,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
+import { EventBus } from '@store';
 
 @Component({})
 export default class UIModal extends Vue {
@@ -52,8 +53,11 @@ export default class UIModal extends Vue {
     this.$emit('close', true);
   }
 
+  emitClosePopup() {
+    EventBus.$emit('closePopups');
+  }
+
   mounted() {
-    console.log(this.$slots);
   }
 
 }

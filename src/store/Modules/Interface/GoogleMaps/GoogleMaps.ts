@@ -8,6 +8,8 @@ import { MovingStore } from '@store';
 
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
+const PLACES_API = `https://maps.googleapis.com/maps/api/place/autocomplete/json?language=fr&type=address&key=AIzaSyB2zJbMB-_jCSHklks5CKKpoUqZ11eeGU0`;
+// param input
 
 export const getMapInstance = async () => {
   if (!mapInstance) {

@@ -89,7 +89,6 @@ export default class Moving extends Vue {
       display: flex;
       flex-flow: row wrap;
       width: 100%;
-      min-height: 100%;
       flex: 1 1 auto;
       height: auto;
       align-self: flex-start;

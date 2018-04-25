@@ -33,6 +33,9 @@ export default class FormButton extends Vue {
   emitClick(event: Event) {
     if (!this.submitting && !this.disabled) {
       this.$emit('click');
+    } else if (this.disabled) {
+      event.preventDefault();
+      this.$emit('disabledClick');
     } else{
       event.preventDefault();
     }

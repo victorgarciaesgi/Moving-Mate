@@ -55,6 +55,7 @@ export default class Radio extends Vue {
   .title {
     font-size: 15px;
     font-weight: bold;
+    text-align: center;
   }
 
   ul.input-radio-list {

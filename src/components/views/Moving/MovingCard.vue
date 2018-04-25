@@ -112,7 +112,6 @@ export default class MovingCard extends Vue {
   }
 
   async mounted () {
-    // console.log(new Date(this.moving.dealDays))
     // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
 

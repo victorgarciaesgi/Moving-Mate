@@ -45,7 +45,7 @@ export namespace Forms {
     }
   }
 
-  type FormType = 'text' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time';
+  type FormType = 'text' | 'number' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time' | 'datetime-local';
   type IOptions = {value: any, text: string};
 
   interface FormPayload {
@@ -100,6 +100,12 @@ export namespace Forms {
   export class Radio extends DefaultFormElement {
     constructor(fields: FormPayload) {
       super({...fields, type: 'radio'});
+    }
+  }
+
+  export class Select extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields})
     }
   }
 }

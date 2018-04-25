@@ -23,7 +23,8 @@
         <FormButton @click='close(true)' v-if='isPopup'>Annuler</FormButton>
         <FormButton type='submit' 
           :submitting='submitting' 
-          :disabled='$v.SignupForm.$invalid' 
+          :disabled='$v.SignupForm.$invalid'
+          @disabledClick='touchForm()' 
           theme='blue'>
           S'inscrire
         </FormButton>
@@ -130,31 +131,36 @@ export default class Inscription extends Vue {
     this.submitting = false;
   }
 
+  touchForm() {
+    this.$v.SignupForm.$touch();
+  }
+
   async submitForm() {
-    this.submitting = true;
-    const submitResponse = await this.signupRequest(this.SignupForm.getData());
-    
-    if (!submitResponse.success){
-      this.formError = {
-        errorType: submitResponse.type,
-        infoMessage: submitResponse.message
+    if (!this.$v.SignupForm.$invalid) {
+      this.submitting = true;
+      const submitResponse = await this.signupRequest(this.SignupForm.getData());
+      
+      if (!submitResponse.success){
+        this.formError = {
+          errorType: submitResponse.type,
+          infoMessage: submitResponse.message
+        }
+      } else {
+        this.close(true);
+        new AlertsElement.SuccessAlert({
+          title: "Inscription réussie",
+          message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
+          actions: [
+            new ActionsElements.LoginAction()
+          ]
+        })
       }
-    } else {
-      this.close(true);
-      new AlertsElement.SuccessAlert({
-        title: "Inscription réussie",
-        message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
-        actions: [
-          new ActionsElements.LoginAction()
-        ]
-      })
+      this.submitting = false;
     }
-    this.submitting = false;
   }
 
 
   async mounted() {
-    console.log(this.SignupForm)
   }
 }
 </script>

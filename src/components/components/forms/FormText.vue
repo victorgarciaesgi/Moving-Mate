@@ -4,7 +4,7 @@
       <input ref='input' class='input-form'
         :id='formId'
         :type='data.type'
-        :value='value'
+        :value='formatedValue'
         :class='{
           formError: (!valid && dirty && data.error && !vl.$pending),
           formValid: (valid && dirty && data.error && !vl.$pending),
@@ -47,7 +47,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { Prop } from "vue-property-decorator";
+import { Prop, Watch } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
 import shortid from 'shortid';
 import {timeout} from '@methods';
@@ -82,6 +82,11 @@ export default class FormText extends Vue {
   public isFocused = false;
   public debounceValue = null;
 
+  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
+  get isPlaceholderHere() {return (this.value.length > 0 || this.isFocused);}
+  get valid() {return !this.vl.$invalid}
+  get dirty() {return this.vl.$dirty;}
+
   updateValue(value) {
     this.vl.$touch();
     this.$emit("input", value);
@@ -111,14 +116,25 @@ export default class FormText extends Vue {
     }
   }
 
-  destroyed() {
-    // this.$emit('input', '');
+  get formatedValue() {
+    const patterns = {
+      normal: [2,4,6,8],
+      plus: [3,4,6,8,10]
+    }
+    const regex = /^(?:(?:\+)\d{2})/;
+    let paternToUse = patterns.normal;
+    if (this.data.type == 'tel') {
+      let tempVal = this.value.trim().split(/ +/).join('').split('');
+      if (regex.test(this.value)) {paternToUse = patterns.plus};
+      paternToUse.forEach((val, index) => {
+        if (index + val < tempVal.length) {
+          tempVal.splice(index + val, 0, " ");
+        }
+      })
+      return tempVal.join('');
+    }
+    return this.value;
   }
-
-  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-  get isPlaceholderHere() {return (this.value.length > 0 || this.isFocused);}
-  get valid() {return !this.vl.$invalid}
-  get dirty() {return this.vl.$dirty;}
 }
 </script>
 
@@ -132,16 +148,6 @@ export default class FormText extends Vue {
   min-width: 250px;
   width: 100%;
   padding: 5px 0 5px 0;
-  
-  label {
-    font-weight: bold;
-    color: $w110;
-    font-size: 15px;
-
-    &.formError {
-      color: $red1;
-    }
-  }
 
   .errorMessage {
     display: flex;
@@ -151,6 +157,7 @@ export default class FormText extends Vue {
     font-size: 11px;
     font-weight: bold;
     color: $red1;
+    margin-left: 5px;
 
     .pending {
       color: $yellow1;
@@ -251,45 +258,6 @@ export default class FormText extends Vue {
 
   /deep/ svg {
     fill: $mainColor;
-  }
-
-  .popup-message {
-    position: fixed;
-    background-color: $w250;
-    border-radius: 5px;
-    box-shadow: 0 0 10px transparentize($g0, 0.7);
-    padding: 10px;
-    color: $g90;
-    font-weight: bold;
-    height: auto;
-    width: 100%;
-    z-index: 10010;
-    font-size: 13px;
-    display: flex;
-    flex-flow: column wrap;
-    align-self: center;
-    text-align: center;
-
-    .error {
-      color: $red1;
-    }
-    .info {
-      color: $yellow1;
-    }
-
-    .triangle {
-      position: absolute;
-      z-index: 10009;
-      top: 100%;
-      left: 50%;
-      @include translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 10px solid $w250;
-      filter: drop-shadow(0px 6px 4px rgba(50, 50, 50, 0.1));
-    }
   }
 }
 </style>

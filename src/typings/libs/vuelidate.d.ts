@@ -242,4 +242,7 @@ declare module "vuelidate/lib/validators" {
    * Passes when all of provided validators passes.
    */
   function and(...validators: ValidationPredicate[]): () => boolean;
+
+  function numeric()
+
 }
