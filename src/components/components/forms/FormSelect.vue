@@ -213,14 +213,16 @@ export default class FormSelect extends Vue {
       z-index: 1000;
       display: flex;
       overflow: auto;
-      max-height: 200px;
+      max-height: 220px;
+      font-size: 15px;
+      font-weight: bold;
       flex-flow: row wrap;
       background-color: white;
-      box-shadow: 0px 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
       border-radius: 0 0 3px 3px;
 
       li {
-        padding: 5px 10px 5px 10px;
+        padding: 10px 10px 10px 10px;
         cursor: pointer;
         width: 100%;
 

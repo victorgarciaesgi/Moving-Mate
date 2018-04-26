@@ -105,7 +105,13 @@ export namespace Forms {
 
   export class Select extends DefaultFormElement {
     constructor(fields: FormPayload) {
-      super({...fields})
+      super({...fields});
+    }
+  }
+
+  export class CheckBox extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, type: 'checkbox'});
     }
   }
 }

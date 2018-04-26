@@ -40,8 +40,11 @@
   width: 100%;
 
   & > * {
-    flex: 1 1 50%;
-    padding: 5px!important;
+    flex: 1 1 50%!important;
+    padding-right: 5px!important;
+    &:last-child {
+      padding-right: 0!important;
+    }
   }
 }
 

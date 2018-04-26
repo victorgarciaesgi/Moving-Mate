@@ -16,11 +16,27 @@
               <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/>
             </li>
             <li v-if='countStep == 1' class='create-view' key='movingInfos'>
-              <Radio v-model='CreateMovingForm[1].type' :data='CreateMovingForm[1].fieldsData.type' />
-              <FormText v-if='typeDepart || typeBoth' v-model="CreateMovingForm[1].addressIn"  key='depart'
-                :vl='$v.CreateMovingForm[1].addressIn' :data='CreateMovingForm[1].fieldsData.addressIn'/>
-              <FormText v-if='typeArrivee || typeBoth' v-model="CreateMovingForm[1].addressOut"  key='arrivee'
-                :vl='$v.CreateMovingForm[1].addressOut' :data='CreateMovingForm[1].fieldsData.addressOut'/>
+              <Radio v-model='CreateMovingForm[1].type' :vl='$v.CreateMovingForm[1].type' :data='CreateMovingForm[1].fieldsData.type' />
+
+              <template v-if='typeDepart || typeBoth'>
+                <FormSeparator>Informations du départ</FormSeparator>
+                <FormText v-model="CreateMovingForm[1].addressIn.address"  key='depart'
+                  :vl='$v.CreateMovingForm[1].addressIn.address' :data='CreateMovingForm[1].fieldsData.addressIn.address'/>
+                <Radio row v-model='CreateMovingForm[1].addressIn.type' :vl='$v.CreateMovingForm[1].addressIn.type' :data='CreateMovingForm[1].fieldsData.addressIn.type' />
+                <div class='form-split two' v-if='!addressInMaison'>
+                  <FormSelect v-model="CreateMovingForm[1].addressIn.floor" :vl='$v.CreateMovingForm[1].addressIn.floor' :data='CreateMovingForm[1].fieldsData.addressIn.floor'/>
+                  <CheckBox v-model="CreateMovingForm[1].addressIn.elevator" :vl='$v.CreateMovingForm[1].addressIn.elevator' :data='CreateMovingForm[1].fieldsData.addressIn.elevator'/>
+                </div>
+              </template>
+
+              <template v-if='typeArrivee || typeBoth'>
+                <FormSeparator>Informations de l'arrivée</FormSeparator>
+                <FormText v-model="CreateMovingForm[1].addressOut.address"  key='arrivee'
+                  :vl='$v.CreateMovingForm[1].addressOut.address' :data='CreateMovingForm[1].fieldsData.addressOut.address'/>
+                <Radio row v-model='CreateMovingForm[1].addressOut.type' :vl='$v.CreateMovingForm[1].addressOut.type' :data='CreateMovingForm[1].fieldsData.addressOut.type' />
+              </template>
+
+              <FormSeparator>Autres informations</FormSeparator>
               <FormText v-model="CreateMovingForm[1].dealDate" :vl='$v.CreateMovingForm[1].dealDate' :data='CreateMovingForm[1].fieldsData.dealDate'/>
 
               <div class='form-split two'>
@@ -57,7 +73,8 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { UIModal, FormButton, FormText, UISteps, FormMessage, Radio, FormSelect } from "@components";
+import { UIModal, FormButton, FormText, UISteps, 
+  FormMessage, Radio, FormSelect, FormSeparator, CheckBox } from "@components";
 import { timeout } from '@methods';
 import { required, email, numeric } from 'vuelidate/lib/validators';
 import {} from ''
@@ -68,7 +85,8 @@ import { Forms } from '@classes';
 
 @Component({
   components: {
-    UIModal, FormButton, FormText, UISteps, FormMessage, Radio, FormSelect
+    UIModal, FormButton, FormText, UISteps, 
+    FormMessage, Radio, FormSelect, FormSeparator, CheckBox
   },
   validations() {
     const _this = this;
@@ -87,15 +105,29 @@ import { Forms } from '@classes';
         get "1"() {
           let baseValidations: any = {
             type: {required},
-            addressIn: {required},
-            addressOut: {required},
+            addressIn: {
+              address: {required},
+              type: {required},
+              floor: {required, numeric},
+              elevator: {required}
+            },
+            addressOut: {
+              address: {required},
+              type: {required},
+              floor: {required, numeric}
+            },
             dealDate: {required},
             estimatedTime: {required},
             menRequired: {required, numeric}
           }
           if (_this.currentFormType == 0) {
-            const {addressOut, ...rest} = baseValidations;
-            baseValidations = rest;
+            const {addressOut, addressIn, ...rest} = baseValidations;
+            if (_this.addressInMaison) {
+              const {floor, ...rest2} = addressIn;
+              baseValidations = {...rest, addressIn: rest2};
+            } else {
+              baseValidations = {...rest, addressIn}
+            }
           } else if (_this.currentFormType == 1) {
             const {addressIn, ...rest} = baseValidations;
             baseValidations = rest;
@@ -113,8 +145,14 @@ export default class CreateMoving extends Vue {
   public countStep = 1;
   public $v;
 
+  get currentFormType() {return this.CreateMovingForm[1].type;}
+  get typeDepart() {return this.CreateMovingForm[1].type == 0;}
+  get typeArrivee() {return this.CreateMovingForm[1].type == 1;}
+  get typeBoth() {return this.CreateMovingForm[1].type == 2;}
 
-  public CreateMovingForm = {
+  get addressInMaison() {return this.CreateMovingForm[1].addressIn.type == 'Maison'}
+
+  public CreateMovingForm: any = {
     "0": new Forms.Form({
       email: new Forms.TextForm({
         value: 'victor@gmail.com',
@@ -137,14 +175,51 @@ export default class CreateMoving extends Vue {
           {value: 2, text: 'Les deux'}
         ]
       }),
-      addressIn: new Forms.TextForm({
-        icon: require('@icons/moving/arrow_up.svg'),
-        placeholder: 'Votre adresse de départ'
-      }),
-      addressOut: new Forms.TextForm({
-        icon: require('@icons/moving/arrow_down.svg'),
-        placeholder: `Votre adresse d'arrivée`
-      }),
+      addressIn: {
+        address: new Forms.TextForm({
+          icon: require('@icons/moving/arrow_up.svg'),
+          placeholder: 'Votre adresse de départ'
+        }),
+        type:  new Forms.Radio({
+          placeholder: `Type d'habitation`,
+          value: 'Maison',
+          options: [
+            {value: 'Maison', text: 'Maison'},
+            {value: 'Appartement', text: `Appartement`},
+          ]
+        }),
+        floor: new Forms.Select({
+          placeholder: `Nombre d'étages`,
+          options: Array.from(Array(7)).map((val, index) => {
+            return {value: index + 1, text: index + 1 + ' étages'}
+          })
+        }),
+        elevator: new Forms.CheckBox({
+          placeholder: 'Ascenseur?',
+          value: false
+        })
+        
+      },
+      addressOut: {
+        address: new Forms.TextForm({
+          icon: require('@icons/moving/arrow_down.svg'),
+          placeholder: `Votre adresse d'arrivée`
+        }),
+        type:  new Forms.Radio({
+          placeholder: `Type d'habitation`,
+          value: 'Maison',
+          options: [
+            {value: 'Maison', text: 'Maison'},
+            {value: 'Appartement', text: `Appartement`},
+          ]
+        }),
+        floor: new Forms.Select({
+          placeholder: `Nombre d'étages`,
+          options: Array.from(Array(7)).map((val, index) => {
+            return {value: index + 1, text: index + 1 + ' étages'}
+          })
+        }),
+      },
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
         placeholder: 'Date et heure de votre déménagement',
@@ -156,18 +231,13 @@ export default class CreateMoving extends Vue {
         })
       }),
       menRequired: new Forms.Select({
-        placeholder: 'Nombre de persones requises',
+        placeholder: 'Nombre de personnes requises',
         options: Array.from(Array(15)).map((val, index) => {
           return {value: index + 1, text: index + 1 + ' personnes'}
         })
       }),
     })
   }
-
-  get currentFormType() {return this.CreateMovingForm[1]['type'];}
-  get typeDepart() {return this.CreateMovingForm[1]['type'] == 0;}
-  get typeArrivee() {return this.CreateMovingForm[1]['type'] == 1;}
-  get typeBoth() {return this.CreateMovingForm[1]['type'] == 2;}
 
   touchForm() {
     this.$v.CreateMovingForm[this.countStep].$touch();
