@@ -1,18 +1,18 @@
 <template>
   <div class="input-box">
     <div class="input-container">
-      <input ref='input' class='input-form'
+      <textarea ref='input' class='input-form'
         :id='formId'
         :type='data.type'
         :value='formatedValue'
         :class='{
           formError: (!valid && dirty && data.error && !vl.$pending),
           formValid: (valid && dirty && data.error && !vl.$pending),
-          placeholder: isPlaceholderHere,
           icon: data.icon,
         }'
         :disabled='data.disabled'
         :required='data.required'
+        resize='none'
         @focus='handleFocus()'
         @blur='handleBlur()'
         @input="updateValue($event.target.value)" />
@@ -35,7 +35,7 @@
 
     <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
       <span v-if='vl.$pending' class='pending'>Verification...</span>
-      <ul v-else-if='dirty && data.error' class='error'>
+      <ul v-else-if='!vl.error && dirty && data.error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
             <span>{{errorMessages[key]}}</span>
         </li>
@@ -61,8 +61,8 @@ import { SvgIcon } from "@components";
     SvgIcon
   }
 })
-export default class FormSearch extends Vue {
-  @Prop({type: [String, Number, null]}) value;
+export default class FormField extends Vue {
+  @Prop({required: true}) value: string | null;
   @Prop({ required: false }) vl: IValidator;
 
   @Prop({required: true}) data: any;
@@ -77,8 +77,7 @@ export default class FormSearch extends Vue {
     sameAs: "Les mots de passe doivent être identiques",
     isMailUnique: 'Cet email est déjà utilisé',
     isNameUnique: 'Ce nom est déjà utilisé',
-    phone: 'Le numéro de téléphone doit être valide',
-    numeric: 'Ce champs doit être un nombre'
+    phone: 'Le numéro de téléphone doit être valide'
   };
 
   public isFocused = false;
@@ -143,11 +142,10 @@ export default class FormSearch extends Vue {
 
 
 <style lang='scss' scoped>
-  
 .input-box {
   display: block;
   position: relative;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 250px;
   width: 100%;
   padding: 5px 0 5px 0;
@@ -183,7 +181,6 @@ export default class FormSearch extends Vue {
     display: block;
     background-color: #e0e1e4;
     color: $mainColor;
-    height: 45px;
     padding: 15px 30px 0 15px;
     margin: 5px 0 5px 0;
     transition: all 0.2s;
@@ -199,10 +196,6 @@ export default class FormSearch extends Vue {
         left: 60px;
       }
     }
-
-    &:not(.placeholder)::-webkit-datetime-edit{ color: transparent; }
-
-    &:focus::-webkit-datetime-edit{ color: $mainColor; } 
 
     &:focus {
       background-color: #d8d9dd;
@@ -230,14 +223,13 @@ export default class FormSearch extends Vue {
     font-size: 16px;
     font-weight: normal;
     left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 15px;
     color: $w150;
     cursor: text;
     
     &.top {
       font-size: 12px;
-      top: 16px;
+      top: 6px;
       cursor: default;
     }
   }

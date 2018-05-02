@@ -91,13 +91,18 @@ export default class UISteps extends Vue {
       }
 
       &.active, &.passed {
-        .line, .icon {
+        .line:first-child, .icon {
           background-color: $mainStyle;
         }
       }
 
-      &.passed .icon {
-        cursor: pointer;
+      &.passed {
+        .line:last-child {
+          background-color: $mainStyle;
+        }
+        .icon {
+          cursor: pointer;
+        }
       }
 
       .icon {

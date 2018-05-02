@@ -8,6 +8,7 @@
         :class='{
           formError: (!valid && dirty && data.error && !vl.$pending),
           formValid: (valid && dirty && data.error && !vl.$pending),
+          placeholder: isPlaceholderHere,
           icon: data.icon,
         }'
         :disabled='data.disabled'
@@ -34,7 +35,7 @@
 
     <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
       <span v-if='vl.$pending' class='pending'>Verification...</span>
-      <ul v-else-if='!vl.error && dirty && data.error' class='error'>
+      <ul v-else-if='dirty && data.error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
             <span>{{errorMessages[key]}}</span>
         </li>
@@ -46,8 +47,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop, Watch } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
 import shortid from 'shortid';
 import {timeout} from '@methods';
@@ -61,7 +61,7 @@ import { SvgIcon } from "@components";
   }
 })
 export default class FormText extends Vue {
-  @Prop({required: true}) value: string | null;
+  @Prop({type: [String, Number, null]}) value;
   @Prop({ required: false }) vl: IValidator;
 
   @Prop({required: true}) data: any;
@@ -76,7 +76,8 @@ export default class FormText extends Vue {
     sameAs: "Les mots de passe doivent être identiques",
     isMailUnique: 'Cet email est déjà utilisé',
     isNameUnique: 'Ce nom est déjà utilisé',
-    phone: 'Le numéro de téléphone doit être valide'
+    phone: 'Le numéro de téléphone doit être valide',
+    numeric: 'Ce champs doit être un nombre'
   };
 
   public isFocused = false;
@@ -141,10 +142,11 @@ export default class FormText extends Vue {
 
 
 <style lang='scss' scoped>
+  
 .input-box {
   display: block;
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 250px;
   width: 100%;
   padding: 5px 0 5px 0;
@@ -196,6 +198,10 @@ export default class FormText extends Vue {
         left: 60px;
       }
     }
+
+    &:not(.placeholder)::-webkit-datetime-edit{ color: transparent; }
+
+    &:focus::-webkit-datetime-edit{ color: $mainColor; } 
 
     &:focus {
       background-color: #d8d9dd;

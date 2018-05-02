@@ -4,20 +4,20 @@
       <span class='title'>{{data.placeholder}}</span>
       <ul class='input-radio-list'>
         <li v-for='option in data.options' :key='option.value' class='input-radio'>
-          <input :id='"radioButton" + option.value' :name='formId' 
+          <input :id='"radioButton" + formId + option.value' :name='formId' 
             :value='option.value'
-            :checked='value == option.value'
+            :checked='value === option.value'
             @change="updateValue(option.value)" 
             type="radio"/>
-          <label :for='"radioButton" + option.value' class='button'>
+          <label :for='"radioButton" + formId + option.value' class='button'>
             <div class='circle'></div>
           </label>
-          <span>{{option.text}}</span>
+          <label :for='"radioButton" + formId + option.value' class='radio-text'>{{option.text}}</label>
         </li>
       </ul>
     </div>
-    <div class='errorMessage' v-if='(vl.$error && data.error)'>
-      <ul v-if='!vl.error && vl.dirty && data.error' class='error'>
+    <div class='errorMessage' v-if='vl.$error && data.error'>
+      <ul v-if='vl.$dirty && data.error' class='error'>
         <li v-for='key in filterErrors' :key='key'>
             <span>{{errorMessages[key]}}</span>
         </li>
@@ -42,6 +42,9 @@ export default class Radio extends Vue {
   public errorMessages = {
     required: "Ce choix est requis",
   };
+
+  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
+
 
   updateValue(value){
     this.$emit('input', value);
@@ -152,7 +155,7 @@ export default class Radio extends Vue {
                 background-color: $mainStyle;
               }
             }
-            & ~ span{
+            & ~ label.radio-text{
               color: $mainStyle;
               font-weight: bold;
             }

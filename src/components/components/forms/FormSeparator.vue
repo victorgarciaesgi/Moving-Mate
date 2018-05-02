@@ -41,7 +41,7 @@ export default class FormSeparator extends Vue {}
     padding: 5px;
     font-size: 14px;
     text-transform: uppercase;
-    color: $w190;
+    color: $w160;
     flex: 0 0 auto;
   }
 
