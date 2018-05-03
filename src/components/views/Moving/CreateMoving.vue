@@ -160,7 +160,7 @@ import { Forms } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 2;
+  public countStep = 0;
   public $v;
 
   get currentFormType() {return this.CreateMovingForm[1].type;}

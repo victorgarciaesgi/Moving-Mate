@@ -4,7 +4,7 @@
       <transition-group name='alert'>
         <component :is='isLink(alert)'
           :to='alert.link'
-          v-for='alert in notificationList' 
+          v-for='alert in notificationList'
           :key='alert.id' 
           :type='alert.type'
           class='alert'>

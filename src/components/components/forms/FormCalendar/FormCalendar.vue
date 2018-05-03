@@ -14,7 +14,7 @@
         :required='data.required'
         @focus='handleFocus()'
         @blur='handleBlur()'
-        @input="updateValue($event.target.value)" />
+        readonly/>
               
       <div class='input-icon-contain' v-if='data.icon'>
         <img class='input-icon' v-if='data.icon && data.inlineIcon' :src="data.icon">
@@ -34,27 +34,28 @@
 
     <div ref='calendar' class='calendar-wrapper' v-show='isFocused' :style='calendarStyle'>
       <div class='header'>
-        <div class='left-arrow arrow'></div>
-        <div class="title">
-          <span class="year"></span>
-          <span class="month"></span>
+        <div class='left-arrow arrow'>
+          <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
         </div>
-        <div class='left-arrow arrow'></div>
+        <div class="title">
+          <span class="month">{{stringMonth}}</span>
+          <span class="year">{{selectedYear}}</span>
+        </div>
+        <div class='right-arrow arrow'>
+          <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
+      </div>
       </div>
       <div class="calendar-dates">
         <ul class="week-days">
-          <li></li>
+          <li v-for='day in weekDays' :key='day'>
+            {{day}}
+          </li>
         </ul>
         <ul class='month-days'>
-          <li class='day prev-month' v-for='day of prevMonth' :key='day.id'>
-
-          </li>
-          <li class='day available' v-for='day in available' :key='day.id'>
-
-          </li>
-          <li class='day next-month' v-for='day of nextMonth' :key='day.id'>
-
-          </li>
+          <CalendarDay v-for='dateElement of allDisplayDates' 
+            :dateElement='dateElement' 
+            :key='dateElement.id'
+            @select='handleDateSelect' />
         </ul>
       </div>
     </div>
@@ -79,12 +80,28 @@ import shortid from 'shortid';
 import {timeout, calculatePopupPosition} from '@methods';
 import {EventBus} from '@store';
 import { SvgIcon } from "@components";
-import moment,{ months } from 'moment';
+import CalendarDay from './CalendarDay.vue';
+import moment from 'moment';
 import 'moment/locale/fr';
+
+
+class MomentDate {
+  date;month;year;id;type;
+
+  constructor(date: moment.Moment, type: string) {
+    this.date = date.date();
+    this.month = date.month();
+    this.id = shortid.generate(),
+    this.year = date.year();
+    this.type = type;
+  }
+}
+
+
 
 @Component({
   components: {
-    SvgIcon
+    SvgIcon, CalendarDay
   }
 })
 export default class FormCalendar extends Vue {
@@ -99,48 +116,58 @@ export default class FormCalendar extends Vue {
     required: "Ce champs est requis",
   };
 
-  public isFocused = false;
+  public isFocused = true;
   public debounceValue = null;
+
+  public weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   public selectedMonth;
   public selectedYear;
+  public allDisplayDates = [];
 
-  public currentDay;
-  public selectedDay;
+  handleDateSelect(date: moment.Moment) {
+    this.$emit('input', date.format())
+  }
 
-  get prevMonth() {
+  getPrevMonth() {
     const prevmonth = moment().month(this.selectedMonth - 1);
     const curmonth = moment().month(this.selectedMonth);
     const numberOfDays = prevmonth.daysInMonth();
-    const lastDay = prevmonth.endOf('month').date();
+    const curStart = curmonth.startOf('month').weekday();
     const result = [];
-    for (let i = numberOfDays - curmonth.startOf('month').weekday() - 1; i < numberOfDays; i++) {
-      result.push(i + 1);
+    for (let i = numberOfDays - curStart; i < numberOfDays; i++) {
+      result.push(new MomentDate(prevmonth.date(i + 1), 'prev'));
     }
-    return result;
+    this.allDisplayDates = [...result];
   };
-  get available() {
+  getAvailable() {
     const curmonth = moment().month(this.selectedMonth);
     const numberOfDays = curmonth.daysInMonth();
     const result = [];
     for (let i = curmonth.startOf('month').date() - 1; i < numberOfDays; i++) {
-      result.push(i + 1);
+      result.push(new MomentDate(curmonth.date(i + 1), 'available'));
     }
-    return result;
+    this.allDisplayDates = [...this.allDisplayDates,...result];
   };
-  get nextMonth() {
+  getNextMonth() {
     const nextmonth = moment().month(this.selectedMonth + 1);
     const curmonth = moment().month(this.selectedMonth);
-    
     const result = [];
-    for (let i = nextmonth.startOf('month').date() - 1; i < 7 - curmonth.endOf('month').weekday() + 1 ; i++) {
-      result.push(i + 1);
+    for (let i = nextmonth.startOf('month').date() - 1; i < 7 - curmonth.endOf('month').weekday() - 1; i++) {
+       result.push(new MomentDate(nextmonth.date(i + 1), 'next'));
     }
-    console.log(result);
-    return result;
+    this.allDisplayDates = [...this.allDisplayDates,...result];
   };
 
+  getDays() {
+    this.getPrevMonth();
+    this.getAvailable();
+    this.getNextMonth();
+  }
 
+  get stringMonth() {
+    return moment().month(this.selectedMonth).format('MMMM');
+  }
 
   public calendarStyle = {
     left: null,
@@ -154,7 +181,11 @@ export default class FormCalendar extends Vue {
   get dirty() {return this.vl.$dirty;}
 
   get formatedValue() {
-    return this.value;
+    if (this.value != '') {
+      return moment(this.value).format('dddd Do MMMM YYYY, hh:mm');
+    } else {
+      return this.value;
+    }
   }
 
   updateValue(value) {
@@ -184,9 +215,9 @@ export default class FormCalendar extends Vue {
   }
 
   created() {
-    console.log(moment().month());
     this.selectedMonth = moment().month();
-    this.currentDay = moment().date();
+    this.selectedYear = moment().year();
+    this.getDays();
   }
 }
 </script>
@@ -201,14 +232,65 @@ export default class FormCalendar extends Vue {
   z-index: 1000;
   display: flex;
   overflow: auto;
-  width: 300px;
-  height: 300px;
+  width: 304px;
   font-size: 15px;
-  font-weight: bold;
-  flex-flow: row wrap;
+  flex-flow: column nowrap;
   background-color: white;
   box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
   border-radius: 0 0 3px 3px;
+
+  .header {
+    display: flex;
+    height: 35px;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row nowrap;
+
+    .arrow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .title {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+      text-transform: capitalize;
+      span {
+        padding: 5px;
+      }
+    }
+  }
+
+  .calendar-dates {
+    display: flex;
+    flex: 1 1 auto;
+    flex-flow: column wrap;
+    padding: 5px;
+
+    ul.week-days {
+      display: flex;
+      flex-flow: row nowrap;
+      padding: 3px 5px 3px 5px;
+      border-bottom: 1px solid $w220;
+
+      li {
+        display: flex;
+        flex: 0 0 calc(100% / 7);
+        justify-content: center;
+        font-size: 13px;
+      }
+    }
+
+    ul.month-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 3px 5px 3px 5px;
+    }
+  }
 }
 
 

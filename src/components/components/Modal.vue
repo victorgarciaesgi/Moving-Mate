@@ -110,9 +110,9 @@ export default class UIModal extends Vue {
     border-radius: 3px;
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
     height: auto;
+    flex: 0 0 auto;
     min-height: 200px;
     min-width: 300px;
-    max-width: 80vw;
     flex-flow: column nowrap;
     overflow: hidden;
     transition: height 0.2s;

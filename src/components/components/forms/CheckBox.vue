@@ -31,6 +31,7 @@ export default class CheckBox extends Vue {
   public errorMessages = {
     required: "Ce choix est requis",
   };
+  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
 
   updateValue(value){
     this.$emit('input', value);
