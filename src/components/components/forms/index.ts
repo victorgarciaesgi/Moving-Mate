@@ -2,7 +2,7 @@ export {default as FormComponent} from './FormComponent.vue';
 export {default as FormText} from './FormText.vue';
 export {default as FormField} from './FormField.vue';
 export {default as FormCalendar} from './FormCalendar/FormCalendar.vue';
-export {default as FormSearch} from './FormSearch.vue';
+export {default as FormPlaceSearch} from './FormPlaceSearch.vue';
 export {default as FormSelect} from './FormSelect.vue';
 export {default as CheckBox} from './CheckBox.vue';
 export {default as FormButton} from './FormButton.vue';

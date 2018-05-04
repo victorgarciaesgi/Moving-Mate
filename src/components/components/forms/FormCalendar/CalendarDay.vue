@@ -4,8 +4,10 @@
     :class='{
       "prev-month": dateElement.type == "prev",
       "available": dateElement.type == "available",
+      "passed": isPassed,
       "next-month": dateElement.type == "next",
-      "today": isToday
+      "today": isToday,
+      "selected": isSelected
     }'> 
     <span>{{dateNumber}}</span>
   </li>
@@ -20,8 +22,9 @@ import moment from 'moment';
 @Component({})
 export default class CalendarDay extends Vue {
   @Prop() dateElement;
+  @Prop() selected;
 
-  public fullDate = null;
+  public fullDate: moment.Moment= null;
 
 
 
@@ -32,8 +35,22 @@ export default class CalendarDay extends Vue {
     return this.fullDate.isSame(today, 'day');
   }
 
+  get isPassed() {
+    const today = moment();
+    return this.fullDate.isBefore(today, 'day');
+  }
+
+  get isSelected() {
+    if (this.selected) {
+      return this.selected.isSame(this.fullDate, 'day');
+    }
+    return false;
+  }
+
   handleSelect() {
-    this.$emit('select', this.fullDate);
+    if (!this.isPassed) {
+      this.$emit('select', this.fullDate);
+    }
   }
 
   created() {
@@ -64,19 +81,31 @@ li.CalendarDay {
     border-radius: 100%;
   }
 
-  &:not(.today):hover span{
+  &:not(.today):not(.selected):not(.passed):hover span{
     background-color: $w230;
   }
 
   &.prev-month, &.next-month {
     color: $w180;
   }
+
   &.available {
     font-weight: bold;
   }
 
+  &.passed {
+    text-decoration: line-through $red1;
+    cursor: not-allowed;
+    color: $w180;
+  }
+
   &.today span{
-    background-color: $mainStyle;
+    background-color: transparentize($mainStyle, 0.2);
+    color: white;
+  }
+
+  &.selected span {
+    background-color: $g60;
     color: white;
   }
 }

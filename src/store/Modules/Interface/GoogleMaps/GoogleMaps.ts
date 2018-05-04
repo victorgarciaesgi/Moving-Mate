@@ -4,11 +4,13 @@ import { storeBuilder } from "../../Store/Store";
 import { IGoogleMapsState, IMarker } from '@types';
 import { Style1 } from './Styles';
 import { MovingStore } from '@store';
+import axios from 'axios';
 
 
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
-const PLACES_API = `https://maps.googleapis.com/maps/api/place/autocomplete/json?language=fr&type=address&key=AIzaSyB2zJbMB-_jCSHklks5CKKpoUqZ11eeGU0`;
+const placesAutocomplete = new google.maps.places.AutocompleteService();
+const PLACES_API = `https://maps.googleapis.com/maps/api/place/autocomplete/json?language=fr&type=address&key=AIzaSyBNEvF2wA8myZMLMTC6uTmVSdvb-Ajac-Q&input=`;
 // param input
 
 export const getMapInstance = async () => {
@@ -133,11 +135,18 @@ namespace Actions {
     return location.bounds;
   }
 
+  async function querySearch(context, query: string) : Promise<any> {
+    placesAutocomplete.getPlacePredictions({input: query, types: ['address'], componentRestrictions: {country: 'fr'}}, (result) => {
+      console.log(result);
+    })
+  }
+
 
   
   export const actions = {
     initMap: b.dispatch(initMap),
-    reCenterMap: b.dispatch(reCenterMap)
+    reCenterMap: b.dispatch(reCenterMap),
+    querySearch: b.dispatch(querySearch)
   }
 }
 

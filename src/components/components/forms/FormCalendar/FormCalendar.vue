@@ -34,14 +34,14 @@
 
     <div ref='calendar' class='calendar-wrapper' v-show='isFocused' :style='calendarStyle'>
       <div class='header'>
-        <div class='left-arrow arrow'>
+        <div class='left-arrow arrow' @click.stop='changeMonth(-1)'>
           <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
         </div>
         <div class="title">
           <span class="month">{{stringMonth}}</span>
           <span class="year">{{selectedYear}}</span>
         </div>
-        <div class='right-arrow arrow'>
+        <div class='right-arrow arrow' @click.stop='changeMonth(1)'>
           <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
       </div>
       </div>
@@ -55,6 +55,7 @@
           <CalendarDay v-for='dateElement of allDisplayDates' 
             :dateElement='dateElement' 
             :key='dateElement.id'
+            :selected='selectedDate'
             @select='handleDateSelect' />
         </ul>
       </div>
@@ -116,17 +117,27 @@ export default class FormCalendar extends Vue {
     required: "Ce champs est requis",
   };
 
-  public isFocused = true;
+  public isFocused = false;
   public debounceValue = null;
 
   public weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-  public selectedMonth;
-  public selectedYear;
+  public selectedMonth = null;
+  public selectedYear = null;
+  public selectedDate = null;
   public allDisplayDates = [];
 
   handleDateSelect(date: moment.Moment) {
-    this.$emit('input', date.format())
+    this.vl.$touch();
+    this.selectedDate = date;
+    this.$emit('input', date.unix())
+  }
+
+  changeMonth(value: number) {
+    const month = moment().year(this.selectedYear).month(this.selectedMonth).add(value, 'month');
+    this.selectedMonth = month.month();
+    this.selectedYear = month.year();
+    this.getDays();
   }
 
   getPrevMonth() {
@@ -176,21 +187,16 @@ export default class FormCalendar extends Vue {
   }
 
   get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-  get isPlaceholderHere() {return (this.value.length > 0 || this.isFocused);}
+  get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
   get valid() {return !this.vl.$invalid}
   get dirty() {return this.vl.$dirty;}
 
   get formatedValue() {
-    if (this.value != '') {
-      return moment(this.value).format('dddd Do MMMM YYYY, hh:mm');
+    if (this.value != '' && !!this.value) {
+      return moment.unix(this.value).format('dddd Do MMMM YYYY, hh:mm');
     } else {
       return this.value;
     }
-  }
-
-  updateValue(value) {
-    this.vl.$touch();
-    this.$emit("input", value);
   }
 
   async handleBlur() {
@@ -212,6 +218,7 @@ export default class FormCalendar extends Vue {
     if (this.value && this.value.trim().length) {
       this.vl.$touch();
     }
+    this.vl.$touch();
   }
 
   created() {
@@ -245,6 +252,8 @@ export default class FormCalendar extends Vue {
     align-items: center;
     justify-content: center;
     flex-flow: row nowrap;
+    font-weight: bold;
+    font-size: 17px;
 
     .arrow {
       display: flex;
@@ -260,7 +269,7 @@ export default class FormCalendar extends Vue {
       justify-content: center;
       text-transform: capitalize;
       span {
-        padding: 5px;
+        padding: 3px;
       }
     }
   }

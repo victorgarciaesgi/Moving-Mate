@@ -20,7 +20,7 @@
 
               <template v-if='typeDepart || typeBoth'>
                 <FormSeparator>Informations du départ</FormSeparator>
-                <FormText v-model="CreateMovingForm[1].addressIn.address"  key='depart'
+                <FormPlaceSearch v-model="CreateMovingForm[1].addressIn.address"  key='depart'
                   :vl='$v.CreateMovingForm[1].addressIn.address' :data='CreateMovingForm[1].fieldsData.addressIn.address'/>
                 <FormText v-model="CreateMovingForm[1].addressIn.volume"
                   :vl='$v.CreateMovingForm[1].addressIn.volume' :data='CreateMovingForm[1].fieldsData.addressIn.volume'/>
@@ -81,7 +81,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import { UIModal, FormButton, FormText, UISteps, 
+import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
   FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar } from "@components";
 import { timeout } from '@methods';
 import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
@@ -93,7 +93,7 @@ import { Forms } from '@classes';
 
 @Component({
   components: {
-    UIModal, FormButton, FormText, UISteps, FormField,
+    UIModal, FormButton, FormText, UISteps, FormField, FormPlaceSearch,
     FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar
   },
   validations() {
@@ -160,7 +160,7 @@ import { Forms } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 0;
+  public countStep = 1;
   public $v;
 
   get currentFormType() {return this.CreateMovingForm[1].type;}

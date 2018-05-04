@@ -8,7 +8,8 @@ const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
-  }
+    'Accept': 'application/json',
+  },
 });
 
 axiosInstance.interceptors.response.use(
@@ -17,6 +18,7 @@ axiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
+    console.log(error.response.status)
     console.log('Request Error: ', error.response);
     return Promise.reject(error)
   }
