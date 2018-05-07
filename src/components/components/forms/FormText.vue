@@ -103,7 +103,7 @@ export default class FormText extends Vue {
 
   mounted() {
     this.formId = shortid.generate();
-    if (this.value && this.value.trim().length) {
+    if (this.value && this.value.toString().trim().length) {
       this.vl.$touch();
     }
   }

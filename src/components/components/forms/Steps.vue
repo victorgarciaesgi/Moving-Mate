@@ -7,7 +7,7 @@
         :class='{active: isActive(index), passed: isPassed(index)}'>
         <div class='line'></div>
         <div class='icon'>
-          <SvgIcon :src='stepItem' :size='30' :color='getColor(index)' />
+          <SvgIcon :src='stepItem' :size='25' :color='getColor(index)' />
         </div>
         <div class='line'></div>
       </li>
@@ -65,7 +65,6 @@ export default class UISteps extends Vue {
   flex: 0 0 auto;
   flex-flow: column nowrap;
   justify-content: center;
-  padding: 10px;
 
   ul.step-list {
     display: flex;
@@ -73,7 +72,7 @@ export default class UISteps extends Vue {
     align-items: center;
     align-content: center;
     justify-content: center;
-    padding: 10px 30px 10px 30px;
+    padding: 10px 60px 10px 60px;
 
     li.step-item {
       display: flex;
@@ -91,7 +90,7 @@ export default class UISteps extends Vue {
       }
 
       &.active, &.passed {
-        .line:first-child, .icon {
+        .line, .icon {
           background-color: $mainStyle;
         }
       }
@@ -110,14 +109,12 @@ export default class UISteps extends Vue {
         border-radius: 100%;
         background-color: $w230;
         padding: 10px;
-        transition: background-color 0.2s;
       }
 
       .line {
         flex: 1 1 auto;
         height: 4px;
         background-color: $w230;
-        transition: background-color 0.2s;
       }
     }
   }

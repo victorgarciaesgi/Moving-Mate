@@ -12,47 +12,47 @@
                 <template slot='title'>Pourquoi vérifier mes informations ?</template>
                 Indiquer une adresse email et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la réservation effectuée.
               </FormMessage>
-              <FormText v-model="CreateMovingForm[0].email" :vl='$v.CreateMovingForm[0].email' :data='CreateMovingForm[0].fieldsData.email'/>
-              <FormText v-model="CreateMovingForm[0].phone" :vl='$v.CreateMovingForm[0].phone' :data='CreateMovingForm[0].fieldsData.phone'/>
+              <FormText v-model='CreateMovingForm.part0.email' :vl='$v.CreateMovingForm.part0.email' :data='CreateMovingForm.part0.fieldsData.email'/>
+              <FormText v-model='CreateMovingForm.part0.phone' :vl='$v.CreateMovingForm.part0.phone' :data='CreateMovingForm.part0.fieldsData.phone'/>
             </li>
             <li v-if='countStep == 1' class='create-view' key='movingInfos'>
-              <Radio v-model='CreateMovingForm[1].type' :vl='$v.CreateMovingForm[1].type' :data='CreateMovingForm[1].fieldsData.type' />
+              <Radio v-model='CreateMovingForm.part1.type' :vl='$v.CreateMovingForm.part1.type' :data='CreateMovingForm.part1.fieldsData.type' />
 
               <template v-if='typeDepart || typeBoth'>
                 <FormSeparator>Informations du départ</FormSeparator>
-                <FormPlaceSearch v-model="CreateMovingForm[1].addressIn.address"  key='depart'
-                  :vl='$v.CreateMovingForm[1].addressIn.address' :data='CreateMovingForm[1].fieldsData.addressIn.address'/>
-                <FormText v-model="CreateMovingForm[1].addressIn.volume"
-                  :vl='$v.CreateMovingForm[1].addressIn.volume' :data='CreateMovingForm[1].fieldsData.addressIn.volume'/>
-                <Radio row v-model='CreateMovingForm[1].addressIn.type' :vl='$v.CreateMovingForm[1].addressIn.type' :data='CreateMovingForm[1].fieldsData.addressIn.type' />
+                <FormPlaceSearch v-model='CreateMovingForm.part1.addressIn.address'  key='departAddress'
+                  :vl='$v.CreateMovingForm.part1.addressIn.address' :data='CreateMovingForm.part1.fieldsData.addressIn.address'/>
+                <FormText v-model='CreateMovingForm.part1.addressIn.volume' key='departVolume'
+                  :vl='$v.CreateMovingForm.part1.addressIn.volume' :data='CreateMovingForm.part1.fieldsData.addressIn.volume'/>
+                <Radio row v-model='CreateMovingForm.part1.addressIn.type' :vl='$v.CreateMovingForm.part1.addressIn.type' :data='CreateMovingForm.part1.fieldsData.addressIn.type' />
                 <div class='form-split two' v-if='!addressInMaison'>
-                  <FormSelect v-model="CreateMovingForm[1].addressIn.floor" :vl='$v.CreateMovingForm[1].addressIn.floor' :data='CreateMovingForm[1].fieldsData.addressIn.floor'/>
-                  <Radio row v-model="CreateMovingForm[1].addressIn.elevator" :vl='$v.CreateMovingForm[1].addressIn.elevator' :data='CreateMovingForm[1].fieldsData.addressIn.elevator'/>
+                  <FormSelect v-model='CreateMovingForm.part1.addressIn.floor' :vl='$v.CreateMovingForm.part1.addressIn.floor' :data='CreateMovingForm.part1.fieldsData.addressIn.floor'/>
+                  <Radio row v-model='CreateMovingForm.part1.addressIn.elevator' :vl='$v.CreateMovingForm.part1.addressIn.elevator' :data='CreateMovingForm.part1.fieldsData.addressIn.elevator'/>
                 </div>
               </template>
 
               <template v-if='typeArrivee || typeBoth'>
                 <FormSeparator>Informations de l'arrivée</FormSeparator>
-                <FormText v-model="CreateMovingForm[1].addressOut.address"  key='arrivee'
-                  :vl='$v.CreateMovingForm[1].addressOut.address' :data='CreateMovingForm[1].fieldsData.addressOut.address'/>
-                <FormText v-model="CreateMovingForm[1].addressOut.volume"
-                  :vl='$v.CreateMovingForm[1].addressOut.volume' :data='CreateMovingForm[1].fieldsData.addressOut.volume'/>
-                <Radio row v-model='CreateMovingForm[1].addressOut.type' :vl='$v.CreateMovingForm[1].addressOut.type' :data='CreateMovingForm[1].fieldsData.addressOut.type' />
+                <FormPlaceSearch v-model='CreateMovingForm.part1.addressOut.address'  key='arriveeAddress'
+                  :vl='$v.CreateMovingForm.part1.addressOut.address' :data='CreateMovingForm.part1.fieldsData.addressOut.address'/>
+                <FormText v-model='CreateMovingForm.part1.addressOut.volume' key='arriveeVolume'
+                  :vl='$v.CreateMovingForm.part1.addressOut.volume' :data='CreateMovingForm.part1.fieldsData.addressOut.volume'/>
+                <Radio row v-model='CreateMovingForm.part1.addressOut.type' :vl='$v.CreateMovingForm.part1.addressOut.type' :data='CreateMovingForm.part1.fieldsData.addressOut.type' />
                 <div class='form-split two' v-if='!addressOutMaison'>
-                  <FormSelect v-model="CreateMovingForm[1].addressOut.floor" :vl='$v.CreateMovingForm[1].addressOut.floor' :data='CreateMovingForm[1].fieldsData.addressOut.floor'/>
-                  <Radio row v-model="CreateMovingForm[1].addressOut.elevator" :vl='$v.CreateMovingForm[1].addressOut.elevator' :data='CreateMovingForm[1].fieldsData.addressOut.elevator'/>
+                  <FormSelect v-model='CreateMovingForm.part1.addressOut.floor' :vl='$v.CreateMovingForm.part1.addressOut.floor' :data='CreateMovingForm.part1.fieldsData.addressOut.floor'/>
+                  <Radio row v-model='CreateMovingForm.part1.addressOut.elevator' :vl='$v.CreateMovingForm.part1.addressOut.elevator' :data='CreateMovingForm.part1.fieldsData.addressOut.elevator'/>
                 </div>
               </template>
             </li>
             <li v-if='countStep == 2' class='create-view' key='confirm'>
               <FormSeparator>Autres informations</FormSeparator>
-              <FormCalendar v-model="CreateMovingForm[2].dealDate" :vl='$v.CreateMovingForm[2].dealDate' :data='CreateMovingForm[2].fieldsData.dealDate'/>
+              <FormCalendar v-model='CreateMovingForm.part2.dealDate' :vl='$v.CreateMovingForm.part2.dealDate' :data='CreateMovingForm.part2.fieldsData.dealDate'/>
 
               <div class='form-split two'>
-                <FormSelect v-model="CreateMovingForm[2].estimatedTime" :vl='$v.CreateMovingForm[2].estimatedTime' :data='CreateMovingForm[2].fieldsData.estimatedTime'/>
-                <FormSelect v-model="CreateMovingForm[2].menRequired" :vl='$v.CreateMovingForm[2].menRequired' :data='CreateMovingForm[2].fieldsData.menRequired'/>
+                <FormSelect v-model='CreateMovingForm.part2.estimatedTime' :vl='$v.CreateMovingForm.part2.estimatedTime' :data='CreateMovingForm.part2.fieldsData.estimatedTime'/>
+                <FormSelect v-model='CreateMovingForm.part2.menRequired' :vl='$v.CreateMovingForm.part2.menRequired' :data='CreateMovingForm.part2.fieldsData.menRequired'/>
               </div>
-              <FormField v-model="CreateMovingForm[2].description" :vl='$v.CreateMovingForm[2].description' :data='CreateMovingForm[2].fieldsData.description'/>
+              <FormField v-model='CreateMovingForm.part2.description' :vl='$v.CreateMovingForm.part2.description' :data='CreateMovingForm.part2.fieldsData.description'/>
             </li>
           </ul>
         </div>
@@ -68,8 +68,8 @@
         <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
         <FormButton theme='blue'
           :submitting='false'
-          :disabled='$v.CreateMovingForm[countStep].$invalid' 
-          @click='crementCount(1)'
+          :disabled='$v.CreateMovingForm["part"+countStep].$invalid' 
+          @click='formClick()'
           @disabledClick='touchForm()'>
             {{getButtonTitle}}
         </FormButton>
@@ -100,7 +100,7 @@ import { Forms } from '@classes';
     const _this = this;
     return {
       CreateMovingForm: {
-        "0": {
+        part0: {
           email: {email, required},
           phone: {required, phone(value) {
             if (required(value)) {
@@ -110,7 +110,7 @@ import { Forms } from '@classes';
             return true;
           }}
         },
-        get "1"() {
+        get part1() {
           let baseValidations: any = {
             type: {required},
             addressIn: {
@@ -128,26 +128,28 @@ import { Forms } from '@classes';
               volume: {required, numeric}
             },
           }
-          if (_this.currentFormType == 0) {
-            const {addressOut, addressIn, ...rest} = baseValidations;
-            if (_this.addressInMaison) {
-              const {floor,elevator, ...rest2} = addressIn;
-              baseValidations = {...rest, addressIn: rest2};
-            } else {
-              baseValidations = {...rest, addressIn}
-            }
-          } else if (_this.currentFormType == 1) {
-            const {addressOut, addressIn, ...rest} = baseValidations;
-            if (_this.addressOutMaison) {
-              const {floor,elevator, ...rest2} = addressOut;
-              baseValidations = {...rest, addressOut: rest2};
-            } else {
-              baseValidations = {...rest, addressOut}
-            }
+
+          if (_this.addressInMaison) {
+            const {addressIn, ...rest} = baseValidations;
+            const {floor,elevator, ...rest2} = addressIn;
+            baseValidations = {...rest, addressIn: rest2};
+          } 
+
+          if (_this.addressOutMaison) {
+            const {addressOut, ...rest} = baseValidations;
+            const {floor,elevator, ...rest2} = addressOut;
+            baseValidations = {...rest, addressOut: rest2};
+          } 
+          
+          if (_this.typeDepart) {
+            delete baseValidations.addressOut;
+          } 
+          else if (_this.typeArrivee) {
+            delete baseValidations.addressIn;
           }
           return baseValidations;
         },
-        "2": {
+        part2: {
           dealDate: {required},
           estimatedTime: {required},
           menRequired: {required, numeric},
@@ -161,15 +163,16 @@ export default class CreateMoving extends Vue {
 
   public show = true;
   public countStep = 1;
+  public submitting;
   public $v;
 
-  get currentFormType() {return this.CreateMovingForm[1].type;}
-  get typeDepart() {return this.CreateMovingForm[1].type == 0;}
-  get typeArrivee() {return this.CreateMovingForm[1].type == 1;}
-  get typeBoth() {return this.CreateMovingForm[1].type == 2;}
+  get currentFormType() {return this.CreateMovingForm.part1.type;}
+  get typeDepart() {return this.CreateMovingForm.part1.type == 0;}
+  get typeArrivee() {return this.CreateMovingForm.part1.type == 1;}
+  get typeBoth() {return this.CreateMovingForm.part1.type == 2;}
 
-  get addressInMaison() {return this.CreateMovingForm[1].addressIn.type == 'Maison'}
-  get addressOutMaison() {return this.CreateMovingForm[1].addressOut.type == 'Maison'}
+  get addressInMaison() {return this.CreateMovingForm.part1.addressIn.type == 'Maison'}
+  get addressOutMaison() {return this.CreateMovingForm.part1.addressOut.type == 'Maison'}
 
   get getButtonTitle() {
     if (this.countStep < 2) {
@@ -179,9 +182,17 @@ export default class CreateMoving extends Vue {
     }
   }
 
+  formClick() {
+    if (this.countStep < 2) {
+      this.crementCount(1);
+    } else {
+      this.submitForm();
+    }
+    this.submitForm();
+  }
 
   public CreateMovingForm: any = {
-    "0": new Forms.Form({
+    part0: new Forms.Form({
       email: new Forms.TextForm({
         value: 'victor@gmail.com',
         type: 'email',
@@ -193,7 +204,7 @@ export default class CreateMoving extends Vue {
         placeholder: 'Votre numéro de téléphone'
       })
     }),
-    "1": new Forms.Form({
+    part1: new Forms.Form({
       type: new Forms.Radio({
         placeholder: `J'ai besoin d'aide:`,
         value: 0,
@@ -267,7 +278,7 @@ export default class CreateMoving extends Vue {
         })
       },
     }),
-    "2": new Forms.Form({
+    part2: new Forms.Form({
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
         placeholder: 'Date et heure de votre déménagement',
@@ -291,8 +302,38 @@ export default class CreateMoving extends Vue {
     })
   }
 
+  async submitForm() {
+    let {part0, part1, part2} = this.CreateMovingForm;
+    part0 = part0.getData();
+    part1 = part1.getData();
+    part2 = part2.getData();
+
+    if (this.addressInMaison) {
+      const {addressIn, ...rest} = part1;
+      const {floor,elevator, ...rest2} = addressIn;
+      part1 = {...rest, addressIn: rest2};
+    } 
+
+    if (this.addressOutMaison) {
+      const {addressOut, ...rest} = part1;
+      const {floor,elevator, ...rest2} = addressOut;
+      part1 = {...rest, addressOut: rest2};
+    } 
+    
+    if (this.typeDepart) {
+      delete part1.addressOut;
+    } 
+    else if (this.typeArrivee) {
+      delete part1.addressIn;
+    }
+    const finalValues = {...part0, ...part1, ...part2};
+    console.log(JSON.parse(JSON.stringify(finalValues)));
+
+    this.submitting = true;
+  }
+
   touchForm() {
-    this.$v.CreateMovingForm[this.countStep].$touch();
+    this.$v.CreateMovingForm["part"+this.countStep].$touch();
   }
 
   updateStep(index: number) {

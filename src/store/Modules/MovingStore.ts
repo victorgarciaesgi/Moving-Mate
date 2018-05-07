@@ -140,11 +140,22 @@ namespace Actions {
     })
   }
 
+  async function createAnnouncement(context, form) {
+    try {
+      const {success} = await Api.post('announcement', form);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
   export const actions = {
     fetchMoving: b.dispatch(fetchMoving),
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
     createMarkers: b.dispatch(createMarkers),
+    createAnnouncement: b.dispatch(createAnnouncement)
   }
 }
 

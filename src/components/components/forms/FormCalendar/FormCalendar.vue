@@ -32,34 +32,38 @@
     </div>
 
 
-    <div ref='calendar' class='calendar-wrapper' v-show='isFocused' :style='calendarStyle'>
-      <div class='header'>
-        <div class='left-arrow arrow' @click.stop='changeMonth(-1)'>
-          <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
+    <transition name='slide-top'>
+      <div class='calendar-sticky'>
+        <div ref='calendar' class='calendar-wrapper' v-show='isFocused'>
+          <div class='header'>
+            <div class='left-arrow arrow' @mousedown.prevent='changeMonth(-1)'>
+              <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
+            </div>
+            <div class="title">
+              <span class="month">{{stringMonth}}</span>
+              <span class="year">{{selectedYear}}</span>
+            </div>
+            <div class='right-arrow arrow' @mousedown.prevent='changeMonth(1)'>
+              <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
+          </div>
+          </div>
+          <div class="calendar-dates">
+            <ul class="week-days">
+              <li v-for='day in weekDays' :key='day'>
+                {{day}}
+              </li>
+            </ul>
+            <ul class='month-days'>
+              <CalendarDay v-for='dateElement of allDisplayDates' 
+                :dateElement='dateElement' 
+                :key='dateElement.id'
+                :selected='selectedDate'
+                @select='handleDateSelect' />
+            </ul>
+          </div>
         </div>
-        <div class="title">
-          <span class="month">{{stringMonth}}</span>
-          <span class="year">{{selectedYear}}</span>
-        </div>
-        <div class='right-arrow arrow' @click.stop='changeMonth(1)'>
-          <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
       </div>
-      </div>
-      <div class="calendar-dates">
-        <ul class="week-days">
-          <li v-for='day in weekDays' :key='day'>
-            {{day}}
-          </li>
-        </ul>
-        <ul class='month-days'>
-          <CalendarDay v-for='dateElement of allDisplayDates' 
-            :dateElement='dateElement' 
-            :key='dateElement.id'
-            :selected='selectedDate'
-            @select='handleDateSelect' />
-        </ul>
-      </div>
-    </div>
+    </transition>
 
     <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
       <span v-if='vl.$pending' class='pending'>Verification...</span>
@@ -127,9 +131,14 @@ export default class FormCalendar extends Vue {
   public selectedDate = null;
   public allDisplayDates = [];
 
-  handleDateSelect(date: moment.Moment) {
+  handleDateSelect(date: moment.Moment, type: string) {
     this.vl.$touch();
     this.selectedDate = date;
+    if (type == 'prev') {
+      this.changeMonth(-1)
+    } else if( type == 'next') {
+      this.changeMonth(1);
+    }
     this.$emit('input', date.unix())
   }
 
@@ -218,7 +227,6 @@ export default class FormCalendar extends Vue {
     if (this.value && this.value.trim().length) {
       this.vl.$touch();
     }
-    this.vl.$touch();
   }
 
   created() {
@@ -233,71 +241,77 @@ export default class FormCalendar extends Vue {
 
 <style lang='scss' scoped>
 
-
-.calendar-wrapper {
+.calendar-sticky {
   position: fixed;
   z-index: 1000;
-  display: flex;
-  overflow: auto;
-  width: 304px;
-  font-size: 15px;
-  flex-flow: column nowrap;
-  background-color: white;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-  border-radius: 0 0 3px 3px;
 
-  .header {
+  .calendar-wrapper {
+    position: sticky;
+    top: 0px;
+    left: 0px;
     display: flex;
-    height: 35px;
-    align-items: center;
-    justify-content: center;
-    flex-flow: row nowrap;
-    font-weight: bold;
-    font-size: 17px;
+    overflow: auto;
+    margin-top: -5px;
+    width: 304px;
+    font-size: 15px;
+    flex-flow: column nowrap;
+    background-color: white;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    border-radius: 0 0 3px 3px;
 
-    .arrow {
+    .header {
       display: flex;
-      justify-content: center;
+      height: 35px;
       align-items: center;
-      flex: 0 0 auto;
-      cursor: pointer;
+      justify-content: center;
+      flex-flow: row nowrap;
+      font-weight: bold;
+      font-size: 17px;
+
+      .arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 0 0 auto;
+        cursor: pointer;
+      }
+
+      .title {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: center;
+        text-transform: capitalize;
+        span {
+          padding: 3px;
+        }
+      }
     }
 
-    .title {
+    .calendar-dates {
       display: flex;
       flex: 1 1 auto;
-      justify-content: center;
-      text-transform: capitalize;
-      span {
-        padding: 3px;
-      }
-    }
-  }
+      flex-flow: column wrap;
+      padding: 5px;
 
-  .calendar-dates {
-    display: flex;
-    flex: 1 1 auto;
-    flex-flow: column wrap;
-    padding: 5px;
-
-    ul.week-days {
-      display: flex;
-      flex-flow: row nowrap;
-      padding: 3px 5px 3px 5px;
-      border-bottom: 1px solid $w220;
-
-      li {
+      ul.week-days {
         display: flex;
-        flex: 0 0 calc(100% / 7);
-        justify-content: center;
-        font-size: 13px;
-      }
-    }
+        flex-flow: row nowrap;
+        padding: 3px 5px 3px 5px;
+        border-bottom: 1px solid $w220;
 
-    ul.month-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      padding: 3px 5px 3px 5px;
+        li {
+          display: flex;
+          flex: 0 0 calc(100% / 7);
+          justify-content: center;
+          font-size: 13px;
+        }
+      }
+
+      ul.month-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 3px 5px 3px 5px;
+      }
     }
   }
 }
@@ -427,6 +441,16 @@ export default class FormCalendar extends Vue {
   /deep/ svg {
     fill: $mainColor;
   }
+}
+
+
+.slide-top-enter-active,
+.slide-top-leave-active {
+  transition: all 0.3s;
+}
+.slide-top-enter, .slide-top-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
 }
 </style>
 

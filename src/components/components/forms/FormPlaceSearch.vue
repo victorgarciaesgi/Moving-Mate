@@ -14,6 +14,10 @@
         :required='data.required'
         @focus='handleFocus()'
         @blur='handleBlur()'
+        @keydown.down.up.prevent="modifySelected($event)"
+        @keydown.esc.prevent='forceBlur()'
+        @keydown.enter.prevent="selectAddress()"
+        :readonly='value != ""'
         @input='handlePlacesSearch($event.target.value)'/>
               
       <div class='input-icon-contain' v-if='data.icon'>
@@ -25,12 +29,36 @@
         {{data.placeholder}}
       </label>
 
-      <img v-if='vl.$pending' class='form-valid-icon' src='~@images/loading.svg'>
+      <img v-if='vl.$pending || searching' class='form-valid-icon' src='~@images/loading.svg'>
       <div v-else-if='valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-valid"></div>
       <div v-else-if='!valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-invalid"></div>
       <div v-else-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
+
+      <img v-if='value != ""' src='~@icons/quit.svg' class='clearValue' @click='clearValue()'>
     </div>
 
+    <transition name='slide-top'>
+      <div ref='results' class='search-results' v-show='isFocused && tempValue.length > 0 && value == ""' :style='resultsStyle'>
+        <ul class='results' v-if='searchResults.length'>
+          <li v-for='(result, index) in searchResults' :key='result.place_id'
+            @click='selectAddress(result)'
+            :class='{selected: index == resultSelected}'>
+            <div class='icon'>
+              <SvgIcon :src="require('@icons/location.svg')" 
+                :color="{[css.mainStyle]: index == resultSelected}"/>
+            </div>
+            <span class='detail'>{{result.display.addressValue}}</span>
+            <span class='ville'>{{result.display.addressCity}}</span>
+          </li>
+          <div class='logo-google'>
+            <img src='~@images/powered-by-google-on-white.png'>
+          </div>
+        </ul>
+        <div v-if='!searchResults.length && !searching && value == ""' class='no-result'>
+          Aucun résultat ☹️
+        </div>
+      </div>
+    </transition>
 
 
     <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
@@ -62,7 +90,7 @@ import {debounce} from 'lodash';
   }
 })
 export default class FormPlaceSearch extends Vue {
-  @Prop({type: [String, Number, null]}) value;
+  @Prop() value;
   @Prop({ required: false }) vl: IValidator;
   @Prop({required: true}) data: any;
   
@@ -71,30 +99,25 @@ export default class FormPlaceSearch extends Vue {
   public errorMessages = {
     required: "Ce champs est requis",
   };
-
+  public resultSelected = 0;
+  public css = require('@css');
   public isFocused = false;
-  public submitting = false;
+  public tempValue = "";
+  public searching = false;
   public handlePlacesSearch = null;
+  public searchResults = [];
 
   public resultsStyle = {
-    left: null,
-    top: null,
-    bottom: null,
     width: null
   }
 
   get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-  get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
+  get isPlaceholderHere() {return ((this.tempValue.toString().length > 0 || this.value.length > 0) || this.isFocused);}
   get valid() {return !this.vl.$invalid}
   get dirty() {return this.vl.$dirty;}
 
   get formatedValue() {
-    return this.value;
-  }
-
-  async handleBlur() {
-    this.isFocused = false;
-    this.vl.$touch();
+    return this.tempValue;
   }
 
   updateValue(value: any) {
@@ -102,33 +125,81 @@ export default class FormPlaceSearch extends Vue {
     this.$emit("input", value);
   }
 
-  searchPlaces(value: any) {
-    GoogleMaps.actions.querySearch(value);
+  async searchPlaces(value: any) {
+    this.searching = true;
+    try {
+      const places = await GoogleMaps.actions.querySearch(value);
+      places.map(m => {
+        const [detail, ville, pays] = m.terms;
+        m.display = {addressValue: detail.value + ' ' + ville.value , addressCity: pays.value};
+        return m;
+      })
+      this.searchResults = places;
+      this.resultSelected = 0;
+    } finally {
+      this.searching = false;
+  }
+  }
+
+  selectAddress(result?) {
+    if (this.searchResults.length) {
+      const address = result || this.searchResults[this.resultSelected]
+      this.$emit('input', address.display);
+      this.forceBlur();
+      this.tempValue = address.display.addressValue + ', ' + address.display.addressCity;
+      this.searchResults = [];
+    } 
+  }
+
+  modifySelected(event: KeyboardEvent) {
+    let touche = event.which - 39;
+    if ((this.resultSelected + touche >= 0 && (this.resultSelected + touche <= (this.searchResults.length - 1)))) {
+      this.resultSelected += touche;
+    }
+  }
+
+  clearValue() {
+    this.tempValue = "";
+    this.$emit('input', "");
+    this.$refs['input'].focus();
   }
 
   handleFocus() {
     this.isFocused = true;
-    const target = this.$refs['calendar'];
+    const target = this.$refs['results'];
     const origin = this.$refs['input'];
     const {width, ...results} = calculatePopupPosition(origin, target);
-    this.resultsStyle = {...this.resultsStyle, ...results};
+    this.resultsStyle = {...this.resultsStyle, width};
     EventBus.$emit('closePopups', this);
+  }
+
+  handleBlur() {
+    this.isFocused = false;
+    this.vl.$touch();
+  }
+
+  forceBlur() {
+    this.$refs['input'].blur();
   }
 
   mounted() {
     this.formId = shortid.generate();
-    if (this.value && this.value.trim().length) {
+    if (this.value != "") {
+      this.tempValue = this.value.addressValue + ', ' + this.value.addressCity;
       this.vl.$touch();
     }
-    this.vl.$touch();
   }
 
   created() {
     const _this = this;
     this.handlePlacesSearch = debounce(e => {
-      console.log('ok')
+      if (e.length > 0) {
+        _this.tempValue = e;
       _this.searchPlaces(e);
-    }, 200)
+      } else {
+        _this.clearValue()
+      }
+    }, 400)
   }
 }
 </script>
@@ -136,6 +207,84 @@ export default class FormPlaceSearch extends Vue {
 
 
 <style lang='scss' scoped>
+
+.search-results {
+  position: fixed;
+  width: 100%;
+  background-color: white;
+  z-index: 1000;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  margin-top: -5px;
+
+  ul {
+    display: flex;
+    overflow: hidden;
+    flex-flow: column wrap;
+
+    li {
+      display: flex;
+      flex-flow: row nowrap;
+      height: 40px;
+      font-size: 15px;
+      align-items: center;
+      background-color: white;
+      cursor: pointer;
+
+      .detail {
+        font-size: 15px;
+        color: $g60;
+      }
+
+      .ville {
+        margin-left: 5px;
+        color: $w150;
+        font-size: 13px;
+      }
+
+
+      &:not(:last-child) {
+        border-bottom: 1px solid $w240;
+      }
+
+      &:hover {
+        background-color: $w245;
+      }
+
+      &.selected:not(:only-child) {
+        background-color: $w235;
+      }
+
+      .icon {
+        display: flex;
+        flex: 0 0 auto;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+      }
+    }
+    .logo-google {
+      display: none;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 5px;
+    }
+  }
+
+  .no-result {
+    height: 60px;
+    border-radius: 5px;
+    display: flex;
+    background-color: white;
+    flex: 1 1 auto;
+    z-index: 2;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    font-size: 19px;
+  }
+
+}
 
 .input-box {
   display: block;
@@ -177,7 +326,7 @@ export default class FormPlaceSearch extends Vue {
     background-color: #e0e1e4;
     color: $mainColor;
     height: 45px;
-    padding: 15px 30px 0 15px;
+    padding: 15px 60px 0 15px;
     margin: 5px 0 5px 0;
     transition: all 0.2s;
     width: 100%;
@@ -212,6 +361,16 @@ export default class FormPlaceSearch extends Vue {
         fill: $red1;
       }
     }
+  }
+
+  img.clearValue {
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    transform: translateY(-50%);
   }
 
   .input-placeholder {
@@ -259,6 +418,15 @@ export default class FormPlaceSearch extends Vue {
   /deep/ svg {
     fill: $mainColor;
   }
+}
+
+.slide-top-enter-active,
+.slide-top-leave-active {
+  transition: all 0.3s;
+}
+.slide-top-enter, .slide-top-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
 }
 </style>
 

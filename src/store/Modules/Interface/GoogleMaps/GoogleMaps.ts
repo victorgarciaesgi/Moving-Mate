@@ -136,8 +136,13 @@ namespace Actions {
   }
 
   async function querySearch(context, query: string) : Promise<any> {
-    placesAutocomplete.getPlacePredictions({input: query, types: ['address'], componentRestrictions: {country: 'fr'}}, (result) => {
-      console.log(result);
+    return new Promise((resolve, reject) => {
+      placesAutocomplete.getPlacePredictions({
+        input: query, types: ['address'],
+        componentRestrictions: {country: 'fr'}}, 
+        (result) => {
+          resolve(result);
+      })
     })
   }
 

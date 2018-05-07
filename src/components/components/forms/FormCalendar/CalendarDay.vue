@@ -49,7 +49,7 @@ export default class CalendarDay extends Vue {
 
   handleSelect() {
     if (!this.isPassed) {
-      this.$emit('select', this.fullDate);
+      this.$emit('select', this.fullDate, this.dateElement.type);
     }
   }
 
