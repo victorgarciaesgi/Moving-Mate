@@ -35,7 +35,7 @@ export default class FormMessage extends Vue {
 .Form-message {
   display: flex;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  margin: 0 0 10px 0;
+  margin: 5px 0 10px 0;
   border-radius: 3px;
   overflow: hidden;
   font-size: 14px;

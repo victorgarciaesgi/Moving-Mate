@@ -21,7 +21,8 @@ const state: IMovingState = {
     searchCommited: false,
   },
   searchingMovingList: false,
-  movingList: []
+  movingList: [],
+  oneAnnouncement: null
 }
 
 const b = storeBuilder.module<IMovingState>("MovingModule", state);
@@ -63,12 +64,17 @@ namespace Mutations {
     state.searchingMovingList = !state.searchingMovingList;
   }
 
+  function updateOneAnnouncement(state: IMovingState, movingEvent: Object) {
+    state.oneAnnouncement = <any>movingEvent;
+  }
+
   export const mutations = {
     updateMovingList: b.commit(updateMovingList),
     updateSearchList: b.commit(updateSearchList),
     updateSearchValue: b.commit(updateSearchValue),
     updateSearchRoute: b.commit(updateSearchRoute),
     updateSearchingState: b.commit(updateSearchingState),
+    updateOneAnnouncement: b.commit(updateOneAnnouncement)
   }
 }
 
@@ -140,6 +146,12 @@ namespace Actions {
     })
   }
 
+  async function getOneAnnouncement(context, id: string) {
+    const {data} = await Api.get('announcement/' + id);
+    Mutations.mutations.updateOneAnnouncement(data);
+    return data.label;
+  }
+
   async function createAnnouncement(context, form) {
     try {
       const {success} = await Api.post('announcement', form);
@@ -155,7 +167,8 @@ namespace Actions {
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
     createMarkers: b.dispatch(createMarkers),
-    createAnnouncement: b.dispatch(createAnnouncement)
+    createAnnouncement: b.dispatch(createAnnouncement),
+    getOneAnnouncement: b.dispatch(getOneAnnouncement)
   }
 }
 

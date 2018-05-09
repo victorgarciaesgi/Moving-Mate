@@ -46,6 +46,8 @@
             </li>
             <li v-if='countStep == 2' class='create-view' key='confirm'>
               <FormSeparator>Autres informations</FormSeparator>
+              
+              <FormText v-model='CreateMovingForm.part2.label' :vl='$v.CreateMovingForm.part2.label' :data='CreateMovingForm.part2.fieldsData.label'/>
               <FormCalendar v-model='CreateMovingForm.part2.dealDate' :vl='$v.CreateMovingForm.part2.dealDate' :data='CreateMovingForm.part2.fieldsData.dealDate'/>
 
               <div class='form-split two'>
@@ -150,6 +152,7 @@ import { Forms } from '@classes';
           return baseValidations;
         },
         part2: {
+          label: {required, maxLenght: maxLength(60)},
           dealDate: {required},
           estimatedTime: {required},
           menRequired: {required, numeric},
@@ -162,7 +165,7 @@ import { Forms } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 1;
+  public countStep = 0;
   public submitting;
   public $v;
 
@@ -279,6 +282,9 @@ export default class CreateMoving extends Vue {
       },
     }),
     part2: new Forms.Form({
+      label: new Forms.TextForm({
+        placeholder: 'Titre de votre déménagement (court)',
+      }),
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
         placeholder: 'Date et heure de votre déménagement',
@@ -297,7 +303,6 @@ export default class CreateMoving extends Vue {
       }),
       description: new Forms.TextForm({
         placeholder: 'Description du déménagement',
-
       })
     })
   }
@@ -380,7 +385,7 @@ export default class CreateMoving extends Vue {
     position: relative;
     flex-flow: row nowrap;
     overflow: auto;
-    padding: 10px 30px 10px 30px;
+    padding: 0 30px 10px 30px;
 
     li.create-view {
       display: flex;

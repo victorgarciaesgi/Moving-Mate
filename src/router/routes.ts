@@ -75,16 +75,6 @@ export const routesList: MyRouteConfig[]  = [
         },
       },
       {
-        path: '/moving/detail/:movingId',
-        name: routesNames.movingDetail,
-        component: () => import('@views/Moving/MovingDetail.vue'),
-        props: true,
-        meta: {
-          contentProp: true,
-          isModal: true
-        },
-      },
-      {
         path: '/moving/create',
         name: routesNames.movingCreate,
         component: () => import('@views/Moving/CreateMoving.vue'),
@@ -95,6 +85,19 @@ export const routesList: MyRouteConfig[]  = [
         }
       },
     ]
+  },
+  {
+    path: '/moving/detail/:movingId',
+    name: routesNames.movingDetail,
+    component: () => import('@views/Moving/MovingDetail.vue'),
+    props: true,
+    meta: {
+      contentProp: true,
+      async asyncData(to: Route) {
+        const title = await Stores.MovingStore.actions.getOneAnnouncement(to.params.movingId);
+        return title;
+      }
+    },
   },
   {
     path: '/movers', name: routesNames.movers,

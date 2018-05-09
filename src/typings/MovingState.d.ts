@@ -8,12 +8,15 @@ export interface IMovingState {
   },
   searchingMovingList: boolean,
   movingList: IMovingEvent[],
+  oneAnnouncement: IMovingEvent
 }
 
 export interface IMovingEvent {
   id: number,
   user: IMovingUser,
-  participations: IMovingUser[],
+  partipations: {
+    users: IMovingUser[]
+  },
   label: string,
   addressIn: IAddress,
   addressOut: IAddress,

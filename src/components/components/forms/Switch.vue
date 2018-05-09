@@ -2,14 +2,11 @@
   <div class="switch">
     <ul class="options">
       <li class='option' v-for='(option, index) in options' 
-        :key='option'
-        :style='{width: percent + "%"}'
-        @click.stop='setIndex(index)'>
-        {{option}}
+        :key='index'
+        :class='{selected: index == value}'
+        @click.stop='updateValue(index)'>
+          {{option}}
       </li>
-      <div @click.stop class='cursor' :style='getPosition'>
-        {{options[selected]}}
-      </div>
     </ul>
   </div>
 </template>
@@ -22,28 +19,18 @@ import shortid from 'shortid';
 @Component({})
 export default class UISwitch extends Vue {
 
-  @Prop() value: boolean;
+  @Prop() value: number;
   @Prop() options: Array<string>;
   @Prop() name: string;
 
-  public selected = 0;
   public percent: number;
   public id;
 
-  get getPosition() {
-    return {left: this.percent*this.selected + '%', width: this.percent + '%'};
-  }
-
-  setIndex(index: number) {
-    this.selected = index;
-  }
-
-  updateValue(value){
+  updateValue(value: number) {
     this.$emit('input', value);
   }
 
   created() {
-    this.percent = Math.round(100 / this.options.length);
     this.id = shortid.generate();
   }
 }
@@ -52,6 +39,7 @@ export default class UISwitch extends Vue {
 
 
 <style lang='scss' scoped>
+
 .switch {
   position: relative;
   display: flex;
@@ -62,10 +50,12 @@ export default class UISwitch extends Vue {
     display: flex;
     justify-content: center;
     flex-flow: row wrap;
-    border-radius: 40px;
+    overflow: hidden;
     width: auto;
+    border-radius: 5px;
     background-color: $w240;
     font-size: 14px;
+    border: 1px solid $w230;
 
     li.option {
       display: flex;
@@ -74,21 +64,10 @@ export default class UISwitch extends Vue {
       font-size: 14px;
       width: auto;
       padding: 5px 10px 5px 10px;
-    }
 
-    .cursor {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      top: 0;
-      height: 100%;
-      padding: 5px 10px 5px 10px;
-      border-radius: 40px;
-      background-color: white;
-      transition: left 0.3s;
-      font-weight: bold;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      &.selected {
+        background-color: white;
+      }
     }
   }
 }

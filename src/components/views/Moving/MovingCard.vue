@@ -29,35 +29,44 @@
         <div class='liaison'></div>
       </div>
       <div class='moving-infos'>
-        <div class='switch-place'>
-          <UISwitch :options="['Départ', 'Arrivée']" />
-        </div>
-        <div class='movers info'>
+        <div class='info'>
           <div class='info-content'>
-            <strong>{{getMenNumber}}</strong>
-            <span>déménageurs</span>
-          </div>
-        </div>
-        <div class='price info'>
-          <div class='info-content'>
-            <strong>{{getPrice}}€</strong>
+            <strong>{{getPrice}}10€</strong>
             <span>par pers.</span>
           </div>
         </div>
-        <div class='elevator info'>
+        <div class='info'>
           <div class='info-content'>
-            <strong>
-              <SvgIcon v-if='moving.addressIn.elevator' :src='require("@icons/moving/present.svg")' :color='css.mainStyle'/>
-              <SvgIcon v-else :src='require("@icons/moving/not_present.svg")' :color='css.red1'/>
-            </strong>
-            <span>Ascenseur</span>
+            <strong>{{getMenNumber}}</strong>
+            <span>{{getMenNumber | pluralize('déménageur')}}</span>
           </div>
         </div>
-        <div class='parking info'>
+        <div class='info'>
           <div class='info-content'>
-            <strong><SvgIcon :src='require("@icons/moving/not_present.svg")' :color='css.red1'/></strong>
-            <span>Parking</span>
+            <strong>
+              <SvgIcon :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
+            </strong>
+            <span>Départ/arrivée</span>
           </div>
+        </div>
+        
+        <div class='info'>
+          <div class='info-content'>
+            <strong><SvgIcon :src='require("@icons/moving/timer.svg")' :size='26'  :color='css.mainStyle'/></strong>
+            <span>4 heures</span>
+          </div>
+        </div>
+      </div>
+      <div class='participants'>
+        <div class='wrapper'>
+          <span>Participants: </span>
+          <ul class='result' v-if='moving.partipations'>
+            <li v-for='part of moving.partipations.users' 
+              :key='part.id'
+              :style='{backgroundImage: `url(${part.picture})`}'>
+            </li>
+          </ul>
+          <span class='result' v-else>Aucun</span>
         </div>
       </div>
     </div>
@@ -88,7 +97,7 @@ export default class MovingCard extends Vue {
   public css = require('@css');
   public note = 3;
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
-
+  public switchValue = 0;
 
   // get profilePic() {
   //   return {backgroundImage: `url("${require('@images/user.jpg')}")`}
@@ -103,7 +112,7 @@ export default class MovingCard extends Vue {
   get getBegin() {
     const date = new DateMoving(this.moving.dealDate);
     return date;
-  }
+  } 
 
 
   redirectToDetail() {
@@ -113,8 +122,16 @@ export default class MovingCard extends Vue {
 
   async mounted () {
     // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
-    let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
+   
 
+    if (this.moving.partipations) {
+      this.moving.partipations.users.map(async (m) => {
+        let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
+        m['picture'] = data.results[0].picture.thumbnail;
+        return m;
+      })
+    }
+     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
 }
@@ -175,9 +192,8 @@ $radius: 8px;
     flex-flow: row nowrap;
     flex: 0 0 auto;
     height: 80px;
-    color: $w240;
-    // border-bottom: 1px solid $w230;
-    background-color: $mainStyle;
+    color: $g90;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
     border-radius: 5px 5px 0 0;
 
     .profil {
@@ -193,7 +209,7 @@ $radius: 8px;
         border-radius: 100%;
         width: 60px;
         height: 60px;
-        border: 2px solid white;
+        border: 2px solid $mainStyle;
       }
     }
 
@@ -244,7 +260,7 @@ $radius: 8px;
 
             .mounth {
               color: $g90;
-              border: 1px solid white;
+              border: 1px solid $w230;
               background-color: white;
               border-left: none;
               border-radius: 0 4px 4px 0;
@@ -252,7 +268,7 @@ $radius: 8px;
 
             .hour {
               color: $g90;
-              border: 1px solid white;
+              border: 1px solid $w230;
               background-color: white;
               margin-left: 10px;
               border-radius: 4px;
@@ -288,7 +304,6 @@ $radius: 8px;
         display: flex;
         width: 100%;
         justify-content: center;
-        padding: 5px;
       }
 
       div.info {
@@ -317,8 +332,55 @@ $radius: 8px;
             font-size: 20px;
             color: $mainStyle;
             flex: 0 0 auto;
-            width: 45px;
+            min-width: 40px;
+            padding: 0 5px 0 5px;
             border-right: 1px solid $w220;
+          }
+
+          span {
+            flex: 1 1 auto;
+          }
+        }
+      }
+    }
+
+    .participants {
+      display: flex;
+      width: 100%;
+      padding: 5px 10px 5px 10px;
+      font-size: 14px;
+      border-top: 1px solid $w230;
+      color: $w120;
+
+      .wrapper {
+        display: flex;
+        width: 100%;
+        flex-flow: row nowrap;
+        height: 100%;
+        padding: 5px;
+        align-items: center;
+        align-content: center;
+        color: $w150;
+        font-size: 15px;
+        height: 30px;
+
+        .result {
+          margin-left: 5px;
+        }
+
+        ul {
+          display: flex;
+          flex-flow: row wrap;
+          flex: 1 1 auto;
+
+          li {
+            flex: 0 0 auto;
+            border-radius: 40px;
+            height: 28px;
+            width: 28px;
+            border: 3px solid white;
+            margin-right: -7px;
+            @include bg-center;
           }
         }
       }
