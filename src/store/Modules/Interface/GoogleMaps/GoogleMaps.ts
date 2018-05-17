@@ -141,6 +141,7 @@ namespace Actions {
         input: query, types: ['address'],
         componentRestrictions: {country: 'fr'}}, 
         (result) => {
+          console.log(result);
           resolve(result);
       })
     })

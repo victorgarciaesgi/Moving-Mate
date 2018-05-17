@@ -31,36 +31,49 @@ export class AxiosError {
   }
 }
 
-export type ApiResponse = ApiSuccess | ApiError | ApiWarning;
-
-export class ApiSuccess {
+export class ApiResponse {
   public success: boolean = true;
-  public message: string;
+  public message?: string;
   public data?: any;
-  public type?: string = 'success';
-
-  constructor(message?: string, data?: any) {
-    this.message = message;
-    this.data = data ? data : {};
+  public type: string;
+  constructor(fields: {message?: string, data?: any, type: any, success: boolean}) {
+    this.message = fields.message;
+    this.type = fields.type;
+    this.data = fields.data ? fields.data : {};
+    this.success = fields.success;
   }
 }
 
-export class ApiError {
-  public success: boolean = false;
-  public message: string;
-  public type?: string = 'error';
 
-  constructor(message?: string) {
-    this.message = message;
+export class ApiSuccess extends ApiResponse{
+  constructor(fields : {message?: string, data?: any} = {}) {
+    super({
+      success: true,
+      type: 'success',
+      message: fields.message,
+      data: fields.data
+    })
   }
 }
 
-export class ApiWarning {
-  public success: boolean = false;
-  public message: string;
-  public type?: string = 'warning';
+export class ApiError extends ApiResponse{
+  constructor(fields : {message?: string, data?: any} = {}) {
+    super({
+      success: false,
+      type: 'error',
+      message: fields.message,
+      data: fields.data
+    })
+  }
+}
 
-  constructor(message?: string) {
-    this.message = message;
+export class ApiWarning extends ApiResponse{
+  constructor(fields : {message?: string, data?: any} = {}) {
+    super({
+      success: false,
+      type: 'warning',
+      message: fields.message,
+      data: fields.data
+    })
   }
 }

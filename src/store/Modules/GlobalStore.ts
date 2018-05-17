@@ -1,9 +1,5 @@
-import {ActionContext  } from 'vuex';
-import Vue from 'vue'
+
 import { IGlobalState, svgPath } from '@types';
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../Api';
-import { RootState } from '../index';
-import { timeout } from '@methods';
 import axios from 'axios';
 import { storeBuilder } from "./Store/Store";
 

@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    <div class='search-options'>
+    <div class='search-options' v-if='createMoving'>
       <router-link to='/moving/create'>
         <FormButton>
           <SvgIcon :src="require('@icons/add_circle.svg')" />
@@ -94,7 +94,6 @@ import { Watch } from 'vue-property-decorator';
 import axios from 'axios';
 import router from '@router';
 import { EventBus } from '@store';
-import { MovingStore } from '@store';
 
 @Component({
   components: {
@@ -112,9 +111,12 @@ import { MovingStore } from '@store';
 })
 export default class SearchMoving extends Vue {
 
-  get formSearchValue() {return MovingStore.state.formSearchData.formSearchValue}
-  get placesResults() {return MovingStore.state.formSearchData.placesResults}
-  get searchCommited() {return MovingStore.state.formSearchData.searchCommited}
+  @Prop() store;
+  @Prop() createMoving: boolean;
+
+  get formSearchValue() {return this.store.state.formSearchData.formSearchValue}
+  get placesResults() {return this.store.state.formSearchData.placesResults}
+  get searchCommited() {return this.store.state.formSearchData.searchCommited}
   public placesResultsDisplay = false;
   public handlePlacesSearch = null;
   public searching = false;
@@ -139,7 +141,7 @@ export default class SearchMoving extends Vue {
   }
 
   handlePathSelect(path: svgPath) {
-    MovingStore.mutations.updateSearchRoute(path.title || '');
+    this.$emit('updateRoute',path.title || '');
     EventBus.$emit('closePopups');
   }
 
@@ -153,14 +155,14 @@ export default class SearchMoving extends Vue {
   handleNewSearch(name?: string) {
     if (this.placesResults.length) {
       let value = name || this.placesResults[this.resultSelected].nom;
-      MovingStore.mutations.updateSearchRoute(value);
+      this.$emit('updateRoute', value);
     } 
   }
 
   async getUserLocation() {
     if (navigator.geolocation && !this.searching && !this.locationSearching) {
       this.locationSearching = true;
-      await MovingStore.actions.fetchUserLocation();
+      await this.store.actions.fetchUserLocation();
       this.locationSearching = false;
     }
   }
@@ -174,10 +176,10 @@ export default class SearchMoving extends Vue {
       if (newVal.trim().length > 0) {
         this.searching = true;
         this.resultSelected = 0;
-        await MovingStore.actions.fetchPlaces(newVal);
+        await this.store.actions.fetchPlaces(newVal);
       } else {
-        MovingStore.mutations.updateSearchList([]);
-        MovingStore.mutations.updateSearchRoute(newVal);
+        this.store.mutations.updateSearchList([]);
+        this.$emit('updateRoute', newVal);
       }
       this.searching = false;
     }
@@ -185,7 +187,7 @@ export default class SearchMoving extends Vue {
 
   created() {
     this.handlePlacesSearch = debounce(e => {
-      MovingStore.mutations.updateSearchValue(e);
+      this.store.mutations.updateSearchValue(e);
     }, 300)
   }
 

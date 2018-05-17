@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse, AxiosInterceptorManager } from 'axios';
 import LoginModule from '../Modules/Auth/LoginStore';
-import router from '@src/router'
+import router from '@src/router';
+import {clone} from 'lodash';
 import * as Types from './ApiTypes';
 
 const API_URL = process.env.API_URL;
@@ -35,19 +36,12 @@ export const removeAuthHeaders = () => {
 async function Request(type: string, path: string, payload: any, noAuth?: boolean): Promise<Types.AxiosSuccess | Types.AxiosError> {
   try {
     console.log(`Axios Request [${type}]:`, axiosInstance.defaults);
-    let axiosInstanceToUse: AxiosInstance;
-    if (noAuth) {
-      axiosInstanceToUse = {...axiosInstance};
-      delete axiosInstanceToUse.defaults.headers.Authorization;
-    } else {
-      axiosInstanceToUse = axiosInstance;
-    }
     if (type === 'post' || type === 'put') {
-      let response: AxiosResponse = await axiosInstanceToUse[type](path, payload);
+      let response: AxiosResponse = await axiosInstance[type](path, payload);
       console.log(new Types.AxiosSuccess(response.data));
       return new Types.AxiosSuccess(response.data);
     } else {
-      let response: AxiosResponse = await axiosInstanceToUse[type](path, {
+      let response: AxiosResponse = await axiosInstance[type](path, {
         params: payload,
       })
       return new Types.AxiosSuccess(response.data);

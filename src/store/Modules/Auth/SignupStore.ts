@@ -1,9 +1,8 @@
 import { ISignupState } from '@types';
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse } from '../../Api';
-import { timeout } from '@methods';
 import { storeBuilder } from "../Store/Store";
+import Paths from '@paths';
 
-const SIGNUP_URL = 'register/';
 
 //State
 const state: ISignupState = {
@@ -40,7 +39,7 @@ namespace Mutations {
 namespace Actions {
   async function signupRequest(context, loginData: Object): Promise<ApiResponse> {
     try {
-      let { success, status, data } = await Api.post(SIGNUP_URL, loginData);
+      let { success, status, data } = await Api.post(Paths.SIGNUP, loginData);
       state.requesting = false
       if (success) {
         return new ApiSuccess();
@@ -48,11 +47,11 @@ namespace Actions {
     } catch(err) {
       console.log(err)
       if (err.status === 403) {
-        return new ApiError('Adresse mail déjà utilisée');
+        return new ApiError({message: 'Adresse mail déjà utilisée'});
       } else if (err.status === 500) {
-        return new ApiWarning(`Une erreur s'est produite`);
+        return new ApiWarning({message: `Une erreur s'est produite`});
       } else if (err.status === 0) {
-        return new ApiWarning(`Vérifiez votre connexion internet`);
+        return new ApiWarning({message: `Vérifiez votre connexion internet`});
       }
     } finally {
       state.requesting = false;

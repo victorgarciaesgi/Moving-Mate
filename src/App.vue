@@ -6,7 +6,9 @@
       <Notifications/>
       <Alerts/>
       <div class='view'>
-        <router-view/>
+        <transition name='fade' mode='out-in'>
+          <router-view/>
+        </transition>
       </div>
     </template>
     <!-- <template>
@@ -23,7 +25,7 @@
 import Vue from "vue";
 import { Store } from "vuex";
 import { sync } from 'vuex-router-sync'
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
 import { EventBus, RootState, storeBuilder, DebugMode } from "@store";
 import router from "./router";
 import { HeaderComponent, Notifications, ProgressBarComponent, Alerts } from "@components";
@@ -47,6 +49,8 @@ sync(store, router);
 })
 export default class App extends Vue {
 
+  public transitionName;
+
   get sessionChecked() { return LoginStore.state.sessionChecked};
 
   created() {
@@ -59,6 +63,12 @@ export default class App extends Vue {
   closePopups() {
     EventBus.$emit("closePopups");
   }
+
+  // @Watch('$route') routeChanged(to, from) {
+  //   const toDepth = to.path.split('/').length
+  //   const fromDepth = from.path.split('/').length
+  //   this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+  // }
 }
 </script>
 

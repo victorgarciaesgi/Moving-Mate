@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import VueRouter, {Route, RouteRecord} from 'vue-router';
-import * as Components from '@components';
 import { LoginStore } from '@modules';
-import { timeout } from '@methods';
 import { routesList, MyRoute } from './routes';
 import { ProgressBar, GlobalStore } from '@store';
 
@@ -28,24 +26,17 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     // Check if route come from child
     console.log(to, from);
     if (from.name && from.matched[0].name == to.name) {
-      console.log('lol1')
-
       next();
       return;
     } 
     else if (from.name == to.name){
-      console.log('lol4')
       next()
     }
     else if (to.matched && from.name && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
-      console.log('lol2')
-
       next();
       return;
     }
     else {
-      console.log('lol3')
-
       if (!to.meta.transparent && !to.meta.isModal) {
         ProgressBar.mutations.start();
       } 
@@ -55,7 +46,6 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
 
       // If page is initialazed on child
       if (to.matched[0] && to.meta.isModal) {
-        console.log('lol6')
         if (!from.name) {
           getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);
@@ -100,14 +90,17 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       GlobalStore.state.headerBoxShadow = false;
     } else {GlobalStore.state.headerBoxShadow = true}
 
-    next(ProgressBar.mutations.finish());
+    next();
 
   } catch(err) {
     console.log('Route error:', err);
     ProgressBar.mutations.fail();
-    ProgressBar.mutations.finish();
     next();
   }
+})
+
+Router.afterEach(async (from: MyRoute, next) => {
+  ProgressBar.mutations.finish();
 })
 
 const getRouteData = async (to: MyRoute | RouteRecord) => {

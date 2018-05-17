@@ -5,8 +5,8 @@
         :id='formId'
         :value='formatedValue'
         :class='{
-          formError: (!valid && dirty && data.error && !vl.$pending),
-          formValid: (valid && dirty && data.error && !vl.$pending),
+          formError: (!valid && dirty && data.error && !isPending),
+          formValid: (valid && dirty && data.error && !isPending),
           placeholder: isPlaceholderHere,
           icon: data.icon,
         }'
@@ -29,10 +29,10 @@
         {{data.placeholder}}
       </label>
 
-      <img v-if='vl.$pending || searching' class='form-valid-icon' src='~@images/loading.svg'>
-      <div v-else-if='valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-valid"></div>
-      <div v-else-if='!valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-invalid"></div>
-      <div v-else-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
+      <img v-if='isPending || searching' class='form-valid-icon' src='~@images/loading.svg'>
+      <div v-else-if='valid && dirty && data.error && !isPending' class="form-valid-icon form-valid"></div>
+      <div v-else-if='!valid && dirty && data.error && !isPending' class="form-valid-icon form-invalid"></div>
+      <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
 
       <img v-if='value != ""' src='~@icons/quit.svg' class='clearValue' @click='clearValue()'>
     </div>
@@ -60,48 +60,30 @@
       </div>
     </transition>
 
-
-    <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
-      <span v-if='vl.$pending' class='pending'>Verification...</span>
-      <ul v-else-if='dirty && data.error' class='error'>
-        <li v-for='key in filterErrors' :key='key'>
-            <span>{{errorMessages[key]}}</span>
-        </li>
-      </ul>
-    </div>
+    <FormError v-if='vl' :vl='vl' :data='data'/>
   </div>
 
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { IValidator } from "vuelidate";
-import shortid from 'shortid';
 import {timeout, calculatePopupPosition} from '@methods';
 import {EventBus, GoogleMaps} from '@store';
-import { SvgIcon } from "@components";
+import {Prop} from 'vue-property-decorator';
+import shortid from 'shortid';
+import {Component, Mixin, Mixins} from 'vue-mixin-decorator';
+import {FormMixin} from '../Mixins/FormMixin';
 import {debounce} from 'lodash';
 
 
 @Component({
-  components: {
-    SvgIcon
-  }
+  mixins: [FormMixin]
 })
-export default class FormPlaceSearch extends Vue {
-  @Prop() value;
-  @Prop({ required: false }) vl: IValidator;
-  @Prop({required: true}) data: any;
-  
+export default class FormPlaceSearch extends FormMixin {
 
-  public formId = null;
-  public errorMessages = {
-    required: "Ce champs est requis",
-  };
+  @Prop() value;
+
   public resultSelected = 0;
   public css = require('@css');
-  public isFocused = false;
   public tempValue = "";
   public searching = false;
   public handlePlacesSearch = null;
@@ -111,19 +93,9 @@ export default class FormPlaceSearch extends Vue {
     width: null
   }
 
-  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
+  get formatedValue() {return this.tempValue;}
   get isPlaceholderHere() {return ((this.tempValue.toString().length > 0 || this.value.length > 0) || this.isFocused);}
-  get valid() {return !this.vl.$invalid}
-  get dirty() {return this.vl.$dirty;}
 
-  get formatedValue() {
-    return this.tempValue;
-  }
-
-  updateValue(value: any) {
-    this.vl.$touch();
-    this.$emit("input", value);
-  }
 
   async searchPlaces(value: any) {
     this.searching = true;
@@ -138,13 +110,14 @@ export default class FormPlaceSearch extends Vue {
       this.resultSelected = 0;
     } finally {
       this.searching = false;
-  }
+    }
   }
 
   selectAddress(result?) {
     if (this.searchResults.length) {
-      const address = result || this.searchResults[this.resultSelected]
-      this.$emit('input', address.display);
+      const address = result || this.searchResults[this.resultSelected];
+      console.log(address)
+      this.$emit('input', {...address.display, placeId: address.place_id});
       this.forceBlur();
       this.tempValue = address.display.addressValue + ', ' + address.display.addressCity;
       this.searchResults = [];
@@ -176,10 +149,6 @@ export default class FormPlaceSearch extends Vue {
   handleBlur() {
     this.isFocused = false;
     this.vl.$touch();
-  }
-
-  forceBlur() {
-    this.$refs['input'].blur();
   }
 
   mounted() {
@@ -293,26 +262,6 @@ export default class FormPlaceSearch extends Vue {
   min-width: 250px;
   width: 100%;
   padding: 5px 0 5px 0;
-
-  .errorMessage {
-    display: flex;
-    position: relative;
-    flex-flow: columns wrap;
-    justify-content: flex-start;
-    font-size: 11px;
-    font-weight: bold;
-    color: $red1;
-    margin-left: 5px;
-
-    .pending {
-      color: $yellow1;
-    }
-
-    ul {
-      display: flex;
-      flex-flow: column wrap;
-    }
-  }
 }
 
 .input-container {

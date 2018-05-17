@@ -42,8 +42,8 @@
                       <div class="user-name">{{loginState.userInfos.username | capitalize}}</div>
                   </div>
                   <ul class='user-option-list'>
-                      <a href="#"><li class='user-option'>Mon profil</li></a>
-                      <a href="#" v-if='isAdmin'>
+                    <router-link :to='userProfilePath'><li class='user-option'>Mon profil</li></router-link>
+                     <a href="#" v-if='isAdmin'>
                         <li class='user-option'>
                           Administration
                         </li>
@@ -90,6 +90,7 @@ import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
 import { LoginStore, SignupStore, GlobalStore } from '@modules'
 import { StringifyOptions } from "querystring";
+import {routesNames} from '@router';
 
 @Component({
   components: { Connexion, Inscription, Popup, SvgIcon },
@@ -101,6 +102,7 @@ export default class HeaderComponent extends Vue {
   get userPicture(){return LoginStore.getters.userPicture};
   get isAdmin() {return LoginStore.getters.isAdmin};
   get headerBox() {return GlobalStore.state.headerBoxShadow};
+  get userProfilePath() {return {name: routesNames.user}}
 
   private showLogin = LoginStore.mutations.showLogin;
   private disconnectRequest = LoginStore.actions.disconnectRequest;

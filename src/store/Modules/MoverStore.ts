@@ -1,9 +1,8 @@
-import { IMovingState, IMarker} from '@types';
+import { IMover, IMoverState} from '@types';
 import Api, { ApiError, ApiSuccess, ApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
-import { GoogleMaps } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
 
@@ -12,99 +11,76 @@ const GEO_API = 'https://geo.api.gouv.fr';
 const fields = '&fields=centre,codeDepartement,codeVille,codeRegion,nom';
 
 //State
-const state: IMovingState = {
+const state: IMoverState = {
   formSearchData: {
     formSearchValue: '',
     placesResults: [],
     searchCommited: false,
   },
-  searchingMovingList: false,
-  movingList: [],
-  oneAnnouncement: null
+  searchingMoverList: false,
+  moverList: [],
 }
 
-const b = storeBuilder.module<IMovingState>("MovingModule", state);
+const b = storeBuilder.module<IMoverState>("MoverModule", state);
 const stateGetter = b.state()
 
 // Getters
 namespace Getters {
 
-  const formatedMovingList = b.read(function formatedMovingList(state) {
-    return state.movingList;
-  })
-
   export const getters = {
-    get formatedMovingList() {return formatedMovingList()}
   }  
 }
 
 // Mutations
 namespace Mutations {
-  function updateMovingList(state: IMovingState, list: Array<any>) {
-    state.movingList = list;
+  function updateMoverList(state: IMoverState, list: Array<any>) {
+    state.moverList = list;
   }
 
-  function updateSearchList(state: IMovingState, list: Array<any>) {
+  function updateSearchList(state: IMoverState, list: Array<any>) {
     state.formSearchData.placesResults = list;
   }
 
-  function updateSearchValue(state: IMovingState, newString: string) {
+  function updateSearchValue(state: IMoverState, newString: string) {
     state.formSearchData.searchCommited = false;
     state.formSearchData.formSearchValue = newString;
   }
 
-  function updateSearchRoute(state: IMovingState, newString: string) {
-    Router.replace(`/moving/search/${newString}`);
+  function updateSearchRoute(state: IMoverState, newString: string) {
+    Router.replace(`/movers/search/${newString}`);
     // Mutations.mutations.updateSearchValue(newString);
   }
 
-  function updateSearchingState(state: IMovingState) {
-    state.searchingMovingList = !state.searchingMovingList;
-  }
-
-  function updateOneAnnouncement(state: IMovingState, movingEvent: Object) {
-    state.oneAnnouncement = <any>movingEvent;
+  function updateSearchingState(state: IMoverState) {
+    state.searchingMoverList = !state.searchingMoverList;
   }
 
   export const mutations = {
-    updateMovingList: b.commit(updateMovingList),
+    updateMoverList: b.commit(updateMoverList),
     updateSearchList: b.commit(updateSearchList),
     updateSearchValue: b.commit(updateSearchValue),
     updateSearchRoute: b.commit(updateSearchRoute),
     updateSearchingState: b.commit(updateSearchingState),
-    updateOneAnnouncement: b.commit(updateOneAnnouncement)
   }
 }
 
 // Actions
 namespace Actions {
 
-  async function fetchMoving(context, payload?: {search?: string}) {
-    GoogleMaps.mutations.updateMarkers([]);
+  async function fetchMover(context, payload?: {search?: string}) {
     Mutations.mutations.updateSearchingState();
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
-    Mutations.mutations.updateMovingList([]);
+    Mutations.mutations.updateMoverList([]);
 
     try {
-      const { data } = await Api.get(Paths.MOVING_LIST, payload);
-      Mutations.mutations.updateMovingList(data);
-      actions.createMarkers({annoucements: data, payload})
-      
+      const { data } = await Api.get(Paths.MOVERS_LIST, payload);
+      console.log(data);
+      Mutations.mutations.updateMoverList(data);      
     } finally {
       Mutations.mutations.updateSearchingState();
     }
   }
-
-  async function createMarkers(context, {annoucements, payload}) {
-    console.log(annoucements);
-    let markers: IMarker[] = [];
-    const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
-    for (let moving of annoucements) {
-      markers.push(new Marker(bounds, moving))
-    }
-    GoogleMaps.mutations.updateMarkers(markers);
-  } 
 
   async function fetchPlaces(context, payload: string) {
     let searchValues = await Promise.all([
@@ -143,36 +119,15 @@ namespace Actions {
     })
   }
 
-  async function getOneAnnouncement(context, id: string) {
-    const {data} = await Api.get(Paths.MOVING_DETAIL + id);
-    Mutations.mutations.updateOneAnnouncement(data);
-    console.log(data);
-    return data.label;
-  }
-
-  async function createAnnouncement(context, form: Object) : Promise<ApiResponse>{
-    try {
-      const {data} = await Api.post(Paths.MOIVNG_CREATE, form);
-      console.log(data)
-      return new ApiSuccess({data});
-
-    } catch {
-      return new ApiError();
-    }
-  }
-
   export const actions = {
-    fetchMoving: b.dispatch(fetchMoving),
+    fetchMover: b.dispatch(fetchMover),
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
-    createMarkers: b.dispatch(createMarkers),
-    createAnnouncement: b.dispatch(createAnnouncement),
-    getOneAnnouncement: b.dispatch(getOneAnnouncement)
   }
 }
 
 // Module
-const MovingModule = {
+const MoverModule = {
   get state() { return stateGetter()},
   getters: Getters.getters,
   mutations: Mutations.mutations,
@@ -180,5 +135,5 @@ const MovingModule = {
 }
 
 
-export default MovingModule;
+export default MoverModule;
 

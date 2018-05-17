@@ -2,7 +2,10 @@
   <div class='Moving'>
     <section class='searchResults'>
       <section class='searchComponent' :class='{shadow}'>
-        <SearchMoving></SearchMoving>
+        <SearchMoving :store='MovingStore'
+          @updateRoute='updateRoute'
+          createMoving
+          ></SearchMoving>
       </section>
       <section class='resultsList'>
         <MovingList/>
@@ -39,6 +42,12 @@ export default class Moving extends Vue {
   @Prop({required: false}) search: string;
 
   public shadow = false;
+
+  get MovingStore() {return MovingStore}
+
+  updateRoute(value) {
+    MovingStore.mutations.updateSearchRoute(value);
+  }
 
   handleBodyScroll() {
     if ($(document).scrollTop() === 0) {
@@ -80,8 +89,9 @@ export default class Moving extends Vue {
   section.searchResults {
     position: relative;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column nowrap;
     min-height: 100%;
+    height: auto;
     width: calc(100% - 500px);
     background-color: white;
 

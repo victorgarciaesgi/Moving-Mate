@@ -1,6 +1,7 @@
 export * from './LoginState';
 export * from './Signup';
 export * from './MovingState';
+export * from './MoverState';
 export * from './Notifications';
 export * from './ProgressBar.d';
 export * from './GlobalState.d';

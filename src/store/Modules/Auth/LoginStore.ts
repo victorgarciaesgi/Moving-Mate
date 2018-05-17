@@ -3,14 +3,11 @@ import { merge } from 'lodash'
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../../Api';
 import NotificationsModule from '../Interface/NotificationsStore';
 import router from '@router';
-import { ActionContext } from 'vuex';
 import { ILoginState } from '@types';
 import { capitalize } from 'lodash';
 import { storeBuilder } from "../Store/Store";
 import { JWT } from './TokenStore';
-import {timeout} from '@methods'
-
-const LOGIN_URL = "login_check";
+import Paths from '@paths';
 
 const initialState: ILoginState = {
   userInfos: {
@@ -122,18 +119,18 @@ namespace Actions {
   async function connexionRequest(context,{loginData, redirect}): Promise<ApiResponse> {
     try {
       state.requesting = true;
-      let { success, status, data } = await Api.post(LOGIN_URL, loginData);
+      let { success, status, data } = await Api.post(Paths.LOGIN, loginData);
       JWT.set(data.token);
       LoginModule.actions.connexionSuccess({token: data.token, redirect});
       return new ApiSuccess();
     } catch(err) {
       console.log(err)
       if (err.status === 401) {
-        return new ApiError('Adresse email ou mot de passe incorrect')
+        return new ApiError({message: 'Adresse email ou mot de passe incorrect'})
       } else if (err.status === 404 || err.status === 500) {
-        return new ApiWarning(`Une erreur s'est produite`);
+        return new ApiWarning({message: `Une erreur s'est produite`});
       } else if (err.status === 0) {
-        return new ApiWarning(`Vérifiez votre connexion internet`);
+        return new ApiWarning({message: `Vérifiez votre connexion internet`});
       }
     } finally {
       state.requesting = false;
@@ -149,6 +146,7 @@ namespace Actions {
   function disconnectRequest() {
     JWT.clear();
     LoginModule.mutations.disconnectUser();
+    router.go(0);
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
   }
   async function checkUserSession(){

@@ -40,6 +40,7 @@ const baseConfig = {
       '@methods': helpers.root('src/utils/methods.ts'),
       '@filters': helpers.root('src/utils/filters.ts'),
       '@api': helpers.root('src/store/Api/index.ts'),
+      '@paths': helpers.root('src/store/Api/ApiRoutes.ts'),
       '@types': helpers.root('src/typings/index.ts'),
       '@store': helpers.root('src/store/index.ts'),
       '@modules': helpers.root('src/store/Modules/index.ts'),

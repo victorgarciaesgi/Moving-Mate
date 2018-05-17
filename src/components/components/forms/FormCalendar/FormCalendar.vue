@@ -5,8 +5,8 @@
         :id='formId'
         :value='formatedValue'
         :class='{
-          formError: (!valid && dirty && data.error && !vl.$pending),
-          formValid: (valid && dirty && data.error && !vl.$pending),
+          formError: (!valid && dirty && data.error && !isPending),
+          formValid: (valid && dirty && data.error && !isPending),
           placeholder: isPlaceholderHere,
           icon: data.icon,
         }'
@@ -25,10 +25,10 @@
         {{data.placeholder}}
       </label>
 
-      <img v-if='vl.$pending' class='form-valid-icon' src='~@images/loading.svg'>
-      <div v-else-if='valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-valid"></div>
-      <div v-else-if='!valid && dirty && data.error && !vl.$pending' class="form-valid-icon form-invalid"></div>
-      <div v-else-if='!dirty && !vl.required' class="form-valid-icon form-required"></div>
+      <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
+      <div v-else-if='valid && dirty && data.error && !isPending' class="form-valid-icon form-valid"></div>
+      <div v-else-if='!valid && dirty && data.error && !isPending' class="form-valid-icon form-invalid"></div>
+      <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
     </div>
 
 
@@ -55,7 +55,8 @@
             </ul>
             <ul class='month-days'>
               <CalendarDay v-for='dateElement of allDisplayDates' 
-                :dateElement='dateElement' 
+                :dateElement='dateElement'
+                :isMoving='isMoving'
                 :key='dateElement.id'
                 :selected='selectedDate'
                 @select='handleDateSelect' />
@@ -65,29 +66,23 @@
       </div>
     </transition>
 
-    <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
-      <span v-if='vl.$pending' class='pending'>Verification...</span>
-      <ul v-else-if='dirty && data.error' class='error'>
-        <li v-for='key in filterErrors' :key='key'>
-            <span>{{errorMessages[key]}}</span>
-        </li>
-      </ul>
-    </div>
+    <FormError v-if='vl' :vl='vl' :data='data'/>
+
   </div>
 
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
-import { IValidator } from "vuelidate";
+import {Prop, Watch } from "vue-property-decorator";
 import shortid from 'shortid';
 import {timeout, calculatePopupPosition} from '@methods';
 import {EventBus} from '@store';
-import { SvgIcon } from "@components";
 import CalendarDay from './CalendarDay.vue';
 import moment from 'moment';
 import 'moment/locale/fr';
+import {Component, Mixin, Mixins} from 'vue-mixin-decorator';
+import {FormMixin} from '../../Mixins/FormMixin';
 
 
 class MomentDate {
@@ -105,24 +100,11 @@ class MomentDate {
 
 
 @Component({
-  components: {
-    SvgIcon, CalendarDay
-  }
+  components: { CalendarDay }
 })
-export default class FormCalendar extends Vue {
-  @Prop({type: [String, Number, null]}) value;
-  @Prop({ required: false }) vl: IValidator;
+export default class FormCalendar extends FormMixin {
 
-  @Prop({required: true}) data: any;
-  
-
-  public formId = null;
-  public errorMessages = {
-    required: "Ce champs est requis",
-  };
-
-  public isFocused = false;
-  public debounceValue = null;
+  @Prop() isMoving: boolean;
 
   public weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
@@ -131,15 +113,19 @@ export default class FormCalendar extends Vue {
   public selectedDate = null;
   public allDisplayDates = [];
 
+  get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
+
+
   handleDateSelect(date: moment.Moment, type: string) {
-    this.vl.$touch();
+    if (this.vl) this.vl.$touch();
     this.selectedDate = date;
     if (type == 'prev') {
       this.changeMonth(-1)
     } else if( type == 'next') {
       this.changeMonth(1);
     }
-    this.$emit('input', date.unix())
+    this.$emit('input', date.unix());
+    this.forceBlur();
   }
 
   changeMonth(value: number) {
@@ -150,8 +136,8 @@ export default class FormCalendar extends Vue {
   }
 
   getPrevMonth() {
-    const prevmonth = moment().month(this.selectedMonth - 1);
-    const curmonth = moment().month(this.selectedMonth);
+    const prevmonth = moment().year(this.selectedYear).month(this.selectedMonth - 1);
+    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
     const numberOfDays = prevmonth.daysInMonth();
     const curStart = curmonth.startOf('month').weekday();
     const result = [];
@@ -161,7 +147,7 @@ export default class FormCalendar extends Vue {
     this.allDisplayDates = [...result];
   };
   getAvailable() {
-    const curmonth = moment().month(this.selectedMonth);
+    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
     const numberOfDays = curmonth.daysInMonth();
     const result = [];
     for (let i = curmonth.startOf('month').date() - 1; i < numberOfDays; i++) {
@@ -170,8 +156,8 @@ export default class FormCalendar extends Vue {
     this.allDisplayDates = [...this.allDisplayDates,...result];
   };
   getNextMonth() {
-    const nextmonth = moment().month(this.selectedMonth + 1);
-    const curmonth = moment().month(this.selectedMonth);
+    const nextmonth = moment().year(this.selectedYear).month(this.selectedMonth + 1);
+    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
     const result = [];
     for (let i = nextmonth.startOf('month').date() - 1; i < 7 - curmonth.endOf('month').weekday() - 1; i++) {
        result.push(new MomentDate(nextmonth.date(i + 1), 'next'));
@@ -195,22 +181,13 @@ export default class FormCalendar extends Vue {
     bottom: null,
   }
 
-  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-  get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
-  get valid() {return !this.vl.$invalid}
-  get dirty() {return this.vl.$dirty;}
-
   get formatedValue() {
     if (this.value != '' && !!this.value) {
-      return moment.unix(this.value).format('dddd Do MMMM YYYY, hh:mm');
+      if (this.isMoving) return moment.unix(this.value).format('dddd Do MMMM YYYY, hh:mm');
+      else return moment.unix(this.value).format('Do/MM/YYYY');
     } else {
       return this.value;
     }
-  }
-
-  async handleBlur() {
-    this.isFocused = false;
-    this.vl.$touch();
   }
 
   handleFocus() {
@@ -222,11 +199,9 @@ export default class FormCalendar extends Vue {
     EventBus.$emit('closePopups', this);
   }
 
-  mounted() {
-    this.formId = shortid.generate();
-    if (this.value && this.value.trim().length) {
-      this.vl.$touch();
-    }
+  handleBlur() {
+    this.isFocused = false;
+    if (this.vl) this.vl.$touch();
   }
 
   created() {

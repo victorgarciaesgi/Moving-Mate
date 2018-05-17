@@ -2,7 +2,7 @@ import { AlertsStore, LoginStore } from '@store';
 
 export namespace AlertsElement {
 
-  type AlertType = "success" | "warning" | "error" | "info";
+  type AlertType = "success" | "confirm" | "warning" | "error" | "info";
   type Diff<T extends string, U extends string> = ({[P in T]: P } & {[P in U]: never } & { [x: string]: never })[T];  
   type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>;
 
@@ -25,14 +25,30 @@ export namespace AlertsElement {
   }
 
   export class SuccessAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?: boolean, actions: ActionsElements.Action[]}) {
+    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
+      const actions = fields.actions || [];
       super({
         title: fields.title || 'Opération réussie',
         type: 'success',
         message: fields.message,
         actions: [
-          ...fields.actions,
-          new ActionsElements.ConfirmAction({}),
+          ...actions,
+          new ActionsElements.ConfirmAction({})
+        ]
+      });
+    }
+  }
+
+  export class ErrorAlert extends Alert {
+    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
+      const actions = fields.actions || [];
+      super({
+        title: fields.title || `Erreur de l'opération`,
+        type: 'error',
+        message: fields.message,
+        actions: [
+          ...actions,
+          new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'}),
         ]
       });
     }
@@ -70,8 +86,8 @@ export namespace ActionsElements {
       });
       if (triggers) {
         this.triggers = [
+          ...triggers,
           AlertsStore.mutations.confirmAlert,
-          ...triggers
         ];
       } else {
         this.trigger = this.trigger = AlertsStore.mutations.confirmAlert;

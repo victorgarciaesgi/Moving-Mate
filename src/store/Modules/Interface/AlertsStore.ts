@@ -11,6 +11,7 @@ let rejectAlert;
 const state: IAlertsState = {
   alertData: null,
   alertShow: false,
+  submitting: false
 }
 
 const b = storeBuilder.module<IAlertsState>("AlertsModule", state);
@@ -32,12 +33,10 @@ namespace Mutations {
   function confirmAlert(state: IAlertsState) {
     state.alertData = null;
     state.alertShow = false;
-    resolveAlert(true);
   }
   function cancelAlert(state: IAlertsState) {
     state.alertData = null;
     state.alertShow = false;
-    resolveAlert(false);
   }
 
   export const mutations = {
@@ -61,11 +60,24 @@ namespace Actions {
     Mutations.mutations.hideAlert();
   }
 
-  async function executeAction(contect, action: ActionsElements.Action) {
+  async function executeAction(context, {action, value}: {action: ActionsElements.Action, value: boolean}) {
     if (action.trigger) {
-      action.trigger();
+      await action.trigger();
+      resolveAlert(value);
     } else if (action.triggers) {
-      action.triggers.forEach(m => m())
+      return new Promise(async (resolve, reject) => {
+        context.state.submitting = true;
+        try {
+          for (const trigger of action.triggers) {
+            await trigger();
+          }
+          resolveAlert(value)
+        } catch(e) {
+          rejectAlert(value)
+        } finally {
+          context.state.submitting = false;
+        }
+      })
     }
   }
 

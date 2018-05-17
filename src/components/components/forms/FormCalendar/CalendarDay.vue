@@ -23,10 +23,9 @@ import moment from 'moment';
 export default class CalendarDay extends Vue {
   @Prop() dateElement;
   @Prop() selected;
+  @Prop() isMoving: boolean;
 
   public fullDate: moment.Moment= null;
-
-
 
   get dateNumber() {return this.dateElement.date;}
 
@@ -36,6 +35,9 @@ export default class CalendarDay extends Vue {
   }
 
   get isPassed() {
+    if (!this.isMoving) {
+      return false;
+    }
     const today = moment();
     return this.fullDate.isBefore(today, 'day');
   }

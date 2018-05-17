@@ -85,6 +85,7 @@
     "url": "^0.11.0",
     "url-loader": "^0.6.2",
     "vue-loader": "^13.3.0",
+    "vue-mixin-decorator": "^1.0.0",
     "vue-style-loader": "^3.0.3",
     "vue-ts-loader": "0.0.3",
     "vuex-typescript": "^3.0.2",

@@ -10,8 +10,8 @@
           <!-- <span class='day'>{{getBegin.day}}</span> -->
           <div class='date'>
             <span class='number'>{{getBegin.number}}</span>
-            <span class='mounth'>{{getBegin.month}}</span>
-            <span class='hour'>{{getBegin.hour}}</span>     
+            <span class='month'>{{getBegin.month}}</span>
+            <span class='hour'>{{getBegin.hour}}</span>  
           </div>       
         </div>
       </div>
@@ -20,18 +20,24 @@
       <div class='moving-places'>
         <div class='depart element'>
           <div class='icon black'></div>
-          <span>{{getDepart}}</span>
+          <div class='value'>
+            <span class='city'>{{getDepart.city}}</span>
+            <span class='zip'>   {{getDepart.zip}}</span>
+          </div>
         </div>
         <div class='arrivee element'>
           <div class='icon blue'></div>
-          <span>{{getArrivee}}</span>
+          <div class='value'>
+            <span class='city'>{{getArrivee.city}}</span>
+            <span class='zip'>   {{getArrivee.zip}}</span>
+          </div>
         </div>
         <div class='liaison'></div>
       </div>
       <div class='moving-infos'>
         <div class='info'>
           <div class='info-content'>
-            <strong>{{getPrice}}10€</strong>
+            <strong>{{getPrice}}€</strong>
             <span>par pers.</span>
           </div>
         </div>
@@ -60,8 +66,8 @@
       <div class='participants'>
         <div class='wrapper'>
           <span>Participants: </span>
-          <ul class='result' v-if='moving.partipations'>
-            <li v-for='part of moving.partipations.users' 
+          <ul class='result' v-if='moving.participations'>
+            <li v-for='part of moving.participations.users' 
               :key='part.id'
               :style='{backgroundImage: `url(${part.picture})`}'>
             </li>
@@ -95,9 +101,7 @@ export default class MovingCard extends Vue {
   @Prop({required: true}) moving: IMovingEvent;
   @Prop({required: false}) onMap: boolean;
   public css = require('@css');
-  public note = 3;
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
-  public switchValue = 0;
 
   // get profilePic() {
   //   return {backgroundImage: `url("${require('@images/user.jpg')}")`}
@@ -105,8 +109,8 @@ export default class MovingCard extends Vue {
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
   get userName() { return this.moving.user.username; }
-  get getDepart() { return this.moving.addressIn.city; }
-  get getArrivee() { return this.moving.addressOut.city;}
+  get getDepart() { return this.moving.addressIn; }
+  get getArrivee() { return this.moving.addressOut;}
   get getMenNumber() {return this.moving.menRequired};
   get getPrice() {return this.moving.pricePerHourPerUser};
   get getBegin() {
@@ -117,15 +121,13 @@ export default class MovingCard extends Vue {
 
   redirectToDetail() {
     // A changer vers id
-    Router.push({name: routesNames.movingDetail, params: {movingId: this.moving.id.toString()}});
+    Router.push({name: routesNames.movingInfos, params: {movingId: this.moving.id.toString()}});
   }
 
-  async mounted () {
+  async fetchImage() {
     // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
-   
-
-    if (this.moving.partipations) {
-      this.moving.partipations.users.map(async (m) => {
+    if (this.moving.participations) {
+      this.moving.participations.users.map(async (m) => {
         let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
         m['picture'] = data.results[0].picture.thumbnail;
         return m;
@@ -134,6 +136,10 @@ export default class MovingCard extends Vue {
      let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
+
+  mounted () {
+    this.fetchImage();
+  } 
 }
 </script>
 
@@ -150,7 +156,7 @@ $radius: 8px;
   width: 350px;
   height: auto;
   border-radius: 5px;
-  box-shadow: 0 0 25px rgba(30,30,30,0.18);
+  box-shadow: 0 0 25px rgba(30,30,30,0.16);
   background-color: white;
   overflow: hidden;
   margin: 10px;
@@ -158,6 +164,15 @@ $radius: 8px;
   font-weight: normal;
   font-family: 'Open Sans', sans-serif;
   cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
 
   &.onMap {
@@ -209,7 +224,7 @@ $radius: 8px;
         border-radius: 100%;
         width: 60px;
         height: 60px;
-        border: 2px solid $mainStyle;
+        border: 3px solid $mainStyle;
       }
     }
 
@@ -258,7 +273,7 @@ $radius: 8px;
               font-size: 14px;
             }
 
-            .mounth {
+            .month {
               color: $g90;
               border: 1px solid $w230;
               background-color: white;
@@ -347,9 +362,9 @@ $radius: 8px;
     .participants {
       display: flex;
       width: 100%;
-      padding: 5px 10px 5px 10px;
+      padding: 0 10px 5px 10px;
       font-size: 14px;
-      border-top: 1px solid $w230;
+      // border-top: 1px solid $w230;
       color: $w120;
 
       .wrapper {
@@ -414,12 +429,26 @@ $radius: 8px;
           border-top: 1px solid $w230;
         }
 
-        span {
+        .value {
+          display: flex;
+          flex-flow: row nowrap;
           flex: 1 1 auto;
           margin-left: 5px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+
+          span.city {
+            flex: 1 1 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          span.zip {
+            color: $w120;
+            font-weight: normal;
+            font-size: 13px;
+            flex: 0 0 auto;
+            padding: 0 10px 0 10px;
+          }
         }
 
         .icon {

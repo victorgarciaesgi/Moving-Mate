@@ -19,14 +19,15 @@
             
             <div class='align-left'>
               <FormButton  v-for="action in leftButtons" :key='action.text'
-                @click='executeAction(action)'
+                @click='executeAction(action, false)'
                 :theme='getTheme(action.type)'>
                 {{action.text}}
               </FormButton>
             </div>
             <div class='align-right'>
               <FormButton v-for="action in rightButtons" :key='action.text'
-                @click='executeAction(action)'
+                @click='executeAction(action, true)'
+                :submitting='submitting'
                 :theme='getTheme(action.type)'>
                 {{action.text}}
               </FormButton>
@@ -59,7 +60,9 @@ import {AlertsElement, ActionsElements} from '@classes';
 })
 export default class Alerts extends Vue {
 
+
   get alertState() { return AlertsStore.state}
+  get submitting() {return AlertsStore.state.submitting}
 
   get getTheme() {
     return type => {
@@ -92,8 +95,8 @@ export default class Alerts extends Vue {
     AlertsStore.mutations.cancelAlert();
   }
 
-  executeAction(action: ActionsElements.Action) {
-    AlertsStore.actions.executeAction(action);
+  async executeAction(action: ActionsElements.Action, value: boolean) {
+    await AlertsStore.actions.executeAction({action, value});
   }
 }
 </script>
@@ -111,7 +114,7 @@ export default class Alerts extends Vue {
   justify-content: center;
   align-items: center;
   align-content: center;
-  z-index: 10002;
+  z-index: 10003;
 
   .alert-window{
     display: flex;
@@ -146,6 +149,8 @@ export default class Alerts extends Vue {
 
         &.success {border-color: $mainStyle}
         &.error {border-color: $red1}
+
+        &.confirm {padding: 0; border: none;}
 
         img {
           height: 50px;

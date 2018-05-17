@@ -1,4 +1,3 @@
-export {default as FormComponent} from './FormComponent.vue';
 export {default as FormText} from './FormText.vue';
 export {default as FormField} from './FormField.vue';
 export {default as FormCalendar} from './FormCalendar/FormCalendar.vue';

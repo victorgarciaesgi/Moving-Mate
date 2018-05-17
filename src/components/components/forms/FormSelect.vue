@@ -3,8 +3,8 @@
     <div class='select-container'>
       <div ref='select-form' class='select-form' 
         :class='{
-          formError: (!valid && dirty && data.error && !vl.$pending),
-          formValid: (valid && dirty && data.error && !vl.$pending),
+          formError: (!valid && dirty && data.error && !isPending),
+          formValid: (valid && dirty && data.error && !isPending),
           icon: data.icon}'
         @click.stop="toggleOptions()">
         <div class='select-placeholder' :class='{top: isPlaceholderHere}'>
@@ -26,42 +26,24 @@
       </ul>
     </div>
 
-    <div class='errorMessage' v-if='((vl.$error && data.error) || vl.$pending)'>
-      <ul v-if='!vl.error && dirty && data.error' class='error'>
-        <li v-for='key in filterErrors' :key='key'>
-            <span>{{errorMessages[key]}}</span>
-        </li>
-      </ul>
-    </div>
+    <FormError v-if='vl' :vl='vl' :data='data'/>
+
   </div>
 
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import { Prop, Watch } from "vue-property-decorator";
-import { IValidator } from "vuelidate";
-import { EventBus } from '@store';
-import {calculatePopupPosition} from '@methods'
-
-import { SvgIcon } from "@components";
+import {Prop, Watch} from "vue-property-decorator";
+import {Component, Mixin, Mixins} from 'vue-mixin-decorator';
+import {FormMixin} from '../Mixins/FormMixin';
+import {timeout, calculatePopupPosition} from '@methods';
+import {EventBus, GoogleMaps} from '@store';
 
 @Component({
-  components: {
-    SvgIcon
-  }
+  mixins: [FormMixin]
 })
-export default class FormSelect extends Vue {
-  @Prop({required: true, type: [String, Number, null]}) value;
-  @Prop({ required: false }) vl: IValidator;
-  @Prop({required: true}) data: any;
+export default class FormSelect extends FormMixin {
   
-
-  public errorMessages = {
-    required: "Vous devez sélectionner une option",
-  };
-
   public optionsStyle = {
     left: null,
     top: null,
@@ -70,10 +52,6 @@ export default class FormSelect extends Vue {
   }
   public showOptions = false;
 
-  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-  get isPlaceholderHere() {return !!this.value}
-  get valid() {return !this.vl.$invalid}
-  get dirty() {return this.vl.$dirty}
   get getValue() {
     if (this.value) {
       return this.data.options.find(m => m.value == this.value).text
@@ -81,12 +59,8 @@ export default class FormSelect extends Vue {
       return null;
     }
   }
+  get isPlaceholderHere() {return !!this.value}
 
-  updateValue(value) {
-    this.vl.$touch();
-    this.$emit("input", value);
-    this.showOptions = false;
-  }
 
   toggleOptions() {
     if (this.showOptions) {
@@ -110,14 +84,6 @@ export default class FormSelect extends Vue {
       }
     })
   }
-
-  mounted() {
-    if (this.value && this.value.toString().trim().length) {
-      this.vl.$touch();
-    }
-  }
-
-  
 }
 </script>
 
@@ -131,26 +97,6 @@ export default class FormSelect extends Vue {
   min-width: 200px;
   width: 100%;
   padding: 5px 0 5px 0;
-
-  .errorMessage {
-    display: flex;
-    position: relative;
-    flex-flow: columns wrap;
-    justify-content: flex-start;
-    font-size: 11px;
-    font-weight: bold;
-    color: $red1;
-    margin-left: 5px;
-
-    .pending {
-      color: $yellow1;
-    }
-
-    ul {
-      display: flex;
-      flex-flow: column wrap;
-    }
-  }
 
   .select-container {
     display: flex;

@@ -50,7 +50,7 @@ namespace Actions {
     const decodedToken = await jwtDecode(token);
     console.log(token);
     console.log(decodedToken);
-    const response = await Api.post(VERIF_URL, {token});
+    const response = await Api.post(VERIF_URL, {token: 'Bearer ' + token});
   }
   
   export const actions = {

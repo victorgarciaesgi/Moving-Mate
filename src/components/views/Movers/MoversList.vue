@@ -1,20 +1,19 @@
 <template>
-  <div class="moving-list-root">
+  <div class="movers-list-root">
     <div v-if='searching' class='loader' >
       <img src="~@images/loading.svg">
     </div>
-    <template v-else-if='movingList.length'>
-      <ul  class='moving-list' >
-      <MovingCard v-for='moving in movingList' 
-                  :key='moving.id'
-                  :moving='moving'>
-      </MovingCard>
-    </ul>
+    <template v-else-if='moversList.length'>
+      <ul class='movers-list' >
+        <MoverCard v-for='mover in moversList' 
+          :key='mover.id'
+          :mover='mover' />
+      </ul>
     </template>
     <div v-else class='no-result flexy'>
       <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
         :size='50' color='#5a5a5a'/>
-      Aucune annonce trouvée
+      Aucune déménageur trouvé
     </div>
   </div>
 
@@ -23,22 +22,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component } from 'vue-property-decorator';
-import { MovingStore } from '@store';
-import MovingCard from './MovingCard.vue';
+import { MoverStore } from '@store';
+import MoverCard from './MoverCard.vue';
 import { SvgIcon } from '@components';
 
 @Component({
-  components: { MovingCard, SvgIcon}
+  components: { MoverCard, SvgIcon}
 })
-export default class MovingList extends Vue {
+export default class MoversList extends Vue {
 
-  get movingList() {return MovingStore.getters.formatedMovingList}
-  get searching() {return MovingStore.state.searchingMovingList}
-
-
-  mounted() {
-  }
-
+  get moversList() {return MoverStore.state.moverList}
+  get searching() {return MoverStore.state.searchingMoverList}
 
 }
 </script>
@@ -47,7 +41,7 @@ export default class MovingList extends Vue {
 <style lang="scss" scoped>
 
 
-.moving-list-root {
+.movers-list-root {
   display: flex;
   position: relative;
   flex-flow: column wrap;
@@ -61,8 +55,7 @@ export default class MovingList extends Vue {
     height: 50px;
   }
 
-
-  ul.moving-list {
+  ul.movers-list {
     display: flex;
     position: relative;
     flex-flow: row wrap;

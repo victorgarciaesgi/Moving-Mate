@@ -14,7 +14,7 @@ export interface IMovingState {
 export interface IMovingEvent {
   id: number,
   user: IMovingUser,
-  partipations: {
+  participations: {
     users: IMovingUser[]
   },
   label: string,
@@ -24,6 +24,7 @@ export interface IMovingEvent {
   menRequired: number,
   description: string,
   enabled: boolean,
+  staticMap: string,
   volume: number,
   dealDate: number,
   createdAt: Date,
@@ -46,6 +47,7 @@ export interface IMovingUser {
 
 export interface IAddress {
   type: "Maison" | "Appartement",
+  volume: number,
   value: string,
   city: string,
   zip: number,

@@ -1,5 +1,5 @@
 <template>
-  <div class='Form-message'>
+  <div class='Form-message' :class='{noshadow}'>
     <div class='border-content'>
       <div class='title'>
         <slot name='title'></slot>
@@ -22,6 +22,7 @@ import {Component, Prop, Watch } from 'vue-property-decorator';
 @Component({})
 export default class FormMessage extends Vue {
 
+  @Prop() noshadow: boolean;
 
 }
 
@@ -39,6 +40,13 @@ export default class FormMessage extends Vue {
   border-radius: 3px;
   overflow: hidden;
   font-size: 14px;
+
+  &.noshadow {
+    box-shadow: none;
+    border: 1px solid $w230;
+    border-radius: 0 3px 3px 0;
+    border-left: none;
+  }
   
 
   .border-content {

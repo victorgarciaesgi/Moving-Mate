@@ -16,43 +16,20 @@
         </li>
       </ul>
     </div>
-    <div class='errorMessage' v-if='vl.$error && data.error'>
-      <ul v-if='vl.$dirty && data.error' class='error'>
-        <li v-for='key in filterErrors' :key='key'>
-            <span>{{errorMessages[key]}}</span>
-        </li>
-      </ul>
-    </div>
+    <FormError :vl='vl' :data='data'/>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Prop, Component } from "vue-property-decorator";
-import shortId from 'shortid';
+import {Prop, Watch} from "vue-property-decorator";
+import {Component, Mixin, Mixins} from 'vue-mixin-decorator';
+import {FormMixin} from '../Mixins/FormMixin';
 
-@Component({})
-export default class Radio extends Vue {
-
-  @Prop({required: true, type: [String, Number, null]}) value;
-  @Prop() data: any;
-  @Prop() row: boolean;
-  @Prop() vl;
-  public formId = null;
-  public errorMessages = {
-    required: "Ce choix est requis",
-  };
-
-  get filterErrors() {return Object.keys(this.vl.$params).filter(key => !this.vl[key]);}
-
-
-  updateValue(value){
-    this.$emit('input', value);
-  }
-
-  mounted() {
-    this.formId = shortId.generate();
-  }
+@Component({
+  mixins: [FormMixin]
+})
+export default class Radio extends FormMixin {
+    @Prop() row: boolean;
 }
 </script>
 
@@ -68,22 +45,6 @@ export default class Radio extends Vue {
   height: auto;
   width: 100%;
   @include userselect;
-
-  .errorMessage {
-    display: flex;
-    position: relative;
-    flex-flow: columns wrap;
-    justify-content: flex-start;
-    font-size: 11px;
-    font-weight: bold;
-    color: $red1;
-    margin-left: 5px;
-
-    ul {
-      display: flex;
-      flex-flow: column wrap;
-    }
-  }
 
   .Radio-wrap {
     display: flex;

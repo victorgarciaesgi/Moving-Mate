@@ -3,17 +3,17 @@ export * from './ApiTypes';
 export {addAuthHeaders, removeAuthHeaders} from './Instance';
 
 export namespace ApiTool {
-  export async function post(path: string, payload: any, noAuth?: boolean) {
-    return await Request('post', path, payload, noAuth)
+  export async function post(path: string, payload: any) {
+    return await Request('post', path, payload)
   }
-  export async function get(path: string, payload?: any, noAuth?: boolean) {
-    return await Request('get', path, payload, noAuth)
+  export async function get(path: string, payload?: any) {
+    return await Request('get', path, payload)
   }
-  export async function put(path: string, payload: any, noAuth?: boolean) {
-    return await Request('put', path, payload, noAuth)
+  export async function put(path: string, payload: any) {
+    return await Request('put', path, payload)
   }
-  export async function Delete(path: string, payload: any, noAuth?: boolean) {
-    return await Request('delete', path, payload, noAuth)
+  export async function Delete(path: string, payload: any) {
+    return await Request('delete', path, payload)
   }
 }
 export default ApiTool;
