@@ -13,16 +13,14 @@ const placesAutocomplete = new google.maps.places.AutocompleteService();
 const PLACES_API = `https://maps.googleapis.com/maps/api/place/autocomplete/json?language=fr&type=address&key=AIzaSyBNEvF2wA8myZMLMTC6uTmVSdvb-Ajac-Q&input=`;
 // param input
 
-export const getMapInstance = async () => {
+export const getMapInstance = async (): Promise<google.maps.Map> => {
   if (!mapInstance) {
     await mapPromise;
   }
   return mapInstance;
 }
 let mapResolver = null;
-let mapPromise = new Promise((resolve) => {
-  mapResolver = resolve;
-});
+let mapPromise = null;
 
 interface geoLocateResult {
   location: google.maps.LatLng, 
@@ -57,6 +55,9 @@ const stateGetter = b.state();
 module Mutations {
 
   async function renderMap(state: IGoogleMapsState, {mapElement, location}) {
+    mapPromise = new Promise((resolve) => {
+      mapResolver = resolve;
+    });
     mapInstance = new google.maps.Map(mapElement, {
         center: location.location,
         styles: Style1,
@@ -65,13 +66,14 @@ module Mutations {
         mapTypeControl: false,
         scrollwheel: false
       });
-    mapInstance.fitBounds(location.bounds);
     mapResolver();
+    google.maps.event.addDomListener(mapInstance, 'idle', mapResolver);
+    mapInstance.fitBounds(location.bounds);
   }
   async function reloadMap(state: IGoogleMapsState, {location}) {
-    await mapPromise;
-    mapInstance.setCenter(location.location);
-    mapInstance.fitBounds(location.bounds);
+    const instance = await getMapInstance();
+    instance.setCenter(location.location);
+    instance.fitBounds(location.bounds);
   }
 
   async function updateMarkers(state: IGoogleMapsState, markers: IMarker[]) {
@@ -85,7 +87,7 @@ module Mutations {
   }
 
   function deleteMarkersFromMap(state: IGoogleMapsState) {
-    state.googleMarkerList.forEach(m => m.setMap(null))
+    state.googleMarkerList.forEach(m => m.setMap(null));
   }
 
   function addMarkersFromMap(state: IGoogleMapsState, marker: google.maps.Marker) {
@@ -125,6 +127,7 @@ namespace Actions {
 
   async function reCenterMap(context, ville: string): Promise<google.maps.LatLngBounds>{
     let location: geoLocateResult;
+    await getMapInstance();
     Mutations.mutations.updateMarkers([]);
     if (ville) {
       location = await geoLocate(ville + ', France');

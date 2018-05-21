@@ -3,7 +3,7 @@ import Api, { ApiError, ApiSuccess, ApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
-import { GoogleMaps } from '@store';
+import { GoogleMaps, getMapInstance } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
 
@@ -17,6 +17,7 @@ const state: IMovingState = {
     formSearchValue: '',
     placesResults: [],
     searchCommited: false,
+    formSearchCommitedValue: '',
   },
   searchingMovingList: false,
   movingList: [],
@@ -52,6 +53,10 @@ namespace Mutations {
     state.formSearchData.searchCommited = false;
     state.formSearchData.formSearchValue = newString;
   }
+  function updateCommitedValue(state: IMovingState, newString: string) {
+    state.formSearchData.searchCommited = true;
+    state.formSearchData.formSearchCommitedValue = newString;
+  }
 
   function updateSearchRoute(state: IMovingState, newString: string) {
     Router.replace(`/moving/search/${newString}`);
@@ -67,9 +72,10 @@ namespace Mutations {
   }
 
   export const mutations = {
-    updateMovingList: b.commit(updateMovingList),
+    updateMovingList: b.commit(updateMovingList),    
     updateSearchList: b.commit(updateSearchList),
     updateSearchValue: b.commit(updateSearchValue),
+    updateCommitedValue: b.commit(updateCommitedValue),
     updateSearchRoute: b.commit(updateSearchRoute),
     updateSearchingState: b.commit(updateSearchingState),
     updateOneAnnouncement: b.commit(updateOneAnnouncement)
@@ -99,6 +105,7 @@ namespace Actions {
   async function createMarkers(context, {annoucements, payload}) {
     console.log(annoucements);
     let markers: IMarker[] = [];
+    await getMapInstance();
     const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
     for (let moving of annoucements) {
       markers.push(new Marker(bounds, moving))
@@ -152,12 +159,23 @@ namespace Actions {
 
   async function createAnnouncement(context, form: Object) : Promise<ApiResponse>{
     try {
-      const {data} = await Api.post(Paths.MOIVNG_CREATE, form);
+      const {data} = await Api.post(Paths.MOVING_CREATE, form);
       console.log(data)
-      return new ApiSuccess({data});
+      return Promise.resolve(new ApiSuccess({data}));
 
     } catch {
-      return new ApiError();
+      return Promise.reject(new ApiError())
+    }
+  }
+
+  async function createParticipation(context, infos: Object) {
+    try {
+      const {data} = await Api.post(Paths.PARTICIPATION_CREATE, infos);
+      console.log(data)
+      return Promise.resolve(new ApiSuccess({data}));
+
+    } catch {
+      return Promise.reject(new ApiError())
     }
   }
 
@@ -167,7 +185,8 @@ namespace Actions {
     fetchUserLocation: b.dispatch(fetchUserLocation),
     createMarkers: b.dispatch(createMarkers),
     createAnnouncement: b.dispatch(createAnnouncement),
-    getOneAnnouncement: b.dispatch(getOneAnnouncement)
+    getOneAnnouncement: b.dispatch(getOneAnnouncement),
+    createParticipation: b.dispatch(createParticipation)
   }
 }
 

@@ -80,6 +80,9 @@
                 :vl='$v.CreateMovingForm.part2.menRequired' 
                 :data='CreateMovingForm.part2.fieldsData.menRequired'/>
             </div>
+            <FormText v-model='CreateMovingForm.part2.pricePerHourPerUser' 
+              :vl='$v.CreateMovingForm.part2.pricePerHourPerUser' 
+              :data='CreateMovingForm.part2.fieldsData.pricePerHourPerUser'/>
             <FormField v-model='CreateMovingForm.part2.description'
               :vl='$v.CreateMovingForm.part2.description' 
               :data='CreateMovingForm.part2.fieldsData.description'/>
@@ -180,6 +183,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
           label: {required, maxLenght: maxLength(100)},
           dealDate: {required},
           estimatedTime: {required},
+          pricePerHourPerUser: {required, numeric},
           menRequired: {required, numeric},
           description: {required, maxLength: maxLength(1000)}
         }
@@ -249,10 +253,6 @@ export default class CreateMoving extends Vue {
       addressIn: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_up.svg'),
-          value: {
-            addressValue: '9 avenue Moche',
-            addressCity: 'MonCul'
-          },
           placeholder: 'Votre adresse de départ'
         }),
         addressType:  new Forms.Radio({
@@ -328,6 +328,11 @@ export default class CreateMoving extends Vue {
           return {value: index + 1, text: index + 1 + ' personnes'}
         })
       }),
+      pricePerHourPerUser: new Forms.TextForm({
+        icon: require('@icons/euro.svg'),
+        placeholder: 'Prix par heure et par déménageur (en €)',
+        value: 15
+      }),
       description: new Forms.TextForm({
         placeholder: 'Description du déménagement',
         value: 'akljlkjdlandlzdlzaldajl'
@@ -351,7 +356,13 @@ export default class CreateMoving extends Vue {
       const {addressOut, ...rest} = part1;
       const {floor,elevator, ...rest2} = addressOut;
       part1 = {...rest, addressOut: rest2};
-    } 
+    }
+
+    part1.addressIn.placeId = part1.addressIn.address.placeId;
+    part1.addressOut.placeId = part1.addressOut.address.placeId;
+    delete part1.addressIn.address;
+    delete part1.addressOut.address;
+    delete part2.dealDate;
     
     if (this.typeDepart) {
       delete part1.addressOut;
@@ -359,7 +370,7 @@ export default class CreateMoving extends Vue {
     else if (this.typeArrivee) {
       delete part1.addressIn;
     }
-    const finalValues = {...part0, ...part1, ...part2};
+    const finalValues = {...part1, ...part2};
     console.log(JSON.parse(JSON.stringify(finalValues)));
     this.submitting = true;
     const {success, data} = await MovingStore.actions.createAnnouncement(finalValues);
@@ -369,7 +380,6 @@ export default class CreateMoving extends Vue {
         title: "Publication réussie!",
         message: "Votre annonce a bien été publiée. Recrutez des déménageurs depuis la page de votre annonce ou attendez que des déménégeurs proposent leur aide",
         actions: [
-          new ActionsElements.ConfirmAction({}),
           new ActionsElements.Action({
             type: 'action',
             text: 'Voir mon annonce',

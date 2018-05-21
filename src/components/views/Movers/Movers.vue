@@ -1,13 +1,13 @@
 <template lang='html'>
   <div class='Movers'>
     <section class='searchResults'>
-      <section class='searchComponent' :class='{shadow}'>
-        <SearchMoving :store='MoverStore'
+      <section class='searchComponent' :class='{shadow, invite}'>
+        <SearchMoving :store='SearchStore'
           @updateRoute='updateRoute'
           ></SearchMoving>
       </section>
       <section class='resultsList'>
-        <MoversList/>
+        <MoversList :invite='invite' :Store='SearchStore'/>
       </section>
     </section>
   </div>
@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Prop } from 'vue-property-decorator';
-import { MoverStore } from '@store';
+import { MoverStore, InviteMoverStore } from '@store';
 import MoversList from './MoversList.vue';
 import SearchMoving from '../Moving/SearchMoving.vue';
 import $ from 'jquery';
@@ -25,20 +25,35 @@ import $ from 'jquery';
 @Component({
   components: {
     SearchMoving, MoversList
-  }
+  },
 })
 export default class Movers extends Vue {
 
-  get MoverStore() {return MoverStore}
+  @Prop() invite: boolean;
+  @Prop() Store: any;
+
+  get SearchStore() {
+    if (this.invite) {
+      return InviteMoverStore
+    } else {
+      return MoverStore;
+    }
+  };
+
   public shadow = false;
 
 
   updateRoute(value) {
-    MoverStore.mutations.updateSearchRoute(value);
+    if (this.invite) {
+      InviteMoverStore.mutations.updateSearchRoute(value);
+    } else {
+      MoverStore.mutations.updateSearchRoute(value);
+    }
   }
 
   handleBodyScroll() {
-    if ($(document).scrollTop() === 0) {
+    if (this.invite) return;
+    else if ($(document).scrollTop() === 0) {
       this.shadow = false;
     } else {
       this.shadow = true;
@@ -47,6 +62,14 @@ export default class Movers extends Vue {
 
   created() {
     $(document).scroll(this.handleBodyScroll);
+  }
+
+  beforeDestroy() {
+    if (this.invite) {
+      InviteMoverStore.mutations.updateMoverList([]);
+    } else {
+      MoverStore.mutations.updateMoverList([]);
+    }
   }
 }
 </script>
@@ -95,6 +118,11 @@ export default class Movers extends Vue {
 
       &.shadow {
         box-shadow: 0 0 10px transparentize($g0, 0.8);
+      }
+      
+      &.invite {
+        position: relative;
+        top: 0;
       }
     }
   }

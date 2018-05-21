@@ -3,8 +3,8 @@ import shortid from 'shortid';
 import {Prop} from "vue-property-decorator";
 import {debounce} from 'lodash';
 import {Mixin} from 'vue-mixin-decorator';
-import FormError from '../Forms/FormError.vue';
-import { SvgIcon } from "@components";
+import FormError from '../forms/FormError.vue';
+import SvgIcon from "../widgets/Divers/SvgIcon.vue";
 
 
 @Mixin({

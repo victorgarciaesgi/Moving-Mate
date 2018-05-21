@@ -1,4 +1,4 @@
-
+const css = require('@css');
 
 
 
@@ -112,6 +112,38 @@ export namespace Forms {
   export class CheckBox extends DefaultFormElement {
     constructor(fields: FormPayload) {
       super({...fields, type: 'checkbox'});
+    }
+  }
+
+  interface StarPayload extends FormPayload {
+    starCount?: number,
+    baseColor?: string,
+    selectedColor?: string,
+    hoverColor?: string,
+    editable?: boolean,
+    init?: number,
+    size?: number
+  }
+
+  export class StarRating extends DefaultFormElement {
+    starCount?: number;
+    baseColor?: string;
+    selectedColor?: string;
+    hoverColor?: string;
+    editable?: boolean;
+    init?: number;
+    size?: number;
+    
+    constructor(fields: StarPayload) {
+      super(fields);
+      this.starCount = fields.starCount || 5;
+      this.baseColor = fields.baseColor || css.mainStyle;
+      this.selectedColor = fields.selectedColor || css.mainColor;
+      this.hoverColor = fields.hoverColor || css.yellow1;
+      this.editable = fields.editable != null ? fields.editable : true;
+      this.init = fields.init || 0;
+      this.size = fields.size || 25;
+
     }
   }
 }

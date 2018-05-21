@@ -61,6 +61,10 @@ export default class Moving extends Vue {
     $(document).scroll(this.handleBodyScroll);
   }
 
+  beforeDestroy() {
+    MovingStore.mutations.updateMovingList([])
+  }
+
 }
 </script>
 

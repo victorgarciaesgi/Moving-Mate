@@ -1,23 +1,26 @@
 <template>
-  <div ref='root' class='background-loader'
-    :style='loaderImg' :class='{blured: smallImgLoaded}'>
-    <img v-if='smallImgLoaded && !smallSrc' src="~@images/loading.svg">
+  <div ref='root' class='background-loader'>
+    <transition name='fade' mode='out-in'>
+      <div v-if='bigImgLoaded' class='cover' :style='loaderImg'></div>
+      <img v-else src="~@images/loading_white.svg">
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {Component, Prop} from 'vue-property-decorator';
+import {Component, Prop, Watch} from 'vue-property-decorator';
 
-@Component({})
+@Component({
+  props: ['src']
+})
 export default class BackgroundLoader extends Vue {
 
-  @Prop({required: true}) src: string;
-  @Prop({required: false}) smallSrc: string;
   @Prop({default: 'jpg'}) extension: string;
   @Prop(Boolean) moving: boolean;
 
-  public smallImgLoaded = false;
+  public src;
+
   public bigImgLoaded = false;
   public displaySrc = null;
 
@@ -25,40 +28,33 @@ export default class BackgroundLoader extends Vue {
     return {backgroundImage: `url(${this.displaySrc})`};
   }
 
-  loadImage(src, value) {
-    this.smallImgLoaded = value;
-    this.displaySrc = src;
-  }
-
-  mounted() {
+  @Watch('src') watchSrc(newVal, oldVal) {
+    this.bigImgLoaded = false;
+    this.displaySrc = null;
     let smallSrc;
     let bigSrc;
     if (this.moving) {
-      smallSrc = require(`@images/${this.src}/${this.src}_lazy.${this.extension}`);
       bigSrc = require(`@images/${this.src}/${this.src}.${this.extension}`);
     } else {
-      smallSrc = this.smallSrc;
       bigSrc = this.src;
-
-      this.displaySrc = smallSrc || bigSrc;
-    }
-    if (smallSrc) {
-      let smallImg = new Image();
-      smallImg.onload = () => {
-        if (!this.bigImgLoaded) {
-          this.loadImage(smallSrc, true)
-        }
-      }
-      smallImg.src = smallSrc;
-    } else {
-      this.smallImgLoaded = true;
+      this.displaySrc = bigSrc;
     }
     let bigImg = new Image();
     bigImg.onload = () => {
-      this.bigImgLoaded = true;
-      this.loadImage(bigSrc, false);
+      this.loadImage(bigSrc);
     }
     bigImg.src = bigSrc;
+  }
+
+  loadImage(src) {
+    this.bigImgLoaded = true;
+    this.displaySrc = src;
+  }
+
+
+
+  mounted() {
+    
   }
 }
 </script>
@@ -66,21 +62,27 @@ export default class BackgroundLoader extends Vue {
 <style lang="scss" scoped>
 
 .background-loader {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 100%;
-  @include bg-center;
+  background-color: $g90;
   transition: filter 0.3s;
+
+  .cover {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    @include bg-center;
+    width: 100%;
+  }
 
   img {
     height: 30px;
     width: 30px;
-  }
-
-  .blured {
-    filter: blur(50px);
   }
 }
 

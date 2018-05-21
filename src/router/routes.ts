@@ -11,6 +11,7 @@ export const routesNames = {
   movingOffers: 'MovingOffers',
   movingCreate: 'MovingCreate',
   searchMoving: 'SearchMovingRoute',
+  searchMoverInvite: 'SearchMoverInvite',
   movers: 'MoversRoute',
   searchMover: 'SearchMoverRoute',
   connexion: 'Connexion',
@@ -29,6 +30,7 @@ interface MyMeta {
   transparent?: boolean,
   isModal?: boolean,
   requiresAuth?: boolean,
+  isTab?: boolean,
   noAuth?: boolean,
   asyncData?: (to?: MyRoute) => Promise<any>
 }
@@ -60,9 +62,6 @@ export const routesList: MyRouteConfig[]  = [
     component: async () => await import('@views/Moving/Moving.vue'),
     meta: {
       title: 'Les déménagements',
-      async asyncData() {
-        await Stores.MovingStore.actions.fetchMoving({});
-      }
     },
     children: [
       {
@@ -72,9 +71,9 @@ export const routesList: MyRouteConfig[]  = [
           title: 'Les déménagements',
           contentProp: true,
           transparent: true,
-          async asyncData(to: Route) {
+          async asyncData(to) {
+            Stores.MovingStore.mutations.updateCommitedValue(to.params.search || '');
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
-            Stores.MovingStore.actions.fetchMoving(to.params);
             return to.params.search;
           }
         },
@@ -95,7 +94,7 @@ export const routesList: MyRouteConfig[]  = [
     path: '/moving/detail',
     component: async () => await import('@views/Moving/MovingDetail/MovingDetail.vue'),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
     children: [
       {
@@ -104,20 +103,46 @@ export const routesList: MyRouteConfig[]  = [
         component: async () => await import('@views/Moving/MovingDetail/MovingInfos.vue'),
         meta: {
           contentProp: true,
+          isTab: true,
           asyncData: getOneMoving
         }
       },
       {
         path: ':movingId/invite',
         name: routesNames.movingInvite,
+        component: async () => await import('@views/Moving/MovingDetail/MovingInvite.vue'),
         meta: {
-          asyncData: getOneMoving
-        }
+          contentProp: true,
+          isTab: true,
+          async asyncData(to) {
+            await Stores.InviteMoverStore.actions.fetchMover({});
+            return await getOneMoving(to);
+          }
+        },
+        children: [
+          {
+            path: 'search/:search?',
+            name: routesNames.searchMoverInvite,
+            meta: {
+              title: 'Les déménageurs',
+              contentProp: true,
+              transparent: true,
+              async asyncData(to) {
+                getOneMoving(to);
+                Stores.InviteMoverStore.mutations.updateSearchValue(to.params.search || '');
+                await Stores.InviteMoverStore.actions.fetchMover(to.params);
+                return to.params.search;
+              }
+            },
+          },
+        ]
       },
       {
         path: ':movingId/offers',
         name: routesNames.movingOffers,
         meta: {
+          contentProp: true,
+          isTab: true,
           asyncData: getOneMoving
         }
       }
@@ -140,9 +165,9 @@ export const routesList: MyRouteConfig[]  = [
           title: 'Les déménageurs',
           contentProp: true,
           transparent: true,
-          async asyncData(to: Route) {
+          async asyncData(to) {
             Stores.MoverStore.mutations.updateSearchValue(to.params.search || '');
-            Stores.MoverStore.actions.fetchMover(to.params);
+            await Stores.MoverStore.actions.fetchMover(to.params);
             return to.params.search;
           }
         },
@@ -232,7 +257,7 @@ async function getOneMoving(to: Route) {
   return title;
 }
 
-async function getOneUser(to: Route) {
+async function getOneUser() {
   const userData = await Stores.UserStore.actions.getOneUser();
   return userData;
 }

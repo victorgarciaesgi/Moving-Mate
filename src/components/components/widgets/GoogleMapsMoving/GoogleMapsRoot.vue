@@ -6,17 +6,27 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component } from 'vue-property-decorator';
+import Vue from 'vue';
+import { Component, Prop, Watch } from 'vue-property-decorator';
 import { GoogleMaps } from '@store';
 
 @Component({
 })
 export default class GoogleMapsRoot extends Vue {
 
-  mounted() {
+  @Prop() initFunction: Function;
+  @Prop({type: String}) reload;
+
+
+  @Watch('reload') reloadMap() {
+    this.initFunction();
+  }
+
+
+  async mounted() {
     const mapElement: HTMLElement = this.$refs['googlemap'];
-    GoogleMaps.actions.initMap(mapElement);
+    await GoogleMaps.actions.initMap(mapElement);
+    await this.initFunction();
   }
 
   beforeDestroy() {

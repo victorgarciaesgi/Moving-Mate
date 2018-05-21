@@ -102,7 +102,7 @@ import { EventBus } from '@store';
   directives: {
     focus: {
       inserted(el, binding, vnode) {
-        if (!vnode.context['searchCommited']) {
+        if (!vnode.context['searchCommited'] && !vnode.context['formSearchValue']) {
           el.focus();
         }
       }
@@ -113,6 +113,7 @@ export default class SearchMoving extends Vue {
 
   @Prop() store;
   @Prop() createMoving: boolean;
+  @Prop() moverInvite: boolean;
 
   get formSearchValue() {return this.store.state.formSearchData.formSearchValue}
   get placesResults() {return this.store.state.formSearchData.placesResults}
@@ -189,6 +190,10 @@ export default class SearchMoving extends Vue {
     this.handlePlacesSearch = debounce(e => {
       this.store.mutations.updateSearchValue(e);
     }, 300)
+  }
+
+  beforeDestroy() {
+    this.store.mutations.updateSearchValue("");
   }
 
 }

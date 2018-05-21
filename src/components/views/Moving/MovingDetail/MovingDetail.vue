@@ -4,7 +4,7 @@
     <div class='moving-tabs'>
       <ul class='tab-list'>
         <li class='tab' v-for='tab in tabs' :key='tab.title'>
-          <router-link :to='{name: tab.path, params: {movingId: tab.params}}'>
+          <router-link :class='{childs: tab.childs}' :to='{name: tab.path, params: {movingId: tab.params}}'>
             <span>{{tab.title}}</span>
           </router-link>
         </li>
@@ -30,20 +30,24 @@ import { routesNames } from '@router';
 @Component({})
 export default class MovingDetail extends Vue {
   
-  public backgroundCover = null;
 
   public tabs = [
-    {title: 'Informations', path: routesNames.movingInfos, params: MovingStore.state.oneAnnouncement.id},
-    {title: 'Inviter des déménageurs', path: routesNames.movingInvite, params: MovingStore.state.oneAnnouncement.id},
-    {title: 'Offres partenaires', path: routesNames.movingOffers, params: MovingStore.state.oneAnnouncement.id}
+    {title: 'Informations',childs: false, path: routesNames.movingInfos, params: this.paramId},
+    {title: 'Inviter des déménageurs',childs: true, path: routesNames.movingInvite, params: this.paramId},
+    {title: 'Offres partenaires',childs: false, path: routesNames.movingOffers, params: this.paramId}
   ]
+
+  get paramId() {
+    return MovingStore.state.oneAnnouncement?MovingStore.state.oneAnnouncement.id: null;
+  }
+
+  get backgroundCover() {
+    return {backgroundImage: `url(${this.movingEvent?this.movingEvent.staticMap:null})`}
+  }
 
   get movingEvent() {return MovingStore.state.oneAnnouncement}
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
-  mounted() {
-    this.backgroundCover = {backgroundImage: `url(${this.movingEvent.staticMap})`}
-  }
 
 }
 </script>
@@ -75,8 +79,12 @@ export default class MovingDetail extends Vue {
 
   .moving-tabs {
     display: flex;
+    position: sticky;
+    top: $headerHeight;
     justify-content: center;
     align-items: center;
+    background-color: white;
+    z-index: 100;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 
     ul.tab-list {
@@ -92,6 +100,14 @@ export default class MovingDetail extends Vue {
         a {
           span {
             padding: 15px 10px 10px 10px;
+          }
+
+          &.childs.router-link-active{
+            color: $g60;
+            font-weight: bold;
+            span {
+              border-bottom: 2px solid $g60;
+            }
           }
           &.router-link-exact-active {
             color: $g60;

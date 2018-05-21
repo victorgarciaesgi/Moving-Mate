@@ -3,7 +3,8 @@ const ServerRoutes = {
   SIGNUP: 'register/',
   MOVING_LIST: 'announcements',
   MOVING_DETAIL: 'announcement/',
-  MOIVNG_CREATE: 'announcement',
+  MOVING_CREATE: 'announcement',
+  PARTICIPATION_CREATE: 'participation',
   MOVERS_LIST: 'movers'
 }
 

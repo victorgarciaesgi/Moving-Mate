@@ -3,11 +3,12 @@
     <div v-if='searching' class='loader' >
       <img src="~@images/loading.svg">
     </div>
-    <template v-else-if='moversList.length'>
+    <template v-else-if='moverList.length'>
       <ul class='movers-list' >
-        <MoverCard v-for='mover in moversList' 
+        <MoverCard v-for='mover in moverList' 
           :key='mover.id'
-          :mover='mover' />
+          :mover='mover' 
+          :invite='invite'/>
       </ul>
     </template>
     <div v-else class='no-result flexy'>
@@ -21,18 +22,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Component } from 'vue-property-decorator';
+import { Component, Prop } from 'vue-property-decorator';
 import { MoverStore } from '@store';
 import MoverCard from './MoverCard.vue';
 import { SvgIcon } from '@components';
 
 @Component({
-  components: { MoverCard, SvgIcon}
+  components: { MoverCard, SvgIcon},
+  props: ["Store", "invite"]
 })
 export default class MoversList extends Vue {
 
-  get moversList() {return MoverStore.state.moverList}
-  get searching() {return MoverStore.state.searchingMoverList}
+  @Prop() invite: boolean;
+  @Prop() Store;
+
+  get moverList() {return this.Store.state.moverList}
+  get searching() {return this.Store.state.searchingMoverList}
 
 }
 </script>

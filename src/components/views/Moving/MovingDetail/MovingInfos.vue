@@ -74,18 +74,24 @@
         <div class='moving-places'>
           <div class='depart element'>
             <div class='icon black'></div>
-            <span>{{getDepart}}</span>
+            <div class='value'>
+              <span class='city'>{{getDepart.city}}</span>
+              <span class='zip'>   {{getDepart.zip}}</span>
+          </div>
           </div>
           <div class='arrivee element'>
             <div class='icon blue'></div>
-            <span>{{getArrivee}}</span>
+            <div class='value'>
+              <span class='city'>{{getDepart.city}}</span>
+              <span class='zip'>   {{getDepart.zip}}</span>
+          </div>
           </div>
           <div class='liaison'></div>
         </div>
         <div class='base-info info-wrap'>
           <div class='info'>
             <div class='info-content'>
-              <strong>{{getPrice}}10€</strong>
+              <strong>{{getPrice}}€</strong>
               <span>par pers.</span>
             </div>
           </div>
@@ -131,12 +137,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
-import {IMovingEvent} from '@types';
+import {IMovingEvent, MovingStatus} from '@types';
 import { StarRating, SvgIcon, UISwitch, FormMessage } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
 import moment from 'moment';
-import {MovingStore} from '@store';
+import {MovingStore, LoginStore} from '@store';
 import {DateMoving, AlertsElement, ActionsElements} from '@classes';
 import { timeout } from '@methods';
 import { throws } from 'assert';
@@ -159,8 +165,8 @@ export default class MovingDetail extends Vue {
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
   get userName() { return this.movingEvent.user.username; }
-  get getDepart() { return this.movingEvent.addressIn.city; }
-  get getArrivee() { return this.movingEvent.addressOut.city;}
+  get getDepart() { return this.movingEvent.addressIn; }
+  get getArrivee() { return this.movingEvent.addressOut;}
   get getMenNumber() {return this.movingEvent.menRequired};
   get getPrice() {return this.movingEvent.pricePerHourPerUser};
   get getBegin() {
@@ -170,7 +176,7 @@ export default class MovingDetail extends Vue {
 
   get departCards() {
     return [
-      {title: 'Ville', value: this.getDepart, image: require('@icons/localisation.svg')},
+      {title: 'Ville', value: this.getDepart.city, image: require('@icons/localisation.svg')},
       {title: 'Volume', value: `${this.movingEvent.volume}cm³`, image: require('@icons/moving/volume.svg')},
       {title: 'Type', value: 'Appartement', image: require('@icons/region.svg')},
       {title: 'Ascenseur', value: 'Non', image: require('@icons/moving/elevator.svg'), size: 20},
@@ -180,7 +186,7 @@ export default class MovingDetail extends Vue {
 
   get arriveeCards() {
     return [
-      {title: 'Ville', value: this.getArrivee, image: require('@icons/localisation.svg')},
+      {title: 'Ville', value: this.getArrivee.city, image: require('@icons/localisation.svg')},
       {title: 'Volume', value: `${this.movingEvent.volume}cm³`, image: require('@icons/moving/volume.svg')},
       {title: 'Type', value: 'Appartement', image: require('@icons/region.svg')},
       {title: 'Ascenseur', value: 'Non', image: require('@icons/moving/elevator.svg'), size: 20},
@@ -199,7 +205,12 @@ export default class MovingDetail extends Vue {
           new ActionsElements.ConfirmAction({
             text: 'Confirmer',
             triggers: [
-              () => timeout(1000),
+              () => MovingStore.actions.createParticipation({
+                announcement: this.movingEvent.id,
+                user: LoginStore.state.userInfos.id,
+                toHire: this.movingEvent.user.id
+              }),
+              () => MovingStore.actions.getOneAnnouncement(this.movingEvent.id.toString())
             ]
           }),
           new ActionsElements.CancelAction()
@@ -299,7 +310,14 @@ export default class MovingDetail extends Vue {
         display: flex;
         flex-flow: column wrap;
         // border-bottom: 1px solid $w220;
-        padding: 15px 0 15px 0;
+
+        &::after {
+          content: '';
+          height: 1px;
+          width: 100%;
+          margin: 15px 0 15px 0;
+          background-color: $w230;
+        }
 
         &:last-child {
           border: none;
@@ -412,7 +430,7 @@ export default class MovingDetail extends Vue {
     display: flex;
     flex-flow: column wrap;
     position: sticky;
-    top: calc(#{$headerHeight} + 40px);
+    top: calc(#{$headerHeight} + 80px);
     width: 350px;
     height: auto;
     margin-left: 30px;
@@ -481,12 +499,26 @@ export default class MovingDetail extends Vue {
             border-top: 1px solid $w230;
           }
 
-          span {
+          .value {
+            display: flex;
+            flex-flow: row nowrap;
             flex: 1 1 auto;
             margin-left: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+
+            span.city {
+              flex: 1 1 auto;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            span.zip {
+              color: $w120;
+              font-weight: normal;
+              font-size: 13px;
+              flex: 0 0 auto;
+              padding: 0 10px 0 10px;
+            }
           }
 
           .icon {

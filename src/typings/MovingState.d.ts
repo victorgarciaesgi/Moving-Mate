@@ -1,10 +1,11 @@
-import {IMoverState} from './MoverState'
+import {IMover} from './MoverState'
 
 export interface IMovingState {
   formSearchData: {
     formSearchValue: string,
     placesResults: ICity[],
     searchCommited: boolean,
+    formSearchCommitedValue: string
   },
   searchingMovingList: boolean,
   movingList: IMovingEvent[],

@@ -2,40 +2,34 @@
   <div class='star-component'>
     <div class="star-container" @mouseleave='leave()'>
       <div class="starRating"
-          v-for='(index) in starCount' :key='index' 
+          v-for='(index) in data.starCount' :key='index' 
           :style='getSize'
           :class='getActiveClass(index)' 
           >
-        <SvgIcon :src='getActiveImage(index)' 
+        <SvgIcon :src='getActiveImage(index)'
           :color='getActiveColor(index)'
-          :size='size'/>
-        <template v-if='editable'>
+          :size='data.size'/>
+        <template v-if='data.editable'>
           <div class="part" @mouseenter="hover(index - 0.5)" @click="set(index - 0.5)"></div>
           <div class="part" @mouseenter="hover(index)" @click="set(index)"></div>
         </template>
       </div>
     </div>
-    <div class="star-displayNumber" v-if='displayNote'>
-      {{ (hoverCount != 0?(hoverCount):'-') }} / {{starCount}}
-    </div>
-    <div class="star-displayCount" v-if='displayNote && noteCount'>
-      {{noteCount}} {{noteCount > 1?'notes':'note'}}
-    </div>
     
-    <template v-if='vl'>
-      <div v-if='!vl.$dirty && !displayNote' class="form-valid-icon form-required"></div>
-      <div v-if='!vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-valid"></div>
-      <div v-if='vl.$invalid && vl.$dirty && !displayNote' class="form-valid-icon form-invalid"></div>
-    </template>
+    <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
+    <div v-else-if='valid && dirty && data.error' class="form-valid-icon form-valid"></div>
+    <div v-else-if='!valid && dirty && data.error' class="form-valid-icon form-invalid"></div>
+    <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop, Watch } from "vue-property-decorator";
+import { Prop, Watch } from "vue-property-decorator";
 import { IValidator } from "vuelidate";
 import SvgIcon from '../Divers/SvgIcon.vue';
-const css = require('@css');
+import {Component, Mixin, Mixins} from 'vue-mixin-decorator';
+import {FormMixin} from '../../Mixins/FormMixin';
 
 
 @Component({
@@ -43,18 +37,8 @@ const css = require('@css');
     SvgIcon: SvgIcon
   }
 })
-export default class StarRating extends Vue {
-  @Prop({required: false}) value: number;
-  @Prop({ default: 5 }) starCount: number;
-  @Prop({ default: false }) required: boolean;
-  @Prop({ default: css.mainStyle}) baseColor: string;
-  @Prop({ default: css.mainColor}) selectedColor: string;
-  @Prop({ default: 25}) size: number;
-  @Prop({ default: true }) editable: boolean;
-  @Prop({ default: 0 }) init: number;
-  @Prop({ required: false}) noteCount: number;
-  @Prop({ default: false }) displayNote: boolean;
-  @Prop({ required: false}) vl: IValidator;
+export default class StarRating extends FormMixin {
+  @Prop() value: number;
 
   public rating: number = 0; 
   public hoverCount: number = 0;
@@ -68,17 +52,17 @@ export default class StarRating extends Vue {
 
   get getSize() {
     return {
-      height: `${this.size}px`,
-      width: `${this.size}px`,
+      height: `${this.data.size}px`,
+      width: `${this.data.size}px`,
     }
   }
 
   get getActiveColor() {
     return index => {
-      if (this.editable) {
-        return (!this.hoverStar && this.vl?this.vl.$dirty:false)?this.selectedColor:this.baseColor;
+      if (this.data.editable) {
+        return (!this.hoverStar && this.vl?this.vl.$dirty:false)?this.data.selectedColor:this.data.baseColor;
       } else {
-        return this.baseColor;
+        return this.data.baseColor;
       }
     }
   }
@@ -93,26 +77,26 @@ export default class StarRating extends Vue {
 
   get getActiveClass() {
     return index => {
-      if (this.editable) {
+      if (this.data.editable) {
         return {
           full: index <= this.hoverCount,
           half: index == this.hoverCount + 0.5,
           empty: index > this.hoverCount,
-          editable: this.editable
+          editable: this.data.editable
         }
       } else {
         return {
           full: index <= this.hoverCount,
           half: (index > this.hoverCount) && (index - 0.5 <= this.hoverCount),
           empty: index > this.hoverCount && (index - 0.5 > this.hoverCount),
-          editable: this.editable
+          editable: this.data.editable
         }
       }
     }
   }
 
   mounted() {
-    this.hoverCount = this.value || this.init;
+    this.hoverCount = this.value || this.data.init;
   }
 
   hover(value) {
@@ -121,12 +105,12 @@ export default class StarRating extends Vue {
   }
 
   leave() {
-    if (this.editable) {
+    if (this.data.editable) {
       this.hoverStar = false;
       if (this.vl) {
-        this.hoverCount = this.vl.$dirty ? this.rating : this.init;
+        this.hoverCount = this.vl.$dirty ? this.rating : this.data.init;
       } else {
-        this.hoverCount = this.value ? this.value : this.init;
+        this.hoverCount = this.value ? this.value : this.data.init;
       }
     }
   }
@@ -162,7 +146,6 @@ export default class StarRating extends Vue {
       position: relative;
       display: flex;
       flex-flow: row nowrap;
-      margin: -2px;
 
       /deep/ .svg-container {
         position: absolute;

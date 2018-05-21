@@ -27,7 +27,6 @@ export default class MarkerElement extends Vue {
 
   async renderMarker() {
     const mapInstance = await getMapInstance();
-
     this.marker = new google.maps.Marker({
       position: this.markerData.position,
       map: mapInstance,

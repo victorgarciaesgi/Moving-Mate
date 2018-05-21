@@ -27,25 +27,31 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     console.log(to, from);
     if (from.name && from.matched[0].name == to.name) {
       next();
+      console.log("1")
       return;
     } 
     else if (from.name == to.name){
+      console.log("2")
       next()
     }
-    else if (to.matched && from.name && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
+    else if (to.matched && from.name && !to.meta.isTab && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
       next();
+      console.log("3")
       return;
     }
     else {
       if (!to.meta.transparent && !to.meta.isModal) {
+        console.log("4")
         ProgressBar.mutations.start();
       } 
       else if (to.meta.transparent && !from.name) {
+        console.log("5")
         ProgressBar.mutations.start();
       }
 
       // If page is initialazed on child
       if (to.matched[0] && to.meta.isModal) {
+        console.log("6")
         if (!from.name) {
           getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);
