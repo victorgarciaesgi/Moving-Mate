@@ -70,8 +70,8 @@ export function calculatePopupRelativePosition(origin: HTMLElement, target: HTML
   let containerHeight: number;
   let containerPosition;
 
-  let outputLeft: number;
-  let outputTop: number;
+  let outputLeft: any;
+  let outputTop: any;
 
   if (container) {
     containerWidth = $container.outerWidth();
@@ -98,9 +98,9 @@ export function calculatePopupRelativePosition(origin: HTMLElement, target: HTML
   if ((outputLeft + popupWidth) > (containerWidth - 15)) {
     XType = 'right';
   } else if ((outputLeft < 15) ) {
-    XType = 'left'
+    XType = 'left';
   } else {
-    XType = 'center'
+    XType = 'center';
   }
 
   if ((outputTop + popupHeight + 15) > containerHeight){

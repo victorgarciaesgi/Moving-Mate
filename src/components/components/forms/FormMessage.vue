@@ -43,9 +43,18 @@ export default class FormMessage extends Vue {
 
   &.noshadow {
     box-shadow: none;
-    border: 1px solid $w230;
-    border-radius: 0 3px 3px 0;
-    border-left: none;
+    // border: 1px solid $w230;
+    // border-radius: 0 3px 3px 0;
+    // border-left: none;
+    background-color: lighten($yellow1, 15%);
+    color: $w250;
+
+    .border-content {
+      border-color: $yellow1;
+      .content {
+        color: $w245;
+      }
+    }
   }
   
 

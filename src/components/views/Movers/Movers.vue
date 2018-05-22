@@ -91,6 +91,7 @@ export default class Movers extends Vue {
     flex-flow: row wrap;
     min-height: 100%;
     width: 100%;
+    align-content: flex-start;
     background-color: white;
 
     section.resultsList {
@@ -101,7 +102,6 @@ export default class Movers extends Vue {
       height: auto;
       align-self: flex-start;
       background-color: white;
-
     }
 
     section.searchComponent {

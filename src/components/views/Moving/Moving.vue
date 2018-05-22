@@ -127,6 +127,21 @@ export default class Moving extends Vue {
       }
     }
   }
+
+
+  @media screen and (max-width: 1070px) {
+    section.resultsMap {
+      width: 100%;
+      left: 0px;
+      height: 300px;
+    }
+
+    section.searchResults {
+      margin-top: 300px;
+      width: 100%;
+      min-height: calc(100% - 300px);
+    }
+  }
 }
 
 

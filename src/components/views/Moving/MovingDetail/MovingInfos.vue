@@ -19,7 +19,7 @@
               <span class='month'>{{getBegin.month}}</span>
               <span class='hour'>{{getBegin.hour}}</span>
             </div>
-            <div class='message'>
+            <div class='message' v-if='!isMovingMine'>
               <FormMessage noshadow>
                 <template slot='title'>Vous devez respecter les horaires fournies par l'émetteur de l'annonce</template>
                 Si vous n'êtes pas présent à l'heure prévue, l'émetteur peut se voir en droit de refuser votre aide et de vous mettre une mauvaise note
@@ -55,7 +55,7 @@
             </div>
           </div>
         </div>
-         <FormMessage noshadow>
+         <FormMessage v-if='!isMovingMine' noshadow>
           <template slot='title'>L'addresse exacte n'est pas affichée</template>
           Pour des raisons de confidentialité, nous n'affichons pas l'addresse exacte de l'utilisateur. Seuls les déménageurs acceptés par celui-ci pourront la voir
         </FormMessage>
@@ -116,6 +116,8 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class='footer'>
         <div class='participants'>
           <span class='title'>Participants validés</span>
           <ul class='result' v-if='movingEvent.participations'>
@@ -126,9 +128,7 @@
           </ul>
           <span class='result' v-else>Aucun participants</span>
         </div>
-      </div>
-      <div class='footer'>
-        <div class='button-ask' @click='proposeHelp()'>Proposer mon aide</div>
+        <div class='button-ask' v-if='!isMovingMine' @click='proposeHelp()'>Proposer mon aide</div>
       </div>
     </section>
   </div>
@@ -173,6 +173,8 @@ export default class MovingDetail extends Vue {
     const date = new DateMoving(this.movingEvent.dealDate);
     return date;
   }
+
+  get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
   get departCards() {
     return [
@@ -257,6 +259,7 @@ export default class MovingDetail extends Vue {
 
 .sections {
   display: flex;
+  position: relative;
   flex-flow: row wrap;
   padding: 20px;
   padding-top: 30px;
@@ -438,6 +441,7 @@ export default class MovingDetail extends Vue {
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
 
+
     .header {
       display: flex;
       flex-flow: row nowrap;
@@ -599,6 +603,14 @@ export default class MovingDetail extends Vue {
         }
       }
 
+      
+    }
+
+    .footer {
+      display: flex;
+      flex-flow: column wrap;
+      padding: 10px;
+
       .participants {
         display: flex;
         flex-flow: column nowrap;
@@ -632,18 +644,14 @@ export default class MovingDetail extends Vue {
           }
         }
       }
-    }
-
-    .footer {
-      display: flex;
-      flex-flow: row nowrap;
-      padding: 10px;
 
       .button-ask {
         display: flex;
         justify-content: center;
         align-items: center;
+        align-content: center;
         height: 50px;
+        text-align: center;
         width: 100%;
         border-radius: 3px;
         font-size: 16px;
@@ -660,6 +668,70 @@ export default class MovingDetail extends Vue {
         &:active {
           background-color: darken($mainStyle, 10%);
         }
+      }
+    }
+
+    @media screen and (max-width: 1070px) {
+      width: 100%;
+      height: auto;
+      bottom: 20px;
+      top: auto;
+      margin-left: 0;
+      flex-flow: row nowrap;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      justify-content: center;
+
+      .header {
+        flex-flow: column wrap;
+        align-items: center;
+        flex: 0 0 auto;
+      }
+
+      .content {
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+        flex: 1 1 auto;
+
+        .moving-places {
+          display: none;
+        }
+
+        .info-wrap {
+          flex: 1 1 120px;
+          flex-flow: row wrap;
+
+          .info {
+            flex: 1 1 auto;
+          }
+        }
+      }
+
+      .footer {
+        flex-flow: row nowrap;
+        justify-content: center;
+        flex: 1 1 auto;
+        align-items: center;
+
+        .button-ask {
+          flex: 1 1 auto;
+        }
+      }
+    }
+
+    @media screen and (max-width: 900px) {
+      .footer .participants {
+        display: none;
+      }
+    }
+
+    @media screen and (max-width: 580px) {
+      .content {
+        display: none;
+      }
+
+      .footer .participants {
+        display: flex;
       }
     }
   }

@@ -10,11 +10,12 @@ import SvgIcon from "../widgets/Divers/SvgIcon.vue";
 @Mixin({
   components: {
     SvgIcon, FormError
-  }
+  },
+  props: ['value', 'vl', 'data']
 })
 export class FormMixin extends Vue {
 
-  @Prop({type: [String, Number, null]}) value: any;
+  @Prop({required: true}) value: any;
   @Prop({required: false}) vl;
   @Prop({required: true}) data: any;
 

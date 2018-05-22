@@ -55,7 +55,7 @@
             </div>
             <img v-if='locationSearching' class='loading icon' src='~@images/loading.svg'>
             <div class='france-map-selector'>
-              <Popup class='center' :width='260'>
+              <Popup :width='260'>
                 <template slot='popup'>
                   <MapViewer svgPath='departements' 
                     @pathSelected='handlePathSelect' 

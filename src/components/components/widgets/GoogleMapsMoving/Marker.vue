@@ -32,6 +32,7 @@ export default class MarkerElement extends Vue {
       map: mapInstance,
       animation: google.maps.Animation.DROP,
       title: this.markerData.title,
+      icon: require('@icons/truck_blue.svg'),
     })
     GoogleMaps.mutations.addMarkersFromMap(this.marker);
     this.marker.addListener('click', async () => {

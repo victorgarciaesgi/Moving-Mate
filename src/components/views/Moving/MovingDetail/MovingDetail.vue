@@ -1,7 +1,7 @@
 <template>
   <div class='MovingDetail' v-if='movingEvent'>
     <div class='moving-cover' :style='backgroundCover'></div>
-    <div class='moving-tabs'>
+    <div class='moving-tabs' v-if='isMovingMine'>
       <ul class='tab-list'>
         <li class='tab' v-for='tab in tabs' :key='tab.title'>
           <router-link :class='{childs: tab.childs}' :to='{name: tab.path, params: {movingId: tab.params}}'>

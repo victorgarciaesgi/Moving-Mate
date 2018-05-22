@@ -1,7 +1,9 @@
 <template>
   <div class='Home'>
     <section class='image-home'>
-      <img src='~@images/home_image/home_image.jpg' />
+      <ul class="link-list">
+        <router-link tag='li' to='moving' class='link'>Voir les déménagements</router-link>
+      </ul>
     </section>
 
     <section class='help '>
@@ -18,7 +20,7 @@
       </ul>
     </section>
 
-    <section class='france-map line-separator'>
+    <section class='france-map'>
       <h1>Voir les déménagements en France!</h1>
       <MapViewer svgPath='departements' @pathSelected='handlePathSelect' />
     </section>
@@ -35,13 +37,13 @@ import { Component } from 'vue-property-decorator';
 import { svgPath } from '@types';
 import router, {routesNames} from '@router';
 import FooterComponent from './Footer.vue';
-import { StarRating, SvgIcon, MapViewer, BlurLoader } from '@components';
+import { StarRating, SvgIcon, MapViewer, BackgroundLoader } from '@components';
 import { LoginStore, AlertsStore } from '@store';
 import {AlertsElement, ActionsElements} from '@classes';
 
 @Component({
   components: {
-    StarRating, SvgIcon, MapViewer, BlurLoader, FooterComponent
+    StarRating, SvgIcon, MapViewer, BackgroundLoader, FooterComponent
   }
 })
 export default class Home extends Vue {
@@ -58,23 +60,7 @@ export default class Home extends Vue {
   }
 
   async mounted() {
-    // let response = await new AlertsElement.SuccessAlert({
-    //   title: "Test d'une alerte",
-    //   message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
-    //   actions: [
-    //     new ActionsElements.CancelAction(),
-    //     new ActionsElements.Action({
-    //       type: "action",
-    //       text: "Faire un truc",
-    //       triggers: [
-    //         ActionsElements.triggers.close,
-    //         () => router.push({name: routesNames.movers}),
-    //       ]
-    //     }),
-    //   ]
-    // }).waitResponse();
 
-    // console.log(response);
   }
 
 }
@@ -98,8 +84,10 @@ export default class Home extends Vue {
 
   section.image-home {
     overflow: hidden;
-    height: auto;
+    height: 400px;
     max-height: 60vh;
+    background-image: url("~@images/home_image/home_image.jpg");
+    @include bg-center;
 
     img {
       width: 100%;
@@ -173,7 +161,10 @@ export default class Home extends Vue {
 
   section.france-map {
     height: auto;
-    padding: 30px;
+    margin: 0 30px 30px 30px;
+    padding-top: 30px;
+
+    border-top: 1px solid $w220;
   }
 }
 

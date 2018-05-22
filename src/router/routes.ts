@@ -32,7 +32,8 @@ interface MyMeta {
   requiresAuth?: boolean,
   isTab?: boolean,
   noAuth?: boolean,
-  asyncData?: (to?: MyRoute) => Promise<any>
+  asyncData?: (to?: MyRoute) => Promise<any>,
+  isMine?: () => Promise<any>
 }
 
 export interface MyRoute extends Route {

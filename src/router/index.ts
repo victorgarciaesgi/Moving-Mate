@@ -11,7 +11,11 @@ const Router = new VueRouter({
   mode: 'history',
   fallback: false,
   scrollBehavior(to, from, savedPosition) {
-    return { x: 0, y: 0 }
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
   },
   routes: routesList
 })
@@ -34,7 +38,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       console.log("2")
       next()
     }
-    else if (to.matched && from.name && !to.meta.isTab && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
+    else if (to.matched && from.name && !to.matched.some(m => m.meta.isTab) && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
       next();
       console.log("3")
       return;

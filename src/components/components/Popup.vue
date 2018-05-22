@@ -83,19 +83,6 @@ export default class Popup extends Vue {
 
 .popup-root {
   position: relative;
-
-
-  &.center {
-    .popup-box{
-      left: 50%;
-    }
-    .triangle {
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
-
     
   .popup-box{
     position: absolute;

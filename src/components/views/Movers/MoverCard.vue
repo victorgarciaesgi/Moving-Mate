@@ -6,7 +6,7 @@
       </div>
       <div class='userName'>
         <span class='value'>
-          <span>{{username}}</span> 
+          <span>{{userName}}</span> 
           <SvgIcon :src='require("@icons/movers/verified.svg")' :size='18' color='white'/>
         </span>
       </div>
@@ -59,9 +59,9 @@ import {IMover} from '@types';
 import { StarRating, SvgIcon, UISwitch, BackgroundLoader } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
-import {MovingStore} from '@store';
+import {MovingStore, LoginStore} from '@store';
 import Router, {routesNames} from '@router';
-import {DateMoving, Forms} from '@classes';
+import {DateMoving, Forms, AlertsElement, ActionsElements} from '@classes';
 
 @Component({
   components: {
@@ -77,7 +77,7 @@ export default class MoverCard extends Vue {
   public css = require('@css');
   public profilePic = null;
 
-  get username() {return this.mover.username};
+  get userName() {return this.mover.username};
   get userPrice() {return this.mover.pricePerHour || 15};
   get movingEvent() {return MovingStore.state.oneAnnouncement}
 
@@ -93,8 +93,33 @@ export default class MoverCard extends Vue {
     // Router.push({name: routesNames.moverInfos, params: {moverId: this.mover.id.toString()}});
   }
 
-  proposeHelp() {
-    
+  async proposeHelp() {
+    try {
+      const response = await new AlertsElement.Alert({
+        title: `Proposer son aide à ${this.userName}`,
+        type: 'confirm',
+        message: `En confirmant, ${this.userName} recevra une demande d'aide de votre part`,
+        strict: true,
+        actions: [
+          new ActionsElements.ConfirmAction({
+            text: 'Confirmer',
+          }),
+          new ActionsElements.CancelAction()
+        ]
+      }).waitResponse();
+
+      if (response) {
+        new AlertsElement.SuccessAlert({
+          title: `Proposition envoyée`,
+          message: `Votre demande a bien été envoyée à ${this.userName}`,
+        })
+      }
+    } catch(e) {
+      new AlertsElement.ErrorAlert({
+        title: `La proposition a échoué`,
+        message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+      })
+    }
   }
 
   async fetchImage() {
