@@ -1,5 +1,5 @@
 <template>
-  <li class='moving-card' :class='{onMap}' @click.prevent='redirectToDetail'>
+  <li class='moving-card' :class='{onMap, embed}' @click.prevent='redirectToDetail'>
     <div class='header'>
       <div class='profil'>
         <div class='profil-bg' :style='profilePic'></div>
@@ -100,6 +100,7 @@ export default class MovingCard extends Vue {
 
   @Prop({required: true}) moving: IMovingEvent;
   @Prop({required: false}) onMap: boolean;
+  @Prop() embed: boolean;
   public css = require('@css');
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
@@ -166,12 +167,9 @@ $radius: 8px;
   cursor: pointer;
   transition: transform 0.2s;
 
-  &:hover {
-    transform: translateY(-5px);
-  }
-
-  &:active {
-    transform: scale(0.95);
+  &.embed {
+    margin: 0;
+    box-shadow: none;
   }
 
 
@@ -199,6 +197,14 @@ $radius: 8px;
       @include translateX(-50%);
       top: 100%;
     }
+  }
+
+  &:not(.embed):not(.onMap):hover {
+    transform: translateY(-5px);
+  }
+
+  &:not(.embed):not(.onMap):active {
+    transform: scale(0.95);
   }
 
   .header {

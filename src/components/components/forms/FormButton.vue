@@ -1,8 +1,9 @@
 <template>
-  <button @mousedown.prevent.stop='emitClick($event)' :type='type' 
-    :class='[{submitting: submitting, disabled: disabled}, colorClass]'>
+  <button @mousedown.stop='emitClick($event)' :type='type' 
+    :class='[{submitting: submitting, disabled: disabled}, colorClass]'
+    :style='getColorTheme'>
     <img v-if='!!icon' :src="icon">
-    <span :style='{color}'>
+    <span :style='{color: spanColor}'>
       <slot></slot>
     </span>
     <SvgIcon class='loading' :src='require("@images/loading.svg")' :size='17' />
@@ -28,11 +29,23 @@ export default class FormButton extends Vue {
   @Prop({required: false}) theme: string;
   @Prop({required: false}) color: string;
   
+  @Prop() colorTheme: string;
+
+  
   public css = require('@css');
+
+  get getColorTheme() {
+    if (!this.colorTheme) return;
+    return {
+      color: 'white',
+      backgroundColor: this.colorTheme
+    }
+  }
 
   emitClick(event: Event) {
     if (!this.submitting && !this.disabled) {
-      this.$emit('click');
+      if (this.type == 'button') this.$emit('click');
+      else if (this.type == 'submit') this.$emit('submit')
     } else if (this.disabled) {
       event.preventDefault();
       this.$emit('disabledClick');
@@ -43,6 +56,10 @@ export default class FormButton extends Vue {
 
   get colorClass(){
     return this.theme || '';
+  }
+
+  get spanColor() {
+    return this.color || this.colorTheme?'white':false || null;
   }
 
 }

@@ -124,7 +124,7 @@ export default class FormCalendar extends FormMixin {
     } else if( type == 'next') {
       this.changeMonth(1);
     }
-    this.$emit('input', date.unix());
+    this.$emit('input', date.unix() * 1000);
     this.forceBlur();
   }
 
@@ -183,8 +183,8 @@ export default class FormCalendar extends FormMixin {
 
   get formatedValue() {
     if (this.value != '' && !!this.value) {
-      if (this.isMoving) return moment.unix(this.value).format('dddd Do MMMM YYYY, hh:mm');
-      else return moment.unix(this.value).format('Do/MM/YYYY');
+      if (this.isMoving) return moment.unix(this.value / 1000).format('dddd Do MMMM YYYY, HH:mm');
+      else return moment.unix(this.value / 1000).format('Do/MM/YYYY');
     } else {
       return this.value;
     }

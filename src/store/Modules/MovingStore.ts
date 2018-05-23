@@ -1,4 +1,4 @@
-import { IMovingState, IMarker} from '@types';
+import { IMovingState, IMarker, IMovingEvent} from '@types';
 import Api, { ApiError, ApiSuccess, ApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
@@ -150,7 +150,12 @@ namespace Actions {
     })
   }
 
-  async function getOneAnnouncement(context, id: string) {
+  async function getOneAnnouncement(context, id: string): Promise<IMovingEvent>{
+    const {data} = await Api.get(Paths.MOVING_DETAIL + id);
+    return data;
+  }
+
+  async function getAnnouncementDetails(context, id: string) {
     const {data} = await Api.get(Paths.MOVING_DETAIL + id);
     Mutations.mutations.updateOneAnnouncement(data);
     console.log(data);
@@ -186,6 +191,7 @@ namespace Actions {
     createMarkers: b.dispatch(createMarkers),
     createAnnouncement: b.dispatch(createAnnouncement),
     getOneAnnouncement: b.dispatch(getOneAnnouncement),
+    getAnnouncementDetails: b.dispatch(getAnnouncementDetails),
     createParticipation: b.dispatch(createParticipation)
   }
 }

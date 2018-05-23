@@ -1,14 +1,8 @@
 <template>
   <div class='popup-root'>
-    <div v-show='show'
-      @click.stop
-      ref='popup'
+    <div v-show='show' @click.stop ref='popup'
       class="popup-box"
-      :class='[
-        PopupXYTypes.XType,
-        PopupXYTypes.YType,
-        {active: show}
-      ]'>
+      :style='getWidth' :class='[PopupXYTypes.XType,PopupXYTypes.YType,{active: show}]'>
         <div class='triangle up' v-if='show'
           :class='[
             PopupXYTypes.XType,
@@ -41,7 +35,7 @@ import { relative, isAbsolute } from "path";
 @Component({})
 export default class Popup extends Vue {
 
-  @Prop({default: 300}) width: number;
+  @Prop() width: number;
   @Prop({required: false}) container: HTMLElement;
 
   public show: boolean = false;
@@ -49,6 +43,10 @@ export default class Popup extends Vue {
   public PopupXYTypes = {
     XType: null,
     YType: null
+  }
+  get getWidth() {
+    if (!this.width) return;
+    return {width: this.width + 'px'}
   }
 
   togglePopup() {
@@ -59,6 +57,7 @@ export default class Popup extends Vue {
       this.PopupXYTypes = Types;
       EventBus.$emit('closePopups', this);
       this.show = true;
+      this.$emit('open');
     } 
     else {
       this.show = false;
@@ -86,6 +85,9 @@ export default class Popup extends Vue {
     
   .popup-box{
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: white;
     top: calc(100% + 15px);
     border-radius: 5px;
@@ -93,10 +95,17 @@ export default class Popup extends Vue {
     height: auto;
     min-height: 200px;
     min-width: 250px;
+    width: auto;
     max-height: 80vh;
     max-width: 80vw;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     z-index: 10011;
+
+    .center {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-between;
+    }
 
     &.center {
       left: 50%;
@@ -166,7 +175,7 @@ export default class Popup extends Vue {
 
     &.bottom {bottom: 100%;}
     &.top {top: 100%}
-    &.right { right: 15px;}
+    &.right { right: 5px;}
     &.center {
       left: 50%;
       @include translateX(-50%);

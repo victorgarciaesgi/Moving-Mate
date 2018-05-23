@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter, {Route, RouteRecord} from 'vue-router';
 import { LoginStore } from '@modules';
 import { routesList, MyRoute } from './routes';
-import { ProgressBar, GlobalStore } from '@store';
+import { ProgressBar, GlobalStore, EventBus } from '@store';
 
 Vue.use(VueRouter);
 
@@ -26,7 +26,6 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     if (!LoginStore.state.sessionChecked) {
       await LoginStore.actions.checkUserSession();
     }
-
     // Check if route come from child
     console.log(to, from);
     if (from.name && from.matched[0].name == to.name) {
@@ -111,6 +110,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
 
 Router.afterEach(async (from: MyRoute, next) => {
   ProgressBar.mutations.finish();
+  EventBus.$emit('closePopups');
 })
 
 const getRouteData = async (to: MyRoute | RouteRecord) => {

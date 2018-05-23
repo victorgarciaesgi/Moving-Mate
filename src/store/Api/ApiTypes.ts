@@ -18,14 +18,13 @@ export class AxiosError {
   constructor(status: number, data?: any) {
     this.status = status;
     this.data = data;
-    if (status != 401) {
+    if (status != 403) {
       // if (status == 0) message = 'Vérifiez votre connexion Internet';
       // NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } 
     else {
       if (data.message !== 'Bad credentials') {
         LoginStore.actions.disconnectRequest();
-        // NotificationsStore.actions.addNotification({ type: 'error', message: message })
       }
     }
   }

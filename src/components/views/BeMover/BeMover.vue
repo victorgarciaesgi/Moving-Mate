@@ -3,7 +3,23 @@
     <div class='sections'>
       <section class='bemover-form'>
         <h1>Devenir déménageur</h1>
-        <CheckBox v-model='becomeMoverForm.cgu' :data='becomeMoverForm.fieldsData.cgu'/>
+        <div class='content'>
+          <FormText v-model='becomeMoverForm.firstname' :vl='$v.becomeMoverForm.firstname' :data='becomeMoverForm.fieldsData.firstname' />
+          <FormText v-model='becomeMoverForm.lastname' :vl='$v.becomeMoverForm.lastname' :data='becomeMoverForm.fieldsData.lastname' />
+          <FormPlaceSearch v-model='becomeMoverForm.address' :vl='$v.becomeMoverForm.address' :data='becomeMoverForm.fieldsData.address' />
+          <FormText v-model='becomeMoverForm.price' :vl='$v.becomeMoverForm.price' :data='becomeMoverForm.fieldsData.price' />
+          <FormField v-model='becomeMoverForm.description' :vl='$v.becomeMoverForm.description' :data='becomeMoverForm.fieldsData.description' />
+          <CheckBox v-model='becomeMoverForm.cgu' :vl='$v.becomeMoverForm.cgu' :data='becomeMoverForm.fieldsData.cgu'/>
+          <div class='footer'>
+            <FormButton 
+              :submitting='submitting'
+              :disabled='$v.becomeMoverForm.$invalid'
+              @disabledClick='touchForm()'
+              :colorTheme='css.mainStyle'>
+                Devenir déménageur
+            </FormButton>
+          </div>
+        </div>
       </section>
       <!-- <section class='bemover-previsu'></section> -->
     </div>
@@ -26,16 +42,48 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
     FormButton, FormText, UISteps, FormField, FormPlaceSearch,
     FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar
   },
+  validations: {
+    becomeMoverForm: {
+      cgu: {isCguChecked(value) {return value}},
+      firstname: {required},
+      lastname: {required},
+      address: {required},
+      price:{required, numeric},
+      description: {required}
+    }
+  }
 })
 export default class BeMover extends Vue {
 
-
+  public $v;
+  public css = require('@css');
+  public submitting = false;
 
   public becomeMoverForm = new Forms.Form({
     cgu: new Forms.CheckBox({
       placeholder: `J'accepte les conditions générale d'utilisation du site`
+    }),
+    firstname: new Forms.TextForm({
+      placeholder: 'Votre prénom'
+    }),
+    lastname: new Forms.TextForm({
+      placeholder: 'Votre nom'
+    }),
+    address: new Forms.TextForm({
+      placeholder: 'Votre adresse de départ'
+    }),
+    price: new Forms.TextForm({
+      placeholder: 'Votre prix par heure',
+    }),
+    description: new Forms.TextForm({
+      placeholder: 'Décrivez vous en quelques mots'
     })
   })
+
+  touchForm() {
+    console.log('lol')
+    this.$v.becomeMoverForm.$touch();
+  }
 
 
 }
@@ -48,6 +96,7 @@ export default class BeMover extends Vue {
   display: flex;
   justify-content: center;
   width: 100%;
+  background-color: white;
   .sections {
     display: flex;
     position: relative;
@@ -65,6 +114,22 @@ export default class BeMover extends Vue {
       flex-flow: column wrap;
       padding: 10px;
       padding-top: 0;
+
+      h1 {
+        text-align: center;
+        padding: 10px;
+      }
+
+      .content {
+        padding: 20px;
+        display: flex;
+        flex-flow: column wrap;
+
+        .footer {
+          display: flex;
+          flex-flow: row wrao
+        }
+      }
     }
 
     section.bemover-previsu {

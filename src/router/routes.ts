@@ -33,7 +33,7 @@ interface MyMeta {
   isTab?: boolean,
   noAuth?: boolean,
   asyncData?: (to?: MyRoute) => Promise<any>,
-  isMine?: () => Promise<any>
+  isAuthorized?: () => Promise<boolean>
 }
 
 export interface MyRoute extends Route {
@@ -254,7 +254,7 @@ export const routesList: MyRouteConfig[]  = [
 
 
 async function getOneMoving(to: Route) {
-  const title = await Stores.MovingStore.actions.getOneAnnouncement(to.params.movingId);
+  const title = await Stores.MovingStore.actions.getAnnouncementDetails(to.params.movingId);
   return title;
 }
 

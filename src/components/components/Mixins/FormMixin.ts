@@ -28,7 +28,7 @@ export class FormMixin extends Vue {
   get valid() {return this.vl?!this.vl.$invalid: null}
   get dirty() {return this.vl?this.vl.$dirty: null}
   get error() {return this.vl?this.vl.$error: null}
-  get required() {return this.vl?this.vl.required: null}
+  get required() {return this.vl?this.vl.$params.required: null}
   get isPending() {return this.vl?this.vl.$pending: null}
 
   updateValue(value) {

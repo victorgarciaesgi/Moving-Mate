@@ -1,5 +1,8 @@
 <template>
   <div class='Moving'>
+    <section class='resultsMap'>
+      <MovingMap/>
+    </section>
     <section class='searchResults'>
       <section class='searchComponent' :class='{shadow}'>
         <SearchMoving :store='MovingStore'
@@ -11,11 +14,6 @@
         <MovingList/>
       </section>
     </section>
-
-    <section class='resultsMap'>
-      <MovingMap/>
-    </section>
-
     <router-view></router-view>
   </div>
 </template>
@@ -131,13 +129,14 @@ export default class Moving extends Vue {
 
   @media screen and (max-width: 1070px) {
     section.resultsMap {
+      position: relative;
       width: 100%;
       left: 0px;
+      top: 0;
       height: 300px;
     }
 
     section.searchResults {
-      margin-top: 300px;
       width: 100%;
       min-height: calc(100% - 300px);
     }

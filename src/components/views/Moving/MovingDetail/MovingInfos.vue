@@ -16,7 +16,7 @@
           <div class='section-content'>
             <div class='date'>
               <span class='number'>{{getBegin.number}}</span>
-              <span class='month'>{{getBegin.month}}</span>
+              <span class='month'>{{getBegin.month}} {{getBegin.year}}</span>
               <span class='hour'>{{getBegin.hour}}</span>
             </div>
             <div class='message' v-if='!isMovingMine'>
@@ -212,7 +212,7 @@ export default class MovingDetail extends Vue {
                 user: LoginStore.state.userInfos.id,
                 toHire: this.movingEvent.user.id
               }),
-              () => MovingStore.actions.getOneAnnouncement(this.movingEvent.id.toString())
+              () => MovingStore.actions.getAnnouncementDetails(this.movingEvent.id.toString())
             ]
           }),
           new ActionsElements.CancelAction()

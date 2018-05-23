@@ -34,7 +34,8 @@ export default class FormError extends Vue {
     isMailUnique: 'Cet email est déjà utilisé',
     isNameUnique: 'Ce nom est déjà utilisé',
     phone: 'Le numéro de téléphone doit être valide',
-    numeric: 'Ce champs doit être un nombre'
+    numeric: 'Ce champs doit être un nombre',
+    isCguChecked: 'Les CGU doivent être acceptées'
   };
 }
 </script>

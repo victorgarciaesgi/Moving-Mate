@@ -76,7 +76,8 @@ import {debounce} from 'lodash';
 
 
 @Component({
-  mixins: [FormMixin]
+  mixins: [FormMixin],
+  props: ['value']
 })
 export default class FormPlaceSearch extends FormMixin {
 
@@ -148,14 +149,14 @@ export default class FormPlaceSearch extends FormMixin {
 
   handleBlur() {
     this.isFocused = false;
-    this.vl.$touch();
+    if (this.vl) this.vl.$touch();
   }
 
   mounted() {
     this.formId = shortid.generate();
     if (this.value != "") {
       this.tempValue = this.value.addressValue + ', ' + this.value.addressCity;
-      this.vl.$touch();
+      if (this.vl) this.vl.$touch();
     }
   }
 

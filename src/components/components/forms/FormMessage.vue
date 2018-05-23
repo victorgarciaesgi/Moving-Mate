@@ -42,17 +42,17 @@ export default class FormMessage extends Vue {
   font-size: 14px;
 
   &.noshadow {
-    box-shadow: none;
+    // box-shadow: none;
     // border: 1px solid $w230;
     // border-radius: 0 3px 3px 0;
     // border-left: none;
-    background-color: lighten($yellow1, 15%);
-    color: $w250;
+    // background-color: lighten($yellow1, 30%);
+    color: $g60;
 
     .border-content {
       border-color: $yellow1;
       .content {
-        color: $w245;
+        color: $g90;
       }
     }
   }

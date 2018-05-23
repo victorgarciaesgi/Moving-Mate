@@ -31,7 +31,6 @@ export default class CheckBox extends FormMixin {
   position: relative;
   display: flex;
   flex-flow: column wrap;
-  align-items: center;
   justify-content: center;
   padding: 10px 10px 10px 5px;;
   height: auto;
@@ -43,11 +42,12 @@ export default class CheckBox extends FormMixin {
     display: flex;
     flex-flow: row wrap;
     align-items: center;
-    justify-content: center;
+    margin-left: 5px;
 
     span{
       font-size: 14px;
       font-weight: bold;
+      margin-left: 5px;
     }
 
     label.button{

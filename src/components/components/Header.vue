@@ -14,7 +14,7 @@
           </router-link>
         </ul>
         <ul class='login-list'>
-          <li class="header-button color">
+          <li class="header-button color" v-if='!(loginState.isLoggedIn && userInfos.isMover)'>
             <router-link to='/bemover'>
               <span>Devenir déménageur</span>
             </router-link>
@@ -22,38 +22,54 @@
 
           <!-- If user logged in -->
 
-          <template v-if='loginState.isLoggedIn' >
-            <li for='user-notifications' class='header-button popup'>
-              <Popup v-if='loginState.isLoggedIn' :width='250'>
+          <template v-if='loginState.isLoggedIn'>
+            <li class='header-button popup'>
+              <Popup v-if='loginState.isLoggedIn' @open='fetchMyMoving'>
                 <template slot='popup'>
-                </template>
-                <div slot='button' class='bouton-data image' >
-                  <SvgIcon :src="require('@icons/notification_none.svg')" :size='24'></SvgIcon>
-                </div>
-              </Popup>
-              
-            </li>
-
-            <li for='user-menu' class="header-button popup">
-              <Popup :width='250'>
-                <template slot='popup'>
-                  <div class="user">
-                      <div class="user-picture" :style='getProfileImage'></div>
-                      <div class="user-name">{{loginState.userInfos.username | capitalize}}</div>
+                  <div class='center' v-if='searchingMyMoving'><img src='~@images/loading.svg'></div>
+                  <div v-else-if="myMoving">
+                    <MovingCard :moving='myMoving' embed />
                   </div>
-                  <ul class='user-option-list'>
-                    <router-link :to='userProfilePath'><li class='user-option'>Mon profil</li></router-link>
-                     <a href="#" v-if='isAdmin'>
-                        <li class='user-option'>
-                          Administration
-                        </li>
-                      </a>
-                      <li class='user-option'>Aide</li>
-                      <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
-                  </ul>
+                  <div v-else class='center' >Aucun déménagement trouvé</div>
                 </template>
                 <div slot='button' class='bouton-data' >
-                  <span>{{loginState.userInfos.username | capitalize}}</span>
+                  <span>Mon déménagement</span>
+                </div>
+              </Popup>
+            </li>
+            <li class='header-button popup'>
+              <Popup v-if='loginState.isLoggedIn' :width='300'>
+                <template slot='popup'>
+                  <div class='center'>
+                    <SvgIcon :src='require("@icons/notifs/notification_none.svg")'/>
+                    <span>Aucune notification</span>
+                  </div>
+                </template>
+                <div slot='button' class='bouton-data image' >
+                  <SvgIcon :src="require('@icons/notifs/notification_empty.svg')" :size='24'></SvgIcon>
+                </div>
+              </Popup>
+            </li>
+
+            <li class="header-button popup">
+              <Popup :width='250'>
+                <template slot='popup'>
+                 <div class='user-options-popup'>
+                    <div class="user">
+                      <div class="user-picture" :style='getProfileImage'></div>
+                      <div class="user-name">{{userInfos.username | capitalize}}</div>
+                    </div>
+                    <ul class='user-option-list'>
+                      <router-link tag='li' :to='userProfilePath' class='user-option'>Mon profil</router-link>
+                      <li class='user-option'>Historique de déménagements</li>
+                      <li class='user-option' v-if='isAdmin'>Administration</li>
+                      <li class='user-option'>Aide</li>
+                      <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
+                    </ul>
+                 </div>
+                </template>
+                <div slot='button' class='bouton-data'>
+                  <span>{{userInfos.username | capitalize}}</span>
                   <div class='profile-image' :style='getProfileImage'></div>
                 </div>
               </Popup>
@@ -88,16 +104,18 @@ import {RootState} from '@store';
 import { ILoginState, ISignupState } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
-import { LoginStore, SignupStore, GlobalStore } from '@modules'
+import MovingCard from '@views/Moving/MovingCard.vue';
+import { LoginStore, SignupStore, GlobalStore, MovingStore } from '@modules'
 import { StringifyOptions } from "querystring";
 import {routesNames} from '@router';
 
 @Component({
-  components: { Connexion, Inscription, Popup, SvgIcon },
+  components: { Connexion, Inscription, Popup, SvgIcon, MovingCard },
 })
 export default class HeaderComponent extends Vue {
 
   get loginState() {return LoginStore.state}
+  get userInfos() {return LoginStore.state.userInfos};
   get fullName() {return LoginStore.getters.fullName};
   get userPicture(){return LoginStore.getters.userPicture};
   get isAdmin() {return LoginStore.getters.isAdmin};
@@ -120,9 +138,20 @@ export default class HeaderComponent extends Vue {
     }
   }
 
-  mounted() {
-    
+  public myMoving = null;
+  public searchingMyMoving = false;
+
+  async fetchMyMoving() {
+    if (this.myMoving) return;
+    try {
+      this.searchingMyMoving = true;
+      const moving = await MovingStore.actions.getOneAnnouncement('1');
+      this.myMoving = moving;
+    } finally {
+      this.searchingMyMoving = false;
+    }
   }
+
 
   togglePopup(popupName: string, target?: HTMLElement) {
     this.$refs[popupName].togglePopup(target);
@@ -242,6 +271,7 @@ div.header-wrapper{
         flex-flow: row nowrap;
         flex: 1 0 auto;
         justify-content: flex-end;
+        align-items: center;
         padding: 11px 15px 11px 15px;
 
         %header-button {
@@ -349,31 +379,36 @@ div.header-wrapper{
   }
 }
 
-.user-option-list{
-  position: relative;
-  display: flex;
-  flex-flow: column nowrap;
-  overflow: hidden;
-  border-radius: 0 0 3px 3px;
+.user-options-popup {
+  width: 100%;
 
-  .user-option{
+  .user-option-list{
     position: relative;
-    height: 40px;
-    padding-left: 20px;
-    line-height: 40px;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: bold;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: hidden;
+    border-radius: 0 0 3px 3px;
 
-    &:hover{
-      background-color: $w245;
-    }
+    .user-option{
+      position: relative;
+      height: 40px;
+      padding-left: 20px;
+      line-height: 40px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: bold;
 
-    &:active{
-      background-color: $w220;
+      &:hover{
+        background-color: $w245;
+      }
+
+      &:active{
+        background-color: $w220;
+      }
     }
   }
 }
+
 
 </style>
 

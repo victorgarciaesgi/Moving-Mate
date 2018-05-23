@@ -146,8 +146,8 @@ namespace Actions {
   function disconnectRequest() {
     JWT.clear();
     LoginModule.mutations.disconnectUser();
-    router.go(0);
-    NotificationsModule.actions.addNotification({ type: "success", message: `Vous avez été deconnecté` })
+    router.push('/');
+    NotificationsModule.actions.addNotification({ type: "alert", message: `Vous avez été deconnecté` })
   }
   async function checkUserSession(){
     let token = JWT.fetch();

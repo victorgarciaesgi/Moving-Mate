@@ -1,41 +1,39 @@
 <template>
-  <form @submit.prevent='submitForm()' novalidate>
-    <UIModal :show='show' @close='modalClosed' :width='450' :isPopup='isPopup'>
-      <span slot='header'>Connexion</span>
-      
-      <div slot='content' style='padding: 10px 30px 10px 30px'>
-        <div class='moving-logo'>
-          <!-- <img src="~@images/logo_truck_M.svg"> -->
-          <span class='form-option'>
-            Pas encore inscrit? 
-            <span class='form-link' @click='handleSubmitLink()'>Inscrivez vous</span>
-          </span>
-        </div>
-        <SocialButton media='facebook'>Connexion avec Facebook</SocialButton>
-        <SocialButton media='google'>Connexion avec Google</SocialButton>
-        <FormSeparator>Ou connectez vous</FormSeparator>
-        <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>
-        <FormText v-model="LoginForm._password" :vl='$v.LoginForm._password' :data='LoginForm.fieldsData._password'/>
-
-        <div class='form-option'>
-          <span class='form-link'>Mot de passe oublié?</span>
-        </div>
-        <!-- <CheckBox v-model='LoginForm._souvenir' label='Se souvenir de moi' name="_souvenir" />    -->
-        <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
-          {{infoMessage}}
-        </div>
+  <UIModal :show='show' @close='modalClosed' :width='450' :isPopup='isPopup'>
+    <span slot='header'>Connexion</span>
+    
+    <div slot='content' style='padding: 10px 30px 10px 30px'>
+      <div class='moving-logo'>
+        <!-- <img src="~@images/logo_truck_M.svg"> -->
+        <span class='form-option'>
+          Pas encore inscrit? 
+          <span class='form-link' @click='handleSubmitLink()'>Inscrivez vous</span>
+        </span>
       </div>
-      <template slot='footer'>
-        <FormButton @click='modalClosed(true)'>Annuler</FormButton>
-        <FormButton type='submit' 
-          :submitting='loginState.requesting' 
-          :disabled='$v.LoginForm.$invalid'
-          theme='blue'>
-            Se connecter
-        </FormButton>
-      </template>
-    </UIModal>
-  </form>
+      <SocialButton media='facebook'>Connexion avec Facebook</SocialButton>
+      <SocialButton media='google'>Connexion avec Google</SocialButton>
+      <FormSeparator>Ou connectez vous</FormSeparator>
+      <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>
+      <FormText v-model="LoginForm._password" :vl='$v.LoginForm._password' :data='LoginForm.fieldsData._password'/>
+
+      <div class='form-option'>
+        <span class='form-link'>Mot de passe oublié?</span>
+      </div>
+      <!-- <CheckBox v-model='LoginForm._souvenir' label='Se souvenir de moi' name="_souvenir" />    -->
+      <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
+        {{infoMessage}}
+      </div>
+    </div>
+    <template slot='footer'>
+      <FormButton @click='modalClosed(true)'>Annuler</FormButton>
+      <FormButton :submitting='loginState.requesting' 
+        :disabled='$v.LoginForm.$invalid'
+        @click='submitForm()'
+        theme='blue'>
+          Se connecter
+      </FormButton>
+    </template>
+  </UIModal>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <div ref='root' class='background-loader'>
+  <div ref='root' class='background-loader' :class='{loaded: bigImgLoaded}'>
     <transition name='fade' mode='out-in'>
       <div v-if='bigImgLoaded' class='cover' :style='loaderImg'></div>
       <img v-else src="~@images/loading_white.svg">
@@ -69,7 +69,11 @@ export default class BackgroundLoader extends Vue {
   height: 100%;
   width: 100%;
   background-color: $g90;
-  transition: filter 0.3s;
+  transition: all 0.3s;
+
+  // &.loaded {
+  //   background-color: transparent;
+  // }
 
   .cover {
     position: absolute;
