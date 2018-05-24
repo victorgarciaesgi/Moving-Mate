@@ -77,7 +77,7 @@ namespace Actions {
     try {
       const { data } = await Api.get(Paths.MOVERS_LIST, payload);
       console.log(data);
-      Mutations.mutations.updateMoverList(data);      
+      Mutations.mutations.updateMoverList(data);
     } finally {
       Mutations.mutations.updateSearchingState();
     }

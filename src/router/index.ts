@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, {Route, RouteRecord} from 'vue-router';
-import { LoginStore } from '@modules';
-import { routesList, MyRoute } from './routes';
+import { LoginStore, NotificationsStore } from '@modules';
+import { routesList, MyRoute, MyRouteRecord } from './routes';
 import { ProgressBar, GlobalStore, EventBus } from '@store';
 
 Vue.use(VueRouter);
@@ -67,8 +67,29 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     // Check requires auth
     if (to.matched.some(m => m.meta.requiresAuth)) {
       if (LoginStore.state.isLoggedIn) {
-        if (to.meta.asyncData) {
-          await getRouteData(to);
+        if (to.matched.some(m => !!m.meta.isAuthorized)) {
+          if (to.meta.asyncData) {
+            try {
+              await getRouteData(to);
+            } catch(e) {
+              NotificationsStore.actions.addNotification({type: 'warning', message: `Vous n'avez pas accès à cette page`})
+              if (from.meta.title) {
+                ProgressBar.mutations.hide();
+              } else {
+                next('/');
+              }
+              return;
+            }
+          }
+          // const results = await Promise.all([
+          //   ...to.matched.filter(m => !!m.meta.isAuthorized)
+          //   .map(m => m.meta.isAuthorized(routeData))
+          // ]);
+
+        } else {
+          if (!!to.meta.asyncData) {
+            await getRouteData(to);
+          }
         }
       }
       else {
@@ -113,14 +134,15 @@ Router.afterEach(async (from: MyRoute, next) => {
   EventBus.$emit('closePopups');
 })
 
-const getRouteData = async (to: MyRoute | RouteRecord) => {
+const getRouteData = async (to: MyRoute | MyRouteRecord) => {
   if (!to.meta.transparent) {
     ProgressBar.mutations.start();
   }
-  const titleToDisplay = await to.meta.asyncData(to);
+  const titleToDisplay: any = await to.meta.asyncData(to);
   if (to.meta.contentProp) {
-    document.title = `${titleToDisplay || to.meta.title} - MovingMate`;
+    document.title = `${titleToDisplay.title || to.meta.title} - MovingMate`;
   }
+  return titleToDisplay.verif;
 }
 
 

@@ -1,5 +1,5 @@
 import { IMovingState, IMarker, IMovingEvent} from '@types';
-import Api, { ApiError, ApiSuccess, ApiResponse } from '../Api';
+import Api, { ApiError, ApiSuccess, IApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
@@ -108,7 +108,7 @@ namespace Actions {
     await getMapInstance();
     const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
     for (let moving of annoucements) {
-      markers.push(new Marker(bounds, moving))
+      markers.push(new Marker(moving))
     }
     GoogleMaps.mutations.updateMarkers(markers);
   } 
@@ -159,17 +159,17 @@ namespace Actions {
     const {data} = await Api.get(Paths.MOVING_DETAIL + id);
     Mutations.mutations.updateOneAnnouncement(data);
     console.log(data);
-    return data.label;
+    return {title: data.label, verif: data.id};
   }
 
-  async function createAnnouncement(context, form: Object) : Promise<ApiResponse>{
+  async function createAnnouncement(context, form: Object){
     try {
       const {data} = await Api.post(Paths.MOVING_CREATE, form);
       console.log(data)
-      return Promise.resolve(new ApiSuccess({data}));
+      return new ApiSuccess({data})
 
     } catch {
-      return Promise.reject(new ApiError())
+      return new ApiError();
     }
   }
 
@@ -177,10 +177,10 @@ namespace Actions {
     try {
       const {data} = await Api.post(Paths.PARTICIPATION_CREATE, infos);
       console.log(data)
-      return Promise.resolve(new ApiSuccess({data}));
+      return new ApiSuccess({data});
 
     } catch {
-      return Promise.reject(new ApiError())
+      return new ApiError();
     }
   }
 

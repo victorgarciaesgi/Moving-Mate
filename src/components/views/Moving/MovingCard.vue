@@ -10,7 +10,7 @@
           <!-- <span class='day'>{{getBegin.day}}</span> -->
           <div class='date'>
             <span class='number'>{{getBegin.number}}</span>
-            <span class='month'>{{getBegin.month}}</span>
+            <span class='month'>{{getBegin.month}} {{getBegin.year}}</span>
             <span class='hour'>{{getBegin.hour}}</span>  
           </div>       
         </div>

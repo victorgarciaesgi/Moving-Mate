@@ -211,16 +211,17 @@ export default class SearchMoving extends Vue {
   padding-bottom: 10px;
 
   .search-options {
-    flex: 0 0 auto;
+    flex: 1 0 auto;
     display: flex;
     flex-flow: row wrap;
     align-items: center;
+    justify-content: center;
   }
 
   .search-container {
     position: relative;
     display: flex;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     flex-flow: row wrap;
     justify-content: center;
     padding: 15px 20px 15px 20px;
@@ -229,12 +230,15 @@ export default class SearchMoving extends Vue {
 
     .search-wrapper {
       display: flex;
-      flex: 0 0 auto;
+      flex: 1 1 auto;
+      justify-content: center;
 
       .search-box {
         display: flex;
         position: relative;
         flex-flow: row wrap;
+        flex: 1 1 auto;
+        max-width: 450px;
         justify-content: center;
 
         &.searching {
@@ -316,8 +320,10 @@ export default class SearchMoving extends Vue {
           background-color: white;
           color: $g70;
           height: 60px;
-          padding: 5px 60px 5px 60px;
-          width: 450px;
+          padding: 5px 80px 5px 60px;
+          max-width: 450px;
+          width: 100%;
+          flex: 1 1 auto;
           line-height: 30px;
           font-size: 20px;
           border-radius: 4px;

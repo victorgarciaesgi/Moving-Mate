@@ -37,7 +37,7 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function signupRequest(context, loginData: Object): Promise<ApiResponse> {
+  async function signupRequest(context, loginData: Object) {
     try {
       let { success, status, data } = await Api.post(Paths.SIGNUP, loginData);
       state.requesting = false

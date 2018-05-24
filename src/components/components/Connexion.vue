@@ -105,13 +105,15 @@ export default class Connexion extends Vue {
 
   async submitForm(){
     this.infoMessage = '';
-    const loginResponse = await this.connexionRequest({
-      loginData: this.LoginForm.getData(), 
-      redirect: this.redirect
-    });
-    if (!loginResponse.success) {
-      this.errorType = loginResponse.type;
-      this.infoMessage = loginResponse.message;
+    try {
+      await this.connexionRequest({
+        loginData: this.LoginForm.getData(), 
+        redirect: this.redirect
+      });
+    } catch(e) {
+      console.log(e)
+      this.errorType = e.type;
+      this.infoMessage = e.message;
     }
   }
 }

@@ -145,7 +145,7 @@ export default class HeaderComponent extends Vue {
     if (this.myMoving) return;
     try {
       this.searchingMyMoving = true;
-      const moving = await MovingStore.actions.getOneAnnouncement('1');
+      const moving = await MovingStore.actions.getOneAnnouncement('7');
       this.myMoving = moving;
     } finally {
       this.searchingMyMoving = false;

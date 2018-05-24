@@ -1,6 +1,7 @@
 import { RouteConfig, Route, RouteRecord } from 'vue-router/types';
 import * as Stores from '@store';
 import { Connexion, Inscription } from '@components';
+import {timeout} from '@methods';
 
 export const routesNames = {
   home: 'HomeRoute',
@@ -9,6 +10,7 @@ export const routesNames = {
   movingInvite: 'MovingInvite',
   movingInfos: 'MovingInfos',
   movingOffers: 'MovingOffers',
+  movingDemandes: 'MovingDemandes',
   movingCreate: 'MovingCreate',
   searchMoving: 'SearchMovingRoute',
   searchMoverInvite: 'SearchMoverInvite',
@@ -32,16 +34,17 @@ interface MyMeta {
   requiresAuth?: boolean,
   isTab?: boolean,
   noAuth?: boolean,
-  asyncData?: (to?: MyRoute) => Promise<any>,
-  isAuthorized?: () => Promise<boolean>
+  asyncData?: (to?: MyRoute | MyRouteRecord) => Promise<{title?: string, verif?: any} | void>,
+  isAuthorized?: (verif?: any) => Promise<boolean>
 }
 
 export interface MyRoute extends Route {
-  meta?: MyMeta
+  meta: MyMeta,
+  matched: MyRouteRecord[]
 }
 
 export interface MyRouteRecord extends RouteRecord {
-  meta: MyMeta
+  meta: MyMeta,
 }
 
 export interface MyRouteConfig extends RouteConfig {
@@ -72,34 +75,36 @@ export const routesList: MyRouteConfig[]  = [
           title: 'Les déménagements',
           contentProp: true,
           transparent: true,
-          async asyncData(to) {
+          async asyncData(to: MyRoute) {
             Stores.MovingStore.mutations.updateCommitedValue(to.params.search || '');
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
-            return to.params.search;
+            return {title: to.params.search};
           }
         },
       },
-      {
-        path: 'create',
-        name: routesNames.movingCreate,
-        component: async () => await import('@views/Moving/CreateMoving.vue'),
-        meta: {
-          title: 'Créer une annonce',
-          requiresAuth: true,
-          isModal: true
-        }
-      },
+      
     ]
   },
   {
-    path: '/moving/detail',
+    path: '/moving/create',
+    name: routesNames.movingCreate,
+    component: async () => await import('@views/Moving/CreateMoving.vue'),
+    meta: {
+      title: 'Créer une annonce',
+      requiresAuth: true,
+    }
+  },
+  {
+    path: '/moving/detail/:movingId',
     component: async () => await import('@views/Moving/MovingDetail/MovingDetail.vue'),
     meta: {
       requiresAuth: true,
+      contentProp: true,
+      asyncData: getOneMoving,
     },
     children: [
       {
-        path: ':movingId',
+        path: '',
         name: routesNames.movingInfos,
         component: async () => await import('@views/Moving/MovingDetail/MovingInfos.vue'),
         meta: {
@@ -109,16 +114,16 @@ export const routesList: MyRouteConfig[]  = [
         }
       },
       {
-        path: ':movingId/invite',
+        path: 'invite',
         name: routesNames.movingInvite,
         component: async () => await import('@views/Moving/MovingDetail/MovingInvite.vue'),
         meta: {
           contentProp: true,
           isTab: true,
-          async asyncData(to) {
+          async asyncData(to: MyRoute) {
             await Stores.InviteMoverStore.actions.fetchMover({});
-            return await getOneMoving(to);
-          }
+            return await getOneMoving(to)
+          },
         },
         children: [
           {
@@ -128,23 +133,35 @@ export const routesList: MyRouteConfig[]  = [
               title: 'Les déménageurs',
               contentProp: true,
               transparent: true,
-              async asyncData(to) {
+              async asyncData(to: MyRoute) {
                 getOneMoving(to);
                 Stores.InviteMoverStore.mutations.updateSearchValue(to.params.search || '');
                 await Stores.InviteMoverStore.actions.fetchMover(to.params);
-                return to.params.search;
+                return {title: to.params.search};
               }
             },
           },
         ]
       },
       {
-        path: ':movingId/offers',
+        path: 'demandes',
+        name: routesNames.movingDemandes,
+        meta: {
+          contentProp: true,
+          isTab: true,
+          asyncData: getOneMoving,
+
+        }
+      },
+      {
+        path: 'offers',
+        component: async () => await import('@views/Moving/MovingDetail/MovingDemandes.vue'),
         name: routesNames.movingOffers,
         meta: {
           contentProp: true,
           isTab: true,
-          asyncData: getOneMoving
+          asyncData: getOneMoving,
+
         }
       }
     ]
@@ -166,10 +183,10 @@ export const routesList: MyRouteConfig[]  = [
           title: 'Les déménageurs',
           contentProp: true,
           transparent: true,
-          async asyncData(to) {
+          async asyncData(to: MyRoute) {
             Stores.MoverStore.mutations.updateSearchValue(to.params.search || '');
             await Stores.MoverStore.actions.fetchMover(to.params);
-            return to.params.search;
+            return {title: to.params.search};
           }
         },
       },
@@ -253,12 +270,12 @@ export const routesList: MyRouteConfig[]  = [
 ]
 
 
-async function getOneMoving(to: Route) {
-  const title = await Stores.MovingStore.actions.getAnnouncementDetails(to.params.movingId);
-  return title;
+async function getOneMoving(to: MyRoute) {
+  const data = await Stores.MovingStore.actions.getAnnouncementDetails(to.params.movingId);
+  return {title: data.title, };
 }
 
 async function getOneUser() {
-  const userData = await Stores.UserStore.actions.getOneUser();
-  return userData;
+  const username = await Stores.UserStore.actions.getOneUser();
+  return {title: username};
 }

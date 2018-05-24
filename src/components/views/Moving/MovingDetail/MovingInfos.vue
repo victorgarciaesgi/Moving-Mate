@@ -209,7 +209,6 @@ export default class MovingDetail extends Vue {
             triggers: [
               () => MovingStore.actions.createParticipation({
                 announcement: this.movingEvent.id,
-                user: LoginStore.state.userInfos.id,
                 toHire: this.movingEvent.user.id
               }),
               () => MovingStore.actions.getAnnouncementDetails(this.movingEvent.id.toString())

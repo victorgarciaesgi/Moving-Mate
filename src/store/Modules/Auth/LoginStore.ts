@@ -116,13 +116,13 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function connexionRequest(context,{loginData, redirect}): Promise<ApiResponse> {
+  async function connexionRequest(context,{loginData, redirect}){
     try {
       state.requesting = true;
       let { success, status, data } = await Api.post(Paths.LOGIN, loginData);
       JWT.set(data.token);
       LoginModule.actions.connexionSuccess({token: data.token, redirect});
-      return new ApiSuccess();
+      return new ApiSuccess()
     } catch(err) {
       console.log(err)
       if (err.status === 401) {

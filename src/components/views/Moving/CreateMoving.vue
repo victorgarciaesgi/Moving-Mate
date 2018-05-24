@@ -1,7 +1,7 @@
 <template>
-  <UIModal :show='show' @close='modalClosed' :width='550' footerShadow>    
-    <template slot='content'>
-      <div class='content-root'>
+  <div class='CreateMoving'>
+    <section class='window'>
+      <div class='content'>
         <div class='steps-display'>
           <UISteps :step='countStep' @click='updateStep'/>
         </div>
@@ -11,9 +11,12 @@
               <template slot='title'>Pourquoi vérifier mes informations ?</template>
               Indiquer une adresse email et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la réservation effectuée.
             </FormMessage>
-            <FormText v-model='CreateMovingForm.part0.email' 
-              :vl='$v.CreateMovingForm.part0.email' 
-              :data='CreateMovingForm.part0.fieldsData.email'/>
+            <FormText v-model='CreateMovingForm.part0.firstname' 
+              :vl='$v.CreateMovingForm.part0.firstname' 
+              :data='CreateMovingForm.part0.fieldsData.firstname'/>
+            <FormText v-model='CreateMovingForm.part0.lastname' 
+              :vl='$v.CreateMovingForm.part0.lastname' 
+              :data='CreateMovingForm.part0.fieldsData.lastname'/>
             <FormText v-model='CreateMovingForm.part0.phone' 
               :vl='$v.CreateMovingForm.part0.phone' 
               :data='CreateMovingForm.part0.fieldsData.phone'/>
@@ -89,25 +92,25 @@
           </li>
         </ul>
       </div>
-    </template>
 
-    <template slot='footer'>
-      <FormButton @click='modalClosed()'>
-        Annuler
-      </FormButton>
-      <FormButton v-if='countStep > 0' @click='crementCount(-1)'>
-        étape précédente
-      </FormButton>
-      <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
-      <FormButton theme='blue'
-        :submitting='submitting'
-        :disabled='$v.CreateMovingForm["part"+countStep].$invalid' 
-        @click='formClick()'
-        @disabledClick='touchForm()'>
-          {{getButtonTitle}}
-      </FormButton>
-    </template>
-  </UIModal>
+      <div class='footer'>
+        <FormButton @click='modalClosed()'>
+          Annuler
+        </FormButton>
+        <FormButton v-if='countStep > 0' @click='crementCount(-1)'>
+          étape précédente
+        </FormButton>
+        <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
+        <FormButton theme='blue'
+          :submitting='submitting'
+          :disabled='$v.CreateMovingForm["part"+countStep].$invalid' 
+          @click='formClick()'
+          @disabledClick='touchForm()'>
+            {{getButtonTitle}}
+        </FormButton>
+      </div>
+   </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -132,7 +135,8 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
     return {
       CreateMovingForm: {
         part0: {
-          email: {email, required},
+          firstname: {required},
+          lastname: {required},
           phone: {required, phone(value) {
             if (required(value)) {
               const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -224,10 +228,13 @@ export default class CreateMoving extends Vue {
 
   public CreateMovingForm: any = {
     part0: new Forms.Form({
-      email: new Forms.TextForm({
-        value: 'victor@gmail.com',
-        type: 'email',
-        placeholder: 'Votre adresse email'
+      firstname: new Forms.TextForm({
+        value: LoginStore.state.userInfos.firstname || 'balek',
+        placeholder: 'Votre prénom'
+      }),
+      lastname: new Forms.TextForm({
+        value: LoginStore.state.userInfos.lastname || 'balek',
+        placeholder: 'Votre nom de famille'
       }),
       phone: new Forms.TextForm({
         value: '0637096255',
@@ -238,7 +245,7 @@ export default class CreateMoving extends Vue {
     part1: new Forms.Form({
       helpType: new Forms.Radio({
         placeholder: `J'ai besoin d'aide:`,
-        value: 0,
+        value: 2,
         options: [
           {value: 0, text: 'Au départ'},
           {value: 1, text: `A l'arrivée`},
@@ -253,6 +260,11 @@ export default class CreateMoving extends Vue {
       addressIn: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_up.svg'),
+          value: {
+            addressCity:"Paris",
+            addressValue:"9 Avenue Anatole France",
+            placeId:"ChIJ6Wdw6uFv5kcRFiniHxoAJ-o"
+          },
           placeholder: 'Votre adresse de départ'
         }),
         addressType:  new Forms.Radio({
@@ -280,6 +292,11 @@ export default class CreateMoving extends Vue {
       addressOut: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_down.svg'),
+          value: {
+            addressCity:"Montpellier",
+            addressValue:"15 Rue Foch",
+            placeId:"ChIJcVon7gevthIReAMdXVT163k"
+          },
           placeholder: `Votre adresse d'arrivée`
         }),
         addressType:  new Forms.Radio({
@@ -312,6 +329,7 @@ export default class CreateMoving extends Vue {
       }),
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
+        value: 1531468857,
         placeholder: 'Date et heure de votre déménagement',
       }),
       estimatedTime: new Forms.Select({
@@ -341,7 +359,7 @@ export default class CreateMoving extends Vue {
   }
 
   async submitForm() {
-    let {part0, part1, part2} = this.CreateMovingForm;
+    let {part0, part1, part2} = Object.assign({}, this.CreateMovingForm);
     part0 = part0.getData();
     part1 = part1.getData();
     part2 = part2.getData();
@@ -372,10 +390,10 @@ export default class CreateMoving extends Vue {
     }
     const finalValues = {...part1, ...part2};
     console.log(JSON.parse(JSON.stringify(finalValues)));
-    this.submitting = true;
-    const {success, data} = await MovingStore.actions.createAnnouncement(finalValues);
-    this.submitting = false;
-    if (success) {
+    try {
+      this.submitting = true;
+      const result: any = await MovingStore.actions.createAnnouncement(finalValues);
+      Router.push({name: routesNames.moving})
       new AlertsElement.SuccessAlert({
         title: "Publication réussie!",
         message: "Votre annonce a bien été publiée. Recrutez des déménageurs depuis la page de votre annonce ou attendez que des déménégeurs proposent leur aide",
@@ -384,16 +402,18 @@ export default class CreateMoving extends Vue {
             type: 'action',
             text: 'Voir mon annonce',
             triggers: [
-              () => Router.push({name: routesNames.movingInfos, params: {movingId: data}}),
+              () => Router.push({name: routesNames.movingInfos, params: {movingId: result.data}}),
             ]
           })
         ]
       })
-    } else {
+    } catch(e) {
       new AlertsElement.ErrorAlert({
         title: 'Erreur lors de la création',
         message: `Une erreur s'est produite lors de la création de l'annonce. Veuillez nous excuser`,
       })
+    } finally {
+      this.submitting = false;
     }
   }
 
@@ -429,34 +449,59 @@ export default class CreateMoving extends Vue {
 <style lang='scss' scoped>
 
 
-.content-root {
+.CreateMoving {
   display: flex;
-  position: relative;
-  flex: 1 1 auto;
-  flex-flow: column wrap;
   width: 100%;
+  justify-content: center;
+  align-items: center;
 
-  .steps-display {
-
-  }
-
-  ul.create-views-list {
+  .window {
     display: flex;
-    position: relative;
-    flex-flow: row nowrap;
-    overflow: auto;
-    padding: 0 30px 10px 30px;
+    flex-flow: column wrap;
+    width: 650px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    border-radius: 5px;
+    background-color: white;
 
-    li.create-view {
+    .content {
       display: flex;
       position: relative;
-      width: 100%;
-      flex: 0 0 auto;
+      flex: 1 1 auto;
       flex-flow: column wrap;
-      justify-content: center;
+      width: 100%;
+
+      ul.create-views-list {
+        display: flex;
+        position: relative;
+        flex-flow: row nowrap;
+        overflow: auto;
+        padding: 0 30px 10px 30px;
+
+        li.create-view {
+          display: flex;
+          position: relative;
+          width: 100%;
+          flex: 0 0 auto;
+          flex-flow: column wrap;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+
+    .footer {
+      display: flex;
+      flex-flow: row nowrap;
+      flex: 0 0 auto;
+      padding: 5px;
+      height: 50px;
       align-items: center;
+      align-content: center;
+      justify-content: flex-end;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
     }
   }
+
 }
 
  

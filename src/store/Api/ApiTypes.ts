@@ -18,30 +18,56 @@ export class AxiosError {
   constructor(status: number, data?: any) {
     this.status = status;
     this.data = data;
-    if (status != 403) {
+    if (status != 401) {
       // if (status == 0) message = 'Vérifiez votre connexion Internet';
       // NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } 
     else {
       if (data.message !== 'Bad credentials') {
-        LoginStore.actions.disconnectRequest();
+        // LoginStore.actions.disconnectRequest();
       }
     }
   }
 }
 
+// export class ApiResponse {
+//   public success: boolean = true;
+//   public message?: string;
+//   public data?: any;
+//   public type: string;
+//   constructor(fields: {message?: string, data?: any, type: any, success: boolean}) {
+//     this.message = fields.message;
+//     this.type = fields.type;
+//     this.data = fields.data ? fields.data : {};
+//     this.success = fields.success;
+//   }
+
+//   yes() {
+//     return Promise.resolve(this);
+//   }
+// }
+
+export interface IApiResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+  type: string;
+}
+
 export class ApiResponse {
-  public success: boolean = true;
-  public message?: string;
-  public data?: any;
-  public type: string;
   constructor(fields: {message?: string, data?: any, type: any, success: boolean}) {
-    this.message = fields.message;
-    this.type = fields.type;
-    this.data = fields.data ? fields.data : {};
-    this.success = fields.success;
+    let returnData: any = {};
+    returnData.message = fields.message;
+    returnData.type = fields.type;
+    returnData.data = fields.data != null ? fields.data : {};
+    returnData.success = fields.success;
+    if (fields.success) return Promise.resolve(returnData);
+    else return Promise.reject(returnData)
   }
 }
+
+
+
 
 
 export class ApiSuccess extends ApiResponse{

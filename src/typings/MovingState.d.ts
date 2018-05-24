@@ -53,6 +53,8 @@ export interface IAddress {
   city: string,
   zip: number,
   additional: string,
+  latitude: number,
+  longitude: number,
   floor: number,
   elevator: boolean
 }

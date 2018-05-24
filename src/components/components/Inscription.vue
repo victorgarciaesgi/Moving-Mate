@@ -138,14 +138,8 @@ export default class Inscription extends Vue {
   async submitForm() {
     if (!this.$v.SignupForm.$invalid) {
       this.submitting = true;
-      const submitResponse = await this.signupRequest(this.SignupForm.getData());
-      
-      if (!submitResponse.success){
-        this.formError = {
-          errorType: submitResponse.type,
-          infoMessage: submitResponse.message
-        }
-      } else {
+      try {
+        await this.signupRequest(this.SignupForm.getData());
         this.close(true);
         new AlertsElement.SuccessAlert({
           title: "Inscription réussie",
@@ -154,8 +148,14 @@ export default class Inscription extends Vue {
             new ActionsElements.LoginAction()
           ]
         })
+      } catch(e) {
+        this.formError = {
+          errorType: e.type,
+          infoMessage: e.message
+        }
+      } finally {
+        this.submitting = false;
       }
-      this.submitting = false;
     }
   }
 

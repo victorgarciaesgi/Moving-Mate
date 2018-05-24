@@ -13,10 +13,10 @@ export default class Marker {
   public infos: IMovingEvent;
   public infoBox: google.maps.InfoWindow;
 
-  constructor(bounds: any, infos: IMovingEvent) {
-    let lng = Math.random() * (bounds.b.f - bounds.b.b) + bounds.b.b;
-    let lat = Math.random() * (bounds.f.f - bounds.f.b) + bounds.f.b;
-    this.position = {lat, lng};
+  constructor(infos: IMovingEvent) {
+    // let lng = Math.random() * (bounds.b.f - bounds.b.b) + bounds.b.b;
+    // let lat = Math.random() * (bounds.f.f - bounds.f.b) + bounds.f.b;
+    this.position = {lat: Number(infos.addressIn.latitude), lng: Number(infos.addressIn.longitude)};
     this.infos = infos;
     this.id = shortid.generate();
 

@@ -1,8 +1,8 @@
 <template>
   <div class='MovingDetail' v-if='movingEvent'>
     <div class='moving-cover' :style='backgroundCover'></div>
-    <div class='moving-tabs' v-if='isMovingMine'>
-      <ul class='tab-list'>
+    <div class='moving-tabs' v-if='isMovingMine' >
+      <ul class='tab-list' @scroll.passive>
         <li class='tab' v-for='tab in tabs' :key='tab.title'>
           <router-link :class='{childs: tab.childs}' :to='{name: tab.path, params: {movingId: tab.params}}'>
             <span>{{tab.title}}</span>
@@ -16,7 +16,7 @@
       </transition>
     </div>
   </div>
-  <div v-else>
+  <div v-else class='noResult'>
     Aucun déménagement trouvé
   </div>
 </template>
@@ -33,8 +33,9 @@ export default class MovingDetail extends Vue {
 
   public tabs = [
     {title: 'Informations',childs: false, path: routesNames.movingInfos, params: this.paramId},
+    {title: 'Demandes',childs: false, path: routesNames.movingDemandes, params: this.paramId},
     {title: 'Inviter des déménageurs',childs: true, path: routesNames.movingInvite, params: this.paramId},
-    {title: 'Offres partenaires',childs: false, path: routesNames.movingOffers, params: this.paramId}
+    {title: 'Offres partenaires',childs: false, path: routesNames.movingOffers, params: this.paramId},
   ]
 
   get paramId() {
@@ -48,10 +49,8 @@ export default class MovingDetail extends Vue {
   get movingEvent() {return MovingStore.state.oneAnnouncement}
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
-
 }
 </script>
-
 
 
 <style lang='scss' scoped>
@@ -79,6 +78,7 @@ export default class MovingDetail extends Vue {
 
   .moving-tabs {
     display: flex;
+    position: relative;
     position: sticky;
     top: $headerHeight;
     justify-content: center;
@@ -90,6 +90,7 @@ export default class MovingDetail extends Vue {
     ul.tab-list {
       display: flex;
       flex-flow: row nowrap;
+      overflow-x: auto;
 
       li.tab {
         display: flex;
@@ -99,6 +100,10 @@ export default class MovingDetail extends Vue {
 
         a {
           span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
             padding: 15px 10px 10px 10px;
           }
 
