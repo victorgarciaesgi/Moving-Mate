@@ -1,15 +1,7 @@
 <template>
   <div class='MovingDetail' v-if='movingEvent'>
     <div class='moving-cover' :style='backgroundCover'></div>
-    <div class='moving-tabs' v-if='isMovingMine' >
-      <ul class='tab-list' @scroll.passive>
-        <li class='tab' v-for='tab in tabs' :key='tab.title'>
-          <router-link :class='{childs: tab.childs}' :to='{name: tab.path, params: {movingId: tab.params}}'>
-            <span>{{tab.title}}</span>
-          </router-link>
-        </li>
-      </ul>
-    </div>
+    <UITabs :tabs='tabs' v-if='isMovingMine'/>
     <div class='child-views'>
       <transition name='fade' mode='out-in'>
         <router-view/>
@@ -26,16 +18,20 @@ import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import { MovingStore, LoginStore } from '@store';
 import { routesNames } from '@router';
+import {UITabs} from '@components'
+import {ITab} from '@types';
 
-@Component({})
+@Component({
+  components: {UITabs}
+})
 export default class MovingDetail extends Vue {
   
 
-  public tabs = [
-    {title: 'Informations',childs: false, path: routesNames.movingInfos, params: this.paramId},
-    {title: 'Demandes',childs: false, path: routesNames.movingDemandes, params: this.paramId},
-    {title: 'Inviter des déménageurs',childs: true, path: routesNames.movingInvite, params: this.paramId},
-    {title: 'Offres partenaires',childs: false, path: routesNames.movingOffers, params: this.paramId},
+  public tabs: ITab[] = [
+    {title: 'Informations',icon: require('@icons/infos.svg'), to: {name: routesNames.movingInfos, params: {movingId: this.paramId}}},
+    {title: 'Demandes',icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
+    {title: 'Inviter des déménageurs',icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
+    {title: 'Offres partenaires', icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
   ]
 
   get paramId() {

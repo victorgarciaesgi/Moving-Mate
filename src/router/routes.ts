@@ -82,17 +82,17 @@ export const routesList: MyRouteConfig[]  = [
           }
         },
       },
-      
+      {
+        path: 'create',
+        name: routesNames.movingCreate,
+        component: async () => await import('@views/Moving/CreateMoving.vue'),
+        meta: {
+          title: 'Créer une annonce',
+          requiresAuth: true,
+          isModal: true
+        }
+      },
     ]
-  },
-  {
-    path: '/moving/create',
-    name: routesNames.movingCreate,
-    component: async () => await import('@views/Moving/CreateMoving.vue'),
-    meta: {
-      title: 'Créer une annonce',
-      requiresAuth: true,
-    }
   },
   {
     path: '/moving/detail/:movingId',
@@ -173,6 +173,7 @@ export const routesList: MyRouteConfig[]  = [
       title: 'Les déménageurs',
       async asyncData() {
         await Stores.MoverStore.actions.fetchMover({});
+        return {}
       }
     },
     children: [

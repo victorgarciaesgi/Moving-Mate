@@ -15,3 +15,15 @@ export interface IResponse<T> {
   type: 'error'|'warning'
   data: T,
 }
+
+export interface ITab {
+  title: string,
+  icon?: any,
+  childs?: boolean,
+  to: {
+    name: string,
+    params: {
+      [x:string]: any
+    }
+  }
+}

@@ -1,7 +1,7 @@
 <template>
-  <div class='CreateMoving'>
-    <section class='window'>
-      <div class='content'>
+  <UIModal :show='show' @close='modalClosed' :width='550' footerShadow>    
+    <template slot='content'>
+      <div class='content-root'>
         <div class='steps-display'>
           <UISteps :step='countStep' @click='updateStep'/>
         </div>
@@ -92,25 +92,26 @@
           </li>
         </ul>
       </div>
+    </template>
 
-      <div class='footer'>
-        <FormButton @click='modalClosed()'>
-          Annuler
-        </FormButton>
-        <FormButton v-if='countStep > 0' @click='crementCount(-1)'>
-          étape précédente
-        </FormButton>
-        <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
-        <FormButton theme='blue'
-          :submitting='submitting'
-          :disabled='$v.CreateMovingForm["part"+countStep].$invalid' 
-          @click='formClick()'
-          @disabledClick='touchForm()'>
-            {{getButtonTitle}}
-        </FormButton>
-      </div>
-   </section>
-  </div>
+    <template slot='footer'>
+      <FormButton @click='modalClosed()'>
+        Annuler
+      </FormButton>
+      <FormButton v-if='countStep > 0' @click='crementCount(-1)'>
+        étape précédente
+      </FormButton>
+      <!-- :disabled='$v.CreateMovingForm[countStep].$invalid' -->
+      <FormButton theme='blue'
+        :submitting='submitting'
+        :disabled='$v.CreateMovingForm["part"+countStep].$invalid' 
+        @click='formClick()'
+        @disabledClick='touchForm()'>
+          {{getButtonTitle}}
+      </FormButton>
+    </template>
+  </UIModal>
+
 </template>
 
 <script lang="ts">
@@ -448,60 +449,34 @@ export default class CreateMoving extends Vue {
 
 <style lang='scss' scoped>
 
-
-.CreateMoving {
+.content-root {
   display: flex;
+  position: relative;
+  flex: 1 1 auto;
+  flex-flow: column wrap;
   width: 100%;
-  justify-content: center;
-  align-items: center;
 
-  .window {
-    display: flex;
-    flex-flow: column wrap;
-    width: 650px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    border-radius: 5px;
-    background-color: white;
+  .steps-display {
 
-    .content {
-      display: flex;
-      position: relative;
-      flex: 1 1 auto;
-      flex-flow: column wrap;
-      width: 100%;
-
-      ul.create-views-list {
-        display: flex;
-        position: relative;
-        flex-flow: row nowrap;
-        overflow: auto;
-        padding: 0 30px 10px 30px;
-
-        li.create-view {
-          display: flex;
-          position: relative;
-          width: 100%;
-          flex: 0 0 auto;
-          flex-flow: column wrap;
-          justify-content: center;
-          align-items: center;
-        }
-      }
-    }
-
-    .footer {
-      display: flex;
-      flex-flow: row nowrap;
-      flex: 0 0 auto;
-      padding: 5px;
-      height: 50px;
-      align-items: center;
-      align-content: center;
-      justify-content: flex-end;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-    }
   }
 
+  ul.create-views-list {
+    display: flex;
+    position: relative;
+    flex-flow: row nowrap;
+    overflow: auto;
+    padding: 0 30px 10px 30px;
+
+    li.create-view {
+      display: flex;
+      position: relative;
+      width: 100%;
+      flex: 0 0 auto;
+      flex-flow: column wrap;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
 
  

@@ -24,7 +24,7 @@ export class AxiosError {
     } 
     else {
       if (data.message !== 'Bad credentials') {
-        // LoginStore.actions.disconnectRequest();
+        LoginStore.actions.disconnectRequest();
       }
     }
   }

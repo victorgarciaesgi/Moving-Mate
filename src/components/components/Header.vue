@@ -186,7 +186,7 @@ div.header-wrapper{
     display: flex;
     background-color: white;
     color: $mainColor;
-    z-index: 10000;
+    z-index: 9000;
     flex-flow: row nowrap;
     justify-content: flex-start;
     border-bottom: 1px solid transparent;
