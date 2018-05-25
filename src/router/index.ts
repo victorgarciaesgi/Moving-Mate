@@ -3,6 +3,7 @@ import VueRouter, {Route, RouteRecord} from 'vue-router';
 import { LoginStore, NotificationsStore } from '@modules';
 import { routesList, MyRoute, MyRouteRecord } from './routes';
 import { ProgressBar, GlobalStore, EventBus } from '@store';
+import {isEqual} from 'lodash'
 
 Vue.use(VueRouter);
 
@@ -33,7 +34,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       console.log("1")
       return;
     } 
-    else if (from.name == to.name){
+    else if (from.name == to.name && isEqual(from.params, to.params)){
       console.log("2")
       next()
     }
@@ -68,28 +69,16 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     if (to.matched.some(m => m.meta.requiresAuth)) {
       if (LoginStore.state.isLoggedIn) {
         if (to.matched.some(m => !!m.meta.isAuthorized)) {
-          if (to.meta.asyncData) {
-            try {
-              await getRouteData(to);
-            } catch(e) {
-              NotificationsStore.actions.addNotification({type: 'warning', message: `Vous n'avez pas accès à cette page`})
-              if (from.meta.title) {
-                ProgressBar.mutations.hide();
-              } else {
-                next('/');
-              }
-              return;
-            }
-          }
-          // const results = await Promise.all([
-          //   ...to.matched.filter(m => !!m.meta.isAuthorized)
-          //   .map(m => m.meta.isAuthorized(routeData))
-          // ]);
+          const results = await Promise.all([
+            ...to.matched.filter(m => !!m.meta.isAuthorized)
+            .map(m => m.meta.isAuthorized(to))
+          ]);
 
-        } else {
-          if (!!to.meta.asyncData) {
-            await getRouteData(to);
-          }
+          
+
+        } 
+        if (!!to.meta.asyncData) {
+          await getRouteData(to);
         }
       }
       else {
@@ -116,7 +105,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     }
 
     // Check header state
-    if (to.meta.headerShadow) {
+    if (to.matched.some(m => m.meta.headerShadow != null)) {
       GlobalStore.state.headerBoxShadow = false;
     } else {GlobalStore.state.headerBoxShadow = true}
 
@@ -125,6 +114,13 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
   } catch(err) {
     console.log('Route error:', err);
     ProgressBar.mutations.fail();
+    // NotificationsStore.actions.addNotification({type: 'warning', message: `Vous n'avez pas accès à cette page`})
+    // if (from.meta.title) {
+    //   ProgressBar.mutations.hide();
+    // } else {
+    //   next('/');
+    // }
+    // return;
     next();
   }
 })

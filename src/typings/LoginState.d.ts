@@ -15,7 +15,6 @@ export interface IUser {
   username: string,
   surname: string,
   profile: string,
-  status: MovingStatus | null,
   userToken: string,
   roles: Array<IUserRoles>;
   avatar: string,
@@ -27,8 +26,3 @@ export interface IUser {
 }
 
 export type IUserRoles = "ROLE_USER" | "ROLE_ADMIN";
-
-export enum MovingStatus {
-  Client,
-  Demenageur
-}

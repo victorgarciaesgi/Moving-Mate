@@ -122,7 +122,9 @@ export namespace Forms {
     hoverColor?: string,
     editable?: boolean,
     init?: number,
-    size?: number
+    size?: number,
+    displayNote?: boolean,
+    center?: boolean
   }
 
   export class StarRating extends DefaultFormElement {
@@ -133,17 +135,20 @@ export namespace Forms {
     editable?: boolean;
     init?: number;
     size?: number;
+    displayNote?: boolean;
+    center?: boolean;
     
     constructor(fields: StarPayload) {
       super(fields);
       this.starCount = fields.starCount || 5;
-      this.baseColor = fields.baseColor || css.mainStyle;
+      this.baseColor = fields.baseColor || css.yellow2;
       this.selectedColor = fields.selectedColor || css.mainColor;
       this.hoverColor = fields.hoverColor || css.yellow1;
       this.editable = fields.editable != null ? fields.editable : true;
       this.init = fields.init || 0;
       this.size = fields.size || 25;
-
+      this.displayNote = fields.displayNote != null ? fields.displayNote : false;
+      this.center = fields.center != null ? fields.center : true
     }
   }
 }

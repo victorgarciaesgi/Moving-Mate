@@ -1,13 +1,17 @@
 <template>
   <li class='Mover-card' @click.prevent='redirectToDetail'>
     <div class="header">
-      <div class='userPicture' >
+      <div class='userPicture'>
         <BackgroundLoader :src='profilePic' />
       </div>
       <div class='userName'>
         <span class='value'>
           <span>{{userName}}</span> 
           <SvgIcon :src='require("@icons/movers/verified.svg")' :size='18' color='white'/>
+        </span>
+        <span class='place'>
+          <span class='city'>{{mover.city || 'Paris'}}</span>
+          <span class='zip'>{{mover.zipcode || '75001'}}</span>
         </span>
       </div>
       <div class='userDisponibility'>
@@ -24,20 +28,20 @@
       </div>
       <ul class='userInfos'>
         <li class='place info'>
-          <div class='icon'><SvgIcon :size='20' :color='css.mainStyle' :src="require('@icons/localisation.svg')"/></div>
-          <span class='value'>
-            <span class='city'>Paris</span>
-            <span class='zip'>75001</span>
-          </span>
-        </li>
-        <li class='place info'>
-          <div class='icon'><SvgIcon :size='20' :color='css.mainStyle' :src="require('@icons/movers/happy.svg')"/></div>
+          <div class='icon'><SvgIcon :size='21' :color='css.mainStyle' :src="require('@icons/movers/happy.svg')"/></div>
           <span class='value'>
             <StarRating :value='starDetail.value' :data='starDetail'/>
           </span>
         </li>
         <li class='place info'>
-          <div class='icon'><SvgIcon :size='20' :color='css.mainStyle' :src="require('@icons/comment.svg')"/></div>
+          <div class='icon'><SvgIcon :size='21' :color='css.mainStyle' :src="require('@icons/truck.svg')"/></div>
+          <span class='value'>
+            <span class='count'>2</span>
+            <span class='type'>{{5 | pluralize('déménagement')}}</span>
+          </span>
+        </li>
+        <li class='place info'>
+          <div class='icon'><SvgIcon :size='21' :color='css.mainStyle' :src="require('@icons/comment.svg')"/></div>
           <span class='value'>
             <span class='count'>5</span>
             <span class='type'>{{5 | pluralize('commentaire')}}</span>
@@ -85,7 +89,9 @@ export default class MoverCard extends Vue {
   public starDetail = new Forms.StarRating({
     editable: false,
     value: 4.5,
-    size: 22
+    size: 22,
+    displayNote: true,
+    center: false
   })
 
   redirectToDetail() {
@@ -179,7 +185,9 @@ $radius: 8px;
 
     .userName {
       display: flex;
-      flex-flow: row wrap;
+      flex-flow: column wrap;
+      align-items: flex-start;
+      justify-content: center;
       position: absolute;
       bottom: 0px;
       left: 0;
@@ -187,8 +195,7 @@ $radius: 8px;
       color: white;
       height: 60px;
       width: 100%;
-      align-items: center;
-      padding: 30px 10px 10px 15px;
+      padding: 0 0 0 15px;
 
       .value {
         display: flex;
@@ -200,6 +207,17 @@ $radius: 8px;
         
         span{
           margin-right: 5px;
+        }
+      }
+
+      .place {
+        .city {
+          color: $w245;
+        }
+
+        .zip {
+          font-size: 14px;
+          color: $w230;
         }
       }
     }
@@ -259,6 +277,7 @@ $radius: 8px;
 
       li.info {
         display: flex;
+        flex-wrap: nowrap;
         height: 40px;
         padding: 5px 20px 5px 20px;
         align-items: center;
@@ -266,12 +285,14 @@ $radius: 8px;
         .icon {
           display: flex;
           padding: 3px;
-          border: 1px solid $w230;
+          flex: 0 0 auto;
+          // border: 1px solid $w230;
           border-radius: 4px;
         }
 
         .value {
           margin-left: 10px;
+          flex: 1 1 auto;
 
           .zip {
             color: $w120;
@@ -281,10 +302,11 @@ $radius: 8px;
           .count {
             font-weight: bold;
             font-size: 15px;
+            color: $g90;
           }
 
           .type {
-            font-size: 14px;
+            font-size: 15px;
           }
         }
       }

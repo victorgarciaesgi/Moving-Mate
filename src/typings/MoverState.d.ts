@@ -1,4 +1,4 @@
-import {IUser} from './UserTypes';
+import {IUserProfile} from './UserTypes';
 import {ICity} from './MovingState';
 
 export interface IMoverState {
@@ -11,6 +11,6 @@ export interface IMoverState {
   moverList: IMover[],
 }
 
-export interface IMover extends IUser {
+export interface IMover extends IUserProfile {
   
 }

@@ -1,14 +1,24 @@
-import {IMovingEvent} from './MovingState';
+export interface IUserState {
+  oneUser: IUserProfile;
+}
 
-export interface IUser {
-  id: number,
+
+
+export interface IUserProfile {
+  id: string,
+  name: string,
   username: string,
+  surname: string,
+  profile: string,
+  userToken: string,
+  roles: Array<IUserRoles>,
+  pricePerHour: number,
   avatar: string,
   avatarName: string,
   description: string,
   lastname: string,
   firstname: string,
-  birthdate: Date,
-  pricePerHour: number,
-  participations: IMovingEvent[]
+  birthdate: string,
+  city: string;
+  zip: string;
 }

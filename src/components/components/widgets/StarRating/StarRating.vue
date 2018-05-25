@@ -1,5 +1,6 @@
 <template>
   <div class='star-component'>
+    <div class='displayNote' v-if='data.center'></div>
     <div class="star-container" @mouseleave='leave()'>
       <div class="starRating"
           v-for='(index) in data.starCount' :key='index' 
@@ -15,11 +16,15 @@
         </template>
       </div>
     </div>
+    <div class='displayNote'>
+      <div class='value'>{{ (hoverCount != 0?(hoverCount):'-') }} / {{data.starCount}}</div>
+    </div>
+
     
-    <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
+    <!-- <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
     <div v-else-if='valid && dirty && data.error' class="form-valid-icon form-valid"></div>
     <div v-else-if='!valid && dirty && data.error' class="form-valid-icon form-invalid"></div>
-    <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
+    <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div> -->
   </div>
 </template>
 
@@ -132,6 +137,7 @@ export default class StarRating extends FormMixin {
   flex-flow: row nowrap;
   justify-content: center;
   position: relative;
+  width: 100%;
 
   .star-container {
     position: relative;
@@ -164,26 +170,26 @@ export default class StarRating extends FormMixin {
     }
   }
 
-  .star-displayNumber {
+  .displayNote {
+    position: relative;
     color: white;
-    flex: 1 1 auto;
+    min-height: 0px;
+    flex: 1 0 0;
+    flex-flow: row nowrap;
     display: flex;
-    justify-content: flex-start;
-    padding: 3px 10px 3px 10px;
-    border-radius: 30px;
-    font-size: 14px;
-    // background-color: $yellow1;
-  }
-
-  .star-displayCount {
-    color: white;
-    flex: 1 1 auto;
-    display: flex;
+    height: auto;
     justify-content: flex-end;
-    padding: 3px 10px 3px 10px;
-    border-radius: 30px;
-    font-size: 12px;
-    // background-color: $yellow1;
+    align-items: center;
+    min-height: 0;
+    min-width: 0;
+
+    .value {
+      border-radius: 20px;
+      flex: 0 0 auto;
+      background-color: $mainStyle;
+      font-size: 12px;
+      padding: 2px 8px 2px 8px;
+    }
   }
 }
 

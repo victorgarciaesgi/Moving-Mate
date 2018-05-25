@@ -7,6 +7,7 @@ export * from './ProgressBar.d';
 export * from './GlobalState.d';
 export * from './GoogleMaps.d';
 export * from './AlertState.d';
+export * from './UserTypes.d';
 
 
 export interface IResponse<T> {

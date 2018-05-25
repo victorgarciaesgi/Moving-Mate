@@ -45,6 +45,10 @@ export default class MovingDetail extends Vue {
   get movingEvent() {return MovingStore.state.oneAnnouncement}
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
+  beforeDestroy() {
+    MovingStore.mutations.updateOneAnnouncement(null)
+  }
+
 }
 </script>
 

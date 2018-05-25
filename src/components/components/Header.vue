@@ -120,7 +120,7 @@ export default class HeaderComponent extends Vue {
   get userPicture(){return LoginStore.getters.userPicture};
   get isAdmin() {return LoginStore.getters.isAdmin};
   get headerBox() {return GlobalStore.state.headerBoxShadow};
-  get userProfilePath() {return {name: routesNames.user}}
+  get userProfilePath() {return {name: routesNames.user, params: {userId: this.userInfos.id}}}
 
   private showLogin = LoginStore.mutations.showLogin;
   private disconnectRequest = LoginStore.actions.disconnectRequest;

@@ -67,7 +67,7 @@ namespace Mutations {
     state.searchingMovingList = !state.searchingMovingList;
   }
 
-  function updateOneAnnouncement(state: IMovingState, movingEvent: Object) {
+  function updateOneAnnouncement(state: IMovingState, movingEvent: Object | null) {
     state.oneAnnouncement = <any>movingEvent;
   }
 
@@ -156,10 +156,14 @@ namespace Actions {
   }
 
   async function getAnnouncementDetails(context, id: string) {
-    const {data} = await Api.get(Paths.MOVING_DETAIL + id);
-    Mutations.mutations.updateOneAnnouncement(data);
-    console.log(data);
-    return {title: data.label, verif: data.id};
+    if (state.oneAnnouncement != null) {
+      return {title: state.oneAnnouncement.label}
+    } else {
+      const {data} = await Api.get(Paths.MOVING_DETAIL + id);
+      Mutations.mutations.updateOneAnnouncement(data);
+      console.log(data);
+      return {title: data.label};
+    }
   }
 
   async function createAnnouncement(context, form: Object){

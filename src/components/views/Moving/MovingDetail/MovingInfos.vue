@@ -137,7 +137,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
-import {IMovingEvent, MovingStatus} from '@types';
+import {IMovingEvent} from '@types';
 import { StarRating, SvgIcon, UISwitch, FormMessage } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';

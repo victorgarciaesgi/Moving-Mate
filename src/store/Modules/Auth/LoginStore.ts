@@ -23,7 +23,6 @@ const initialState: ILoginState = {
     firstname: null,
     lastname: null,
     roles: [],
-    status: null,
     userToken: null,
   },
   sessionChecked: false,

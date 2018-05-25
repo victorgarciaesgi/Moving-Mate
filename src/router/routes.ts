@@ -20,7 +20,6 @@ export const routesNames = {
   inscription: "Inscription",
   becomeMover: "BecomeMover",
   user: 'User',
-  userDetail: 'UserDetail',
   userMovings: 'UserMovings',
   userParticipations: 'UserParticipations'
 }
@@ -34,8 +33,8 @@ interface MyMeta {
   requiresAuth?: boolean,
   isTab?: boolean,
   noAuth?: boolean,
-  asyncData?: (to?: MyRoute | MyRouteRecord) => Promise<{title?: string, verif?: any} | void>,
-  isAuthorized?: (verif?: any) => Promise<boolean>
+  asyncData?: (to?: MyRoute | MyRouteRecord) => Promise<{title?: string} | void>,
+  isAuthorized?: (to?: any) => boolean;
 }
 
 export interface MyRoute extends Route {
@@ -56,14 +55,14 @@ export interface MyRouteConfig extends RouteConfig {
 export const routesList: MyRouteConfig[]  = [
   {
     path: '/', name: routesNames.home,
-    component: async () => await import('@views/Home/Home.vue'),
+    component: () => import('@views/Home/Home.vue'),
     meta: {
       title: 'Accueil'
     }
   },
   { 
     path: '/moving', name: routesNames.moving,
-    component: async () => await import('@views/Moving/Moving.vue'),
+    component: () => import('@views/Moving/Moving.vue'),
     meta: {
       title: 'Les déménagements',
     },
@@ -85,7 +84,7 @@ export const routesList: MyRouteConfig[]  = [
       {
         path: 'create',
         name: routesNames.movingCreate,
-        component: async () => await import('@views/Moving/CreateMoving.vue'),
+        component: () => import('@views/Moving/CreateMoving.vue'),
         meta: {
           title: 'Créer une annonce',
           requiresAuth: true,
@@ -96,17 +95,18 @@ export const routesList: MyRouteConfig[]  = [
   },
   {
     path: '/moving/detail/:movingId',
-    component: async () => await import('@views/Moving/MovingDetail/MovingDetail.vue'),
+    component: () => import('@views/Moving/MovingDetail/MovingDetail.vue'),
     meta: {
       requiresAuth: true,
       contentProp: true,
       asyncData: getOneMoving,
+      headerShadow: false
     },
     children: [
       {
-        path: '',
+        path: '/',
         name: routesNames.movingInfos,
-        component: async () => await import('@views/Moving/MovingDetail/MovingInfos.vue'),
+        component: () => import('@views/Moving/MovingDetail/MovingInfos.vue'),
         meta: {
           contentProp: true,
           isTab: true,
@@ -116,7 +116,7 @@ export const routesList: MyRouteConfig[]  = [
       {
         path: 'invite',
         name: routesNames.movingInvite,
-        component: async () => await import('@views/Moving/MovingDetail/MovingInvite.vue'),
+        component: () => import('@views/Moving/MovingDetail/MovingInvite.vue'),
         meta: {
           contentProp: true,
           isTab: true,
@@ -124,6 +124,9 @@ export const routesList: MyRouteConfig[]  = [
             await Stores.InviteMoverStore.actions.fetchMover({});
             return await getOneMoving(to)
           },
+          isAuthorized(to: MyRoute) {
+            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
+          }
         },
         children: [
           {
@@ -150,25 +153,29 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isTab: true,
           asyncData: getOneMoving,
-
+          isAuthorized(to: MyRoute) {
+            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
+          }
         }
       },
       {
         path: 'offers',
-        component: async () => await import('@views/Moving/MovingDetail/MovingDemandes.vue'),
+        component: () => import('@views/Moving/MovingDetail/MovingDemandes.vue'),
         name: routesNames.movingOffers,
         meta: {
           contentProp: true,
           isTab: true,
           asyncData: getOneMoving,
-
+          isAuthorized(to: MyRoute) {
+            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
+          }
         }
       }
     ]
   },
   { 
     path: '/movers', name: routesNames.movers,
-    component: async () => await import('@views/Movers/Movers.vue'),
+    component: () => import('@views/Movers/Movers.vue'),
     meta: {
       title: 'Les déménageurs',
       async asyncData() {
@@ -194,7 +201,7 @@ export const routesList: MyRouteConfig[]  = [
     ]
   },
   { path: '/bemover', name: routesNames.becomeMover,
-    component: async () => await import('@views/BeMover/BeMover.vue'), 
+    component: () => import('@views/BeMover/BeMover.vue'), 
     meta: {
       title: 'Devenir déménageur',
       requiresAuth: true 
@@ -223,41 +230,42 @@ export const routesList: MyRouteConfig[]  = [
     },
   },
   {
-    path: '/myaccount',
-    name: routesNames.user,
-    component: async () => await import('@views/User/Account.vue'),
+    path: '/user/:userId',
+    component: () => import('@views/User/User.vue'),
     meta: {
-      title: 'Mon compte',
       requiresAuth: true,
-      contentProp: true,
-      asyncData: getOneUser
+      asyncData: getOneUser,
+      headerShadow: false
     },
     children: [
       {
-        path: 'detail',
-        name: routesNames.userDetail,
-        component: async () => await import('@views/User/AccountDetail.vue'),
+        path: '/',
+        name: routesNames.user,
+        component: () => import('@views/User/UserProfile.vue'),
         meta: {
-          title: 'Détails de l\'utilisateur',
-          isModal: true,
+          contentProp: true,
+          isTab: true,
+          asyncData: (to: MyRoute) => getOneUser(to, 'Profil'),
         }
       },
       {
         path: 'movings',
         name: routesNames.userMovings,
-        component: async () => await import('@views/User/AccountMovings.vue'),
+        component: () => import('@views/User/UserMovings.vue'),
         meta: {
-          title: 'Historique des déménagements',
-          isModal: true,
+          contentProp: true,
+          isTab: true,
+          asyncData: (to: MyRoute) => getOneUser(to, 'Déménagements'),
         }
       },
       {
         path: 'participations',
         name: routesNames.userParticipations,
-        component: async () => await import('@views/User/AccountParticipations.vue'),
+        component: () => import('@views/User/UserParticipations.vue'),
         meta: {
-          title: 'Historique des participations',
-          isModal: true,
+          contentProp: true,
+          isTab: true,
+          asyncData: (to: MyRoute) => getOneUser(to, 'Participations'),
         }
       },
     ]
@@ -266,17 +274,17 @@ export const routesList: MyRouteConfig[]  = [
     meta: {
       title: 'Page non trouvée'
     },
-    component: async () => await import('@views/Home/Home.vue')
+    component: () => import('@views/Home/Home.vue')
 }
 ]
 
 
 async function getOneMoving(to: MyRoute) {
   const data = await Stores.MovingStore.actions.getAnnouncementDetails(to.params.movingId);
-  return {title: data.title, };
+  return {title: data.title};
 }
 
-async function getOneUser() {
-  const username = await Stores.UserStore.actions.getOneUser();
-  return {title: username};
+async function getOneUser(to: MyRoute, page?) {
+  const username = await Stores.UserStore.actions.getOneUser(to.params.userId);
+  return {title: username.title +  ' - ' + page};
 }
