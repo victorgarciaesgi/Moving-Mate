@@ -199,7 +199,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 0;
+  public countStep = 2;
   public submitting = false;
   public $v;
 

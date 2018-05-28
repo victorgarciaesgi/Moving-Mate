@@ -32,39 +32,55 @@
     </div>
 
 
-    <transition name='slide-top'>
-      <div class='calendar-sticky'>
-        <div ref='calendar' class='calendar-wrapper' v-show='isFocused'>
-          <div class='header'>
-            <div class='left-arrow arrow' @mousedown.prevent='changeMonth(-1)'>
-              <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
+    <div class='calendar-sticky'>
+      <transition name='slide-top'>
+        <div ref='calendar' class='date-calendar' v-show='isFocused'>
+          <div class='calendar-wrapper' >
+            <div class='header'>
+              <div class='left-arrow arrow' @mousedown.prevent='changeMonth(-1)'>
+                <SvgIcon :src="require('@icons/forms/little_arrow_left.svg')" :size='30'/>
+              </div>
+              <div class="title">
+                <span class="month">{{stringMonth}}</span>
+                <span class="year">{{selectedYear}}</span>
+              </div>
+              <div class='right-arrow arrow' @mousedown.prevent='changeMonth(1)'>
+                <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
             </div>
-            <div class="title">
-              <span class="month">{{stringMonth}}</span>
-              <span class="year">{{selectedYear}}</span>
             </div>
-            <div class='right-arrow arrow' @mousedown.prevent='changeMonth(1)'>
-              <SvgIcon :src="require('@icons/forms/little_arrow_right.svg')" :size='30'/>
+            <div class="calendar-dates">
+              <ul class="week-days">
+                <li v-for='day in weekDays' :key='day'>
+                  {{day}}
+                </li>
+              </ul>
+              <ul class='month-days'>
+                <CalendarDay v-for='dateElement of allDisplayDates' 
+                  :dateElement='dateElement'
+                  :isMoving='isMoving'
+                  :key='dateElement.id'
+                  :selected='selectedDate'
+                  @select='handleDateSelect' />
+              </ul>
+            </div>
           </div>
-          </div>
-          <div class="calendar-dates">
-            <ul class="week-days">
-              <li v-for='day in weekDays' :key='day'>
-                {{day}}
-              </li>
-            </ul>
-            <ul class='month-days'>
-              <CalendarDay v-for='dateElement of allDisplayDates' 
-                :dateElement='dateElement'
-                :isMoving='isMoving'
-                :key='dateElement.id'
-                :selected='selectedDate'
-                @select='handleDateSelect' />
-            </ul>
+          <div class='hour-wrapper' v-if='selectedDate'>
+            <div class='upper arrows'>
+              <div class='arrow' @click='changeHours(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
+              <div class='arrow' @click='changeMinutes(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
+            </div>
+            <div class='placeholder'>
+              <div class='hour clock'><span>{{hoursString}}</span></div>:
+              <div class='minutes clock'><span>{{minutesString}}</span></div>
+            </div>
+            <div class='down arrows'>
+              <div class='arrow' @click='changeHours(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
+              <div class='arrow' @click='changeMinutes(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
 
     <FormError v-if='vl' :vl='vl' :data='data'/>
 
@@ -108,36 +124,60 @@ export default class FormCalendar extends FormMixin {
 
   public weekDays = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-  public selectedMonth = null;
-  public selectedYear = null;
-  public selectedDate = null;
+  public selectedMonth: number = null;
+  public selectedYear: number = null;
+  public selectedDate: moment.Moment = null;
+  public selectedHour: number = null;
+  public selectedMinute: number = null;
   public allDisplayDates = [];
+
+  public isFocused = true; // A ENLEVER
 
   get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
 
 
   handleDateSelect(date: moment.Moment, type: string) {
     if (this.vl) this.vl.$touch();
-    this.selectedDate = date;
+    this.selectedDate = moment().year(date.year()).month(date.month()).day(date.date());
+    if (this.selectedHour || this.selectedMinute) {
+      this.selectedDate = this.selectedDate.hour(this.selectedHour).minute(this.selectedMinute);
+    } else {
+      this.selectedDate = this.selectedDate.hour(date.hour()).minute(date.minute());
+    }
     if (type == 'prev') {
       this.changeMonth(-1)
     } else if( type == 'next') {
       this.changeMonth(1);
     }
-    this.$emit('input', date.unix());
-    this.forceBlur();
+    this.$emit('input', this.selectedDate.unix());
   }
 
   changeMonth(value: number) {
-    const month = moment().year(this.selectedYear).month(this.selectedMonth).add(value, 'month');
+    const month = this.currentMoment.add(value, 'month');
     this.selectedMonth = month.month();
     this.selectedYear = month.year();
     this.getDays();
   }
 
+  changeHours(value: number) {
+    if (this.vl) this.vl.$touch();
+    this.selectedDate = this.selectedDate.add(value, 'hour');
+    this.selectedHour = this.selectedDate.hour();
+    this.selectedMinute = this.selectedDate.minute();
+    this.$emit('input', this.selectedDate.unix());
+  }
+
+  changeMinutes(value: number) {
+    if (this.vl) this.vl.$touch();
+    this.selectedDate = this.selectedDate.add(value, 'minute');
+    this.selectedMinute = this.selectedDate.minute();
+    this.selectedHour = this.selectedDate.hour();
+    this.$emit('input', this.selectedDate.unix());
+  }
+
   getPrevMonth() {
     const prevmonth = moment().year(this.selectedYear).month(this.selectedMonth - 1);
-    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
+    const curmonth = this.currentMoment;
     const numberOfDays = prevmonth.daysInMonth();
     const curStart = curmonth.startOf('month').weekday();
     const result = [];
@@ -147,7 +187,7 @@ export default class FormCalendar extends FormMixin {
     this.allDisplayDates = [...result];
   };
   getAvailable() {
-    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
+    const curmonth = this.currentMoment;
     const numberOfDays = curmonth.daysInMonth();
     const result = [];
     for (let i = curmonth.startOf('month').date() - 1; i < numberOfDays; i++) {
@@ -157,7 +197,7 @@ export default class FormCalendar extends FormMixin {
   };
   getNextMonth() {
     const nextmonth = moment().year(this.selectedYear).month(this.selectedMonth + 1);
-    const curmonth = moment().year(this.selectedYear).month(this.selectedMonth);
+    const curmonth = this.currentMoment;
     const result = [];
     for (let i = nextmonth.startOf('month').date() - 1; i < 7 - curmonth.endOf('month').weekday() - 1; i++) {
        result.push(new MomentDate(nextmonth.date(i + 1), 'next'));
@@ -171,9 +211,11 @@ export default class FormCalendar extends FormMixin {
     this.getNextMonth();
   }
 
-  get stringMonth() {
-    return moment().month(this.selectedMonth).format('MMMM');
-  }
+  get currentMoment() {return moment().year(this.selectedYear).month(this.selectedMonth);}
+  get stringMonth() {return this.currentMoment.format('MMMM');}
+  get hoursString() {return moment.unix(this.value).format('HH')}
+  get minutesString() {return moment.unix(this.value).format('mm')}
+
 
   public calendarStyle = {
     left: null,
@@ -205,6 +247,9 @@ export default class FormCalendar extends FormMixin {
   }
 
   created() {
+    if (this.value != '') {
+      this.selectedDate = moment.unix(this.value);
+    }
     this.selectedMonth = moment().month();
     this.selectedYear = moment().year();
     this.getDays();
@@ -220,72 +265,129 @@ export default class FormCalendar extends FormMixin {
   position: fixed;
   z-index: 1000;
 
-  .calendar-wrapper {
+  .date-calendar {
     position: sticky;
     top: 0px;
     left: 0px;
     display: flex;
-    overflow: auto;
-    margin-top: -5px;
-    width: 304px;
-    font-size: 15px;
-    flex-flow: column nowrap;
+    flex-flow: row wrap;
     background-color: white;
+    margin-top: -5px;
     box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
     border-radius: 0 0 3px 3px;
 
-    .header {
-      display: flex;
-      height: 35px;
-      align-items: center;
-      justify-content: center;
-      flex-flow: row nowrap;
-      font-weight: bold;
-      font-size: 17px;
 
-      .arrow {
+    .calendar-wrapper {
+      display: flex;
+      overflow: auto;
+      width: 304px;
+      font-size: 15px;
+      flex-flow: column nowrap;
+      border-right: 1px solid $w230;
+
+      .header {
         display: flex;
-        justify-content: center;
+        height: 35px;
         align-items: center;
-        flex: 0 0 auto;
-        cursor: pointer;
+        justify-content: center;
+        flex-flow: row nowrap;
+        font-weight: bold;
+        font-size: 17px;
+
+        .arrow {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex: 0 0 auto;
+          cursor: pointer;
+        }
+
+        .title {
+          display: flex;
+          flex: 1 1 auto;
+          justify-content: center;
+          text-transform: capitalize;
+          span {
+            padding: 3px;
+          }
+        }
       }
 
-      .title {
+      .calendar-dates {
         display: flex;
         flex: 1 1 auto;
-        justify-content: center;
-        text-transform: capitalize;
-        span {
-          padding: 3px;
+        flex-flow: column wrap;
+        padding: 5px;
+
+        ul.week-days {
+          display: flex;
+          flex-flow: row nowrap;
+          padding: 3px 5px 3px 5px;
+          border-bottom: 1px solid $w220;
+
+          li {
+            display: flex;
+            flex: 0 0 calc(100% / 7);
+            justify-content: center;
+            font-size: 13px;
+          }
+        }
+
+        ul.month-days {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          padding: 3px 5px 3px 5px;
         }
       }
     }
 
-    .calendar-dates {
+    .hour-wrapper {
       display: flex;
-      flex: 1 1 auto;
-      flex-flow: column wrap;
-      padding: 5px;
+      background-color: white;
+      flex-flow: column nowrap;
+      width: 150px;
 
-      ul.week-days {
+      .arrows {
         display: flex;
+        flex: 1 1 auto;
         flex-flow: row nowrap;
-        padding: 3px 5px 3px 5px;
-        border-bottom: 1px solid $w220;
 
-        li {
+        .arrow {
           display: flex;
-          flex: 0 0 calc(100% / 7);
+          flex: 1 1 50%;
           justify-content: center;
-          font-size: 13px;
+        }
+
+        &.upper {
+          align-items: flex-end;
+          margin-bottom: 10px;
+        }
+        &.down {
+          align-items: flex-start;
+          margin-top: 10px;
         }
       }
 
-      ul.month-days {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        padding: 3px 5px 3px 5px;
+      .placeholder {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+
+        .clock {
+          display: flex;
+          flex: 1 1 50%;
+          justify-content: center;
+          align-items: center;
+
+          span {
+            flex: 0 0 auto;
+            border-radius: 10px;
+            background-color: $w230;
+            font-weight: bold;
+            padding: 6px 20px 6px 20px;
+            font-size: 20px;
+          }
+        }
       }
     }
   }
