@@ -211,7 +211,10 @@ export const routesList: MyRouteConfig[]  = [
     component: () => import('@views/BeMover/BeMover.vue'), 
     meta: {
       title: 'Devenir déménageur',
-      requiresAuth: true 
+      requiresAuth: true,
+      isAuthorized(to) {
+        return Stores.LoginStore.state.userInfos.isMover
+      }
     },
 
   },

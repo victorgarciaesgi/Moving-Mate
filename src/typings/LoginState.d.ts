@@ -17,6 +17,7 @@ export interface IUser {
   profile: string,
   userToken: string,
   roles: Array<IUserRoles>;
+  isMover: boolean,
   avatar: string,
   avatarName: string,
   description: string,

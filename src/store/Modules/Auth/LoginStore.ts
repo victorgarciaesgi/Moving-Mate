@@ -22,6 +22,7 @@ const initialState: ILoginState = {
     description: null,
     firstname: null,
     lastname: null,
+    isMover: null,
     roles: [],
     userToken: null,
   },
