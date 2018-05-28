@@ -117,8 +117,8 @@
           </div>
         </div>
       </div>
-      <div class='footer'>
-        <div class='participants'>
+      <div class='footer' v-if='!isMovingMine'>
+        <!-- <div class='participants'>
           <span class='title'>Participants validés</span>
           <ul class='result' v-if='movingEvent.participations'>
             <li v-for='part of movingEvent.participations.users' 
@@ -127,8 +127,8 @@
             </li>
           </ul>
           <span class='result' v-else>Aucun participants</span>
-        </div>
-        <div class='button-ask' v-if='!isMovingMine' @click='proposeHelp()'>Proposer mon aide</div>
+        </div> -->
+        <div class='button-ask' @click='proposeHelp()'>Proposer mon aide</div>
       </div>
     </section>
   </div>
@@ -145,14 +145,13 @@ import moment from 'moment';
 import {MovingStore, LoginStore} from '@store';
 import {DateMoving, AlertsElement, ActionsElements} from '@classes';
 import { timeout } from '@methods';
-import { throws } from 'assert';
 
 @Component({
   components: {
     FormMessage, SvgIcon
   },
 })
-export default class MovingDetail extends Vue {
+export default class MovingInfos extends Vue {
   
   public formatedDate = null;
   public dateFrom = null;
@@ -313,7 +312,7 @@ export default class MovingDetail extends Vue {
         flex-flow: column wrap;
         // border-bottom: 1px solid $w220;
 
-        &::after {
+        &:not(:last-child)::after {
           content: '';
           height: 1px;
           width: 100%;
@@ -670,7 +669,7 @@ export default class MovingDetail extends Vue {
       }
     }
 
-    @media screen and (max-width: 1070px) {
+    @media screen and (max-width: 1070px) and (min-width: 580px) {
       width: 100%;
       height: auto;
       bottom: 20px;
@@ -718,20 +717,19 @@ export default class MovingDetail extends Vue {
       }
     }
 
-    @media screen and (max-width: 900px) {
+    @media screen and (max-width: 900px) and (min-width: 580px) {
       .footer .participants {
         display: none;
       }
     }
+  }
 
-    @media screen and (max-width: 580px) {
-      .content {
-        display: none;
-      }
-
-      .footer .participants {
-        display: flex;
-      }
+  @media screen and (max-width: 580px) {
+    flex-flow: row-reverse wrap;
+    section.moving-actions {
+      position: relative;
+      top: 0;
+      margin-left: 0;
     }
   }
 }

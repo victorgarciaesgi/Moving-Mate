@@ -47,6 +47,7 @@ export namespace Forms {
 
   type FormType = 'text' | 'number' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time' | 'datetime-local';
   type IOptions = {value: any, text: string};
+  type IComponentType = 'FormText' | 'FormField' | 'StarRating' | 'FormSelect' | 'CheckBox' | 'Radio' | 'FormCalendar' | 'FormPlaceSearch'
 
   interface FormPayload {
     value?: any;
@@ -59,6 +60,7 @@ export namespace Forms {
     inlineIcon?: boolean;
     debounce?: number;
     options?: IOptions[];
+    component?: IComponentType
     
   }
   class DefaultFormElement {
@@ -72,6 +74,7 @@ export namespace Forms {
     inlineIcon?: boolean;
     debounce?: number;
     options?: IOptions[];
+    component: IComponentType
 
     constructor({error = true, required = true, ...fields}: FormPayload) {
       this.value = fields.value != undefined ? fields.value : '';

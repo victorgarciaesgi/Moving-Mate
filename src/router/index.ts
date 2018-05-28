@@ -74,8 +74,15 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
             .map(m => m.meta.isAuthorized(to))
           ]);
 
-          
-
+          if(!results.every(m => m)) {
+            NotificationsStore.actions.addNotification({type: 'warning', message: `Vous n'avez pas accès à cette page`})
+            ProgressBar.mutations.fail();
+            if (from.name) {
+              return;
+            } else {
+              next('/');
+            }
+          }
         } 
         if (!!to.meta.asyncData) {
           await getRouteData(to);
@@ -83,7 +90,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       }
       else {
         LoginStore.mutations.showLoginRoute(to.fullPath);
-        if (from.meta.title) {
+        if (from.name) {
           ProgressBar.mutations.hide();
         } else {
           next('/');
@@ -120,8 +127,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     // } else {
     //   next('/');
     // }
-    // return;
-    next();
+    // next();
   }
 })
 

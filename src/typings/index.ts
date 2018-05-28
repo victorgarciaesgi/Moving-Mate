@@ -20,6 +20,7 @@ export interface IResponse<T> {
 export interface ITab {
   title: string,
   icon?: any,
+  condition?: boolean,
   childs?: boolean,
   to: {
     name: string,

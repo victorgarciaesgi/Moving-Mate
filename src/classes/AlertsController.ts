@@ -1,20 +1,25 @@
 import { AlertsStore, LoginStore } from '@store';
+import {Forms} from './FormController';
 
 export namespace AlertsElement {
 
   type AlertType = "success" | "confirm" | "warning" | "error" | "info";
   type Diff<T extends string, U extends string> = ({[P in T]: P } & {[P in U]: never } & { [x: string]: never })[T];  
   type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>;
-
+  type formParam = {
+    form: Forms.Form,
+    submit: Function
+  }
 
   export class Alert{
     public type: AlertType;
     public title: string;
     public message: string;
     public strict?: boolean;
-    public actions: ActionsElements.Action[]
+    public actions: ActionsElements.Action[];
+    public formElement?: formParam;
 
-    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[]}) {
+    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[], formElement?: formParam}) {
       Object.assign(this, fields);
       AlertsStore.actions.addAlert(this);
     }
@@ -27,13 +32,16 @@ export namespace AlertsElement {
   export class SuccessAlert extends Alert {
     constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
       const actions = fields.actions || [];
+      const confirmAction = fields.actions.find(m => m.type == 'confirm')? new ActionsElements.ConfirmAction({}): null
+
       super({
         title: fields.title || 'Opération réussie',
         type: 'success',
+        strict: fields.strict,
         message: fields.message,
         actions: [
           ...actions,
-          new ActionsElements.ConfirmAction({})
+          confirmAction
         ]
       });
     }
@@ -42,13 +50,38 @@ export namespace AlertsElement {
   export class ErrorAlert extends Alert {
     constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
       const actions = fields.actions || [];
+      const confirmAction = fields.actions.find(m => m.type == 'confirm')? new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'}): null
       super({
         title: fields.title || `Erreur de l'opération`,
         type: 'error',
+        strict: fields.strict,
         message: fields.message,
         actions: [
           ...actions,
-          new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'}),
+          confirmAction
+        ]
+      });
+    }
+  }
+
+  export class FormAlert extends Alert {
+    constructor(fields?: {title: string, message: string, formElement: formParam}) {
+      const confirmAction = new ActionsElements.ConfirmAction({
+        text: 'Valider',
+        triggers: [
+          () => fields.formElement.submit(fields.formElement.form.getData())
+        ]
+      })
+
+      super({
+        title: fields.title || '',
+        type: 'info',
+        strict: true,
+        formElement: fields.formElement,
+        message: fields.message,
+        actions: [
+          confirmAction,
+          new ActionsElements.CancelAction()
         ]
       });
     }

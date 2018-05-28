@@ -13,6 +13,7 @@
             {{alertState.alertData.title}}
           </div>
           <span class='message'>{{alertState.alertData.message}}</span>
+          <div class='form' v-if='alertState.form'></div>
         </div>
         <div class='footer'>
           <template v-if='alertState.alertData.actions'>

@@ -1,14 +1,12 @@
-import Vuex from 'vuex'
-import Vue from 'vue';
 import Api, {ApiError, ApiSuccess} from "@api";
 import {IUserState, IUserProfile} from '@types';
 import {storeBuilder} from "./Store/Store";
-
-Vue.use(Vuex);
+import {LoginStore} from '@modules';
 
 //State
 const state: IUserState= {
-  oneUser: null
+  oneUser: null,
+  myProfile: false
 }
 
 const b = storeBuilder.module<IUserState>("UserModule", state);
@@ -27,12 +25,22 @@ namespace Mutations {
 
 namespace Actions {
   async function getOneUser(context, userId: string){
-    if (state.oneUser != null) {
-      return {title: state.oneUser.username}
-    } else {
-      const {data} = await Api.get('profile/');
-      Mutations.mutations.updateOneUser(data);
-      return {title: data.username};
+    try {
+      if (state.oneUser != null && state.oneUser.id == userId) {
+        return {title: state.oneUser.username}
+      } else {
+        if (LoginStore.state.isLoggedIn && (LoginStore.state.userInfos.id == userId)) {
+          const {data} = await Api.get('profile/');
+          Mutations.mutations.updateOneUser(data);
+          return {title: data.username};
+        } else {
+          const {data} = await Api.get(`user/${userId}`);
+          Mutations.mutations.updateOneUser(data);
+          return {title: data.username};
+        }
+      }
+    } catch(e) {
+      console.log(e);
     }
   }
 

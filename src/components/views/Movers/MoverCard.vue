@@ -1,5 +1,5 @@
 <template>
-  <li class='Mover-card' @click.prevent='redirectToDetail'>
+  <router-link tag='li' class='Mover-card' :to='redirectToDetail'>
     <div class="header">
       <div class='userPicture'>
         <BackgroundLoader :src='profilePic' />
@@ -52,7 +52,7 @@
         <div class='button-ask' @click.stop='proposeHelp'>Demander de l'aide</div>
       </div>
     </div>
-  </li>
+  </router-link>
 
 </template>
 
@@ -94,9 +94,9 @@ export default class MoverCard extends Vue {
     center: false
   })
 
-  redirectToDetail() {
-    // A changer vers id
-    // Router.push({name: routesNames.moverInfos, params: {moverId: this.mover.id.toString()}});
+  get redirectToDetail() {
+    // return {name: routesNames.user, params: {moverId: this.mover.id.toString()}};
+    return '/';
   }
 
   async proposeHelp() {

@@ -1,5 +1,6 @@
 export interface IUserState {
   oneUser: IUserProfile;
+  myProfile: boolean
 }
 
 

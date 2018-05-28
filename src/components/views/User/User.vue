@@ -1,5 +1,5 @@
-<template lang='html'>
-  <div class='User'>
+<template>
+  <div class='User' v-if="user">
     <!-- <div class='user-cover'><BackgroundLoader :src='coverPicture' /></div> -->
     <UITabs :tabs='tabs'/>
     <div class='sections'>
@@ -40,7 +40,7 @@
             </li>
           </ul>
 
-          <div class='boutonInvite'>
+          <div class='boutonInvite' v-if='!isMyProfile'>
             <div class='button-ask' @click.stop='proposeHelp'>Demander de l'aide</div>
           </div>
         </div>
@@ -54,7 +54,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
-import {UserStore} from '@store';
+import {UserStore, LoginStore} from '@store';
 import axios from 'axios';
 import {UITabs, BackgroundLoader, SvgIcon, StarRating} from '@components';
 import { routesNames } from '@router';
@@ -75,20 +75,31 @@ export default class User extends Vue {
   get userPrice() {return this.user.pricePerHour || 15};
   get userCity() {return this.user.city || 'Paris'}
 
+  get tabs(): ITab[]  {
+    return [
+      {title: 'Profil',icon: require('@icons/movers/user.svg'), to: {name: routesNames.user, params: {userId: this.UserId}}},
+      {title: 'Editer mon profil',icon: require('@icons/movers/user.svg'), condition: this.isMyProfile, to: {name: routesNames.userEdit, params: {userId: this.UserId}}},
+      {title: 'Participations',icon: require('@icons/movers/grid.svg'),childs: true, to: {name: routesNames.userParticipations, params: {userId: this.UserId}}},
+      {title: 'Déménagements',icon: require('@icons/truck.svg'), to: {name: routesNames.userMovings, params: {userId: this.UserId}}},
+    ]
+  }
+
+  get isMyProfile() {
+    if (!LoginStore.state.isLoggedIn) {
+      return false;
+    } else if (LoginStore.state.userInfos.id == this.UserId) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public starDetail = new Forms.StarRating({
     editable: false,
     value: 4,
     size: 24,
     displayNote: true
   })
-
-
-
-  public tabs: ITab[] = [
-    {title: 'Profil',icon: require('@icons/movers/user.svg'), to: {name: routesNames.user, params: {userId: this.UserId}}},
-    {title: 'Mes participations',icon: require('@icons/movers/grid.svg'),childs: true, to: {name: routesNames.userParticipations, params: {userId: this.UserId}}},
-    {title: 'Mes déménagements',icon: require('@icons/truck.svg'), to: {name: routesNames.userMovings, params: {userId: this.UserId}}},
-  ]
 
   beforeDestroy() {
     console.log('destroyed')
@@ -150,13 +161,15 @@ export default class User extends Vue {
     flex-flow: row wrap;
     padding: 20px;
     justify-content: center;
+    align-items: flex-start;
     
     .user-card {
       display: flex;
-      position: relative;
+      position: sticky;
       flex-flow: column nowrap;
       flex: 0 0 auto;
       width: 300px;
+      top:calc(#{$headerHeight} + 70px);
       background-color: white;
       font-size: 16px;
       font-weight: normal;
@@ -304,7 +317,9 @@ export default class User extends Vue {
 
   .user-views {
     display: flex;
-    width: 700px;
+    width: 600px;
+
+    margin-left: 30px;
   }
 
 }

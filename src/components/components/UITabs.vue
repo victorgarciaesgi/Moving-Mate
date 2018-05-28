@@ -1,7 +1,7 @@
 <template>
   <div class='UITabs' >
     <ul class='tab-list' @scroll.passive>
-      <router-link class='tab' tag='li' v-for='tab in tabs' :key='tab.title' 
+      <router-link class='tab' tag='li' v-for='tab in filteredTabs' :key='tab.title' 
         :class='{childs: tab.childs}' :to='tab.to'>
           <div class='icon normal'><SvgIcon :size='22' color='#5a5a5a' v-if='tab.icon' :src='tab.icon' /></div>
           <div class='icon blue'><SvgIcon :size='22' :color='css.mainStyle' v-if='tab.icon' :src='tab.icon' /></div>
@@ -17,14 +17,25 @@
 import Vue from "vue";
 import {Component, Prop} from "vue-property-decorator";
 import {SvgIcon} from '@components';
-
+import {ITab} from '@types'
 
 @Component({
   components: {SvgIcon}
 })
 export default class UITabs extends Vue {
 
-  @Prop() tabs: Array<any>;
+  @Prop() tabs: Array<ITab>;
+
+  get filteredTabs() {
+    return this.tabs.filter(m => {
+      if (m.condition == null) {
+        return true
+      } else if (m.condition) {
+        return true
+      }
+      return false;
+    })
+  }
 
   public css = require('@css');
 

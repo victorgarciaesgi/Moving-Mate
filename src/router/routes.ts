@@ -10,6 +10,7 @@ export const routesNames = {
   movingInvite: 'MovingInvite',
   movingInfos: 'MovingInfos',
   movingOffers: 'MovingOffers',
+  movingParticipants: 'MovingParticipants',
   movingDemandes: 'MovingDemandes',
   movingCreate: 'MovingCreate',
   searchMoving: 'SearchMovingRoute',
@@ -20,6 +21,7 @@ export const routesNames = {
   inscription: "Inscription",
   becomeMover: "BecomeMover",
   user: 'User',
+  userEdit: 'userEdit',
   userMovings: 'UserMovings',
   userParticipations: 'UserParticipations'
 }
@@ -124,9 +126,6 @@ export const routesList: MyRouteConfig[]  = [
             await Stores.InviteMoverStore.actions.fetchMover({});
             return await getOneMoving(to)
           },
-          isAuthorized(to: MyRoute) {
-            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
-          }
         },
         children: [
           {
@@ -147,20 +146,28 @@ export const routesList: MyRouteConfig[]  = [
         ]
       },
       {
+        path: 'participants',
+        component: () => import('@views/Moving/MovingDetail/MovingParticipants.vue'),
+        name: routesNames.movingParticipants,
+        meta: {
+          contentProp: true,
+          isTab: true,
+          asyncData: getOneMoving,
+        }
+      },
+      {
         path: 'demandes',
+        component: () => import('@views/Moving/MovingDetail/MovingDemandes.vue'),
         name: routesNames.movingDemandes,
         meta: {
           contentProp: true,
           isTab: true,
           asyncData: getOneMoving,
-          isAuthorized(to: MyRoute) {
-            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
-          }
         }
       },
       {
         path: 'offers',
-        component: () => import('@views/Moving/MovingDetail/MovingDemandes.vue'),
+        component: () => import('@views/Moving/MovingDetail/MovingOffers.vue'),
         name: routesNames.movingOffers,
         meta: {
           contentProp: true,
@@ -246,6 +253,19 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isTab: true,
           asyncData: (to: MyRoute) => getOneUser(to, 'Profil'),
+        }
+      },
+      {
+        path: 'edit',
+        name: routesNames.userEdit,
+        component: () => import('@views/User/UserEdit.vue'),
+        meta: {
+          contentProp: true,
+          isTab: true,
+          asyncData: (to: MyRoute) => getOneUser(to, 'Editer mon profil'),
+          isAuthorized(to: MyRoute) {
+            return Stores.LoginStore.state.userInfos.id == to.params.userId;
+          }
         }
       },
       {

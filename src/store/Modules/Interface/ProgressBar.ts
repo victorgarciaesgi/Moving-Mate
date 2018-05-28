@@ -78,7 +78,8 @@ namespace Mutations {
     }, 500)
   }
   function fail(state: IProgressState) {
-    state.canSuccess = false
+    state.canSuccess = false;
+    mutations.finish();
   }
 
   export const mutations = {

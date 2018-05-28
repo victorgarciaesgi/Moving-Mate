@@ -1,6 +1,6 @@
 <template>
   <transition name='bounce'>
-    <div v-if='show' class='modal-base' @click='closeModal()'
+    <div v-if='show' class='modal-base' @click='closeModal()' @scroll.stop
       :class='{full: !isPopup}'>
       <div class="modal-window" @click.stop='emitClosePopup()' :style='{
           maxHeight: height?`${height}px`:"",
@@ -110,9 +110,11 @@ export default class UIModal extends Vue {
     border-radius: 3px;
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
     height: auto;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
+    margin: 10px;
     min-height: 200px;
     min-width: 300px;
+    width: auto;
     flex-flow: column nowrap;
     overflow: hidden;
     transition: height 0.2s;

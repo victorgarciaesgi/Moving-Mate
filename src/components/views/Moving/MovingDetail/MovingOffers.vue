@@ -1,5 +1,5 @@
 <template>
-  <h1>Demandes</h1>
+  <h1>Offres</h1>
 </template>
 
 <script lang="ts">
@@ -14,7 +14,7 @@ import Movers from '@views/Movers/Movers.vue';
     FormMessage, SvgIcon, Movers
   },
 })
-export default class MovingDemandes extends Vue {
+export default class MovingOffers extends Vue {
   
 
 }
