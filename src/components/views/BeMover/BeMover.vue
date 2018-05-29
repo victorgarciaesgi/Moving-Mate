@@ -4,8 +4,15 @@
       <section class='bemover-form'>
         <h1>Devenir déménageur</h1>
         <div class='content'>
+          <FormMessage>
+            <template slot='title'>Confidentialité et sécurité</template>
+            Nous vous demandons ces informations pour  plusieurs raisons.
+            Nous voulons rendre votre visibilité plus grande envers les utilisateurs voulant déménager. Il faut donc être précis sur vos informations
+            <br>Seule votre ville sera affichée dans les recherches
+          </FormMessage>
           <FormText v-model='becomeMoverForm.firstname' :vl='$v.becomeMoverForm.firstname' :data='becomeMoverForm.fieldsData.firstname' />
           <FormText v-model='becomeMoverForm.lastname' :vl='$v.becomeMoverForm.lastname' :data='becomeMoverForm.fieldsData.lastname' />
+          <FormUpload v-model='becomeMoverForm.picture' :vl='$v.becomeMoverForm.picture' :data='becomeMoverForm.fieldsData.picture' />
           <FormPlaceSearch v-model='becomeMoverForm.address' :vl='$v.becomeMoverForm.address' :data='becomeMoverForm.fieldsData.address' />
           <FormText v-model='becomeMoverForm.price' :vl='$v.becomeMoverForm.price' :data='becomeMoverForm.fieldsData.price' />
           <FormField v-model='becomeMoverForm.description' :vl='$v.becomeMoverForm.description' :data='becomeMoverForm.fieldsData.description' />
@@ -30,7 +37,7 @@
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
-  FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar } from "@components";
+  FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar, FormUpload } from "@components";
 import { timeout } from '@methods';
 import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
@@ -39,7 +46,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
 
 @Component({
   components: {
-    FormButton, FormText, UISteps, FormField, FormPlaceSearch,
+    FormButton, FormText, UISteps, FormField, FormPlaceSearch, FormUpload,
     FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar
   },
   validations: {
@@ -48,6 +55,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
       firstname: {required},
       lastname: {required},
       address: {required},
+      picture: {required},
       price:{required, numeric},
       description: {required}
     }
@@ -64,15 +72,22 @@ export default class BeMover extends Vue {
       placeholder: `J'accepte les conditions générale d'utilisation du site`
     }),
     firstname: new Forms.TextForm({
+      icon: require('@icons/surname.svg'),
       placeholder: 'Votre prénom'
     }),
     lastname: new Forms.TextForm({
+      icon: require('@icons/surname.svg'),
       placeholder: 'Votre nom'
     }),
+    picture: new Forms.UploadForm({
+      placeholder: 'Votre photo de profil'
+    }),
     address: new Forms.TextForm({
-      placeholder: 'Votre adresse de départ'
+      icon: require('@icons/localisation.svg'),
+      placeholder: 'Votre adresse'
     }),
     price: new Forms.TextForm({
+      icon: require('@icons/euro.svg'),
       placeholder: 'Votre prix par heure',
     }),
     description: new Forms.TextForm({
@@ -97,13 +112,17 @@ export default class BeMover extends Vue {
   justify-content: center;
   align-items: center;
   width: 100%;
+  background-color: $mainStyle;
+  padding: 10px;
 
   .sections {
     display: flex;
     position: relative;
-    flex-flow: row wrap;
-    padding: 20px;
-    padding-top: 30px;
+    flex-flow: row nowrap;
+    padding: 10px;
+    padding-top: 20px;
+    flex: 0 1 auto;
+    width: 600px;
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
@@ -113,10 +132,9 @@ export default class BeMover extends Vue {
 
     section.bemover-form {
       display: flex;
-      width: 650px;
       height: auto;
+      width: 100%;
       flex-flow: column wrap;
-      padding: 10px;
       padding-top: 0;
 
       h1 {
@@ -125,13 +143,15 @@ export default class BeMover extends Vue {
       }
 
       .content {
-        padding: 20px;
+        padding: 10px;;
         display: flex;
         flex-flow: column wrap;
 
         .footer {
           display: flex;
-          flex-flow: row wrao
+          flex-flow: row wrap;
+          justify-content: flex-end;
+          padding-top: 10px;
         }
       }
     }

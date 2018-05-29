@@ -47,7 +47,7 @@ export namespace Forms {
 
   type FormType = 'text' | 'number' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time' | 'datetime-local';
   type IOptions = {value: any, text: string};
-  type IComponentType = 'FormText' | 'FormField' | 'StarRating' | 'FormSelect' | 'CheckBox' | 'Radio' | 'FormCalendar' | 'FormPlaceSearch'
+  type IComponentType = 'FormText' | 'FormField' | 'StarRating' | 'FormSelect' | 'CheckBox' | 'Radio' | 'FormCalendar' | 'FormPlaceSearch' | 'FormUpload'
 
   interface FormPayload {
     value?: any;
@@ -105,6 +105,12 @@ export namespace Forms {
       super({...fields, component: 'FormField'});
     }
   }
+  export class UploadForm extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, component: 'FormUpload'});
+    }
+  }
+
 
   export class PlaceSearchForm extends DefaultFormElement {
     constructor(fields: FormPayload) {

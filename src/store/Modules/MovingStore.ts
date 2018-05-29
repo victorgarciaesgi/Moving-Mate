@@ -180,8 +180,7 @@ namespace Actions {
   async function createParticipation(context, announcementId: number) {
     try {
       const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${announcementId}`);
-      console.log(data)
-      return new ApiSuccess({data});
+      return new ApiSuccess();
 
     } catch {
       return new ApiError();

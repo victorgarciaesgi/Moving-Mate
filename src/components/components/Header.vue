@@ -6,24 +6,19 @@
           <img src="~@images/logo_banniere.svg" alt="">
         </router-link>
         <ul class='nav-list'>
-          <router-link :to='item.link' v-for="item in nav" :key='item.name'>
-            <li class='route' :size='26'>
-              <!-- <SvgIcon class='tablet' :src='item.icon'></SvgIcon> -->
-              <span>{{item.title}}</span>
-            </li>
+          <router-link tag='li' class='route header-link' :to='item.link' v-for="item in nav" :key='item.name'>
+            <span>{{item.title}}</span>
           </router-link>
         </ul>
         <ul class='login-list'>
-          <li class="header-button color" v-if='!(loginState.isLoggedIn && userInfos.isMover)'>
-            <router-link to='/bemover'>
-              <span>Devenir déménageur</span>
-            </router-link>
-          </li>
+          <router-link tag='li' to='/bemover'  class="header-button color header-link" v-if='!(loginState.isLoggedIn && userInfos.isMover)'>
+            <span>Devenir déménageur</span>
+          </router-link>
 
           <!-- If user logged in -->
 
           <template v-if='loginState.isLoggedIn'>
-            <li class='header-button popup'>
+            <li class='header-button popup header-link'>
               <Popup v-if='loginState.isLoggedIn' @open='fetchMyMoving'>
                 <template slot='popup'>
                   <div class='center' v-if='searchingMyMoving'><img src='~@images/loading.svg'></div>
@@ -37,7 +32,7 @@
                 </div>
               </Popup>
             </li>
-            <li class='header-button popup'>
+            <li class='header-button popup header-link'>
               <Popup v-if='loginState.isLoggedIn' :width='300'>
                 <template slot='popup'>
                   <div class='center'>
@@ -51,7 +46,7 @@
               </Popup>
             </li>
 
-            <li class="header-button popup">
+            <li class="header-button popup header-link">
               <Popup :width='250'>
                 <template slot='popup'>
                  <div class='user-options-popup'>
@@ -79,10 +74,10 @@
           <!-- Else -->
 
           <template v-else>
-            <li class="header-button" @click='showLogin'>
+            <li class="header-button header-link" @click='showLogin'>
               <span>Connexion</span>
             </li>
-            <li class="header-button"  @click='showSignup'>
+            <li class="header-button header-link"  @click='showSignup'>
               <span>Inscription</span>
             </li>
           </template>
@@ -223,47 +218,44 @@ div.header-wrapper{
         flex: 1 0 auto;
         padding: 0px 15px 0px 15px;
 
-        a {
+        li.route {
           display: flex;
+          flex-flow: row nowrap;
+          justify-content: center;
+          align-items: center;
           margin-right: 5px;
           color: $mainStyle;
+          align-content: center;
+          font-size: 15px;
+          font-weight: bold;
+          padding: 7px 5px 5px 5px;
+          border-bottom: 3px solid transparent;
+          transition: all 0.3s;
+          cursor: pointer;
 
-          li.route {
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-            font-size: 15px;
-            font-weight: bold;
-            padding: 7px 5px 5px 5px;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            span{ 
-              padding: 8px 10px 8px 10px;
-              border-radius: 5px;
-            }
-
-            /deep/ div, svg {
-              fill: $g90;
-              height: 25px;
-              width: 25px;
-            }
+          span{ 
+            padding: 8px 10px 8px 10px;
+            border-radius: 5px;
           }
 
-          &:not(.router-link-active):hover li.route {
+          /deep/ div, svg {
+            fill: $g90;
+            height: 25px;
+            width: 25px;
+          }
+          &:not(.router-link-active):hover {
             span{background-color: $w240;}
-          }
-          &.router-link-active li.route {
+            }
+          &.router-link-active {
             span {
               background-color: $w245;
               color: $g90;
             }
             /deep/ svg { fill: $mainStyle }
           }
-
-          
         }
+
+        
       }
 
       ul.login-list {

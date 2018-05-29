@@ -213,7 +213,7 @@ export const routesList: MyRouteConfig[]  = [
       title: 'Devenir déménageur',
       requiresAuth: true,
       isAuthorized(to) {
-        return Stores.LoginStore.state.userInfos.isMover
+        return !Stores.LoginStore.state.userInfos.isMover
       }
     },
 

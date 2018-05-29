@@ -10,7 +10,7 @@ import axios from 'axios';
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
 const placesAutocomplete = new google.maps.places.AutocompleteService();
-const PLACES_API = `https://maps.googleapis.com/maps/api/place/autocomplete/json?language=fr&type=address&key=AIzaSyBNEvF2wA8myZMLMTC6uTmVSdvb-Ajac-Q&input=`;
+const PLACES_API = `https://maps.googleapis.com/maps/api/place/details/json?language=fr&type=address&key=AIzaSyBNEvF2wA8myZMLMTC6uTmVSdvb-Ajac-Q&input=`;
 // param input
 
 export const getMapInstance = async (): Promise<google.maps.Map> => {
