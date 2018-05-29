@@ -77,7 +77,7 @@ export default class CheckBox extends FormMixin {
 
       &:checked + label.button{
         background-color: $mainStyle;
-        background-image: url('~@icons/done.svg');
+        background-image: url('~@icons/done_white.svg');
         border: 1px solid transparent;
 
         & ~ span{

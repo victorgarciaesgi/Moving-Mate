@@ -32,8 +32,8 @@ export namespace AlertsElement {
   export class SuccessAlert extends Alert {
     constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
       const actions = fields.actions || [];
-      const confirmAction = fields.actions.find(m => m.type == 'confirm')? new ActionsElements.ConfirmAction({}): null
-
+      const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({})
+      console.log(fields.actions)
       super({
         title: fields.title || 'Opération réussie',
         type: 'success',
@@ -50,7 +50,8 @@ export namespace AlertsElement {
   export class ErrorAlert extends Alert {
     constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
       const actions = fields.actions || [];
-      const confirmAction = fields.actions.find(m => m.type == 'confirm')? new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'}): null
+      console.log(fields.actions)
+      const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'})
       super({
         title: fields.title || `Erreur de l'opération`,
         type: 'error',

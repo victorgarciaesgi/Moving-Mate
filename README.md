@@ -8,13 +8,14 @@
 
 ## Features
 
-- Vue single file components
+- Vue single file components with Typescript using [Vue-property-decorator](https://github.com/kaorun343/vue-property-decorator) and [Vue-mixin-decorator](https://github.com/justrhysism/vue-mixin-decorator)
 - Vuex Store with namespaced modules
 - Vue router with progress bar and async fetch before resolve
+- Form Validation using [Vuelidate](https://github.com/monterail/vuelidate)
 - Webpack dev server with Hot Modules Replacements and minified/gzipped code in Prod
 - Dynamic component import
 - Use of repo [Vuex-Typex](https://github.com/mrcrowl/vuex-typex) to have Vuex typed
-- Typescript implementation. Target to es2015 and esnext modules
+- Heavy use of Typescript. Target to es2015 and esnext modules
 - SCSS implementation
 - 100% flexbox
 - JWT OAuth

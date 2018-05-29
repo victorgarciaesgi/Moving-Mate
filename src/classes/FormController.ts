@@ -96,25 +96,43 @@ export namespace Forms {
 
   export class TextForm extends DefaultFormElement {
     constructor(fields: FormPayload) {
-      super(fields);
+      super({...fields, component: 'FormText'});
+    }
+  }
+
+  export class FieldForm extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, component: 'FormField'});
+    }
+  }
+
+  export class PlaceSearchForm extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, component: 'FormPlaceSearch'});
+    }
+  }
+
+  export class CalendarForm extends DefaultFormElement {
+    constructor(fields: FormPayload) {
+      super({...fields, component: 'FormCalendar'});
     }
   }
 
   export class Radio extends DefaultFormElement {
     constructor(fields: FormPayload) {
-      super({...fields, type: 'radio'});
+      super({...fields, type: 'radio', component: 'Radio'});
     }
   }
 
   export class Select extends DefaultFormElement {
     constructor(fields: FormPayload) {
-      super({...fields});
+      super({...fields, component: 'FormSelect'});
     }
   }
 
   export class CheckBox extends DefaultFormElement {
     constructor(fields: FormPayload) {
-      super({...fields, type: 'checkbox'});
+      super({...fields, type: 'checkbox', component: 'CheckBox'});
     }
   }
 
@@ -142,6 +160,7 @@ export namespace Forms {
     center?: boolean;
     
     constructor(fields: StarPayload) {
+      fields.component = 'StarRating';
       super(fields);
       this.starCount = fields.starCount || 5;
       this.baseColor = fields.baseColor || css.yellow2;

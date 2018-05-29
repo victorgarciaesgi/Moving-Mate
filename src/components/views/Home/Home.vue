@@ -60,7 +60,16 @@ export default class Home extends Vue {
   }
 
   async mounted() {
-
+    // new AlertsElement.SuccessAlert({
+    //     title: "Publication réussie!",
+    //     message: "Votre annonce a bien été publiée. Recrutez des déménageurs depuis la page de votre annonce ou attendez que des déménégeurs proposent leur aide",
+    //     actions: [
+    //       new ActionsElements.Action({
+    //         type: 'action',
+    //         text: 'Voir mon annonce',
+    //       })
+    //     ]
+    //   })
   }
 
 }

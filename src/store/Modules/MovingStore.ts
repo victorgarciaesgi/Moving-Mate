@@ -155,8 +155,8 @@ namespace Actions {
     return data;
   }
 
-  async function getAnnouncementDetails(context, id: string) {
-    if (state.oneAnnouncement != null) {
+  async function getAnnouncementDetails(context, {id, force}: {id: string, force?: boolean}) {
+    if (state.oneAnnouncement != null && !force) {
       return {title: state.oneAnnouncement.label}
     } else {
       const {data} = await Api.get(Paths.MOVING_DETAIL + id);
@@ -177,9 +177,9 @@ namespace Actions {
     }
   }
 
-  async function createParticipation(context, infos: Object) {
+  async function createParticipation(context, announcementId: number) {
     try {
-      const {data} = await Api.post(Paths.PARTICIPATION_CREATE, infos);
+      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${announcementId}`);
       console.log(data)
       return new ApiSuccess({data});
 

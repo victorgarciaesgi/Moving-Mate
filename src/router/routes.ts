@@ -303,7 +303,7 @@ export const routesList: MyRouteConfig[]  = [
 
 
 async function getOneMoving(to: MyRoute) {
-  const data = await Stores.MovingStore.actions.getAnnouncementDetails(to.params.movingId);
+  const data = await Stores.MovingStore.actions.getAnnouncementDetails({id: to.params.movingId});
   return {title: data.title};
 }
 

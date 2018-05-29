@@ -118,7 +118,7 @@ export default class FormPlaceSearch extends FormMixin {
     if (this.searchResults.length) {
       const address = result || this.searchResults[this.resultSelected];
       console.log(address)
-      this.$emit('input', {...address.display, placeId: address.place_id});
+      this.$emit('input', address.place_id);
       this.forceBlur();
       this.tempValue = address.display.addressValue + ', ' + address.display.addressCity;
       this.searchResults = [];
@@ -155,7 +155,7 @@ export default class FormPlaceSearch extends FormMixin {
   mounted() {
     this.formId = shortid.generate();
     if (this.value != "") {
-      this.tempValue = this.value.addressValue + ', ' + this.value.addressCity;
+      this.tempValue = `Placeholder d'adresse`
       if (this.vl) this.vl.$touch();
     }
   }

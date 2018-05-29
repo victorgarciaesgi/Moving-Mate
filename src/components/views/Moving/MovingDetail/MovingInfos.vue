@@ -206,11 +206,7 @@ export default class MovingInfos extends Vue {
           new ActionsElements.ConfirmAction({
             text: 'Confirmer',
             triggers: [
-              () => MovingStore.actions.createParticipation({
-                announcement: this.movingEvent.id,
-                toHire: this.movingEvent.user.id
-              }),
-              () => MovingStore.actions.getAnnouncementDetails(this.movingEvent.id.toString())
+              () => MovingStore.actions.createParticipation(this.movingEvent.id),
             ]
           }),
           new ActionsElements.CancelAction()
@@ -218,6 +214,10 @@ export default class MovingInfos extends Vue {
       }).waitResponse();
 
       if (response) {
+        MovingStore.actions.getAnnouncementDetails({
+          id: this.movingEvent.id.toString(), 
+          force: true
+        })
         new AlertsElement.SuccessAlert({
           title: `Proposition envoyée`,
           message: `Votre proposition a bien été envoyée à ${this.userName}`,
@@ -233,13 +233,13 @@ export default class MovingInfos extends Vue {
 
   async fetchImage() {
     // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
-    if (this.movingEvent.participations) {
-      this.movingEvent.participations.users.map(async (m) => {
-        let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-        m['picture'] = data.results[0].picture.thumbnail;
-        return m;
-      })
-    }
+    // if (this.movingEvent.participations) {
+    //   this.movingEvent.participations.users.map(async (m) => {
+    //     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
+    //     m['picture'] = data.results[0].picture.thumbnail;
+    //     return m;
+    //   })
+    // }
     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
     this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
     this.formatedDate = moment.unix(this.movingEvent.dealDate).format('dddd Do MMMM YYYY, hh:mm');

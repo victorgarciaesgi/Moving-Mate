@@ -131,14 +131,12 @@ export default class FormCalendar extends FormMixin {
   public selectedMinute: number = null;
   public allDisplayDates = [];
 
-  public isFocused = true; // A ENLEVER
-
   get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
 
 
   handleDateSelect(date: moment.Moment, type: string) {
     if (this.vl) this.vl.$touch();
-    this.selectedDate = moment().year(date.year()).month(date.month()).day(date.date());
+    this.selectedDate = date;
     if (this.selectedHour || this.selectedMinute) {
       this.selectedDate = this.selectedDate.hour(this.selectedHour).minute(this.selectedMinute);
     } else {

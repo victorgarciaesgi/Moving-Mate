@@ -199,7 +199,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
 export default class CreateMoving extends Vue {
 
   public show = true;
-  public countStep = 2;
+  public countStep = 0;
   public submitting = false;
   public $v;
 
@@ -262,8 +262,6 @@ export default class CreateMoving extends Vue {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_up.svg'),
           value: {
-            addressCity:"Paris",
-            addressValue:"9 Avenue Anatole France",
             placeId:"ChIJ6Wdw6uFv5kcRFiniHxoAJ-o"
           },
           placeholder: 'Votre adresse de départ'
@@ -294,8 +292,6 @@ export default class CreateMoving extends Vue {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_down.svg'),
           value: {
-            addressCity:"Montpellier",
-            addressValue:"15 Rue Foch",
             placeId:"ChIJcVon7gevthIReAMdXVT163k"
           },
           placeholder: `Votre adresse d'arrivée`
@@ -377,8 +373,8 @@ export default class CreateMoving extends Vue {
       part1 = {...rest, addressOut: rest2};
     }
 
-    part1.addressIn.placeId = part1.addressIn.address.placeId;
-    part1.addressOut.placeId = part1.addressOut.address.placeId;
+    part1.addressIn.placeId = part1.addressIn.address;
+    part1.addressOut.placeId = part1.addressOut.address;
     delete part1.addressIn.address;
     delete part1.addressOut.address;
     delete part2.dealDate;

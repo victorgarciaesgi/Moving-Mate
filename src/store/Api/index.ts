@@ -3,7 +3,7 @@ export * from './ApiTypes';
 export {addAuthHeaders, removeAuthHeaders} from './Instance';
 
 export namespace ApiTool {
-  export async function post(path: string, payload: any) {
+  export async function post(path: string, payload?: any) {
     return await Request('post', path, payload)
   }
   export async function get(path: string, payload?: any) {

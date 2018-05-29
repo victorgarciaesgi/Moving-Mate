@@ -38,7 +38,10 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       console.log("2")
       next()
     }
-    else if (to.matched && from.name && !to.matched.some(m => m.meta.isTab) && (from.matched[0].name == to.matched[0].name) && (from.matched[0].name != from.name)) {
+    else if (to.matched && from.name && !to.matched.some(m => m.meta.isTab) 
+      && (from.matched[0].name == to.matched[0].name) 
+      && (from.matched[0].name != from.name)
+      && isEqual(from.params, to.params)) {
       next();
       console.log("3")
       return;

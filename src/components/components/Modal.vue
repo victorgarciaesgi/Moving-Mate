@@ -75,11 +75,10 @@ export default class UIModal extends Vue {
   width: 100%;
   background-color: transparentize($g20,0.7);
   display: flex;
-  justify-content: center;
   flex-flow: row wrap;
-  align-items: center;
-  align-content: center;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
   z-index: 10002;
 
   &.full{
@@ -91,18 +90,6 @@ export default class UIModal extends Vue {
     }
   }
 
-  &:before {
-    content: '';
-    height: 30px;
-    width: 100%;
-  }
-
-  &:after {
-    content: '';
-    height: 30px;
-    width: 100%;
-  }
-
   .modal-window{
     display: flex;
     position: relative;
@@ -111,7 +98,7 @@ export default class UIModal extends Vue {
     box-shadow: 0 0 20px rgba(20, 20, 20, 0.3);
     height: auto;
     flex: 0 1 auto;
-    margin: 10px;
+    margin: auto;
     min-height: 200px;
     min-width: 300px;
     width: auto;
@@ -154,10 +141,10 @@ export default class UIModal extends Vue {
 
     div.footer {
       display: flex;
-      flex-flow: row nowrap;
+      flex-flow: row wrap;
       flex: 0 0 auto;
       padding: 5px;
-      height: 50px;
+      min-height: 50px;
       align-items: center;
       align-content: center;
       justify-content: flex-end;

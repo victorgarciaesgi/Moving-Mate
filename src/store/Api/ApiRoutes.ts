@@ -4,7 +4,7 @@ const ServerRoutes = {
   MOVING_LIST: 'announcements',
   MOVING_DETAIL: 'announcement/',
   MOVING_CREATE: 'announcement',
-  PARTICIPATION_CREATE: 'participation',
+  PARTICIPATION_CREATE: 'participations',
   MOVERS_LIST: 'movers'
 }
 
