@@ -112,7 +112,7 @@ export default class BeMover extends Vue {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: $mainStyle;
+  // background-color: $mainStyle;
   padding: 10px;
 
   .sections {
