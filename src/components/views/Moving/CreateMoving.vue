@@ -230,14 +230,17 @@ export default class CreateMoving extends Vue {
   public CreateMovingForm: any = {
     part0: new Forms.Form({
       firstname: new Forms.TextForm({
+        icon: require('@icons/surname.svg'),
         value: LoginStore.state.userInfos.firstname || 'balek',
         placeholder: 'Votre prénom'
       }),
       lastname: new Forms.TextForm({
+        icon: require('@icons/surname.svg'),
         value: LoginStore.state.userInfos.lastname || 'balek',
         placeholder: 'Votre nom de famille'
       }),
       phone: new Forms.TextForm({
+        icon: require('@icons/phone.svg'),
         value: '0637096255',
         type: 'tel',
         placeholder: 'Votre numéro de téléphone'

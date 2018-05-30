@@ -14,6 +14,7 @@
           <FormText v-model='becomeMoverForm.lastname' :vl='$v.becomeMoverForm.lastname' :data='becomeMoverForm.fieldsData.lastname' />
           <FormUpload v-model='becomeMoverForm.picture' :vl='$v.becomeMoverForm.picture' :data='becomeMoverForm.fieldsData.picture' />
           <FormPlaceSearch v-model='becomeMoverForm.address' :vl='$v.becomeMoverForm.address' :data='becomeMoverForm.fieldsData.address' />
+          <FormText v-model='becomeMoverForm.phone' :vl='$v.becomeMoverForm.phone' :data='becomeMoverForm.fieldsData.phone' />
           <FormText v-model='becomeMoverForm.price' :vl='$v.becomeMoverForm.price' :data='becomeMoverForm.fieldsData.price' />
           <FormField v-model='becomeMoverForm.description' :vl='$v.becomeMoverForm.description' :data='becomeMoverForm.fieldsData.description' />
           <CheckBox v-model='becomeMoverForm.cgu' :vl='$v.becomeMoverForm.cgu' :data='becomeMoverForm.fieldsData.cgu'/>
@@ -56,6 +57,13 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
       lastname: {required},
       address: {required},
       picture: {required},
+      phone: {required, phone(value) {
+        if (required(value)) {
+          const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
+          return regex.test(value);
+        }
+        return true;
+      }},
       price:{required, numeric},
       description: {required}
     }
@@ -85,6 +93,11 @@ export default class BeMover extends Vue {
     address: new Forms.TextForm({
       icon: require('@icons/localisation.svg'),
       placeholder: 'Votre adresse'
+    }),
+    phone: new Forms.TextForm({
+      icon: require('@icons/phone.svg'),
+      type: 'tel',
+      placeholder: 'Votre numéro de téléphone'
     }),
     price: new Forms.TextForm({
       icon: require('@icons/euro.svg'),
@@ -120,14 +133,14 @@ export default class BeMover extends Vue {
     position: relative;
     flex-flow: row nowrap;
     padding: 10px;
-    padding-top: 20px;
+    padding-top: 10px;
     flex: 0 1 auto;
     width: 600px;
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
     box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    border-radius: 5px;
+    border-radius: 2px;
     background-color: white;
 
     section.bemover-form {

@@ -87,7 +87,6 @@ export default class FormUpload extends FormMixin {
 
   handleItemDrop(event: DragEvent) {
     this.draggedOver = false;
-    this.dropped = true;
     let imageFile = null;
     if (event.dataTransfer.items) {
       if (event.dataTransfer.items[0].kind === 'file') {
@@ -98,11 +97,21 @@ export default class FormUpload extends FormMixin {
         imageFile = event.dataTransfer.files[0];
       }
     }
-    if (imageFile) this.readImage(imageFile);
+    if (imageFile) {
+      if (imageFile.type == 'image/jpeg') {
+        this.readImage(imageFile);
+      } else {
+        NotificationsStore.actions.addNotification({
+          type: 'error',
+          message: 'Seuls les fichiers .jpeg ou .jpg sont acceptés'
+        })
+      }
+    }
     this.removeDragData(event);
   }
 
   readImage(image: any) {
+    console.log(image);
     if (image.type != 'image/jpeg') {
       NotificationsStore.actions.addNotification({
         type: 'error',
@@ -114,6 +123,7 @@ export default class FormUpload extends FormMixin {
         message: 'La taille maximale est de 3Mo'
       })
     } else {
+      this.dropped = true;
       const reader = new FileReader();
       this.loadingImage = true;
       this.fileTitle = image.name;
@@ -291,6 +301,7 @@ export default class FormUpload extends FormMixin {
     font-weight: bold;
     padding: 0 0 5px 0;
     font-size: 14px;
+    color: $g90;
   }
 }
 
