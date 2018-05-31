@@ -125,7 +125,7 @@ export default class BeMover extends Vue {
   justify-content: center;
   align-items: center;
   width: 100%;
-  // background-color: $mainStyle;
+  background-color: white;
   padding: 10px;
 
   .sections {
@@ -139,9 +139,6 @@ export default class BeMover extends Vue {
     justify-content: center;
     align-items: flex-start;
     align-content: flex-start;
-    box-shadow: 0 0 10px rgba(0,0,0,0.15);
-    border-radius: 2px;
-    background-color: white;
 
     section.bemover-form {
       display: flex;
