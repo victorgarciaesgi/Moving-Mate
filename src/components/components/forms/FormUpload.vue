@@ -211,7 +211,7 @@ export default class FormUpload extends FormMixin {
       background-color: #e0e1e4;
       border-radius: 5px;
       border: 3px dashed $w180;
-      transition: all 0.3s;
+      // transition: all 0.3s;
       overflow: hidden;
 
       .image-previsu {

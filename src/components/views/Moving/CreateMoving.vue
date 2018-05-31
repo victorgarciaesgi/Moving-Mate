@@ -68,7 +68,7 @@
             <FormSeparator>Autres informations</FormSeparator>
             
             <FormText v-model='CreateMovingForm.part2.label' 
-              :vl='$v.CreateMovingForm.part2.label' 
+              :vl='$v.CreateMovingForm.part2.label'
               :data='CreateMovingForm.part2.fieldsData.label'/>
             <FormCalendar v-model='CreateMovingForm.part2.dealDate' 
               :vl='$v.CreateMovingForm.part2.dealDate' 
@@ -86,6 +86,12 @@
             <FormText v-model='CreateMovingForm.part2.pricePerHourPerUser' 
               :vl='$v.CreateMovingForm.part2.pricePerHourPerUser' 
               :data='CreateMovingForm.part2.fieldsData.pricePerHourPerUser'/>
+            <FormMessage>
+              <template slot='title'>Le prix est indicatif</template>
+              Ce nombre indiquera le montant qui vous semble raisonable. <br>
+              Quand vous accepterez un déménageur, c'est son prix par heure qui sera pris en compte dans le calcul et non pas le votre <br>
+              Libre à vous d'accepter ou pas un déménageur avec un prix plus élevé.
+            </FormMessage>
             <FormField v-model='CreateMovingForm.part2.description'
               :vl='$v.CreateMovingForm.part2.description' 
               :data='CreateMovingForm.part2.fieldsData.description'/>
@@ -348,7 +354,7 @@ export default class CreateMoving extends Vue {
       }),
       pricePerHourPerUser: new Forms.TextForm({
         icon: require('@icons/euro.svg'),
-        placeholder: 'Prix par heure et par déménageur (en €)',
+        placeholder: 'Prix par heure et par déménageur conseillé (en €)',
         value: 15
       }),
       description: new Forms.TextForm({

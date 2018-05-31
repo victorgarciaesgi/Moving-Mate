@@ -6,9 +6,8 @@
         <div class='content'>
           <FormMessage>
             <template slot='title'>Confidentialité et sécurité</template>
-            Nous vous demandons ces informations pour  plusieurs raisons.
             Nous voulons rendre votre visibilité plus grande envers les utilisateurs voulant déménager. Il faut donc être précis sur vos informations
-            <br>Seule votre ville sera affichée dans les recherches
+            <br/>Seule votre ville sera affichée dans les recherches
           </FormMessage>
           <FormText v-model='becomeMoverForm.firstname' :vl='$v.becomeMoverForm.firstname' :data='becomeMoverForm.fieldsData.firstname' />
           <FormText v-model='becomeMoverForm.lastname' :vl='$v.becomeMoverForm.lastname' :data='becomeMoverForm.fieldsData.lastname' />
@@ -16,6 +15,10 @@
           <FormPlaceSearch v-model='becomeMoverForm.address' :vl='$v.becomeMoverForm.address' :data='becomeMoverForm.fieldsData.address' />
           <FormText v-model='becomeMoverForm.phone' :vl='$v.becomeMoverForm.phone' :data='becomeMoverForm.fieldsData.phone' />
           <FormText v-model='becomeMoverForm.price' :vl='$v.becomeMoverForm.price' :data='becomeMoverForm.fieldsData.price' />
+          <FormMessage>
+            <template slot='title'>Information  sur le prix</template>
+            Si vous êtes accepté par un déménageur pour l'aider, c'est votre prix qui sera pris en compte dans le calcul
+          </FormMessage>
           <FormField v-model='becomeMoverForm.description' :vl='$v.becomeMoverForm.description' :data='becomeMoverForm.fieldsData.description' />
           <CheckBox v-model='becomeMoverForm.cgu' :vl='$v.becomeMoverForm.cgu' :data='becomeMoverForm.fieldsData.cgu'/>
           <div class='footer'>

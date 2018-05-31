@@ -14,7 +14,7 @@
           <span class='zip'>{{mover.zipcode || '75001'}}</span>
         </span>
       </div>
-      <div class='userDisponibility'>
+      <div class='userDisponibility' v-if='!display'>
         <div class='iconState'></div>
         <div class='stateValue'>Disponible</div>
       </div>
@@ -76,6 +76,7 @@ export default class MoverCard extends Vue {
 
   @Prop({required: true}) mover: IMover;
   @Prop() invite: boolean;
+  @Prop() display: boolean;
 
 
   public css = require('@css');
@@ -101,17 +102,22 @@ export default class MoverCard extends Vue {
 
   async proposeHelp() {
     try {
-      const response = await new AlertsElement.Alert({
-        title: `Proposer son aide à ${this.userName}`,
-        type: 'confirm',
+      const response = await new AlertsElement.FormAlert({
+        title: `Demander de l'aide à ${this.userName}`,
         message: `En confirmant, ${this.userName} recevra une demande d'aide de votre part`,
-        strict: true,
-        actions: [
-          new ActionsElements.ConfirmAction({
-            text: 'Confirmer',
+        formElement: {
+          form: new Forms.Form({
+            message: new Forms.FieldForm({
+              placeholder: `Message pour ${this.userName} (optionnel)`
+            })
           }),
-          new ActionsElements.CancelAction()
-        ]
+          submit: {
+            params: {
+              id: this.movingEvent.id
+            },
+            trigger:  MovingStore.actions.createAskHelp
+          }
+        }
       }).waitResponse();
 
       if (response) {

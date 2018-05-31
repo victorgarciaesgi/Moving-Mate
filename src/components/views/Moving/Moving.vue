@@ -14,7 +14,7 @@
         <MovingList/>
       </section>
     </section>
-    <router-view></router-view>
+    <router-view />
   </div>
 </template>
 

@@ -6,6 +6,8 @@ import Router from '@router';
 import { GoogleMaps, getMapInstance } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
+import {Forms} from '@classes';
+
 
 
 const GEO_API = 'https://geo.api.gouv.fr';
@@ -177,9 +179,22 @@ namespace Actions {
     }
   }
 
-  async function createParticipation(context, announcementId: number) {
+  async function createParticipation(context, {id, form}:{id: number, form: Forms.Form}) {
     try {
-      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${announcementId}`);
+      console.log(form)
+      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${id}`, form);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function createAskHelp(context, {id, form}:{id: number, form: Forms.Form}) {
+    try {
+      console.log(form)
+      // A CHANGER L'URL
+      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${id}`, form);
       return new ApiSuccess();
 
     } catch {
@@ -195,7 +210,8 @@ namespace Actions {
     createAnnouncement: b.dispatch(createAnnouncement),
     getOneAnnouncement: b.dispatch(getOneAnnouncement),
     getAnnouncementDetails: b.dispatch(getAnnouncementDetails),
-    createParticipation: b.dispatch(createParticipation)
+    createParticipation: b.dispatch(createParticipation),
+    createAskHelp: b.dispatch(createAskHelp)
   }
 }
 

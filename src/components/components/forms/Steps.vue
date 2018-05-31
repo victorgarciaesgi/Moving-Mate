@@ -18,7 +18,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
-import {SvgIcon} from '@components'
+import SvgIcon from '../widgets/Divers/SvgIcon.vue';
 
 @Component({
   components: {SvgIcon}

@@ -3,7 +3,7 @@
     <div class='moving-cover' :style='backgroundCover'></div>
     <UITabs :tabs='tabs' v-if='isMovingMine'/>
     <div class='child-views'>
-      <transition name='fade' mode='out-in'>
+      <transition name='slide' mode='out-in'>
         <router-view/>
       </transition>
     </div>

@@ -3,12 +3,18 @@ import {Forms} from './FormController';
 
 export namespace AlertsElement {
 
-  type AlertType = "success" | "confirm" | "warning" | "error" | "info";
+  type AlertType = "success" | "confirm" | "warning" | "error" | "info" | "form";
   type Diff<T extends string, U extends string> = ({[P in T]: P } & {[P in U]: never } & { [x: string]: never })[T];  
   type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>;
   type formParam = {
     form: Forms.Form,
-    submit: Function
+    validations?: {
+      [x:string]: any
+    },
+    submit: {
+      params: {[x:string]: any},
+      trigger: Function
+    }
   }
 
   export class Alert{
@@ -66,18 +72,18 @@ export namespace AlertsElement {
   }
 
   export class FormAlert extends Alert {
-    constructor(fields?: {title: string, message: string, formElement: formParam}) {
+    constructor(fields?: {title: string, message: string, strict?:boolean, formElement: formParam}) {
       const confirmAction = new ActionsElements.ConfirmAction({
         text: 'Valider',
         triggers: [
-          () => fields.formElement.submit(fields.formElement.form.getData())
+          () => fields.formElement.submit.trigger({form: fields.formElement.form.getData(), ...fields.formElement.submit.params})
         ]
       })
 
       super({
         title: fields.title || '',
-        type: 'info',
-        strict: true,
+        type: 'form',
+        strict: fields.strict,
         formElement: fields.formElement,
         message: fields.message,
         actions: [

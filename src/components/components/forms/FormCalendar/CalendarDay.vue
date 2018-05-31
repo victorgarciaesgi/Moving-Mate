@@ -19,7 +19,9 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import shortid from 'shortid';
 import moment from 'moment';
 
-@Component({})
+@Component({
+  props: ['dateElement','selected', 'isMoving']
+})
 export default class CalendarDay extends Vue {
   @Prop() dateElement;
   @Prop() selected;
@@ -28,6 +30,9 @@ export default class CalendarDay extends Vue {
   public fullDate: moment.Moment= null;
 
   get dateNumber() {return this.dateElement.date;}
+  get selectedDate() {
+    return moment.unix(this.selected);
+  }
 
   get isToday() {
     const today = moment();
@@ -44,7 +49,7 @@ export default class CalendarDay extends Vue {
 
   get isSelected() {
     if (this.selected) {
-      return this.selected.isSame(this.fullDate, 'day');
+      return this.selectedDate.isSame(this.fullDate, 'day');
     }
     return false;
   }
@@ -56,7 +61,7 @@ export default class CalendarDay extends Vue {
   }
 
   created() {
-    this.fullDate = moment().year(this.dateElement.year).month(this.dateElement.month).date(this.dateElement.date).hour(10).minute(0);
+    this.fullDate = moment().year(this.dateElement.year).month(this.dateElement.month).date(this.dateElement.date)
   }
 }
 </script>

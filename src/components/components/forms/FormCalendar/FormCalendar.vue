@@ -59,23 +59,23 @@
                   :dateElement='dateElement'
                   :isMoving='isMoving'
                   :key='dateElement.id'
-                  :selected='selectedDate'
+                  :selected='selectedDateUnix'
                   @select='handleDateSelect' />
               </ul>
             </div>
           </div>
           <div class='hour-wrapper' v-if='selectedDate'>
             <div class='upper arrows'>
-              <div class='arrow' @click='changeHours(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
-              <div class='arrow' @click='changeMinutes(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
+              <div class='arrow' @mousedown.prevent='changeHours(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
+              <div class='arrow' @mousedown.prevent='changeMinutes(1)'><SvgIcon :src="require('@icons/forms/little_arrow_up.svg')" :size='50'/></div>
             </div>
             <div class='placeholder'>
               <div class='hour clock'><span>{{hoursString}}</span></div>:
               <div class='minutes clock'><span>{{minutesString}}</span></div>
             </div>
             <div class='down arrows'>
-              <div class='arrow' @click='changeHours(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
-              <div class='arrow' @click='changeMinutes(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
+              <div class='arrow' @mousedown.prevent='changeHours(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
+              <div class='arrow' @mousedown.prevent='changeMinutes(-1)'><SvgIcon :src="require('@icons/forms/little_arrow_down.svg')" :size='50'/></div>
             </div>
           </div>
         </div>
@@ -130,6 +130,7 @@ export default class FormCalendar extends FormMixin {
   public selectedHour: number = null;
   public selectedMinute: number = null;
   public allDisplayDates = [];
+  public selectedDateUnix: number = null;
 
   get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
 
@@ -228,6 +229,10 @@ export default class FormCalendar extends FormMixin {
     } else {
       return this.value;
     }
+  }
+
+  @Watch('value', {deep: true}) isSelectedChanged(newVal, oldVal) {
+    this.selectedDateUnix = this.selectedDate.unix();
   }
 
   handleFocus() {
@@ -354,6 +359,7 @@ export default class FormCalendar extends FormMixin {
           display: flex;
           flex: 1 1 50%;
           justify-content: center;
+          cursor: pointer;
         }
 
         &.upper {

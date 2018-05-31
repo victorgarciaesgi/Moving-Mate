@@ -3,7 +3,7 @@
     <div v-if='alertState.alertShow' class='alert-base' @click='closeAlert(false)'>
       <div class="alert-window" @click.stop>
         <div class='content'>
-          <div class='alert-icon' :class='[alertState.alertData.type]'>
+          <div class='alert-icon' v-if='alertState.alertData.type != "form"' :class='[alertState.alertData.type]'>
             <img src="~@icons/notifs/success.svg" v-if='alertState.alertData.type == "success"'>
             <img src="~@icons/notifs/error.svg" v-else-if='alertState.alertData.type == "error"'>
             <img src="~@icons/notifs/warning.svg" v-else-if='alertState.alertData.type == "warning"'>
@@ -13,7 +13,14 @@
             {{alertState.alertData.title}}
           </div>
           <span class='message'>{{alertState.alertData.message}}</span>
-          <div class='form' v-if='alertState.form'></div>
+          <div class='form' v-if='alertState.alertData.type == "form"'>
+            <component :is='value.component' 
+              v-for='(value, key) in alertState.alertData.formElement.form.fieldsData' 
+              :key='key'
+              v-model='alertState.alertData.formElement.form[key]'
+              :vl='$v[key]'
+              :data='value'></component>
+          </div>
         </div>
         <div class='footer'>
           <template v-if='alertState.alertData.actions'>
@@ -29,6 +36,7 @@
               <FormButton v-for="action in rightButtons" :key='action.text'
                 @click='executeAction(action, true)'
                 :submitting='submitting'
+                :disabled='isDisabled'
                 :theme='getTheme(action.type)'>
                 {{action.text}}
               </FormButton>
@@ -50,17 +58,30 @@
 <script lang="ts">
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
-import FormButton from '@components/forms/FormButton.vue';
 import { AlertsStore } from '@store';
 import {AlertsElement, ActionsElements} from '@classes';
+import { FormButton, FormText, UISteps, FormPlaceSearch,
+  FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar, FormUpload } from "../../forms/index";
 
 @Component({
   components: {
-    FormButton
+    FormButton, FormText, UISteps, FormField, FormPlaceSearch,
+    FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar, FormUpload
+  },
+  validations() {
+    if (this.alertState.alertData.formElement) {
+      if (this.alertState.alertData.formElement.validations) {
+      return this.alertState.alertData.formElement.validations;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 })
 export default class Alerts extends Vue {
 
+  public $v;
 
   get alertState() { return AlertsStore.state}
   get submitting() {return AlertsStore.state.submitting}
@@ -78,13 +99,12 @@ export default class Alerts extends Vue {
     }
   }
 
-  get rightButtons() {
-    return this.alertState.alertData.actions.filter(m => m.type !== "cancel");
+  get isDisabled() {
+    return this.$v.$invalid;
   }
 
-  get leftButtons() {
-    return this.alertState.alertData.actions.filter(m => m.type === "cancel");
-  }
+  get rightButtons() {return this.alertState.alertData.actions.filter(m => m.type !== "cancel");}
+  get leftButtons() {return this.alertState.alertData.actions.filter(m => m.type === "cancel");}
   
   closeAlert(exter: boolean) {
     if (!this.alertState.alertData.strict && !exter) {
@@ -93,7 +113,7 @@ export default class Alerts extends Vue {
   }
 
   validAlert() {
-    AlertsStore.mutations.cancelAlert();
+    AlertsStore.mutations.confirmAlert();
   }
 
   async executeAction(action: ActionsElements.Action, value: boolean) {
@@ -168,6 +188,10 @@ export default class Alerts extends Vue {
 
       .message {
         max-width: 400px;
+      }
+
+      .form {
+        width: 100%;
       }
     }
 

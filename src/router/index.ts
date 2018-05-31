@@ -3,7 +3,8 @@ import VueRouter, {Route, RouteRecord} from 'vue-router';
 import { LoginStore, NotificationsStore } from '@modules';
 import { routesList, MyRoute, MyRouteRecord } from './routes';
 import { ProgressBar, GlobalStore, EventBus } from '@store';
-import {isEqual} from 'lodash'
+import {isEqual} from 'lodash';
+import {timeout} from '@methods';
 
 Vue.use(VueRouter);
 
@@ -11,7 +12,8 @@ Vue.use(VueRouter);
 const Router = new VueRouter({
   mode: 'history',
   fallback: false,
-  scrollBehavior(to, from, savedPosition) {
+  async scrollBehavior(to, from, savedPosition) {
+    await timeout(300);
     if (savedPosition) {
       return savedPosition
     } else {
@@ -29,13 +31,13 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     }
     // Check if route come from child
     console.log(to, from);
-    if (from.name && from.matched[0].name == to.name) {
+    if (from.name && from.matched[0].name == to.name && from.meta.isModal) {
       next();
-      console.log("1")
+      console.log("Route interceptor log: <1>")
       return;
     } 
     else if (from.name == to.name && isEqual(from.params, to.params)){
-      console.log("2")
+      console.log("Route interceptor log: <2>")
       next()
     }
     else if (to.matched && from.name && !to.matched.some(m => m.meta.isTab) 
@@ -43,22 +45,22 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
       && (from.matched[0].name != from.name)
       && isEqual(from.params, to.params)) {
       next();
-      console.log("3")
+      console.log("Route interceptor log: <3>")
       return;
     }
     else {
       if (!to.meta.transparent && !to.meta.isModal) {
-        console.log("4")
+        console.log("Route interceptor log: <4>")
         ProgressBar.mutations.start();
       } 
       else if (to.meta.transparent && !from.name) {
-        console.log("5")
+        console.log("Route interceptor log: <5>")
         ProgressBar.mutations.start();
       }
 
       // If page is initialazed on child
       if (to.matched[0] && to.meta.isModal) {
-        console.log("6")
+        console.log("Route interceptor log: <6>")
         if (!from.name) {
           getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);

@@ -18,11 +18,25 @@
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.15s linear;
 }
-
-
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+
+
+.slide-enter-active, .slide-leave-active {
+  transition: opacity 0.15s linear, transform 0.15s linear;
+}
+.slide-enter {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
 
 .flexy {
   display: flex;

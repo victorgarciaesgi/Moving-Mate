@@ -87,6 +87,7 @@ export namespace Forms {
       this.debounce = fields.debounce || null;
       this.required = required;
       this.options = fields.options;
+      this.component = fields.component || null;
     }
 
     reset() {

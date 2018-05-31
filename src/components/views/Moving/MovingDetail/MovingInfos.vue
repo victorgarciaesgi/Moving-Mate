@@ -12,7 +12,10 @@
       </div>
       <div class='content'>
         <div class='block'>
-          <div class='section-title'>Date et heure du déménagement</div>
+          <div class='section-title'>
+            <SvgIcon class='icon' :src='require("@icons/time.svg")' :size='20'/>
+            Date et heure du déménagement
+          </div>
           <div class='section-content'>
             <div class='date'>
               <span class='number'>{{getBegin.number}}</span>
@@ -28,7 +31,10 @@
           </div>
         </div>
         <div class='block'>
-          <div class='section-title'>Information sur le départ</div>
+          <div class='section-title'>
+            <SvgIcon class='icon' :src='require("@icons/moving/arrow_up.svg")' :size='20'/>
+            Information sur le départ
+            </div>
           <div class='section-content'>
             <div class='info-cards'>
               <div class='info-card' v-for='card in departCards' :key='card.title'>
@@ -42,7 +48,10 @@
           </div>
         </div>
         <div class='block'>
-          <div class='section-title'>Information sur l'arrivée</div>
+          <div class='section-title'>
+            <SvgIcon class='icon' :src='require("@icons/moving/arrow_down.svg")' :size='20'/>
+            Information sur l'arrivée
+          </div>
           <div class='section-content'>
             <div class='info-cards'>
               <div class='info-card' v-for='card in arriveeCards' :key='card.title'>
@@ -55,10 +64,27 @@
             </div>
           </div>
         </div>
-         <FormMessage v-if='!isMovingMine' noshadow>
-          <template slot='title'>L'addresse exacte n'est pas affichée</template>
-          Pour des raisons de confidentialité, nous n'affichons pas l'addresse exacte de l'utilisateur. Seuls les déménageurs acceptés par celui-ci pourront la voir
-        </FormMessage>
+         <div class='block' v-if='!isMovingMine'>
+          <div class='section-content'>
+            <FormMessage  noshadow>
+              <template slot='title'>L'addresse exacte n'est pas affichée</template>
+              Pour des raisons de confidentialité, nous n'affichons pas l'addresse exacte de l'utilisateur. Seuls les déménageurs acceptés par celui-ci pourront la voir
+            </FormMessage>
+          </div>
+         </div>
+        <div class='block'>
+          <div class='section-title'>
+            <SvgIcon class='icon' :src='require("@icons/moving/invite.svg")' :size='20'/>
+            Participants validés
+          </div>
+          <div class='section-content'>
+            <ul class='result' v-if='movingEvent.participations'>
+              <MoverCard v-for='mover of movingEvent.participations.users' 
+                :key='mover.id' :mover='mover' display/>
+            </ul>
+            <span class='result' v-else>Aucun participants</span>
+          </div>
+        </div>
       </div>
     </section>
     <section class='moving-actions'>
@@ -139,16 +165,18 @@ import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMovingEvent} from '@types';
 import { StarRating, SvgIcon, UISwitch, FormMessage } from '@components';
+import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
 import * as Chance from 'chance';
 import axios from 'axios';
 import moment from 'moment';
+import MoverCard from '@views/Movers/MoverCard.vue';
 import {MovingStore, LoginStore} from '@store';
-import {DateMoving, AlertsElement, ActionsElements} from '@classes';
+import {DateMoving, AlertsElement, ActionsElements, Forms} from '@classes';
 import { timeout } from '@methods';
 
 @Component({
   components: {
-    FormMessage, SvgIcon
+    FormMessage, SvgIcon, MoverCard
   },
 })
 export default class MovingInfos extends Vue {
@@ -197,20 +225,22 @@ export default class MovingInfos extends Vue {
   
   async proposeHelp() {
     try {
-      const response = await new AlertsElement.Alert({
+      const response = await new AlertsElement.FormAlert({
         title: `Proposer son aide à ${this.userName}`,
-        type: 'confirm',
         message: `En confirmant, ${this.userName} recevra une proposition d'aide de votre part et se verra en droit de l'accepter ou de la décliner`,
-        strict: true,
-        actions: [
-          new ActionsElements.ConfirmAction({
-            text: 'Confirmer',
-            triggers: [
-              () => MovingStore.actions.createParticipation(this.movingEvent.id),
-            ]
+        formElement: {
+          form: new Forms.Form({
+            message: new Forms.FieldForm({
+              placeholder: `Message pour ${this.userName} (optionnel)`
+            })
           }),
-          new ActionsElements.CancelAction()
-        ]
+          submit: {
+            params: {
+              id: this.movingEvent.id
+            },
+            trigger:  MovingStore.actions.createParticipation
+          }
+        }
       }).waitResponse();
 
       if (response) {
@@ -311,23 +341,16 @@ export default class MovingInfos extends Vue {
         display: flex;
         flex-flow: column wrap;
         // border-bottom: 1px solid $w220;
-
-        &:not(:last-child)::after {
-          content: '';
-          height: 1px;
-          width: 100%;
-          margin: 15px 0 15px 0;
-          background-color: $w230;
-        }
-
-        &:last-child {
-          border: none;
-        }
+        margin-bottom: 10px;
+        margin-top: 10px;
 
         .section-title {
+          display: flex;
           color: $g90;
           font-weight: bold;
           font-size: 18px;
+          align-items: center;
+          .icon {margin-right: 5px}
         }
 
         .section-content {
@@ -335,6 +358,7 @@ export default class MovingInfos extends Vue {
           flex-flow: column wrap;
           margin-top: 15px;
           font-size: 15px;
+          padding-left: 18px;
 
           .date {
             display: flex;

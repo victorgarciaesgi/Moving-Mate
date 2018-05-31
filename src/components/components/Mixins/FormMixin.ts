@@ -22,6 +22,7 @@ export class FormMixin extends Vue {
   public formId = null;
   public isFocused = false;
   public showOptions = false;
+  public css = require('@css');
 
 
   get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}

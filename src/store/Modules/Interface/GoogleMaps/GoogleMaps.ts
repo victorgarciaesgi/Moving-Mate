@@ -45,6 +45,7 @@ const geoLocate = (address: string) : Promise<geoLocateResult> => {
 const state: IGoogleMapsState = {
   markers: [],
   googleMarkerList: [],
+  mapReady: false,
 }
 
 const b = storeBuilder.module<IGoogleMapsState>("GoogleMapsModule", state);
@@ -58,6 +59,9 @@ module Mutations {
     mapPromise = new Promise((resolve) => {
       mapResolver = resolve;
     });
+    mapPromise.then(() => {
+      state.mapReady = true;
+    })
     mapInstance = new google.maps.Map(mapElement, {
         center: location.location,
         styles: Style1,
@@ -66,7 +70,6 @@ module Mutations {
         mapTypeControl: false,
         scrollwheel: false
       });
-    mapResolver();
     google.maps.event.addDomListener(mapInstance, 'idle', mapResolver);
     mapInstance.fitBounds(location.bounds);
   }

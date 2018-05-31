@@ -20,8 +20,10 @@
       <ul ref='select-options' class='select-options' v-show='showOptions' :style='optionsStyle'>
         <li v-for='option of data.options' 
           :key='option.value'
+          :class='{selected: option.value == value}'
           @click='updateValue(option.value)'>
-          {{option.text}}
+            <span>{{option.text}}</span>
+            <SvgIcon v-if='option.value == value' class='icon' :src='require("@icons/done.svg")' :color='css.mainStyle'/>
         </li>
       </ul>
     </div>
@@ -171,6 +173,20 @@ export default class FormSelect extends FormMixin {
         padding: 10px 10px 10px 10px;
         cursor: pointer;
         width: 100%;
+        display: flex;
+        flex-flow: row nowrap;
+
+        span {
+          flex: 1 1 auto;
+        }
+
+        .icon {
+          flex: 0 0 auto;
+        }
+
+        &.selected {
+          color: $mainStyle;
+        }
 
         &:hover {
           background-color: $w240;

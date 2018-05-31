@@ -6,7 +6,7 @@
       <Notifications/>
       <Alerts/>
       <div class='view'>
-        <transition name='fade' mode='out-in'>
+        <transition name='slide' mode='out-in'>
           <router-view/>
         </transition>
       </div>

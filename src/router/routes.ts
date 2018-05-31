@@ -67,6 +67,9 @@ export const routesList: MyRouteConfig[]  = [
     component: () => import('@views/Moving/Moving.vue'),
     meta: {
       title: 'Les déménagements',
+      async asyncData() {
+        
+      }
     },
     children: [
       {
@@ -173,9 +176,6 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isTab: true,
           asyncData: getOneMoving,
-          isAuthorized(to: MyRoute) {
-            return Stores.LoginStore.state.userInfos.id == to.params.movingId;
-          }
         }
       }
     ]

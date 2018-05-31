@@ -45,7 +45,11 @@
           </div>
         </div>
       </section>
-      <section class='user-views'><router-view/></section>
+      <section class='user-views'>
+        <transition name='fade' mode='out-in'>
+          <router-view />
+        </transition>
+      </section>
       <section class=''></section>
     </div>
   </div>

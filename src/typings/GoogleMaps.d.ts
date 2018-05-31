@@ -3,7 +3,8 @@ import {IMovingEvent} from '@types';
 
 export interface IGoogleMapsState {
   markers: IMarker[],
-  googleMarkerList: google.maps.Marker[]
+  googleMarkerList: google.maps.Marker[],
+  mapReady: boolean
 }
 
 export interface IMarker {
