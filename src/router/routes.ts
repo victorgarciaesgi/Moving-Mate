@@ -67,9 +67,7 @@ export const routesList: MyRouteConfig[]  = [
     component: () => import('@views/Moving/Moving.vue'),
     meta: {
       title: 'Les déménagements',
-      async asyncData() {
-        
-      }
+
     },
     children: [
       {
