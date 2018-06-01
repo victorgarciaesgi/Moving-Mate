@@ -8,6 +8,7 @@
     "dev2": "webpack-dashboard -- webpack-dev-server --inline --progress --color",
     "dev": "webpack-dev-server --inline --progress",
     "prod": "npm run clean && npm run build:prod && npm run server:prod",
+    "start": "npm run prod",
     "server:prod": "cross-env NODE_ENV=production nodemon Server.js",
     "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress",
     "clean": "rimraf dist"

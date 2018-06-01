@@ -1,7 +1,7 @@
 <template>
   <div class='header-wrapper'>
     <header :class='{shadow: headerBox}'>
-      <nav>
+      <nav class='desktop'>
         <router-link to='/' class='logo'>
           <img src="~@images/logo_banniere.svg" alt="">
         </router-link>
@@ -83,6 +83,24 @@
           </template>
         </ul>
       </nav>
+      <div class='mobile-header'>
+        <div class='mobile-nav-button'>
+          <SvgIcon :src='require("@icons/menu.svg")' :size='35'/>
+        </div>
+        <router-link to='/' class='logo'>
+          <img src="~@images/logo_banniere.svg" alt="">
+        </router-link>
+      </div>
+
+      <nav class='mobile-panel' v-if='mobilePanel'>
+        <div class='window'>
+          <div class='user-panel' v-if='loginState.isLoggedIn'>
+            <div class='user-infos'></div>
+            <div class='user-links'></div>
+          </div>
+          <div class='link-panel'></div>
+        </div>
+      </nav>
     </header>
   
     <Connexion :show='loginState.showModal' v-if='!loginState.isLoggedIn' ></Connexion>  
@@ -125,6 +143,7 @@ export default class HeaderComponent extends Vue {
   
 
   public $store: Store<RootState>;
+  public mobilePanel = true;
   public popups = [];
 
   get getProfileImage() {
@@ -207,10 +226,11 @@ div.header-wrapper{
       }
     }
 
-    nav {
+    nav.desktop {
       display: flex;
       flex-flow: row nowrap;
       flex: 1 1 auto;
+
 
       ul.nav-list {
         display: flex;
@@ -254,7 +274,6 @@ div.header-wrapper{
             /deep/ svg { fill: $mainStyle }
           }
         }
-
         
       }
 
@@ -338,6 +357,63 @@ div.header-wrapper{
           }
         }  
       }
+    }
+
+    nav.mobile-panel, .mobile-header {
+      display: none;
+    }
+
+    .mobile-header {
+      flex-flow: row nowrap;
+      align-items: center;
+      width: 100%;
+
+      .mobile-nav-button {
+        flex: 1 1 auto;
+        padding: 10px;
+        
+        .svg-container {
+          border-radius: 5px;
+          padding: 3px;
+          :active { background-color: $w235;}
+        }
+      }
+
+      .logo {
+        flex: 0 0 auto;
+      }
+    }
+
+    nav.mobile-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0,0,0,0.4);
+      .window {
+        display: flex;
+        flex-flow: column wrap;
+        overflow-y: auto;
+        overflow-x: hidden;
+        position: absolute;
+        height: 100%;
+        width: 250px;
+        background-color: white;
+
+      }
+
+    }
+
+    @media screen and (max-width: 1070px) {
+      nav.desktop {
+        display: none;
+      }
+
+      nav.mobile-panel, .mobile-header {
+        display: flex;
+      }
+        
     }
   }
 }
