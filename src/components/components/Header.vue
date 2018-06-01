@@ -84,23 +84,28 @@
         </ul>
       </nav>
       <div class='mobile-header'>
-        <div class='mobile-nav-button'>
-          <SvgIcon :src='require("@icons/menu.svg")' :size='35'/>
+        <div class='mobile-nav-button' @click='mobilePanel = true'>
+          <SvgIcon :src='require("@icons/menu.svg")' :size='35' />
         </div>
         <router-link to='/' class='logo'>
           <img src="~@images/logo_banniere.svg" alt="">
         </router-link>
       </div>
 
-      <nav class='mobile-panel' v-if='mobilePanel'>
-        <div class='window'>
-          <div class='user-panel' v-if='loginState.isLoggedIn'>
-            <div class='user-infos'></div>
-            <div class='user-links'></div>
+      <transition name='coulisse'>
+        <nav class='mobile-panel' v-if='mobilePanel' @click='mobilePanel = false'>
+          <div class='window' @click.stop>
+            <div class='user-panel' v-if='loginState.isLoggedIn'>
+              <div class='user-infos'>
+                <div class="picture" :style='getProfileImage'></div>
+                <div class="name">{{userInfos.username | capitalize}}</div>
+              </div>
+              <div class='user-links'></div>
+            </div>
+            <div class='link-panel'></div>
           </div>
-          <div class='link-panel'></div>
-        </div>
-      </nav>
+        </nav>
+      </transition>
     </header>
   
     <Connexion :show='loginState.showModal' v-if='!loginState.isLoggedIn' ></Connexion>  
@@ -391,16 +396,24 @@ div.header-wrapper{
       height: 100%;
       width: 100%;
       background-color: rgba(0,0,0,0.4);
+
       .window {
         display: flex;
         flex-flow: column wrap;
         overflow-y: auto;
         overflow-x: hidden;
         position: absolute;
+        left: 0;
+        top: 0;
         height: 100%;
         width: 250px;
         background-color: white;
 
+
+        .user-panel {
+          display: flex;
+          flex-flow: column wrap;
+        }
       }
 
     }
@@ -475,6 +488,23 @@ div.header-wrapper{
       }
     }
   }
+}
+
+.coulisse-enter-active {
+  transition: opacity 0.4s;
+  .window {
+    left: -250px;
+  }
+}
+.coulisse-leave-active {
+  transition: opacity 0.4s;
+  .window {
+    left: 0;
+  }
+}
+
+.coulisse-enter, .coulisse-leave-to {
+  opacity: 0;
 }
 
 

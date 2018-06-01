@@ -2,7 +2,9 @@
   <div class='Home'>
     <section class='image-home'>
       <ul class="link-list">
-        <router-link tag='li' to='moving' class='link'>Voir les déménagements</router-link>
+        <router-link to='moving' class='link'>Voir les déménagements</router-link>
+        <router-link to='movers' class='link'>Liste des déménageurs</router-link>
+        <router-link to='moving/create' class='link'>Créer une annonce</router-link>
       </ul>
     </section>
 
@@ -89,6 +91,7 @@ export default class Home extends Vue {
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
+    flex: 0 1 auto;
   }
 
   section.image-home {
@@ -97,6 +100,28 @@ export default class Home extends Vue {
     max-height: 60vh;
     background-image: url("~@images/home_image/home_image.jpg");
     @include bg-center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .link-list {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-items: center;
+
+
+      .link {
+        padding: 10px 20px 10px 20px;
+        background-color: white;
+        border-radius: 5px;
+        font-weight: bold;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        margin: 5px 10px 5px 10px;
+      }
+
+    }
+
 
     img {
       width: 100%;
@@ -172,6 +197,7 @@ export default class Home extends Vue {
     height: auto;
     margin: 0 30px 30px 30px;
     padding-top: 30px;
+    flex-flow: column nowrap;
 
     border-top: 1px solid $w220;
   }

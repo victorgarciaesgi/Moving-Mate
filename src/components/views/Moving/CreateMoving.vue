@@ -439,10 +439,10 @@ export default class CreateMoving extends Vue {
 
   modalClosed(empty: boolean) {
     this.show = false;
-    if (GlobalStore.state.previousModalRoute) {
+    if (GlobalStore.state.previousModalRoute && Router.currentRoute.matched.some(m => m.path == GlobalStore.state.previousModalRoute)) {
       Router.push(GlobalStore.state.previousModalRoute)
     } else {
-      Router.push(GlobalStore.state.previousModalRoute || {name: routesNames.moving});
+      Router.push({name: routesNames.moving});
     }
     GlobalStore.mutations.setPreviousModalRoute(null);
   }
