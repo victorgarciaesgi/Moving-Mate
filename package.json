@@ -41,9 +41,7 @@
     "webpack-dashboard": "^1.1.1",
     "webpack-dev-middleware": "^2.0.5",
     "webpack-dev-server": "^2.9.7",
-    "webpack-hot-middleware": "^2.21.0"
-  },
-  "devDependencies": {
+    "webpack-hot-middleware": "^2.21.0",
     "@types/express": "^4.0.37",
     "@types/jquery": "^3.2.18",
     "@types/lodash": "^4.14.76",
