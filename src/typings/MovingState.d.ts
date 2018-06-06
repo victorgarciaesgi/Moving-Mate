@@ -26,6 +26,7 @@ export interface IMovingEvent {
   description: string,
   enabled: boolean,
   staticMap: string,
+  helpType: number,
   volume: number,
   dealDate: number,
   createdAt: Date,

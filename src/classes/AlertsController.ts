@@ -24,8 +24,9 @@ export namespace AlertsElement {
     public strict?: boolean;
     public actions: ActionsElements.Action[];
     public formElement?: formParam;
+    public onClose?: Function[]
 
-    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[], formElement?: formParam}) {
+    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[], formElement?: formParam, onClose?: Function[]}) {
       Object.assign(this, fields);
       AlertsStore.actions.addAlert(this);
     }
@@ -36,7 +37,7 @@ export namespace AlertsElement {
   }
 
   export class SuccessAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
+    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
       const actions = fields.actions || [];
       const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({})
       console.log(fields.actions)
@@ -45,6 +46,7 @@ export namespace AlertsElement {
         type: 'success',
         strict: fields.strict,
         message: fields.message,
+        onClose: fields.onClose,
         actions: [
           ...actions,
           confirmAction
@@ -54,15 +56,16 @@ export namespace AlertsElement {
   }
 
   export class ErrorAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[]}) {
+    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
       const actions = fields.actions || [];
       console.log(fields.actions)
-      const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({text: 'Rooooh ça marche'})
+      const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({text: 'Fermer'})
       super({
         title: fields.title || `Erreur de l'opération`,
         type: 'error',
         strict: fields.strict,
         message: fields.message,
+        onClose: fields.onClose,
         actions: [
           ...actions,
           confirmAction
@@ -72,7 +75,7 @@ export namespace AlertsElement {
   }
 
   export class FormAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?:boolean, formElement: formParam}) {
+    constructor(fields?: {title: string, message: string, strict?:boolean, formElement: formParam, onClose?: Function[]}) {
       const confirmAction = new ActionsElements.ConfirmAction({
         text: 'Valider',
         triggers: [
@@ -86,6 +89,7 @@ export namespace AlertsElement {
         strict: fields.strict,
         formElement: fields.formElement,
         message: fields.message,
+        onClose: fields.onClose,
         actions: [
           confirmAction,
           new ActionsElements.CancelAction()

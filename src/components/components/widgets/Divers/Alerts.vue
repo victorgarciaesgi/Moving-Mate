@@ -103,8 +103,8 @@ export default class Alerts extends Vue {
     return this.$v.$invalid;
   }
 
-  get rightButtons() {return this.alertState.alertData.actions.filter(m => m.type !== "cancel");}
-  get leftButtons() {return this.alertState.alertData.actions.filter(m => m.type === "cancel");}
+  get rightButtons() {return this.alertState.alertData.actions.filter(m=>m).filter(m => m.type !== "cancel");}
+  get leftButtons() {return this.alertState.alertData.actions.filter(m=>m).filter(m => m.type === "cancel");}
   
   closeAlert(exter: boolean) {
     if (!this.alertState.alertData.strict && !exter) {

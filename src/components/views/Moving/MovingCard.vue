@@ -20,19 +20,19 @@
       <div class='moving-places'>
         <div class='depart element'>
           <div class='icon black'></div>
-          <div class='value'>
-            <span class='city'>{{getDepart.city}}</span>
-            <span class='zip'>   {{getDepart.zip}}</span>
+          <div class='value' :class='{grey: !getDepart.city}'>
+            <span class='city'>{{getDepart.city || 'Pas de départ'}}</span>
+            <span class='zip'>{{getDepart.zip}}</span>
           </div>
         </div>
         <div class='arrivee element'>
           <div class='icon blue'></div>
-          <div class='value'>
-            <span class='city'>{{getArrivee.city}}</span>
-            <span class='zip'>   {{getArrivee.zip}}</span>
+          <div class='value' :class='{grey: !getArrivee.city}'>
+            <span class='city'>{{getArrivee.city || `Pas d'arrivée`}}</span>
+            <span class='zip'>{{getArrivee.zip}}</span>
           </div>
         </div>
-        <div class='liaison'></div>
+        <div class='liaison' v-if='moving.helpType == 2'></div>
       </div>
       <div class='moving-infos'>
         <div class='info'>
@@ -50,16 +50,18 @@
         <div class='info'>
           <div class='info-content'>
             <strong>
-              <SvgIcon :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
+              <SvgIcon v-if='moving.helpType == 0' :src='require("@icons/moving/arrow_up.svg")' :size='26' :color='css.mainStyle'/>
+              <SvgIcon v-else-if='moving.helpType == 1' :src='require("@icons/moving/arrow_down.svg")' :size='26' :color='css.mainStyle'/>
+              <SvgIcon v-else :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
             </strong>
-            <span>Départ/arrivée</span>
+            <span>{{getHelpType}}</span>
           </div>
         </div>
         
         <div class='info'>
           <div class='info-content'>
             <strong><SvgIcon :src='require("@icons/moving/timer.svg")' :size='26'  :color='css.mainStyle'/></strong>
-            <span>4 heures</span>
+            <span>{{moving.estimatedTime || 5}} {{moving.estimatedTime | pluralize('heure')}}</span>
           </div>
         </div>
       </div>
@@ -69,7 +71,7 @@
           <ul class='result' v-if='moving.participations'>
             <li v-for='part of moving.participations.users' 
               :key='part.id'
-              :style='{backgroundImage: `url(${part.picture})`}'>
+              :style='{backgroundImage: `url(${part.avatar})`}'>
             </li>
           </ul>
           <span class='result' v-else>Aucun</span>
@@ -104,9 +106,6 @@ export default class MovingCard extends Vue {
   public css = require('@css');
   public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
-  // get profilePic() {
-  //   return {backgroundImage: `url("${require('@images/user.jpg')}")`}
-  // };
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
   get userName() { return this.moving.user.username; }
@@ -114,6 +113,14 @@ export default class MovingCard extends Vue {
   get getArrivee() { return this.moving.addressOut;}
   get getMenNumber() {return this.moving.menRequired};
   get getPrice() {return this.moving.pricePerHourPerUser};
+  get getProfilePic() {
+    return {backgroundImage: `url("${this.moving.user.avatar || require('@images/user.jpg')}")`};
+  }
+  get getHelpType() {
+    if (this.moving.helpType == 0) return 'Départ'
+    else if (this.moving.helpType == 1) return 'Arrivée'
+    else return 'Départ/Arrivée'
+  }
   get getBegin() {
     const date = new DateMoving(this.moving.dealDate);
     return date;
@@ -121,21 +128,16 @@ export default class MovingCard extends Vue {
 
 
   redirectToDetail() {
-    // A changer vers id
     Router.push({name: routesNames.movingInfos, params: {movingId: this.moving.id.toString()}});
   }
 
   async fetchImage() {
-    // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
     if (this.moving.participations) {
       this.moving.participations.users.map(async (m) => {
-        let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-        m['picture'] = data.results[0].picture.thumbnail;
+        m['avatar'] = m.avatar || require('@images/user.jpg');
         return m;
       })
     }
-     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-    this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
   }
 
   mounted () {
@@ -441,11 +443,13 @@ $radius: 8px;
           flex: 1 1 auto;
           margin-left: 5px;
 
+          &.grey {
+            color: $w140;
+          }
+
           span.city {
             flex: 1 1 auto;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            @include ellipsis;
           }
 
           span.zip {

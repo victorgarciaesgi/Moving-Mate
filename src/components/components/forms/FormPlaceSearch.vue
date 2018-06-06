@@ -90,7 +90,7 @@ export default class FormPlaceSearch extends FormMixin {
   public handlePlacesSearch = null;
   public searchResults = [];
 
-  public resultsStyle = {
+  public resultsStyle: any = {
     width: null
   }
 
@@ -142,8 +142,8 @@ export default class FormPlaceSearch extends FormMixin {
     this.isFocused = true;
     const target = this.$refs['results'];
     const origin = this.$refs['input'];
-    const {width, ...results} = calculatePopupPosition(origin, target);
-    this.resultsStyle = {...this.resultsStyle, width};
+    const {width, top, left, ...results} = calculatePopupPosition(origin, target);
+    this.resultsStyle = {...this.resultsStyle, width, top: top , left};
     EventBus.$emit('closePopups', this);
   }
 

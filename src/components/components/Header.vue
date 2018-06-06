@@ -52,7 +52,7 @@
                  <div class='user-options-popup'>
                     <div class="user">
                       <div class="user-picture" :style='getProfileImage'></div>
-                      <div class="user-name">{{userInfos.username | capitalize}}</div>
+                      <div class="user-name">{{fullName || userInfos.username}}</div>
                     </div>
                     <ul class='user-option-list'>
                       <router-link tag='li' :to='userProfilePath' class='user-option'>Mon profil</router-link>
@@ -64,7 +64,7 @@
                  </div>
                 </template>
                 <div slot='button' class='bouton-data'>
-                  <span>{{userInfos.username | capitalize}}</span>
+                  <span>{{fullName || userInfos.username}}</span>
                   <div class='profile-image' :style='getProfileImage'></div>
                 </div>
               </Popup>
@@ -98,11 +98,20 @@
             <div class='user-panel' v-if='loginState.isLoggedIn'>
               <div class='user-infos'>
                 <div class="picture" :style='getProfileImage'></div>
-                <div class="name">{{userInfos.username | capitalize}}</div>
+                <div class="name">{{fullName || userInfos.username}}</div>
               </div>
-              <div class='user-links'></div>
+              <div class='user-links'>
+                <router-link @click.native='mobilePanel = false' class='link' v-if='("condition" in link && !!link.condition) || !("condition" in link) ' v-for='link of userLinks' :key='link.path' :to='link.path' :class='{color: link.color}'>
+                  {{link.title}}
+                </router-link>
+                <li class='link'>Deconnexion</li>
+              </div>
             </div>
-            <div class='link-panel'></div>
+            <div class='link-panel'>
+              <router-link @click.native='mobilePanel = false' class='link' v-if='("condition" in link && !!link.condition) || !("condition" in link) ' v-for='link of mobileLinks' :key='link.path' :to='link.path' :class='{color: link.color}'>
+                {{link.title}}
+              </router-link>
+            </div>
           </div>
         </nav>
       </transition>
@@ -148,8 +157,25 @@ export default class HeaderComponent extends Vue {
   
 
   public $store: Store<RootState>;
-  public mobilePanel = true;
+  public mobilePanel = false;
   public popups = [];
+
+  get mobileLinks() {
+    return [
+      {title: 'Connexion', condition: !this.loginState.isLoggedIn, path: '/connexion'},
+      {title: 'Inscription', condition: !this.loginState.isLoggedIn, path: '/inscription'},
+      {title: 'Devenir déménageur', condition: !this.loginState.isLoggedIn || (this.loginState.isLoggedIn && !this.loginState.userInfos.isMover), path: '/bemover', color: true},
+      {title: 'Déménagements', path: '/moving'},
+      {title: 'Déménageurs', path: '/movers'}
+    ]
+  }
+
+  get userLinks() {
+    return [
+      {title: 'Mon profil', path: `/user/${this.loginState.userInfos.id}`},
+      {title: 'Mon historique', path: `/user/${this.loginState.userInfos.id}/participations`},
+    ]
+  }
 
   get getProfileImage() {
     return {
@@ -164,7 +190,7 @@ export default class HeaderComponent extends Vue {
     if (this.myMoving) return;
     try {
       this.searchingMyMoving = true;
-      const moving = await MovingStore.actions.getOneAnnouncement('7');
+      const moving = await MovingStore.actions.getOneAnnouncement('9');
       this.myMoving = moving;
     } finally {
       this.searchingMyMoving = false;
@@ -403,7 +429,6 @@ div.header-wrapper{
         overflow-y: auto;
         overflow-x: hidden;
         position: absolute;
-        left: 0;
         top: 0;
         height: 100%;
         width: 250px;
@@ -413,12 +438,67 @@ div.header-wrapper{
         .user-panel {
           display: flex;
           flex-flow: column wrap;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+          .user-infos {
+            display: flex;
+            flex-flow: row nowrap;
+            height: 80px;
+            padding: 10px;
+            align-items: center;
+
+            .picture {
+              height: 50px;
+              flex: 0 0 auto;
+              width: 50px;
+              border-radius: 100%;
+              border: 3px solid $mainStyle;
+              @include bg-center;
+            }
+
+            .name {
+              padding-left: 10px;
+              font-weight: bold;
+            }
+          }
+
+          .user-links {
+            display: flex;
+            flex-flow: column wrap;
+
+            .link {
+              display: flex;
+              height: 50px;
+              border-top: 1px solid $w240;
+              justify-content: center;
+              align-items: center;
+              font-weight: bold;
+            }
+          }
+        }
+
+        .link-panel {
+          display: flex;
+          flex-flow: column wrap;
+
+          .link {
+            display: flex;
+            height: 50px;
+            border-bottom: 1px solid $w240;
+            justify-content: center;
+            align-items: center;
+
+            &.color {
+              background-color: $mainStyle;
+              color: white;
+            }
+          }
         }
       }
 
     }
 
-    @media screen and (max-width: 1070px) {
+    @media screen and (max-width: 700px) {
       nav.desktop {
         display: none;
       }
@@ -491,15 +571,17 @@ div.header-wrapper{
 }
 
 .coulisse-enter-active {
-  transition: opacity 0.4s;
+  transition: opacity 0.3s;
   .window {
-    left: -250px;
+    transition: transform 0.3s;
+    transform: translateX(-270px);
   }
 }
 .coulisse-leave-active {
-  transition: opacity 0.4s;
+  transition: opacity 0.3s;
   .window {
-    left: 0;
+    transition: transform 0.3s;
+    transform: translateX(-270px);
   }
 }
 

@@ -3,6 +3,7 @@ import Api, { ApiError, ApiSuccess, IApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
+import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
 import { GoogleMaps, getMapInstance } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
@@ -61,8 +62,11 @@ namespace Mutations {
   }
 
   function updateSearchRoute(state: IMovingState, newString: string) {
-    Router.replace(`/moving/search/${newString}`);
-    // Mutations.mutations.updateSearchValue(newString);
+    if (newString.length) {
+      Router.replace(`/moving/search/${newString}`);
+    } else {
+      Router.replace('/moving')
+    }
   }
 
   function updateSearchingState(state: IMovingState) {
@@ -95,10 +99,17 @@ namespace Actions {
     Mutations.mutations.updateMovingList([]);
 
     try {
-      const { data } = await Api.get(Paths.MOVING_LIST, payload);
-      Mutations.mutations.updateMovingList(data);
-      actions.createMarkers({annoucements: data, payload})
-      
+      if (!payload.search) {
+        const { data } = await Api.get(Paths.MOVING_LIST, payload);
+        Mutations.mutations.updateMovingList(data);
+        actions.createMarkers({annoucements: data, payload})
+      } else {
+        const location = await geoLocate(payload.search);
+        console.log(location.location.lat(), location.location.lng());
+        const result = await Api.AlgoliaMoving({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        console.log(result);
+        actions.createMarkers({annoucements: result, payload: result});
+      }
     } finally {
       Mutations.mutations.updateSearchingState();
     }
@@ -179,6 +190,18 @@ namespace Actions {
     }
   }
 
+  async function sendUserInfos(context, form: Forms.Form) {
+    try {
+      console.log(form)
+      const {data} = await Api.post(Paths.MOVING_USER_INFOS, form);
+      console.log(data);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
   async function createParticipation(context, {id, form}:{id: number, form: Forms.Form}) {
     try {
       console.log(form)
@@ -211,6 +234,7 @@ namespace Actions {
     getOneAnnouncement: b.dispatch(getOneAnnouncement),
     getAnnouncementDetails: b.dispatch(getAnnouncementDetails),
     createParticipation: b.dispatch(createParticipation),
+    sendUserInfos: b.dispatch(sendUserInfos),
     createAskHelp: b.dispatch(createAskHelp)
   }
 }

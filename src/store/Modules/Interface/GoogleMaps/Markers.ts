@@ -16,7 +16,12 @@ export default class Marker {
   constructor(infos: IMovingEvent) {
     // let lng = Math.random() * (bounds.b.f - bounds.b.b) + bounds.b.b;
     // let lat = Math.random() * (bounds.f.f - bounds.f.b) + bounds.f.b;
-    this.position = {lat: Number(infos.addressIn.latitude), lng: Number(infos.addressIn.longitude)};
+    if (infos.addressIn.city) {
+      this.position = {lat: Number(infos.addressIn.latitude), lng: Number(infos.addressIn.longitude)};
+    } else {
+      this.position = {lat: Number(infos.addressOut.latitude), lng: Number(infos.addressOut.longitude)};
+    }
+
     this.infos = infos;
     this.id = shortid.generate();
 

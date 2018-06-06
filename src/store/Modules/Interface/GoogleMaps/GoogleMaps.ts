@@ -27,7 +27,7 @@ interface geoLocateResult {
   bounds: google.maps.LatLngBounds
 }
 
-const geoLocate = (address: string) : Promise<geoLocateResult> => {
+export const geoLocate = (address: string) : Promise<geoLocateResult> => {
   return new Promise((resolve, reject) => {
     geocoder.geocode({address: address}, (results, status) => {
       if (status == google.maps.GeocoderStatus.OK) {

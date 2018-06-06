@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox">
     <div class='checkbox-wrap'>
-      <input :id='formId' :value='value' @change="updateValue($event.target.checked)" type="checkbox"/>
+      <input :id='formId' :checked='value' :value='value' @change="updateValue($event.target.checked)" type="checkbox"/>
       <label :for="formId" class='button'></label>
       <span>{{data.placeholder}}</span>
     </div>

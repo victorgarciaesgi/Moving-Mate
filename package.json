@@ -35,7 +35,13 @@
     "vue2-filters": "^0.2.2",
     "vuelidate": "^0.6.1",
     "vuex": "3.0.1",
-    "vuex-router-sync": "5.0.0"
+    "vuex-router-sync": "5.0.0",
+    "webpack-merge": "^4.1.1",
+    "webpack": "3.8.1",
+    "webpack-dashboard": "^1.1.1",
+    "webpack-dev-middleware": "^2.0.5",
+    "webpack-dev-server": "^2.9.7",
+    "webpack-hot-middleware": "^2.21.0"
   },
   "devDependencies": {
     "@types/express": "^4.0.37",
@@ -90,12 +96,6 @@
     "vue-style-loader": "^3.0.3",
     "vue-ts-loader": "0.0.3",
     "vuex-typescript": "^3.0.2",
-    "vuex-typex": "^3.0.1",
-    "webpack": "3.8.1",
-    "webpack-dashboard": "^1.1.1",
-    "webpack-dev-middleware": "^2.0.5",
-    "webpack-dev-server": "^2.9.7",
-    "webpack-hot-middleware": "^2.21.0",
-    "webpack-merge": "^4.1.1"
+    "vuex-typex": "^3.0.1"
   }
 }

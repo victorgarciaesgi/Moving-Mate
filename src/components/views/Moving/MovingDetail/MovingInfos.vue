@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div class='block'>
+        <div class='block' v-if='getDepart.city'>
           <div class='section-title'>
             <SvgIcon class='icon' :src='require("@icons/moving/arrow_up.svg")' :size='20'/>
             Information sur le départ
@@ -47,7 +47,7 @@
             </div>
           </div>
         </div>
-        <div class='block'>
+        <div class='block' v-if='getArrivee.city'>
           <div class='section-title'>
             <SvgIcon class='icon' :src='require("@icons/moving/arrow_down.svg")' :size='20'/>
             Information sur l'arrivée
@@ -90,7 +90,7 @@
     <section class='moving-actions'>
       <div class='header'>
         <div class='user'>
-          <div class='picture' :style='profilePic'></div>
+          <div class='picture' :style='getProfilePic'></div>
         </div>
         <div class='infos'>
           <span class='name'>{{userName}}</span>
@@ -100,19 +100,19 @@
         <div class='moving-places'>
           <div class='depart element'>
             <div class='icon black'></div>
-            <div class='value'>
-              <span class='city'>{{getDepart.city}}</span>
-              <span class='zip'>   {{getDepart.zip}}</span>
-          </div>
+            <div class='value' :class='{grey: !getDepart.city}'>
+              <span class='city'>{{getDepart.city || 'Pas de départ'}}</span>
+              <span class='zip'>{{getDepart.zip}}</span>
+            </div>
           </div>
           <div class='arrivee element'>
             <div class='icon blue'></div>
-            <div class='value'>
-              <span class='city'>{{getDepart.city}}</span>
-              <span class='zip'>   {{getDepart.zip}}</span>
+            <div class='value' :class='{grey: !getArrivee.city}'>
+              <span class='city'>{{getArrivee.city || `Pas d'arrivée`}}</span>
+              <span class='zip'>{{getArrivee.zip}}</span>
+            </div>
           </div>
-          </div>
-          <div class='liaison'></div>
+          <div class='liaison' v-if='movingEvent.helpType == 2'></div>
         </div>
         <div class='base-info info-wrap'>
           <div class='info'>
@@ -130,30 +130,22 @@
           <div class='info'>
             <div class='info-content'>
               <strong><SvgIcon :src='require("@icons/moving/timer.svg")' :size='26'  :color='css.mainStyle'/></strong>
-              <span>4 heures</span>
+              <span>{{movingEvent.estimatedTime || 5}} {{movingEvent.estimatedTime | pluralize('heure')}}</span>
             </div>
           </div>
           <div class='info'>
             <div class='info-content'>
               <strong>
-                <SvgIcon :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
+                <SvgIcon v-if='movingEvent.helpType == 0' :src='require("@icons/moving/arrow_up.svg")' :size='26' :color='css.mainStyle'/>
+                <SvgIcon v-else-if='movingEvent.helpType == 1' :src='require("@icons/moving/arrow_down.svg")' :size='26' :color='css.mainStyle'/>
+                <SvgIcon v-else :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
               </strong>
-              <span>Départ/arrivée</span>
+              <span>{{getHelpType}}</span>
             </div>
           </div>
         </div>
       </div>
       <div class='footer' v-if='!isMovingMine'>
-        <!-- <div class='participants'>
-          <span class='title'>Participants validés</span>
-          <ul class='result' v-if='movingEvent.participations'>
-            <li v-for='part of movingEvent.participations.users' 
-              :key='part.id'
-              :style='{backgroundImage: `url(${part.picture})`}'>
-            </li>
-          </ul>
-          <span class='result' v-else>Aucun participants</span>
-        </div> -->
         <div class='button-ask' @click='proposeHelp()'>Proposer mon aide</div>
       </div>
     </section>
@@ -199,6 +191,14 @@ export default class MovingInfos extends Vue {
   get getBegin() {
     const date = new DateMoving(this.movingEvent.dealDate);
     return date;
+  }
+  get getProfilePic() {
+    return {backgroundImage: `url("${this.movingEvent.user.avatar || require('@images/user.jpg')}")`};
+  }
+  get getHelpType() {
+    if (this.movingEvent.helpType == 0) return 'Départ'
+    else if (this.movingEvent.helpType == 1) return 'Arrivée'
+    else return 'Départ/Arrivée'
   }
 
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
@@ -260,24 +260,6 @@ export default class MovingInfos extends Vue {
       })
     }
   }
-
-  async fetchImage() {
-    // let {data} = await axios.get(`https://randomuser.me/api/?inc=picture&seed=${this.moving.username}`);
-    // if (this.movingEvent.participations) {
-    //   this.movingEvent.participations.users.map(async (m) => {
-    //     let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-    //     m['picture'] = data.results[0].picture.thumbnail;
-    //     return m;
-    //   })
-    // }
-    let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-    this.profilePic = {backgroundImage: `url("${data.results[0].picture.medium}")`};
-    this.formatedDate = moment.unix(this.movingEvent.dealDate).format('dddd Do MMMM YYYY, hh:mm');
-  }
-
-  mounted () {
-    this.fetchImage();
-  }
 }
 </script>
 
@@ -289,6 +271,7 @@ export default class MovingInfos extends Vue {
   display: flex;
   position: relative;
   flex-flow: row wrap;
+  width: 100%;
   padding: 20px;
   padding-top: 30px;
   justify-content: center;
@@ -299,6 +282,7 @@ export default class MovingInfos extends Vue {
     display: flex;
     width: 650px;
     height: auto;
+    flex: 0 1 auto;
     flex-flow: column wrap;
     padding: 10px;
     padding-top: 0;
@@ -530,6 +514,10 @@ export default class MovingInfos extends Vue {
             flex-flow: row nowrap;
             flex: 1 1 auto;
             margin-left: 5px;
+
+            &.grey {
+              color: $w140;
+            }
 
             span.city {
               flex: 1 1 auto;

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter, {Route, RouteRecord} from 'vue-router';
 import { LoginStore, NotificationsStore } from '@modules';
 import { routesList, MyRoute, MyRouteRecord } from './routes';
-import { ProgressBar, GlobalStore, EventBus } from '@store';
+import { ProgressBar, GlobalStore, EventBus, AlertsStore } from '@store';
 import {isEqual} from 'lodash';
 import {timeout} from '@methods';
 
@@ -138,6 +138,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
 
 Router.afterEach(async (from: MyRoute, next) => {
   ProgressBar.mutations.finish();
+  AlertsStore.mutations.hideAlert();
   EventBus.$emit('closePopups');
 })
 
@@ -149,7 +150,7 @@ const getRouteData = async (to: MyRoute | MyRouteRecord) => {
   if (to.meta.contentProp) {
     document.title = `${titleToDisplay.title || to.meta.title} - MovingMate`;
   }
-  return titleToDisplay.verif;
+  return titleToDisplay.verif || to.meta.title;
 }
 
 

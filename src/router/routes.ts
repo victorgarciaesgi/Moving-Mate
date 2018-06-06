@@ -67,7 +67,12 @@ export const routesList: MyRouteConfig[]  = [
     component: () => import('@views/Moving/Moving.vue'),
     meta: {
       title: 'Les déménagements',
-
+      async asyncData(to: MyRoute) {
+        if (Stores.GoogleMaps.state.mapReady) {
+          Stores.MovingStore.mutations.updateSearchValue('');
+        }
+        return {};
+      }
     },
     children: [
       {

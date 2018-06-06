@@ -43,6 +43,10 @@ export namespace Forms {
       delete _this.initialState;
       return _this;
     }
+
+    validations() {
+      return Object.keys(this.fieldsData).map(m => this.fieldsData[m].validations);
+    }
   }
 
   type FormType = 'text' | 'number' | 'password' | 'checkbox' | 'radio' | 'email' | 'tel' | 'date' | 'time' | 'datetime-local';
@@ -51,6 +55,7 @@ export namespace Forms {
 
   interface FormPayload {
     value?: any;
+    tempValue?: any;
     icon?: any;
     type?: FormType;
     placeholder?: string;
@@ -60,11 +65,16 @@ export namespace Forms {
     inlineIcon?: boolean;
     debounce?: number;
     options?: IOptions[];
-    component?: IComponentType
+    component?: IComponentType;
+    noEdit?: boolean;
+    validations?: {
+      [x:string]: any
+    }
     
   }
   class DefaultFormElement {
     value: any;
+    tempValue?: any;
     icon?: any;
     type?: FormType;
     placeholder?: string;
@@ -74,9 +84,13 @@ export namespace Forms {
     inlineIcon?: boolean;
     debounce?: number;
     options?: IOptions[];
-    component: IComponentType
+    component: IComponentType;
+    noEdit?: boolean;
+    validations?: {
+      [x:string]: any
+    }
 
-    constructor({error = true, required = true, ...fields}: FormPayload) {
+    constructor({error = true, required = true, noEdit = false, ...fields}: FormPayload) {
       this.value = fields.value != undefined ? fields.value : '';
       this.icon = fields.icon || null;
       this.type = fields.type || 'text';
@@ -88,6 +102,9 @@ export namespace Forms {
       this.required = required;
       this.options = fields.options;
       this.component = fields.component || null;
+      this.validations = fields.validations;
+      this.tempValue = fields.tempValue
+      this.noEdit = noEdit;
     }
 
     reset() {

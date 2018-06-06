@@ -5,6 +5,7 @@
         :id='formId'
         :type='data.type'
         :value='formatedValue'
+        :readonly='data.noEdit'
         :class='{
           formError: (!valid && dirty && data.error && !isPending),
           formValid: (valid && dirty && data.error && !isPending),

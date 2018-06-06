@@ -27,6 +27,10 @@ export default class MovingDetail extends Vue {
 
 <style lang='scss' scoped>
 
+.MovingInvite {
+  display: flex;
+  width: 100%;
+}
  
 </style>
 

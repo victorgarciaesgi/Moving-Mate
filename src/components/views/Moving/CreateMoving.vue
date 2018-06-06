@@ -207,6 +207,7 @@ export default class CreateMoving extends Vue {
   public show = true;
   public countStep = 0;
   public submitting = false;
+  public userInfosVerified = false;
   public $v;
 
   get currentFormType() {return this.CreateMovingForm.part1.helpType;}
@@ -225,8 +226,13 @@ export default class CreateMoving extends Vue {
     }
   }
 
+  get userInfos() {return LoginStore.state.userInfos}
+
   formClick() {
-    if (this.countStep < 2) {
+    if (this.countStep == 0) {
+      this.sendUserInfos();
+    }
+    else if (this.countStep == 1) {
       this.crementCount(1);
     } else {
       this.submitForm();
@@ -237,19 +243,22 @@ export default class CreateMoving extends Vue {
     part0: new Forms.Form({
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        value: LoginStore.state.userInfos.firstname || 'balek',
-        placeholder: 'Votre prénom'
+        value: this.userInfos.firstname || 'Phillibert',
+        placeholder: 'Votre prénom',
+        noEdit: !(!!this.userInfos.firstname)
       }),
       lastname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        value: LoginStore.state.userInfos.lastname || 'balek',
-        placeholder: 'Votre nom de famille'
+        value: this.userInfos.lastname || 'Cojaque',
+        placeholder: 'Votre nom de famille',
+        noEdit: !(!!this.userInfos.lastname)
       }),
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
         value: '0637096255',
         type: 'tel',
-        placeholder: 'Votre numéro de téléphone'
+        placeholder: 'Votre numéro de téléphone',
+        noEdit: !(!!this.userInfos.phone)
       })
     }),
     part1: new Forms.Form({
@@ -270,9 +279,7 @@ export default class CreateMoving extends Vue {
       addressIn: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_up.svg'),
-          value: {
-            placeId:"ChIJ6Wdw6uFv5kcRFiniHxoAJ-o"
-          },
+          value: "ChIJ6Wdw6uFv5kcRFiniHxoAJ-o",
           placeholder: 'Votre adresse de départ'
         }),
         addressType:  new Forms.Radio({
@@ -300,9 +307,7 @@ export default class CreateMoving extends Vue {
       addressOut: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_down.svg'),
-          value: {
-            placeId:"ChIJcVon7gevthIReAMdXVT163k"
-          },
+          value: 'ChIJcVon7gevthIReAMdXVT163k',
           placeholder: `Votre adresse d'arrivée`
         }),
         addressType:  new Forms.Radio({
@@ -364,9 +369,32 @@ export default class CreateMoving extends Vue {
     })
   }
 
+  async sendUserInfos() {
+    if (this.userInfosVerified) {
+      this.crementCount(1);
+    } else {
+      let {part0} = Object.assign({}, this.CreateMovingForm);
+      part0 = part0.getData();
+      try {
+        this.submitting = true;
+        const result = await MovingStore.actions.sendUserInfos(part0);
+        this.userInfosVerified = true;
+        this.crementCount(1);
+        
+      } catch(e) {
+        new AlertsElement.ErrorAlert({
+          title: 'Erreur lors du stockage de vos infos',
+          message: `Une erreur s'est produite lors de la sauvegarde de vos infos. Veuillez nous excuser`,
+        })
+      } finally {
+        this.submitting = false;
+      }
+    }
+
+  }
+
   async submitForm() {
     let {part0, part1, part2} = Object.assign({}, this.CreateMovingForm);
-    part0 = part0.getData();
     part1 = part1.getData();
     part2 = part2.getData();
 
@@ -386,13 +414,12 @@ export default class CreateMoving extends Vue {
     part1.addressOut.placeId = part1.addressOut.address;
     delete part1.addressIn.address;
     delete part1.addressOut.address;
-    delete part2.dealDate;
     
     if (this.typeDepart) {
-      delete part1.addressOut;
+      // delete part1.addressOut;
     } 
     else if (this.typeArrivee) {
-      delete part1.addressIn;
+      // delete part1.addressIn;
     }
     const finalValues = {...part1, ...part2};
     console.log(JSON.parse(JSON.stringify(finalValues)));
@@ -410,6 +437,9 @@ export default class CreateMoving extends Vue {
             triggers: [
               () => Router.push({name: routesNames.movingInfos, params: {movingId: result.data}}),
             ]
+          }),
+          new ActionsElements.ConfirmAction({
+            triggers: [() => Router.go(0)]
           })
         ]
       })

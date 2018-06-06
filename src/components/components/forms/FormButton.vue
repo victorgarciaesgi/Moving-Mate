@@ -6,7 +6,8 @@
     <span :style='{color: spanColor}'>
       <slot></slot>
     </span>
-    <SvgIcon class='loading' :src='require("@images/loading.svg")' :size='17' />
+    <SvgIcon v-if='colorTheme' class='loading' :src='require("@images/loading_white.svg")' :size='17' />
+    <SvgIcon v-else class='loading' :src='require("@images/loading.svg")' :size='17' />
   </button>
 </template>
 

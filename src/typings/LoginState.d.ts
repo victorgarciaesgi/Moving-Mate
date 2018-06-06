@@ -1,3 +1,5 @@
+import {IAddress} from './'
+
 export interface ILoginState {
   userInfos: IUser,
   sessionChecked: boolean,
@@ -17,9 +19,11 @@ export interface IUser {
   profile: string,
   userToken: string,
   roles: Array<IUserRoles>;
+  address: IAddress;
   isMover: boolean,
   avatar: string,
   avatarName: string,
+  phone: string,
   description: string,
   lastname: string,
   firstname: string,

@@ -86,7 +86,6 @@ export default class MoverCard extends Vue {
   get userPrice() {return this.mover.pricePerHour || 15};
   get movingEvent() {return MovingStore.state.oneAnnouncement}
 
-
   public starDetail = new Forms.StarRating({
     editable: false,
     value: 4.5,
@@ -96,8 +95,7 @@ export default class MoverCard extends Vue {
   })
 
   get redirectToDetail() {
-    // return {name: routesNames.user, params: {moverId: this.mover.id.toString()}};
-    return '/';
+    return {name: routesNames.user, params: {userId: this.mover.id.toString()}};
   }
 
   async proposeHelp() {
@@ -134,13 +132,8 @@ export default class MoverCard extends Vue {
     }
   }
 
-  async fetchImage() {
-    let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-    this.profilePic = data.results[0].picture.large;
-  }
-
-  async mounted () {
-    await this.fetchImage();
+  mounted() {
+    this.profilePic = this.mover.avatar || require('@images/user.jpg');
   }
 }
 </script>
@@ -217,6 +210,8 @@ $radius: 8px;
       }
 
       .place {
+        @include ellipsis;
+        width: 100%;
         .city {
           color: $w245;
         }

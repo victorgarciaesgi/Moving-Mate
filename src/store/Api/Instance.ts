@@ -5,10 +5,9 @@ import {clone} from 'lodash';
 import * as Types from './ApiTypes';
 
 const API_URL = process.env.API_URL;
-const axiosInstance: AxiosInstance = axios.create({
+export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
-    "Content-Type": "application/json",
     'Accept': 'application/json',
   },
 });
@@ -37,12 +36,25 @@ async function Request(type: string, path: string, payload: any, noAuth?: boolea
   try {
     console.log(`Axios Request [${type}]:`, axiosInstance.defaults);
     if (type === 'post' || type === 'put') {
-      let response: AxiosResponse = await axiosInstance[type](path, payload);
+      let response: AxiosResponse = await axiosInstance[type](path, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
       console.log(new Types.AxiosSuccess(response.data));
       return new Types.AxiosSuccess(response.data);
-    } else {
+    } else if (type === 'get' || type === 'delete') {
       let response: AxiosResponse = await axiosInstance[type](path, {
         params: payload,
+        headers: {"Content-Type": "application/json"}
+      })
+      return new Types.AxiosSuccess(response.data);
+    } else if (type == 'postFormData') {
+      console.log('ok')
+      let response: AxiosResponse = await axiosInstance.post(path, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       })
       return new Types.AxiosSuccess(response.data);
     }

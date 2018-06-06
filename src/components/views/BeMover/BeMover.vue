@@ -11,7 +11,7 @@
           </FormMessage>
           <FormText v-model='becomeMoverForm.firstname' :vl='$v.becomeMoverForm.firstname' :data='becomeMoverForm.fieldsData.firstname' />
           <FormText v-model='becomeMoverForm.lastname' :vl='$v.becomeMoverForm.lastname' :data='becomeMoverForm.fieldsData.lastname' />
-          <FormUpload v-model='becomeMoverForm.picture' :vl='$v.becomeMoverForm.picture' :data='becomeMoverForm.fieldsData.picture' />
+          <FormUpload v-model='becomeMoverForm.avatar' :vl='$v.becomeMoverForm.avatar' :data='becomeMoverForm.fieldsData.avatar' />
           <FormPlaceSearch v-model='becomeMoverForm.address' :vl='$v.becomeMoverForm.address' :data='becomeMoverForm.fieldsData.address' />
           <FormText v-model='becomeMoverForm.phone' :vl='$v.becomeMoverForm.phone' :data='becomeMoverForm.fieldsData.phone' />
           <FormText v-model='becomeMoverForm.price' :vl='$v.becomeMoverForm.price' :data='becomeMoverForm.fieldsData.price' />
@@ -26,6 +26,7 @@
               :submitting='submitting'
               :disabled='$v.becomeMoverForm.$invalid'
               @disabledClick='touchForm()'
+              @click='submitForm()'
               :colorTheme='css.mainStyle'>
                 Devenir déménageur
             </FormButton>
@@ -45,7 +46,7 @@ import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
 import { timeout } from '@methods';
 import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
-import { GlobalStore, LoginStore, MovingStore } from '@store';
+import { GlobalStore, LoginStore, MoverStore } from '@store';
 import { Forms, AlertsElement, ActionsElements } from '@classes';
 
 @Component({
@@ -59,7 +60,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
       firstname: {required},
       lastname: {required},
       address: {required},
-      picture: {required},
+      avatar: {required},
       phone: {required, phone(value) {
         if (required(value)) {
           const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -78,41 +79,78 @@ export default class BeMover extends Vue {
   public css = require('@css');
   public submitting = false;
 
+  get userInfos() {
+    return LoginStore.state.userInfos
+  }
+
   public becomeMoverForm = new Forms.Form({
     cgu: new Forms.CheckBox({
-      placeholder: `J'accepte les conditions générale d'utilisation du site`
+      placeholder: `J'accepte les conditions générale d'utilisation du site`,
+      value: true,
     }),
     firstname: new Forms.TextForm({
       icon: require('@icons/surname.svg'),
-      placeholder: 'Votre prénom'
+      placeholder: 'Votre prénom',
+      value: this.userInfos.firstname || 'Chibre'
     }),
     lastname: new Forms.TextForm({
       icon: require('@icons/surname.svg'),
-      placeholder: 'Votre nom'
+      placeholder: 'Votre nom',
+      value: this.userInfos.lastname || 'Famille'
     }),
-    picture: new Forms.UploadForm({
+    avatar: new Forms.UploadForm({
       placeholder: 'Votre photo de profil'
     }),
     address: new Forms.TextForm({
       icon: require('@icons/localisation.svg'),
-      placeholder: 'Votre adresse'
+      placeholder: 'Votre adresse',
+      value: 'ChIJ0b25kW1u5kcRkGFCgnraSP4'
     }),
     phone: new Forms.TextForm({
       icon: require('@icons/phone.svg'),
       type: 'tel',
-      placeholder: 'Votre numéro de téléphone'
+      placeholder: 'Votre numéro de téléphone',
+      value: '0673625267'
     }),
     price: new Forms.TextForm({
       icon: require('@icons/euro.svg'),
       placeholder: 'Votre prix par heure',
+      value: 15
     }),
     description: new Forms.TextForm({
-      placeholder: 'Décrivez vous en quelques mots'
+      placeholder: 'Décrivez vous en quelques mots',
+      value: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur'
     })
   })
 
+
+  async submitForm() {
+    try {
+      this.submitting = true;
+      const form = this.becomeMoverForm.getData();
+      let formData = new FormData();
+      for (let key in form) {
+        formData.append(key, form[key]);
+      }
+      const result = await MoverStore.actions.becomeMover(formData);
+      new AlertsElement.SuccessAlert({
+        title: "Opération réussie!",
+        message: "Vous êtes bien enregistré en temps que déménageur, vous apparaitrez maintenant dans les recherches",
+        onClose: [
+          () => Router.push({name: routesNames.user, params: {userId: this.userInfos.id}})
+        ]
+      })
+    } catch(e) {
+      new AlertsElement.ErrorAlert({
+        title: 'Erreur lors de votre activation',
+        message: `Une erreur s'est produite lors de votre activation. Veuillez nous excuser`,
+      })
+    } finally {
+      this.submitting = false;
+    }
+  }
+
   touchForm() {
-    console.log('lol')
     this.$v.becomeMoverForm.$touch();
   }
 
@@ -159,6 +197,7 @@ export default class BeMover extends Vue {
         padding: 10px;;
         display: flex;
         flex-flow: column wrap;
+        position: relative;
 
         .footer {
           display: flex;

@@ -23,7 +23,9 @@ const initialState: ILoginState = {
     firstname: null,
     lastname: null,
     isMover: null,
+    address: null,
     roles: [],
+    phone: null,
     userToken: null,
   },
   sessionChecked: false,
@@ -43,7 +45,7 @@ const stateGetter = b.state();
 // Getters
 namespace Getters {
   const fullName = b.read(function fullName(state): string {
-    return capitalize(state.userInfos.surname) + " " + capitalize(state.userInfos.name);
+    return state.userInfos.firstname?capitalize(state.userInfos.surname) + " " + capitalize(state.userInfos.name):null;
   })
 
   const isAdmin = b.read(function isAdmin(state) : boolean {
@@ -116,11 +118,11 @@ namespace Mutations {
 
 // Actions
 namespace Actions {
-  async function connexionRequest(context,{loginData, redirect}){
+  async function connexionRequest(context,{loginData, redirect}: {loginData: any, redirect?: string}){
     try {
       state.requesting = true;
       let { success, status, data } = await Api.post(Paths.LOGIN, loginData);
-      JWT.set(data.token);
+      JWT.set(data);
       LoginModule.actions.connexionSuccess({token: data.token, redirect});
       return new ApiSuccess()
     } catch(err) {
@@ -150,10 +152,13 @@ namespace Actions {
     NotificationsModule.actions.addNotification({ type: "alert", message: `Vous avez été deconnecté` })
   }
   async function checkUserSession(){
-    let token = JWT.fetch();
+    let {token, refresh_token} = JWT.fetch();
     if (!!token) {
-      let userData = await jwtDecode(token);
-      LoginModule.mutations.connectUser({userData, token});
+      // let userData = await jwtDecode(token);
+      // LoginModule.mutations.connectUser({userData, token});
+      let { data } = await Api.checkSession({token, refresh_token});
+      JWT.set(data);
+      LoginModule.actions.connexionSuccess({token: data.token, redirect: null});
     } else {
       console.log('User not logged');
     }

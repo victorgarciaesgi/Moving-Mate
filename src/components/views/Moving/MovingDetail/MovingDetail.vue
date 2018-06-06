@@ -72,7 +72,9 @@ export default class MovingDetail extends Vue {
   }
 
   .child-views {
+    display: flex;
     position: relative;
+    flex-flow: row nowrap;
     width: 100%;
     height: auto;
   }

@@ -3,6 +3,7 @@ import Api, { ApiError, ApiSuccess, ApiResponse } from '../Api';
 import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
+import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
 
@@ -47,8 +48,11 @@ namespace Mutations {
   }
 
   function updateSearchRoute(state: IMoverState, newString: string) {
-    Router.replace(`/movers/search/${newString}`);
-    // Mutations.mutations.updateSearchValue(newString);
+    if (newString.length) {
+      Router.replace(`/movers/search/${newString}`);
+    } else {
+      Router.replace('/movers')
+    }
   }
 
   function updateSearchingState(state: IMoverState) {
@@ -74,9 +78,16 @@ namespace Actions {
     Mutations.mutations.updateMoverList([]);
 
     try {
-      const { data } = await Api.get(Paths.MOVERS_LIST, payload);
-      console.log(data);
-      Mutations.mutations.updateMoverList(data);      
+      if (!payload.search) {
+        const { data } = await Api.get(Paths.MOVERS_LIST, payload);
+        console.log(data);
+        Mutations.mutations.updateMoverList(data);
+      } else {
+        const location = await geoLocate(payload.search);
+        console.log(location.location.lat(), location.location.lng());
+        const result = await Api.AlgoliaMoving({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        console.log(result);
+      }
     } finally {
       Mutations.mutations.updateSearchingState();
     }
@@ -119,10 +130,20 @@ namespace Actions {
     })
   }
 
+  async function becomeMover(context, form: Object) {
+    try {
+      const {data} = await Api.postFormData(Paths.NEW_MOVER, form);
+      return new ApiSuccess()
+    } catch(e) {
+      return new ApiError();
+    }
+  }
+
   export const actions = {
     fetchMover: b.dispatch(fetchMover),
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
+    becomeMover: b.dispatch(becomeMover)
   }
 }
 

@@ -25,16 +25,19 @@ namespace Mutations {
     state.alertShow = true;
   }
   function hideAlert(state: IAlertsState) {
+    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
     state.alertData = null;
     state.alertShow = false;
-    resolveAlert();
+    if (resolveAlert) resolveAlert();
   }
 
   function confirmAlert(state: IAlertsState) {
+    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
     state.alertData = null;
     state.alertShow = false;
   }
   function cancelAlert(state: IAlertsState) {
+    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
     state.alertData = null;
     state.alertShow = false;
   }
@@ -58,6 +61,14 @@ namespace Actions {
   }
   async function hideAlert() {
     Mutations.mutations.hideAlert();
+  }
+
+  async function onCloseAction(context, alert: AlertsElement.Alert) {
+    if (alert.onClose) {
+      for (const trigger of alert.onClose) {
+        await trigger();
+      }
+    }
   }
 
   async function executeAction(context, {action, value}: {action: ActionsElements.Action, value: boolean}) {
@@ -85,6 +96,7 @@ namespace Actions {
     addAlert: b.dispatch(addAlert),
     hideAlert: b.dispatch(hideAlert),
     executeAction: b.dispatch(executeAction),
+    onCloseAction: b.dispatch(onCloseAction)
   }
 }
 
