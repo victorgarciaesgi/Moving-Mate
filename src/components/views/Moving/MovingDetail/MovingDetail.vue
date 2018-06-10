@@ -1,11 +1,21 @@
 <template>
   <div class='MovingDetail' v-if='movingEvent'>
-    <div class='moving-cover' :style='backgroundCover'></div>
+    <div class='moving-cover'>
+      <BackgroundLoader @loaded='imagePrevisuLoaded = true' class='cover-image' :src='backgroundCover'/>
+      <div class='icon-enlarge' v-if="imagePrevisuLoaded" @click='toggleImage(true)'>
+        <SvgIcon :src='require("@icons/moving/fullscreen.svg")' color='white' :size='60'/>
+      </div>
+    </div>
     <UITabs :tabs='tabs' v-if='isMovingMine'/>
     <div class='child-views'>
       <transition name='slide' mode='out-in'>
         <router-view/>
       </transition>
+    </div>
+    <div class='image-previsu'>
+      <UIModal :show='imagePrevisu' @close='toggleImage(false)' full onlyContent>
+        <BackgroundLoader :src='backgroundCover' :absolute='true'/>
+      </UIModal>
     </div>
   </div>
   <div v-else class='noResult'>
@@ -18,11 +28,11 @@ import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import { MovingStore, LoginStore } from '@store';
 import { routesNames } from '@router';
-import {UITabs} from '@components'
+import {UITabs, BackgroundLoader, UIModal, SvgIcon} from '@components'
 import {ITab} from '@types';
 
 @Component({
-  components: {UITabs}
+  components: {UITabs, BackgroundLoader, UIModal, SvgIcon}
 })
 export default class MovingDetail extends Vue {
   
@@ -34,20 +44,28 @@ export default class MovingDetail extends Vue {
     {title: 'Inviter des déménageurs',icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
     {title: 'Offres partenaires', icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
   ]
+  public imagePrevisu = false;
+  public imagePrevisuLoaded = false;
 
   get paramId() {
     return MovingStore.state.oneAnnouncement?MovingStore.state.oneAnnouncement.id: null;
   }
 
-  get backgroundCover() {
-    return {backgroundImage: `url(${this.movingEvent?this.movingEvent.staticMap:null})`}
-  }
+  public backgroundCover = null;
 
   get movingEvent() {return MovingStore.state.oneAnnouncement}
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
+  toggleImage(value: boolean) {
+    this.imagePrevisu = value;
+  }
+
   beforeDestroy() {
     MovingStore.mutations.updateOneAnnouncement(null)
+  }
+
+  created() {
+    this.backgroundCover = this.movingEvent.staticMap;
   }
 
 }
@@ -67,8 +85,33 @@ export default class MovingDetail extends Vue {
 
   .moving-cover {
     display: flex;
-    height: 300px;
+    height: auto;
+    position: relative;
     background-color: $g50;
+    overflow: hidden;
+    height: 300px;
+    cursor: pointer;
+
+    .image-cover {
+      z-index: 1;
+    }
+
+    &:hover .icon-enlarge {
+      opacity: 1;
+    }
+
+    .icon-enlarge {
+      position: absolute;
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      background-color: rgba(0,0,0,0.4);
+      align-items: center;
+      z-index: 3;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
   }
 
   .child-views {

@@ -44,6 +44,7 @@ export default class UIModal extends Vue {
   @Prop({required: false, default: true}) isPopup: boolean;
   @Prop({required: false}) height: number;
   @Prop({required: false}) width: number;
+  @Prop({required: false}) autoFull: number;
   @Prop({requried: false}) onlyContent: boolean
   @Prop({}) footerShadow: boolean;
 

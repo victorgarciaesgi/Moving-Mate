@@ -178,8 +178,9 @@ $radius: 8px;
     border-radius: 5px 5px 0 0;
 
     .userPicture {
-      flex: 1 1 auto;
+      flex: 1 0 auto;
       height: 160px;
+      overflow: hidden;
     }
 
     .userName {

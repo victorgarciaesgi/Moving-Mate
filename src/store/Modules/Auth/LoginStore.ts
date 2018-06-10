@@ -141,7 +141,6 @@ namespace Actions {
   /* */
   async function connexionSuccess(context, {token, redirect}) {
     let userData = await jwtDecode(token);
-    console.log(userData);
     LoginModule.mutations.connectUser({userData, token, redirect});
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
   }
@@ -154,11 +153,14 @@ namespace Actions {
   async function checkUserSession(){
     let {token, refresh_token} = JWT.fetch();
     if (!!token) {
-      // let userData = await jwtDecode(token);
-      // LoginModule.mutations.connectUser({userData, token});
-      let { data } = await Api.checkSession({token, refresh_token});
-      JWT.set(data);
-      LoginModule.actions.connexionSuccess({token: data.token, redirect: null});
+      try {
+        let { data } = await Api.checkSession({token, refresh_token});
+        JWT.set(data);
+        let userData = await jwtDecode(data.token);
+        LoginModule.mutations.connectUser({userData, token: data.token});
+      } catch(e) {
+        Mutations.mutations.disconnectUser();
+      }
     } else {
       console.log('User not logged');
     }

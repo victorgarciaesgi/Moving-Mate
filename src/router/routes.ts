@@ -70,6 +70,7 @@ export const routesList: MyRouteConfig[]  = [
       async asyncData(to: MyRoute) {
         if (Stores.GoogleMaps.state.mapReady) {
           Stores.MovingStore.mutations.updateSearchValue('');
+          Stores.MovingStore.actions.fetchMoving({})
         }
         return {};
       }
