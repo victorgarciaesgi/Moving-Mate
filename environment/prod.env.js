@@ -3,5 +3,5 @@ module.exports = {
   NODE_ENV: '"production"',
   DEBUG_MODE: "'false'",
   API_KEY: '"XXXX-XXXXX-XXXX-XXXX"',
-  API_URL: '"moving.xlwlx.fr/api/"'
+  API_URL: '"http://moving.xlwlx.fr/api/"'
 }
