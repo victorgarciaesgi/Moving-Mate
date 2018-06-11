@@ -20,13 +20,13 @@ export namespace AlertsElement {
   export class Alert{
     public type: AlertType;
     public title: string;
-    public message: string;
+    public message?: string;
     public strict?: boolean;
     public actions: ActionsElements.Action[];
     public formElement?: formParam;
     public onClose?: Function[]
 
-    constructor(fields?:{type: AlertType, title: string, message: string, strict?: boolean, actions: ActionsElements.Action[], formElement?: formParam, onClose?: Function[]}) {
+    constructor(fields?:{type: AlertType, title: string, message?: string, strict?: boolean, actions: ActionsElements.Action[], formElement?: formParam, onClose?: Function[]}) {
       Object.assign(this, fields);
       AlertsStore.actions.addAlert(this);
     }
@@ -37,7 +37,7 @@ export namespace AlertsElement {
   }
 
   export class SuccessAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
+    constructor(fields?: {title: string, message?: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
       const actions = fields.actions || [];
       const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({})
       console.log(fields.actions)
@@ -56,7 +56,7 @@ export namespace AlertsElement {
   }
 
   export class ErrorAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
+    constructor(fields?: {title: string, message?: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
       const actions = fields.actions || [];
       console.log(fields.actions)
       const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({text: 'Fermer'})
@@ -75,7 +75,7 @@ export namespace AlertsElement {
   }
 
   export class FormAlert extends Alert {
-    constructor(fields?: {title: string, message: string, strict?:boolean, formElement: formParam, onClose?: Function[]}) {
+    constructor(fields?: {title: string, message?: string, strict?:boolean, formElement: formParam, onClose?: Function[]}) {
       const confirmAction = new ActionsElements.ConfirmAction({
         text: 'Valider',
         triggers: [

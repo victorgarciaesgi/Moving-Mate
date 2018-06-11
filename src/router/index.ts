@@ -72,6 +72,7 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
 
     // Check requires auth
     if (to.matched.some(m => m.meta.requiresAuth)) {
+      await LoginStore.actions.refreshUserInfos();
       if (LoginStore.state.isLoggedIn) {
         if (to.matched.some(m => !!m.meta.isAuthorized)) {
           const results = await Promise.all([

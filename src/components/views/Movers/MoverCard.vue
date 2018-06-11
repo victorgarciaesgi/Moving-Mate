@@ -33,14 +33,14 @@
             <StarRating :value='starDetail.value' :data='starDetail'/>
           </span>
         </li>
-        <li class='place info'>
+        <li class='place info' v-if='!minimal'>
           <div class='icon'><SvgIcon :size='21' :color='css.mainStyle' :src="require('@icons/truck.svg')"/></div>
           <span class='value'>
             <span class='count'>2</span>
             <span class='type'>{{5 | pluralize('déménagement')}}</span>
           </span>
         </li>
-        <li class='place info'>
+        <li class='place info' v-if='!minimal'>
           <div class='icon'><SvgIcon :size='21' :color='css.mainStyle' :src="require('@icons/comment.svg')"/></div>
           <span class='value'>
             <span class='count'>5</span>
@@ -48,8 +48,11 @@
           </span>
         </li>
       </ul>
-      <div class='boutonInvite' v-if='invite'>
-        <div class='button-ask' @click.stop='proposeHelp'>Demander de l'aide</div>
+      <div class='mover-actions' v-if='invite || note || canDelete || isMe'>
+        <div class='button-ask button' @click.stop='proposeHelp' v-if='invite'>Demander de l'aide</div>
+        <div class='button-note button' @click.stop='noteMover' v-if='note && !isMe'>Noter</div>
+        <div class='button-delete button' @click.stop='deleteMover' v-if='canDelete'>Supprimer</div>
+        <div class='button-leave button' @click.stop='leaveMoving' v-if='isMe'>Se retirer</div>
       </div>
     </div>
   </router-link>
@@ -60,6 +63,7 @@
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMover} from '@types';
+import {required} from 'vuelidate/lib/validators';
 import { StarRating, SvgIcon, UISwitch, BackgroundLoader } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
@@ -77,6 +81,10 @@ export default class MoverCard extends Vue {
   @Prop({required: true}) mover: IMover;
   @Prop() invite: boolean;
   @Prop() display: boolean;
+  @Prop() minimal: boolean;
+  @Prop() note:boolean;
+  @Prop() canDelete: boolean;
+  @Prop() isMe: boolean;
 
 
   public css = require('@css');
@@ -109,6 +117,46 @@ export default class MoverCard extends Vue {
               placeholder: `Message pour ${this.userName} (optionnel)`
             })
           }),
+          submit: {
+            params: {
+              id: this.movingEvent.id
+            },
+            trigger:  MovingStore.actions.createAskHelp
+          }
+        }
+      }).waitResponse();
+
+      if (response) {
+        new AlertsElement.SuccessAlert({
+          title: `Proposition envoyée`,
+          message: `Votre demande a bien été envoyée à ${this.userName}`,
+        })
+      }
+    } catch(e) {
+      new AlertsElement.ErrorAlert({
+        title: `La proposition a échoué`,
+        message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+      })
+    }
+  }
+
+  async noteMover() {
+    try {
+      const response = await new AlertsElement.FormAlert({
+        title: `Noter ${this.userName}`,
+        formElement: {
+          form: new Forms.Form({
+            note: new Forms.StarRating({
+              displayNote: true,
+              size: 28
+            }),
+            commentaire: new Forms.FieldForm({
+              placeholder: `Commentaire sur ${this.userName} (optionnel)`
+            })
+          }),
+          validations: {
+            note: {required}
+          },
           submit: {
             params: {
               id: this.movingEvent.id
@@ -314,28 +362,43 @@ $radius: 8px;
       }
     }
 
-    .boutonInvite {
-      padding: 10px 10px 0 10px;
-      .button-ask {
+    .mover-actions {
+      display: flex;
+      flex-flow: column wrap;
+      padding: 5px 10px 0 10px;
+
+      .button {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 40px;
         width: 100%;
         border-radius: 3px;
+        margin-top: 5px;
         font-size: 16px;
         font-weight: bold;
-        background-color: $mainStyle;
-        color: white;
         @include userselect;
         cursor: pointer;
 
-        &:hover {
-          background-color: darken($mainStyle, 5%);
+        &.button-ask {
+          background-color: $mainStyle;
+          color: white;
+          &:hover {background-color: darken($mainStyle, 5%);}
+          &:active { background-color: darken($mainStyle, 10%);}
         }
 
-        &:active {
-          background-color: darken($mainStyle, 10%);
+        &.button-delete, &.button-leave {
+          background-color: white;
+          color: $red1;
+          &:hover {background-color: darken(white, 5%);}
+          &:active { background-color: darken(white, 10%);}
+        }
+
+        &.button-note {
+          background-color: white;
+          color:$mainStyle;
+          &:hover {background-color: darken(white, 5%);}
+          &:active { background-color: darken(white, 10%);}
         }
       }
     }

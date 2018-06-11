@@ -145,7 +145,7 @@
           </div>
         </div>
       </div>
-      <div class='footer' v-if='!isMovingMine'>
+      <div class='footer' v-if='canAsk'>
         <div class='button-ask' @click='proposeHelp()'>Proposer mon aide</div>
       </div>
     </section>
@@ -202,7 +202,15 @@ export default class MovingInfos extends Vue {
   }
 
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
-
+  get canAsk() {
+    if (this.isMovingMine) return false;
+    else if (!LoginStore.state.userInfos.isMover) return false;
+    else if (this.movingEvent.participations) {
+      if (this.movingEvent.participations.users.length >= this.movingEvent.menRequired) return false;
+      return !this.movingEvent.participations.users.some(m => m.id == LoginStore.state.userInfos.id)
+    }
+    return true;
+  }
   get departCards() {
     return [
       {title: 'Ville', value: this.getDepart.city, image: require('@icons/localisation.svg')},

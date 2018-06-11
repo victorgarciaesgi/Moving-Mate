@@ -1,6 +1,6 @@
 <template>
   <transition name='bounce'>
-    <div v-if='alertState.alertShow' class='alert-base' @click='closeAlert(false)'>
+    <div class='alert-base' @click='closeAlert(false)'>
       <div class="alert-window" @click.stop>
         <div class='content'>
           <div class='alert-icon' v-if='alertState.alertData.type != "form"' :class='[alertState.alertData.type]'>
@@ -12,13 +12,13 @@
           <div class='title'>
             {{alertState.alertData.title}}
           </div>
-          <span class='message'>{{alertState.alertData.message}}</span>
+          <span class='message' v-if='alertState.alertData.message'>{{alertState.alertData.message}}</span>
           <div class='form' v-if='alertState.alertData.type == "form"'>
             <component :is='value.component' 
               v-for='(value, key) in alertState.alertData.formElement.form.fieldsData' 
               :key='key'
-              v-model='alertState.alertData.formElement.form[key]'
-              :vl='$v[key]'
+              v-model='alertForm[key]'
+              :vl='$v.alertForm[key]'
               :data='value'></component>
           </div>
         </div>
@@ -45,7 +45,7 @@
             
           </template>
           <template v-else>
-            <FormButton type='submit' theme='blue' @click='validAlert()'>
+            <FormButton theme='blue' @click='validAlert()'>
               Ça marche!
             </FormButton>
           </template>
@@ -60,18 +60,19 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 import { AlertsStore } from '@store';
 import {AlertsElement, ActionsElements} from '@classes';
-import { FormButton, FormText, UISteps, FormPlaceSearch,
+import StarRating from '../StarRating/StarRating.vue'
+import { FormButton, FormText, UISteps,FormPlaceSearch,
   FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar, FormUpload } from "../../forms/index";
 
 @Component({
   components: {
     FormButton, FormText, UISteps, FormField, FormPlaceSearch,
-    FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar, FormUpload
+    FormMessage, Radio, FormSelect, FormSeparator, CheckBox, FormCalendar, FormUpload, StarRating
   },
   validations() {
-    if (this.alertState.alertData.formElement) {
-      if (this.alertState.alertData.formElement.validations) {
-      return this.alertState.alertData.formElement.validations;
+    if (this.alertForm) {
+      if (this.formValidations) {
+        return {alertForm: this.formValidations};
       } else {
         return false;
       }
@@ -82,6 +83,9 @@ import { FormButton, FormText, UISteps, FormPlaceSearch,
 export default class Alerts extends Vue {
 
   public $v;
+
+  public alertForm = null;
+  public formValidations = null;
 
   get alertState() { return AlertsStore.state}
   get submitting() {return AlertsStore.state.submitting}
@@ -100,7 +104,7 @@ export default class Alerts extends Vue {
   }
 
   get isDisabled() {
-    return this.$v.$invalid;
+    return this.$v.alertForm.$invalid;
   }
 
   get rightButtons() {return this.alertState.alertData.actions.filter(m=>m).filter(m => m.type !== "cancel");}
@@ -118,6 +122,17 @@ export default class Alerts extends Vue {
 
   async executeAction(action: ActionsElements.Action, value: boolean) {
     await AlertsStore.actions.executeAction({action, value});
+  }
+
+  destroyed() {
+    AlertsStore.mutations.hideAlert();
+  }
+
+  created() {
+    if (this.alertState.alertData.formElement) {
+      this.alertForm = this.alertState.alertData.formElement.form;
+      this.formValidations = this.alertState.alertData.formElement.validations;
+    }
   }
 }
 </script>

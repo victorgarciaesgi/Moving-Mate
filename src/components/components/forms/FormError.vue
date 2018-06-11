@@ -1,5 +1,5 @@
 <template>
-  <div class='errorMessage' v-if='((error && data.error) || isPending)'>
+  <div class='errorMessage' v-if='((error && data.error) || isPending)' :class='{center}'>
     <span v-if='isPending' class='pending'>Verification...</span>
     <ul v-else-if='dirty && data.error' class='error'>
       <li v-for='key in filterErrors' :key='key'>
@@ -18,6 +18,7 @@ export default class FormError extends Vue {
   
   @Prop({required: true}) vl;
   @Prop() data;
+  @Prop() center: boolean;
 
   get filterErrors() {return this.vl?Object.keys(this.vl.$params).filter(key => !this.vl[key]): null}
   get error() {return this.vl?this.vl.$error: null}
@@ -47,12 +48,18 @@ export default class FormError extends Vue {
 .errorMessage {
   display: flex;
   position: relative;
-  flex-flow: columns wrap;
+  flex-flow: column wrap;
   justify-content: flex-start;
   font-size: 11px;
   font-weight: bold;
   color: $red1;
   margin-left: 5px;
+
+  &.center {
+    ul li {
+      justify-content: center;
+    }
+  }
 
   .pending {
     color: $yellow1;

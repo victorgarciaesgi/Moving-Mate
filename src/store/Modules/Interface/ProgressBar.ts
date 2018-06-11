@@ -31,20 +31,22 @@ namespace Getters {
 // Mutations
 namespace Mutations {
   function start(state: IProgressState) {
-    clearTimeout(TIMEOUT);
-    state.show = true
-    state.canSuccess = true
-    if (TIMER) {
-      clearInterval(TIMER);
-      state.percent = 0;
-    }
-    CUT = 20000 / Math.floor(state.duration)
-    TIMER = setInterval(() => {
-      Mutations.mutations.increase(CUT * Math.random())
-      if (state.percent > 80) {
-        Mutations.mutations.pause();
+    if (!state.show) {
+      clearTimeout(TIMEOUT);
+      state.show = true;
+      state.canSuccess = true
+      if (TIMER) {
+        clearInterval(TIMER);
+        state.percent = 0;
       }
-    }, 200)
+      CUT = 20000 / Math.floor(state.duration)
+      TIMER = setInterval(() => {
+        Mutations.mutations.increase(CUT * Math.random())
+        if (state.percent > 80) {
+          Mutations.mutations.pause();
+        }
+      }, 200)
+    }
   }
   function set(state: IProgressState, num: number) {
     state.show = true

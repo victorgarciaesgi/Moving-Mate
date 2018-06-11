@@ -6,8 +6,8 @@
     <span :style='{color: spanColor}'>
       <slot></slot>
     </span>
-    <SvgIcon v-if='colorTheme' class='loading' :src='require("@images/loading_white.svg")' :size='17' />
-    <SvgIcon v-else class='loading' :src='require("@images/loading.svg")' :size='17' />
+    <SvgIcon v-if='colorTheme' class='loading' :src='require("@images/loading_white.svg")' :size='18' />
+    <SvgIcon v-else class='loading' :src='require("@images/loading.svg")' :size='18' />
   </button>
 </template>
 
@@ -107,9 +107,9 @@ button {
     display: none;
     margin-left: 6px;
 
-    /deep/ svg{
-      margin-top: 2px;
-    }
+    // /deep/ svg{
+    //   margin-top: 2px;
+    // }
   }
 
   &.disabled{

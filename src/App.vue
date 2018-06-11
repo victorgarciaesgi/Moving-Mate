@@ -4,7 +4,7 @@
       <HeaderComponent/>
       <ProgressBarComponent/>
       <Notifications/>
-      <Alerts/>
+      <Alerts v-if='alertState.alertShow'/>
       <div class='view'>
         <transition name='slide' mode='out-in'>
           <router-view/>
@@ -26,7 +26,7 @@ import Vue from "vue";
 import { Store } from "vuex";
 import { sync } from 'vuex-router-sync'
 import { Component, Watch } from "vue-property-decorator";
-import { EventBus, RootState, storeBuilder, DebugMode } from "@store";
+import { EventBus, RootState, storeBuilder, DebugMode, AlertsStore } from "@store";
 import router from "./router";
 import { HeaderComponent, Notifications, ProgressBarComponent, Alerts, SvgIcon } from "@components";
 import { LoginStore } from "@modules";
@@ -53,6 +53,8 @@ export default class App extends Vue {
   public transitionName;
 
   get sessionChecked() { return LoginStore.state.sessionChecked};
+  get alertState() { return AlertsStore.state}
+
 
   created() {
     document.addEventListener("touchstart", () => {}, <any>{ passive: true });

@@ -52,6 +52,8 @@
           </li>
           <div class='logo-google'>
             <img src='~@images/powered-by-google-on-white.png'>
+            and
+            <img src='@images/logo_truck_M.svg' height='30' width="30">
           </div>
         </ul>
         <div v-if='!searchResults.length && !searching && value == ""' class='no-result'>
@@ -89,7 +91,6 @@ export default class FormPlaceSearch extends FormMixin {
   public searching = false;
   public handlePlacesSearch = null;
   public searchResults = [];
-
   public resultsStyle: any = {
     width: null
   }
@@ -234,10 +235,17 @@ export default class FormPlaceSearch extends FormMixin {
       }
     }
     .logo-google {
-      display: none;
+      display: flex;
       justify-content: flex-end;
       align-items: center;
       padding: 5px;
+      font-weight: bold;
+      font-size: 14px;
+
+      img {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
     }
   }
 

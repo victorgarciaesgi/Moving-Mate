@@ -1,37 +1,14 @@
 <template>
   <div class='Participants'>
     <ul class='mover-list' v-if='participantsList'>
-      <li class='mover-section' v-for='mover of participantsList' :key='mover.id'>
-        <MoverCard :mover='mover' embed />
-        <div class='mover-infos'>
-          <div class='infos'>
-            <div class='info'>
-              <span class='title'>Numéro de téléphone</span>
-              <span class='value'>0681887787</span>
-            </div>
-            <div class='info'>
-              <span class='title'>Adresse</span>
-              <span class='value'>35 rue du Chibre Anal</span>
-            </div>
-          </div>
-          <div class='mover-actions'>
-            <div class='delete bouton'>
-              <span>Supprimer</span>
-            </div>
-            <div class='present'>
-              <span>Present</span>
-            </div>
-            <div class='absent'>
-              <span>Absent</span>
-            </div>
-            <div class='note'>
-              <span>Note</span>
-            </div>
-          </div>
-        </div>
-      </li>
+      <MoverCard :mover='mover' v-for='mover of participantsList' :key='mover.id'
+        :canDelete='isMovingMine' :isMe='mover.id == myId' note display minimal/>
     </ul>
-    <div v-else class=''>Aucun participants</div>
+    <div v-else class='no-result flexy'>
+      <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
+        :size='50' color='#5a5a5a'/>
+      Aucun participants
+    </div>
   </div>
 </template>
 
@@ -41,7 +18,7 @@ import { Component, Prop} from 'vue-property-decorator';
 import { StarRating, SvgIcon, UISwitch, FormMessage } from '@components';
 import moment from 'moment';
 import MoverCard from '@views/Movers/MoverCard.vue';
-import {MovingStore} from '@store';
+import {MovingStore, LoginStore} from '@store';
 import axios from 'axios';
 
 @Component({
@@ -52,8 +29,14 @@ import axios from 'axios';
 export default class MovingParticipants extends Vue {
   
   get participantsList() {
-    return MovingStore.state.oneAnnouncement.participations.users;
+    return MovingStore.state.oneAnnouncement.participations?MovingStore.state.oneAnnouncement.participations.users: null;
   }
+
+  get myId() {return LoginStore.state.userInfos.id}
+
+  get movingEvent() {return MovingStore.state.oneAnnouncement}
+  get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
+
 
 }
 </script>
@@ -71,17 +54,12 @@ export default class MovingParticipants extends Vue {
 
   ul.mover-list {
     display: flex;
-    flex-flow: column wrap;
-    flex: 0 1 auto;
-    width: 650px;
+    flex-flow: row wrap;
+    flex: 1 1 auto;
+    padding-top: 20px;
+    justify-content: center;
+    align-items: flex-start;
 
-    li.mover-section {
-      display: flex;
-      height: auto;
-      flex-flow: row nowrap;
-
-
-    }
   }
 }
  

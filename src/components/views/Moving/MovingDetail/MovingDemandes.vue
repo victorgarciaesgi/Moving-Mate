@@ -1,5 +1,10 @@
 <template>
-  <h1>Demandes</h1>
+  <div v-if='false'></div>
+  <div v-else class='no-result flexy'>
+    <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
+      :size='50' color='#5a5a5a'/>
+    Aucune demande
+  </div>
 </template>
 
 <script lang="ts">
@@ -23,7 +28,6 @@ export default class MovingDemandes extends Vue {
 
 
 <style lang='scss' scoped>
-
  
 </style>
 

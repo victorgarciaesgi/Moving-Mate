@@ -1,5 +1,7 @@
 <template>
-  
+  <div class='Footer'>
+
+  </div>
 </template>
 
 <script lang="ts">
@@ -19,7 +21,10 @@ export default class Home extends Vue {
 
 <style lang="scss" scoped>
 
-
+.Footer {
+  display: flex;
+  
+}
 
 </style>
 

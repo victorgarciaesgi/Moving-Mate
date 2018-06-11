@@ -187,8 +187,8 @@ export namespace Forms {
       fields.component = 'StarRating';
       super(fields);
       this.starCount = fields.starCount || 5;
-      this.baseColor = fields.baseColor || css.yellow2;
-      this.selectedColor = fields.selectedColor || css.mainColor;
+      this.baseColor = fields.baseColor || css.mainStyle ;
+      this.selectedColor = fields.selectedColor || css.mainStyle;
       this.hoverColor = fields.hoverColor || css.yellow1;
       this.editable = fields.editable != null ? fields.editable : true;
       this.init = fields.init || 0;

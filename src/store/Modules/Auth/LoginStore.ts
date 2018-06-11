@@ -82,7 +82,7 @@ namespace Mutations {
     state.sessionChecked = true;
   }
   function connectUser(state: ILoginState, {userData, token, redirect = null}) {
-    state.userInfos = merge(state.userInfos, userData);
+    state.userInfos = {...state.userInfos, ...userData};
     state.userInfos.userToken = token;
     state.isLoggedIn = true;
     state.showModal = false;
@@ -91,6 +91,15 @@ namespace Mutations {
       router.push(state.RouteAfter?state.RouteAfter:redirect);
     }
   }
+
+  function updateUserInfos(state: ILoginState, {userData, token}) {
+    state.userInfos = {...state.userInfos, ...userData};
+    state.userInfos.userToken = token;
+    state.isLoggedIn = true;
+    state.showModal = false;
+    addAuthHeaders();
+  }
+
   function disconnectUser(state: ILoginState) {
     Object.keys(initialState).forEach(key => {
       state[key] = initialState[key]
@@ -112,6 +121,7 @@ namespace Mutations {
     connectUser: b.commit(connectUser),
     disconnectUser: b.commit(disconnectUser),
     sessionChecked: b.commit(sessionChecked),
+    updateUserInfos: b.commit(updateUserInfos)
   }
 }
 
@@ -138,18 +148,20 @@ namespace Actions {
       state.requesting = false;
     }
   }
-  /* */
+
   async function connexionSuccess(context, {token, redirect}) {
     let userData = await jwtDecode(token);
     LoginModule.mutations.connectUser({userData, token, redirect});
     NotificationsModule.actions.addNotification({ type: "success", message: `Vous etes connecté en tant que ${capitalize(userData.username)}` })
   }
+
   function disconnectRequest() {
     JWT.clear();
     LoginModule.mutations.disconnectUser();
     router.push('/');
     NotificationsModule.actions.addNotification({ type: "alert", message: `Vous avez été deconnecté` })
   }
+
   async function checkUserSession(){
     let {token, refresh_token} = JWT.fetch();
     if (!!token) {
@@ -168,11 +180,28 @@ namespace Actions {
     return;
   }
 
+  async function refreshUserInfos(){
+    let {token, refresh_token} = JWT.fetch();
+    if (!!token) {
+      try {
+        let { data } = await Api.checkSession({token, refresh_token});
+        JWT.set(data);
+        let userData = await jwtDecode(data.token);
+        LoginModule.mutations.updateUserInfos({userData, token: data.token});
+      } catch(e) {
+        Mutations.mutations.disconnectUser();
+      }
+    }
+  }
+
+
+
   export const actions = {
     connexionRequest: b.dispatch(connexionRequest),
     connexionSuccess: b.dispatch(connexionSuccess),
     disconnectRequest: b.dispatch(disconnectRequest),
     checkUserSession: b.dispatch(checkUserSession),
+    refreshUserInfos: b.dispatch(refreshUserInfos)
   }
 }
 

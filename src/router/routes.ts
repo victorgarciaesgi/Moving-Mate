@@ -70,6 +70,7 @@ export const routesList: MyRouteConfig[]  = [
       async asyncData(to: MyRoute) {
         if (Stores.GoogleMaps.state.mapReady) {
           Stores.MovingStore.mutations.updateSearchValue('');
+          Stores.MovingStore.mutations.updateSearchingState(true);
           Stores.MovingStore.actions.fetchMoving({})
         }
         return {};
@@ -85,6 +86,7 @@ export const routesList: MyRouteConfig[]  = [
           transparent: true,
           async asyncData(to: MyRoute) {
             Stores.MovingStore.mutations.updateCommitedValue(to.params.search || '');
+            Stores.MovingStore.mutations.updateSearchingState(true);
             Stores.MovingStore.mutations.updateSearchValue(to.params.search || '');
             return {title: to.params.search};
           }

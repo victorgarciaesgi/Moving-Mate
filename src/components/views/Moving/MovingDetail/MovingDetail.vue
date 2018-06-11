@@ -6,7 +6,7 @@
         <SvgIcon :src='require("@icons/moving/fullscreen.svg")' color='white' :size='60'/>
       </div>
     </div>
-    <UITabs :tabs='tabs' v-if='isMovingMine'/>
+    <UITabs :tabs='tabs' v-if='canSeeInfos'/>
     <div class='child-views'>
       <transition name='slide' mode='out-in'>
         <router-view/>
@@ -40,12 +40,22 @@ export default class MovingDetail extends Vue {
   public tabs: ITab[] = [
     {title: 'Informations',icon: require('@icons/infos.svg'), to: {name: routesNames.movingInfos, params: {movingId: this.paramId}}},
     {title: 'Participants validés',icon: require('@icons/done.svg'), to: {name: routesNames.movingParticipants, params: {movingId: this.paramId}}},
-    {title: 'Demandes',icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
-    {title: 'Inviter des déménageurs',icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
-    {title: 'Offres partenaires', icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
+    {title: 'Demandes',condition: this.isMovingMine, icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
+    {title: 'Inviter des déménageurs', condition: this.isMovingMine, icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
+    {title: 'Offres partenaires',condition: this.isMovingMine,  icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
   ]
   public imagePrevisu = false;
   public imagePrevisuLoaded = false;
+
+  get canSeeInfos() {
+    if (this.isMovingMine) return true;
+    else {
+      if (this.movingEvent.participations) {
+        return this.movingEvent.participations.users.some(m => m.id == LoginStore.state.userInfos.id)
+      }
+      return false;
+    }
+  }
 
   get paramId() {
     return MovingStore.state.oneAnnouncement?MovingStore.state.oneAnnouncement.id: null;

@@ -137,7 +137,7 @@ export default class BeMover extends Vue {
         title: "Opération réussie!",
         message: "Vous êtes bien enregistré en temps que déménageur, vous apparaitrez maintenant dans les recherches",
         onClose: [
-          () => Router.push({name: routesNames.user, params: {userId: this.userInfos.id}})
+          () => Router.push({name: routesNames.user, params: {userId: this.userInfos.id}}),
         ]
       })
     } catch(e) {

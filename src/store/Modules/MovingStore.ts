@@ -69,8 +69,8 @@ namespace Mutations {
     }
   }
 
-  function updateSearchingState(state: IMovingState) {
-    state.searchingMovingList = !state.searchingMovingList;
+  function updateSearchingState(state: IMovingState, value: boolean) {
+    state.searchingMovingList = value;
   }
 
   function updateOneAnnouncement(state: IMovingState, movingEvent: Object | null) {
@@ -93,7 +93,7 @@ namespace Actions {
 
   async function fetchMoving(context, payload?: {search?: string}) {
     GoogleMaps.mutations.updateMarkers([]);
-    Mutations.mutations.updateSearchingState();
+    Mutations.mutations.updateSearchingState(true);
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateMovingList([]);
@@ -111,7 +111,7 @@ namespace Actions {
         actions.createMarkers({annoucements: result, payload: result});
       }
     } finally {
-      Mutations.mutations.updateSearchingState();
+      Mutations.mutations.updateSearchingState(false);
     }
   }
 

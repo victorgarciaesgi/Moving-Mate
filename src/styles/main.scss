@@ -47,6 +47,11 @@
   justify-content: center;
   align-content: space-around;
   align-items: center;
+
+  &.no-result {
+    font-weight: bold;
+    padding: 20px;
+  }
 }
 
 .form-split {

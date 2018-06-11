@@ -1,30 +1,28 @@
 <template>
   <div class='star-component'>
-    <div class='displayNote' v-if='data.center'></div>
-    <div class="star-container" @mouseleave='leave()'>
-      <div class="starRating"
-          v-for='(index) in data.starCount' :key='index' 
-          :style='getSize'
-          :class='getActiveClass(index)' 
-          >
-        <SvgIcon :src='getActiveImage(index)'
-          :color='getActiveColor(index)'
-          :size='data.size'/>
-        <template v-if='data.editable'>
-          <div class="part" @mouseenter="hover(index - 0.5)" @click="set(index - 0.5)"></div>
-          <div class="part" @mouseenter="hover(index)" @click="set(index)"></div>
-        </template>
+    <div class='star-content'>
+      <div class='displayNote' v-if='data.center'></div>
+      <div class="star-container" @mouseleave='leave()'>
+        <div class="starRating"
+            v-for='(index) in data.starCount' :key='index' 
+            :style='getSize'
+            :class='getActiveClass(index)' 
+            >
+          <SvgIcon :src='getActiveImage(index)'
+            :color='getActiveColor(index)'
+            :size='data.size'/>
+          <template v-if='data.editable'>
+            <div class="part" @mouseenter="hover(index - 0.5)" @click="set(index - 0.5)"></div>
+            <div class="part" @mouseenter="hover(index)" @click="set(index)"></div>
+          </template>
+        </div>
+      </div>
+      <div class='displayNote'>
+        <div class='value'>{{ (hoverCount != 0?(hoverCount):'-') }} / {{data.starCount}}</div>
       </div>
     </div>
-    <div class='displayNote'>
-      <div class='value'>{{ (hoverCount != 0?(hoverCount):'-') }} / {{data.starCount}}</div>
-    </div>
+    <FormError v-if='vl' :vl='vl' :data='data' center/>
 
-    
-    <!-- <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
-    <div v-else-if='valid && dirty && data.error' class="form-valid-icon form-valid"></div>
-    <div v-else-if='!valid && dirty && data.error' class="form-valid-icon form-invalid"></div>
-    <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div> -->
   </div>
 </template>
 
@@ -40,7 +38,8 @@ import {FormMixin} from '../../Mixins/FormMixin';
 @Component({
   components: {
     SvgIcon: SvgIcon
-  }
+  },
+  props: ['value']
 })
 export default class StarRating extends FormMixin {
   @Prop() value: number;
@@ -123,6 +122,7 @@ export default class StarRating extends FormMixin {
   set(value) {
     this.hoverStar = false;
     this.rating = value;
+    if(this.vl) this.vl.$touch();
     this.$emit("input", value);
     this.$emit("rate", value);
   }
@@ -134,61 +134,67 @@ export default class StarRating extends FormMixin {
 
 .star-component {
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  position: relative;
+  flex-flow: column wrap;
   width: 100%;
 
-  .star-container {
-    position: relative;
+  .star-content {
     display: flex;
+    flex-flow: row nowrap;
     justify-content: center;
-    align-items: center;
-    align-self: center;
-    flex-flow: row wrap;
-    flex: 0 0 auto;
+    position: relative;
+    width: 100%;
 
-    .starRating {
+    .star-container {
       position: relative;
       display: flex;
-      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      flex-flow: row wrap;
+      flex: 0 0 auto;
 
-      /deep/ .svg-container {
-        position: absolute;
-      }
-
-      &.editable {
-        cursor: pointer;
-      }
-
-      .part {
+      .starRating {
         position: relative;
-        flex: 0 0 auto;
-        height: 100%;
-        width: 50%;
+        display: flex;
+        flex-flow: row nowrap;
+
+        /deep/ .svg-container {
+          position: absolute;
+        }
+
+        &.editable {
+          cursor: pointer;
+        }
+
+        .part {
+          position: relative;
+          flex: 0 0 auto;
+          height: 100%;
+          width: 50%;
+        }
       }
     }
-  }
 
-  .displayNote {
-    position: relative;
-    color: white;
-    min-height: 0px;
-    flex: 1 0 0;
-    flex-flow: row nowrap;
-    display: flex;
-    height: auto;
-    justify-content: flex-end;
-    align-items: center;
-    min-height: 0;
-    min-width: 0;
+    .displayNote {
+      position: relative;
+      color: white;
+      min-height: 0px;
+      flex: 1 0 0;
+      flex-flow: row nowrap;
+      display: flex;
+      height: auto;
+      justify-content: flex-end;
+      align-items: center;
+      min-height: 0;
+      min-width: 0;
 
-    .value {
-      border-radius: 20px;
-      flex: 0 0 auto;
-      background-color: $mainStyle;
-      font-size: 12px;
-      padding: 2px 8px 2px 8px;
+      .value {
+        border-radius: 20px;
+        flex: 0 0 auto;
+        background-color: $mainStyle;
+        font-size: 12px;
+        padding: 2px 8px 2px 8px;
+      }
     }
   }
 }

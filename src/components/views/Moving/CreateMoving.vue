@@ -9,7 +9,7 @@
           <li v-if='countStep == 0' class='create-view' key='userInfos'>
             <FormMessage>
               <template slot='title'>Pourquoi vérifier mes informations ?</template>
-              Indiquer une adresse email et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la réservation effectuée.
+              Indiquer un prénom, nom et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la mise en relation effectuée.
             </FormMessage>
             <FormText v-model='CreateMovingForm.part0.firstname' 
               :vl='$v.CreateMovingForm.part0.firstname' 
@@ -272,7 +272,7 @@ export default class CreateMoving extends Vue {
         ]
       }),
       volume: new Forms.TextForm({
-        placeholder: `Volume estimé (en m³)`,
+        placeholder: `Volume estimé total (en m³)`,
         value: 50,
         icon: require('@icons/moving/volume.svg')
       }),

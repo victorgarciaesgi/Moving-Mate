@@ -63,6 +63,7 @@ import axios from 'axios';
 import {UITabs, BackgroundLoader, SvgIcon, StarRating} from '@components';
 import { routesNames } from '@router';
 import {ITab} from '@types';
+import {timeout} from '@methods'
 import {Forms, AlertsElement, ActionsElements} from '@classes';
 
 @Component({
@@ -82,7 +83,7 @@ export default class User extends Vue {
   get tabs(): ITab[]  {
     return [
       {title: 'Profil',icon: require('@icons/movers/user.svg'), to: {name: routesNames.user, params: {userId: this.UserId}}},
-      {title: 'Editer mon profil',icon: require('@icons/movers/user.svg'), condition: this.isMyProfile, to: {name: routesNames.userEdit, params: {userId: this.UserId}}},
+      {title: 'Editer mon profil',icon: require('@icons/edit.svg'), condition: this.isMyProfile, to: {name: routesNames.userEdit, params: {userId: this.UserId}}},
       {title: 'Participations',icon: require('@icons/movers/grid.svg'),childs: true, to: {name: routesNames.userParticipations, params: {userId: this.UserId}}},
       {title: 'Déménagements',icon: require('@icons/truck.svg'), to: {name: routesNames.userMovings, params: {userId: this.UserId}}},
     ]
@@ -106,46 +107,46 @@ export default class User extends Vue {
   })
 
   beforeDestroy() {
-    console.log('destroyed')
     UserStore.mutations.updateOneUser(null);
   }
 
   async proposeHelp() {
     try {
-      const response = await new AlertsElement.Alert({
-        title: `Proposer son aide à ${this.userName}`,
-        type: 'confirm',
+      const response = await new AlertsElement.FormAlert({
+        title: `Demande de l'aide à ${this.userName}`,
         message: `En confirmant, ${this.userName} recevra une demande d'aide de votre part`,
         strict: true,
-        actions: [
-          new ActionsElements.ConfirmAction({
-            text: 'Confirmer',
+        formElement: {
+          form: new Forms.Form({
+            message: new Forms.FieldForm({
+              placeholder: `Message pour ${this.userName} (optionnel)`
+            })
           }),
-          new ActionsElements.CancelAction()
-        ]
+          submit: {
+            params: {
+              id: this.UserId
+            },
+            trigger:  () => timeout(1000)
+          }
+        }
       }).waitResponse();
 
       if (response) {
         new AlertsElement.SuccessAlert({
-          title: `Proposition envoyée`,
+          title: `Demande envoyée`,
           message: `Votre demande a bien été envoyée à ${this.userName}`,
         })
       }
     } catch(e) {
       new AlertsElement.ErrorAlert({
-        title: `La proposition a échoué`,
-        message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+        title: `La demande a échoué`,
+        message: `Une erreur s'est produite lors de l'envoi de la demande`,
       })
     }
   }
 
-  async fetchImage() {
-    let {data} = await axios.get(`https://randomuser.me/api/?inc=picture`);
-    this.profilePic = data.results[0].picture.large;
-  }
-
   async mounted () {
-    await this.fetchImage();
+    this.profilePic = this.user.avatar || require('@images/user.jpg');
   }
 }
 </script>
