@@ -58,6 +58,7 @@ export default class App extends Vue {
 
   created() {
     document.addEventListener("touchstart", () => {}, <any>{ passive: true });
+
     $(window).resize(() => {
       EventBus.$emit("closePopups");
     });

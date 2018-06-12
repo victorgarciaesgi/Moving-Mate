@@ -1,6 +1,8 @@
 import { RouteConfig, Route, RouteRecord } from 'vue-router/types';
 import * as Stores from '@store';
 import { Connexion, Inscription } from '@components';
+import {AlertsElement, ActionsElements} from '@classes';
+import Router from './index';
 import {timeout} from '@methods';
 
 export const routesNames = {
@@ -299,12 +301,22 @@ export const routesList: MyRouteConfig[]  = [
       },
     ]
   },
+  {
+    path: '/emailConfirmed',
+    async beforeEnter() {
+      Router.push('/');
+      await new AlertsElement.SuccessAlert({
+        title: 'Vous êtes bien inscrit!',
+        message: 'Votre compte a bien été activé. Vous pouvez maintenant vous connecter!'
+      }).waitResponse()
+    }
+  },
   { path: '/*',
     meta: {
       title: 'Page non trouvée'
     },
     component: () => import('@views/Home/Home.vue')
-}
+  }
 ]
 
 
