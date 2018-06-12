@@ -1,13 +1,8 @@
 <template>
-  <div class="switch">
-    <ul class="options">
-      <li class='option' v-for='(option, index) in options' 
-        :key='index'
-        :class='{selected: index == value}'
-        @click.stop='updateValue(index)'>
-          {{option}}
-      </li>
-    </ul>
+  <div class="Switch">
+    <div class='container' @click='changeValue' :class='{checked: value}'>
+      <div class='boule' ></div>
+    </div>
   </div>
 </template>
 
@@ -19,20 +14,15 @@ import shortid from 'shortid';
 @Component({})
 export default class UISwitch extends Vue {
 
-  @Prop() value: number;
-  @Prop() options: Array<string>;
-  @Prop() name: string;
+  @Prop() value: boolean;
 
-  public percent: number;
-  public id;
 
-  updateValue(value: number) {
-    this.$emit('input', value);
+  changeValue() {
+    this.$emit('input', !this.value)
   }
 
-  created() {
-    this.id = shortid.generate();
-  }
+
+  
 }
 </script>
 
@@ -40,33 +30,44 @@ export default class UISwitch extends Vue {
 
 <style lang='scss' scoped>
 
-.switch {
+$boule: 25px;
+
+.Switch {
   position: relative;
   display: flex;
-  flex-flow: row wrap;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  padding: 5px;
 
-  ul.options {
-    position: relative;
+  .container {
     display: flex;
-    justify-content: center;
-    flex-flow: row wrap;
-    overflow: hidden;
-    width: auto;
-    border-radius: 5px;
-    background-color: $w240;
-    font-size: 14px;
-    border: 1px solid $w230;
+    position: relative;
+    width: 50px;
+    height: $boule;
+    border-radius: $boule;
+    background-color: $w230;
+    transition: all 0.2s;
+    cursor: pointer;
 
-    li.option {
-      display: flex;
-      flex-flow: row wrap;
-      flex: 1 0 0;
-      font-size: 14px;
-      width: auto;
-      padding: 5px 10px 5px 10px;
 
-      &.selected {
-        background-color: white;
+    .boule {
+      position: absolute;
+      height: $boule;
+      width: $boule;
+      border-radius: $boule;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      left: 0;
+      top: 0;
+      transition: all 0.2s;
+
+    }
+
+    &.checked {
+      background-color: $green1;
+
+      .boule {
+        left: calc(100% - #{$boule});
       }
     }
   }

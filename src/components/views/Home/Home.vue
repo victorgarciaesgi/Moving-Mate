@@ -53,8 +53,8 @@ export default class Home extends Vue {
   public helps = [
     {icon: require('@icons/annonce.svg'), text:'Je publie une annonce gratuitement sur le site!'},
     {icon: require('@icons/people.svg'), text:'Des déménageurs répertoriés viendront proposer leur services'},
-    {icon: require('@icons/payment.svg'), text:'Je prépaie en ligne. La somme sera verséee une fois le déménagement fini'},
-    {icon: require('@icons/star_plain.svg'), text:'Je laisse un avis et une note sur les déménageurs'},
+    {icon: require('@icons/phone.svg'), text:'Nous vous mettons en relation avec les déménageurs'},
+    {icon: require('@icons/star_plain.svg'), text:'Je laisse un avis et une note sur les déménageurs une fois le déménagement fini'},
   ];
 
   handlePathSelect(path: svgPath) {

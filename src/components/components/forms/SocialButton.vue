@@ -105,7 +105,7 @@ export default class SocialButton extends Vue {
   &.google {
     background-color: white;
     color: $mainColor;
-    border: 1px solid $w230;
+    border: 1px solid $w220;
 
     &:active {
       background-color: $w245;

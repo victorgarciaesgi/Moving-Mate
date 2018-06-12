@@ -57,10 +57,14 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
         console.log("Route interceptor log: <5>")
         ProgressBar.mutations.start();
       }
+      else if (to.meta.transparent && !to.matched.some(m => m.name == from.name)) {
+        console.log("Route interceptor log: <6>")
+        ProgressBar.mutations.start();
+      } 
 
       // If page is initialazed on child
       if (to.matched[0] && to.meta.isModal) {
-        console.log("Route interceptor log: <6>")
+        console.log("Route interceptor log: <7>")
         if (!from.name) {
           getRouteData(to.matched[0]);
           GlobalStore.mutations.setPreviousModalRoute(to.matched[0].path);

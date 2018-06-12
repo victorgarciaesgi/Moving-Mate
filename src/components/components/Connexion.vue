@@ -10,7 +10,7 @@
           <span class='form-link' @click='handleSubmitLink()'>Inscrivez vous</span>
         </span>
       </div>
-      <SocialButton media='facebook'>Connexion avec Facebook</SocialButton>
+      <!-- <SocialButton media='facebook'>Connexion avec Facebook</SocialButton> -->
       <SocialButton media='google'>Connexion avec Google</SocialButton>
       <FormSeparator>Ou connectez vous</FormSeparator>
       <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>

@@ -23,7 +23,9 @@ export default class Home extends Vue {
 
 .Footer {
   display: flex;
-  
+  height: 300px;
+  background-color: $g60;
+  width: 100%;
 }
 
 </style>

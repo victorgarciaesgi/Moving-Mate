@@ -31,10 +31,11 @@
             </li>
           </ul>
           <ul class='other-infos'>
-            <li class='disponibility'>
+            <li class='disponibility' :class='{activated: disponibility}'>
               <span class='dot'></span>
-              <span class='text'>Disponible</span>
-          </li>
+              <span class='text'>{{disponibility?'Disponible':'Indisponible'}}</span>
+              <UISwitch v-model='disponibility' v-if='isMyProfile'/>
+            </li>
             <li class='note'>
               <StarRating :value='starDetail.value' :data='starDetail' />
             </li>
@@ -60,14 +61,14 @@ import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
 import {UserStore, LoginStore} from '@store';
 import axios from 'axios';
-import {UITabs, BackgroundLoader, SvgIcon, StarRating} from '@components';
+import {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch} from '@components';
 import { routesNames } from '@router';
 import {ITab} from '@types';
 import {timeout} from '@methods'
 import {Forms, AlertsElement, ActionsElements} from '@classes';
 
 @Component({
-  components: {UITabs, BackgroundLoader, SvgIcon, StarRating}
+  components: {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch}
 })
 
 export default class User extends Vue {
@@ -79,6 +80,8 @@ export default class User extends Vue {
   get userName() {return this.user.username};
   get userPrice() {return this.user.pricePerHour || 15};
   get userCity() {return this.user.city || 'Paris'}
+
+  public disponibility = true;
 
   get tabs(): ITab[]  {
     return [
@@ -282,9 +285,13 @@ export default class User extends Vue {
               .dot {
                 height: 10px;
                 width: 10px;
-                background-color: $green1;
+                background-color: $red1;
                 border-radius: 100%;
                 margin-right: 10px;
+              }
+
+              &.activated .dot{
+                background-color: $green1;
               }
             }
           }

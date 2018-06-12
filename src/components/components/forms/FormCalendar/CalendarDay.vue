@@ -76,15 +76,16 @@ li.CalendarDay {
   justify-content: center;
   align-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
 
   span {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 30px;
-    width: 30px;
+    align-content: center;
+    height: 32px;
+    width: 32px;
     border-radius: 100%;
   }
 

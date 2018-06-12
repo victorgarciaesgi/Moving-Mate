@@ -104,7 +104,7 @@ export default class Alerts extends Vue {
   }
 
   get isDisabled() {
-    return this.$v.alertForm.$invalid;
+    return this.$v.alertForm?this.$v.alertForm.$invalid:false;
   }
 
   get rightButtons() {return this.alertState.alertData.actions.filter(m=>m).filter(m => m.type !== "cancel");}

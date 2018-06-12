@@ -206,8 +206,9 @@ export default class FormUpload extends FormMixin {
 
     .dropDisplay {
       display: flex;
+      position: relative;
       flex-flow: row nowrap;
-      flex: 1 1  auto;
+      width: 100%;
       background-color: #e0e1e4;
       border-radius: 5px;
       border: 3px dashed $w180;
@@ -218,6 +219,7 @@ export default class FormUpload extends FormMixin {
         display: flex;
         height: 100%;
         width: 180px;
+        flex: 0 0 auto;
         justify-content: center;
         align-items: center;
         background-color: $w235;
@@ -233,6 +235,8 @@ export default class FormUpload extends FormMixin {
       .image-uploaded {
         display: flex;
         flex-flow: column nowrap;
+        position: relative;
+        flex: 1 1 auto;
 
         .info {
           display: flex;
@@ -243,11 +247,19 @@ export default class FormUpload extends FormMixin {
           font-size: 14px;
           color: $w120;
           font-weight: bold;
+          overflow: hidden;
 
           &.title {
             color: $mainStyle;
             font-size: 15px;
             align-items: flex-end;
+            display: flex;
+            flex-wrap: nowrap;
+
+            span {
+              @include ellipsis;
+            }
+
           }
 
           &.state {

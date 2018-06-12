@@ -6,7 +6,7 @@
         <div class='moving-logo'>
           <img src="~@images/logo_truck_M.svg">
         </div>
-        <SocialButton media='facebook'>Inscription avec Facebook</SocialButton>
+        <!-- <SocialButton media='facebook'>Inscription avec Facebook</SocialButton> -->
         <SocialButton media='google'>Inscription avec Google</SocialButton>
         <FormSeparator>Ou inscrivez vous</FormSeparator>
         <FormText v-model="SignupForm.email" :vl='$v.SignupForm.email' :data='SignupForm.fieldsData.email'/>
