@@ -65,7 +65,7 @@ const configProd = {
           comments: false,
           beautify: false,
         },
-        compress: { keep_fnames: true },
+        compress: { keep_fnames: true, drop_console: true},
         warnings: false
       }
     }),
