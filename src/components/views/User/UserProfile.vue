@@ -73,7 +73,12 @@
 
 .UserProfile {
   display: flex;
+  position: relative;
   flex-flow: column wrap;
+  flex: 0 1 auto;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
 
   .user-activity {
     display: flex;

@@ -25,7 +25,8 @@ export const routesNames = {
   user: 'User',
   userEdit: 'userEdit',
   userMovings: 'UserMovings',
-  userParticipations: 'UserParticipations'
+  userParticipations: 'UserParticipations',
+  admin: 'admin'
 }
 
 interface MyMeta {
@@ -304,12 +305,29 @@ export const routesList: MyRouteConfig[]  = [
   {
     path: '/emailConfirmed',
     async beforeEnter() {
-      Router.push('/');
-      await new AlertsElement.SuccessAlert({
-        title: 'Vous êtes bien inscrit!',
-        message: 'Votre compte a bien été activé. Vous pouvez maintenant vous connecter!'
-      }).waitResponse()
+      Router.replace('/', async () => {
+        new AlertsElement.SuccessAlert({
+          title: 'Vous êtes bien inscrit!',
+          message: 'Votre compte a bien été activé. Vous pouvez maintenant vous connecter!',
+          actions: [
+            new ActionsElements.LoginAction()
+          ]
+        })
+      });
+      
     }
+  },
+  {
+    path: '/admin', name: routesNames.admin,
+    component: () => import('@views/Admin/Admin.vue'),
+    meta: {
+      title: 'Administration',
+      requiresAuth: true,
+      isAuthorized(to) {
+        return Stores.LoginStore.getters.isAdmin;
+      }
+    }
+
   },
   { path: '/*',
     meta: {

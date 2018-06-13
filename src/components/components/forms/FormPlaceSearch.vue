@@ -156,8 +156,8 @@ export default class FormPlaceSearch extends FormMixin {
   mounted() {
     this.formId = shortid.generate();
     if (this.value != "") {
-      this.tempValue = `Placeholder d'adresse`
-      if (this.vl) this.vl.$touch();
+      this.tempValue = this.value.title || `Placeholder d'adresse`;
+      if (this.vl && !this.data.editMode) this.vl.$touch();
     }
   }
 

@@ -77,34 +77,47 @@ export default class UserEdit extends Vue {
     this.editUserForm = new Forms.Form({
       username: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        placeholder: 'Votre pseudo'
+        placeholder: 'Votre pseudo',
+        value: this.userInfos.username,
+        editMode: true
       }),
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        placeholder: 'Votre prénom'
+        placeholder: 'Votre prénom',
+        value: this.userInfos.firstname,
+        editMode: true
       }),
       lastname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        placeholder: 'Votre nom'
+        placeholder: 'Votre nom',
+        value: this.userInfos.lastname,
+        editMode: true
       }),
       picture: new Forms.UploadForm({
-        placeholder: 'Votre photo de profil'
+        placeholder: 'Votre photo de profil',
+        value: this.userInfos.avatar || require('@images/home_image/home_image.jpg'),
+        editMode: true
       }),
-      address: new Forms.TextForm({
+      address: new Forms.PlaceSearchForm({
         icon: require('@icons/localisation.svg'),
         placeholder: 'Votre adresse',
+        value: {title: this.userInfos.address?this.userInfos.address.value: null},
+        editMode: true
       }),
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
         type: 'tel',
-        placeholder: 'Votre numéro de téléphone'
+        placeholder: 'Votre numéro de téléphone',
+        editMode: true
       }),
       price: new Forms.TextForm({
         icon: require('@icons/euro.svg'),
         placeholder: 'Votre prix par heure',
+        editMode: true
       }),
       description: new Forms.FieldForm({
-        placeholder: 'Votre description'
+        placeholder: 'Votre description',
+        editMode: true
       })
     })
   }

@@ -57,7 +57,7 @@
                     <ul class='user-option-list'>
                       <router-link tag='li' :to='userProfilePath' class='user-option'>Mon profil</router-link>
                       <li class='user-option'>Historique de déménagements</li>
-                      <li class='user-option' v-if='isAdmin'>Administration</li>
+                      <router-link tag='li' to='/admin' class='user-option' v-if='isAdmin'>Administration</router-link>
                       <li class='user-option'>Aide</li>
                       <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
                     </ul>
@@ -217,7 +217,7 @@ export default class HeaderComponent extends Vue {
 div.header-wrapper{
   position: absolute;
   height: 100%;
-  width: 100%;
+  width: 100vw;
   top: 0;
   left: 0;
 

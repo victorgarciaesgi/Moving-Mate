@@ -16,7 +16,7 @@
           <div class='image' v-else-if='imageUploaded' :style='formatedImage'></div>
         </div>
         <div class='image-uploaded' v-if='imageUploaded'>
-          <div class='info title'>
+          <div class='info title' v-if="!onlyDisplay">
             <span>{{fileTitle}}</span>
           </div>
           <div class='info state'>
@@ -24,7 +24,7 @@
               <span>Transfert en cours...</span>
               <img class='image' src='@images/loading_grey.svg'>
             </template>
-            <template v-else>
+            <template v-else-if='!onlyDisplay'>
               <span>Importé</span>
               <SvgIcon class='image' :src='require("@icons/done.svg")' :size='20'/>
             </template>
@@ -68,6 +68,7 @@ export default class FormUpload extends FormMixin {
   public draggedOver = false;
 
   public dropped = false;
+  public onlyDisplay = false;
   public loadingImage = false;
   public imageUploaded = false;
   public fileTitle: string = null;
@@ -144,7 +145,7 @@ export default class FormUpload extends FormMixin {
     this.imageUploaded = false;
     this.fileTitle= null;
     this.imagePrevisu = null;
-    this.$emit('input', '');
+    this.$emit('input', null);
     this.$refs['inputFile'].value = null;
   }
 
@@ -175,6 +176,15 @@ export default class FormUpload extends FormMixin {
   triggerInput() {
     if (!this.imageUploaded) {
       this.$refs['inputFile'].click();
+    }
+  }
+
+  created() {
+    if (!!this.value) {
+      this.onlyDisplay = true;
+      this.imagePrevisu = this.value;
+      this.dropped = true;
+      this.imageUploaded = true;
     }
   }
 
@@ -236,10 +246,14 @@ export default class FormUpload extends FormMixin {
         display: flex;
         flex-flow: column nowrap;
         position: relative;
+        justify-content: flex-start;
         flex: 1 1 auto;
+        min-width:0;
+
 
         .info {
           display: flex;
+          position: relative;
           flex: 1 1 auto;
           justify-content: flex-start;
           align-items: center;
@@ -250,11 +264,12 @@ export default class FormUpload extends FormMixin {
           overflow: hidden;
 
           &.title {
+            position: relative;
             color: $mainStyle;
             font-size: 15px;
             align-items: flex-end;
             display: flex;
-            flex-wrap: nowrap;
+            flex-flow: row nowrap;
 
             span {
               @include ellipsis;

@@ -53,14 +53,14 @@ export class FormMixin extends Vue {
   mounted() {
     this.formId = shortid.generate();
     if (this.value && !!this.vl && this.value.toString().trim().length) {
-      this.vl.$touch();
+      if (this.vl && !this.data.editMode) this.vl.$touch();
     }
   }
 
   created() {
     if (this.data.debounce) {
       this.updateValue = debounce(e => {
-        this.vl.$touch();
+        if (this.vl && !this.data.editMode) this.vl.$touch();
         this.$emit("input", e);
       }, this.data.debounce)
     }

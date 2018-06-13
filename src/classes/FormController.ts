@@ -66,6 +66,7 @@ export namespace Forms {
     debounce?: number;
     options?: IOptions[];
     component?: IComponentType;
+    editMode?: boolean;
     noEdit?: boolean;
     validations?: {
       [x:string]: any
@@ -85,12 +86,13 @@ export namespace Forms {
     debounce?: number;
     options?: IOptions[];
     component: IComponentType;
+    editMode?: boolean;
     noEdit?: boolean;
     validations?: {
       [x:string]: any
     }
 
-    constructor({error = true, required = true, noEdit = false, ...fields}: FormPayload) {
+    constructor({error = true, required = true, noEdit = false, editMode = false, ...fields}: FormPayload) {
       this.value = fields.value != undefined ? fields.value : '';
       this.icon = fields.icon || null;
       this.type = fields.type || 'text';
@@ -105,6 +107,7 @@ export namespace Forms {
       this.validations = fields.validations;
       this.tempValue = fields.tempValue
       this.noEdit = noEdit;
+      this.editMode = editMode;
     }
 
     reset() {

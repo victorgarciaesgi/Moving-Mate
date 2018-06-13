@@ -1,7 +1,7 @@
 <template>
   <div class='User' v-if="user">
     <!-- <div class='user-cover'><BackgroundLoader :src='coverPicture' /></div> -->
-    <UITabs :tabs='tabs'/>
+    <UITabs class='desktop-tabs' :tabs='tabs'/>
     <div class='sections'>
       <section class='user-card'>
         <div class="header">
@@ -46,12 +46,12 @@
           </div>
         </div>
       </section>
+      <UITabs class='mobile-tabs' :tabs='tabs'/>
       <section class='user-views'>
         <transition name='fade' mode='out-in'>
           <router-view />
         </transition>
       </section>
-      <section class=''></section>
     </div>
   </div>
 </template>
@@ -166,10 +166,12 @@ export default class User extends Vue {
   
   .sections {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     padding: 20px;
+    width: 100%;
     justify-content: center;
     align-items: flex-start;
+    min-width: 0;
     
     .user-card {
       display: flex;
@@ -325,13 +327,59 @@ export default class User extends Vue {
         }
       }
     }
+
+    .user-views {
+      display: flex;
+      position: relative;
+      flex-flow: row nowrap;
+      margin-left: 30px;
+      flex: 0 1 auto;
+      min-width: 0;
+      justify-content: center;
+      align-items: flex-start;
+      align-content: flex-start;
+
+      & > * {
+        max-width: 600px;
+        flex: 0 1 auto;
+      }
+    }
+
+    .mobile-tabs {
+      display: none;
+      width: 100vw;
+    }
   }
 
-  .user-views {
-    display: flex;
-    width: 600px;
+  
 
-    margin-left: 30px;
+  @media screen and (max-width: 1000px) {
+    .desktop-tabs {
+      display: none;
+    }
+
+    
+
+    .sections {
+      flex-flow: column wrap;
+      align-items: center;
+      justify-content: flex-start;
+
+      .mobile-tabs {
+        display: flex;
+      }
+
+      .user-card {
+        position: relative;
+        top: 0;
+        margin-bottom: 20px;
+      }
+
+      .user-views {
+        margin-left: 0;
+        margin-top: 20px;
+      }
+    }
   }
 
 }

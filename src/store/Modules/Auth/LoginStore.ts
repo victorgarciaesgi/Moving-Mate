@@ -101,6 +101,7 @@ namespace Mutations {
   }
 
   function disconnectUser(state: ILoginState) {
+    JWT.clear();
     Object.keys(initialState).forEach(key => {
       state[key] = initialState[key]
     });
@@ -156,7 +157,6 @@ namespace Actions {
   }
 
   function disconnectRequest() {
-    JWT.clear();
     LoginModule.mutations.disconnectUser();
     router.push('/');
     NotificationsModule.actions.addNotification({ type: "alert", message: `Vous avez été deconnecté` })

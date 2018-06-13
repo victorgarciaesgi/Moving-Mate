@@ -67,7 +67,7 @@ export default class FormSelect extends FormMixin {
   toggleOptions() {
     if (this.showOptions) {
       this.showOptions = false;
-      this.vl.$touch();
+      if (this.vl) this.vl.$touch();
     } else {
       this.showOptions = true;
       const target = this.$refs['select-options'];
@@ -82,7 +82,7 @@ export default class FormSelect extends FormMixin {
     EventBus.$on('closePopups', (element?) => {
       if (element !== this && this.showOptions) {
         this.showOptions = false;
-        this.vl.$touch()
+        if (this.vl) this.vl.$touch()
       }
     })
   }

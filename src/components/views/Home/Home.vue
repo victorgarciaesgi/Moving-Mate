@@ -2,9 +2,18 @@
   <div class='Home'>
     <section class='image-home'>
       <ul class="link-list">
-        <router-link to='moving' class='link'>Voir les déménagements</router-link>
-        <router-link to='movers' class='link'>Liste des déménageurs</router-link>
-        <router-link to='moving/create' class='link'>Créer une annonce</router-link>
+        <router-link to='moving' class='link'>
+          <SvgIcon class='icon' :src='require("@icons/truck.svg")'/>
+          Voir les déménagements
+        </router-link>
+        <router-link to='movers' class='link'>
+          <SvgIcon class='icon' :src='require("@icons/people.svg")'/>
+          Liste des déménageurs
+        </router-link>
+        <router-link to='moving/create' class='link'>
+          <SvgIcon class='icon' :src='require("@icons/add_circle.svg")'/>
+          Créer une annonce
+        </router-link>
       </ul>
     </section>
 
@@ -110,14 +119,20 @@ export default class Home extends Vue {
       justify-content: center;
       align-items: center;
 
-
       .link {
+        display: flex;
         padding: 10px 20px 10px 20px;
         background-color: white;
         border-radius: 5px;
         font-weight: bold;
         box-shadow: 0 0 10px rgba(0,0,0,0.2);
         margin: 5px 10px 5px 10px;
+        justify-content: center;
+        align-items: center;
+
+        .icon {
+          margin-right: 10px;
+        }
       }
 
     }
