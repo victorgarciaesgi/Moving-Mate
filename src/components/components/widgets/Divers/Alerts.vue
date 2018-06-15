@@ -18,7 +18,7 @@
               v-for='(value, key) in alertState.alertData.formElement.form.fieldsData' 
               :key='key'
               v-model='alertForm[key]'
-              :vl='$v.alertForm[key]'
+              :vl='$v.alertForm?$v.alertForm[key]:null'
               :data='value'></component>
           </div>
         </div>

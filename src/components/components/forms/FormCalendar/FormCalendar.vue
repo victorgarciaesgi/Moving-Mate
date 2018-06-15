@@ -233,6 +233,9 @@ export default class FormCalendar extends FormMixin {
 
   @Watch('value', {deep: true}) isSelectedChanged(newVal, oldVal) {
     this.selectedDateUnix = this.selectedDate.unix();
+    if (this.data.editMode) {
+      if (newVal == this.initialValue) this.vl.$reset()
+    }
   }
 
   handleFocus() {

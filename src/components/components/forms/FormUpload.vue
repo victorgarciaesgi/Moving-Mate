@@ -84,6 +84,7 @@ export default class FormUpload extends FormMixin {
     this.readImage(file);
     this.dropped = true;
     this.$emit('input', file);
+    if(this.vl) this.vl.$touch();
   }
 
   handleItemDrop(event: DragEvent) {
@@ -146,6 +147,7 @@ export default class FormUpload extends FormMixin {
     this.fileTitle= null;
     this.imagePrevisu = null;
     this.$emit('input', null);
+    if(this.vl) this.vl.$touch();
     this.$refs['inputFile'].value = null;
   }
 
@@ -179,13 +181,26 @@ export default class FormUpload extends FormMixin {
     }
   }
 
-  created() {
+  @Watch('value') valueChanged(newVal, oldVal) {
+    if (this.data.editMode) {
+      if (newVal == this.initialValue) {
+        this.vl.$reset();
+        this.preloadInitialImage();
+      }
+    }
+  }
+
+  preloadInitialImage() {
     if (!!this.value) {
       this.onlyDisplay = true;
       this.imagePrevisu = this.value;
       this.dropped = true;
       this.imageUploaded = true;
     }
+  }
+
+  created() {
+    this.preloadInitialImage();
   }
 
 }

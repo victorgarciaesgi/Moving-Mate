@@ -11,12 +11,18 @@
             :vl='$v.editUserForm[key]'
             :data='value'></component>
             <div class='footer'>
+              <FormButton @click='resetForm()'>
+                  Annuler
+              </FormButton>
               <FormButton 
                 :submitting='submitting'
-                @disabledClick='touchForm()'
-                :colorTheme='css.mainStyle'>
+                :disabled='canSubmit'
+                @click='submitEdit'
+                theme='blue'>
                   Éditer mon profil
               </FormButton>
+
+              
             </div>
         </div>
       </section>
@@ -63,8 +69,9 @@ import {LoginStore} from '@store';
 export default class UserEdit extends Vue {
 
   public $v;
+  public $forceUpdate;
 
-  public editUserForm = null;
+  public editUserForm: Forms.Form = null;
   public css = require('@css');
   public submitting = false;
 
@@ -72,8 +79,18 @@ export default class UserEdit extends Vue {
     return LoginStore.state.userInfos
   }
 
+  get canSubmit() {
+    const fieldsModified = Object.keys(this.editUserForm.getData())
+      .filter(key => this.$v.editUserForm[key].$dirty);
+    return fieldsModified.length <= 0;
+  }
 
-  created() {
+  resetForm() {
+    this.$v.$reset();
+    this.editUserForm.reset();
+  }
+
+  fillForm() {
     this.editUserForm = new Forms.Form({
       username: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
@@ -120,6 +137,24 @@ export default class UserEdit extends Vue {
         editMode: true
       })
     })
+  }
+
+  created() {
+    this.fillForm();
+  }
+
+  submitEdit() {
+    const form = this.editUserForm.getData()
+    const filteredForm = Object.keys(form)
+      .filter(key => this.$v.editUserForm[key].$dirty)
+      .reduce((obj, key) => {
+        return {
+          ...obj,
+          [key]: form[key]
+        };
+      }, {});
+
+    console.log(filteredForm);
   }
 }
 </script>

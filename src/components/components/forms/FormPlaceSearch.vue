@@ -158,6 +158,9 @@ export default class FormPlaceSearch extends FormMixin {
     if (this.value != "") {
       this.tempValue = this.value.title || `Placeholder d'adresse`;
       if (this.vl && !this.data.editMode) this.vl.$touch();
+      else if (this.data.editMode) {
+        this.initialValue = this.value;
+      }
     }
   }
 

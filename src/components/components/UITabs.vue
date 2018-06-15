@@ -1,6 +1,6 @@
 <template>
   <div class='UITabs' >
-    <ul class='tab-list' @scroll.passive>
+    <ul class='tab-list' ref='tabList'>
       <router-link class='tab' tag='li' v-for='tab in filteredTabs' :key='tab.title' 
         :class='{childs: tab.childs}' :to='tab.to'>
           <div class='icon normal'><SvgIcon :size='22' color='#5a5a5a' v-if='tab.icon' :src='tab.icon' /></div>
@@ -38,6 +38,10 @@ export default class UITabs extends Vue {
   }
 
   public css = require('@css');
+
+  mounted() {
+    this.$refs['tabList'].addEventListener("touchstart", () => {}, <any>{ passive: true });
+  }
 
 }
 </script>

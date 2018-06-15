@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import shortid from 'shortid';
-import {Prop} from "vue-property-decorator";
+import {Prop, Watch} from "vue-property-decorator";
 import {debounce} from 'lodash';
 import {Mixin} from 'vue-mixin-decorator';
 import FormError from '../forms/FormError.vue';
@@ -21,6 +21,7 @@ export class FormMixin extends Vue {
 
   public formId = null;
   public isFocused = false;
+  public initialValue = null;
   public showOptions = false;
   public css = require('@css');
 
@@ -50,10 +51,19 @@ export class FormMixin extends Vue {
     this.$refs['input'].blur();
   }
 
+  @Watch('value') valueChanged(newVal, oldVal) {
+    if (this.data.editMode) {
+      if (newVal == this.initialValue) this.vl.$reset()
+    }
+  }
+
   mounted() {
     this.formId = shortid.generate();
     if (this.value && !!this.vl && this.value.toString().trim().length) {
       if (this.vl && !this.data.editMode) this.vl.$touch();
+      else if (this.data.editMode) {
+        this.initialValue = this.value;
+      }
     }
   }
 

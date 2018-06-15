@@ -25,19 +25,19 @@ namespace Mutations {
     state.alertShow = true;
   }
   function hideAlert(state: IAlertsState) {
-    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
+    Actions.actions.onCloseAction({alert: Object.assign({}, state.alertData), value: true})
     state.alertData = null;
     state.alertShow = false;
     if (resolveAlert) resolveAlert();
   }
 
   function confirmAlert(state: IAlertsState) {
-    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
+    Actions.actions.onCloseAction({alert: Object.assign({}, state.alertData), value: true})
     state.alertData = null;
     state.alertShow = false;
   }
   function cancelAlert(state: IAlertsState) {
-    Actions.actions.onCloseAction(Object.assign({}, state.alertData))
+    Actions.actions.onCloseAction({alert: Object.assign({}, state.alertData), value: false})
     state.alertData = null;
     state.alertShow = false;
   }
@@ -63,11 +63,19 @@ namespace Actions {
     Mutations.mutations.hideAlert();
   }
 
-  async function onCloseAction(context, alert: AlertsElement.Alert) {
+  async function onCloseAction(context, {alert, value}: {alert: AlertsElement.Alert, value: boolean}) {
     if (alert.onClose) {
-      for (const trigger of alert.onClose) {
-        await trigger();
+      try {
+        for (const trigger of alert.onClose) {
+          await trigger();
+        }
+        resolveAlert(value)
+      } catch(e) {
+        rejectAlert(value)
+      } finally {
+        context.state.submitting = false;
       }
+     
     }
   }
 

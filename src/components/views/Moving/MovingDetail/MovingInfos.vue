@@ -251,16 +251,14 @@ export default class MovingInfos extends Vue {
         }
       }).waitResponse();
 
-      if (response) {
-        MovingStore.actions.getAnnouncementDetails({
-          id: this.movingEvent.id.toString(), 
-          force: true
-        })
-        new AlertsElement.SuccessAlert({
-          title: `Proposition envoyée`,
-          message: `Votre proposition a bien été envoyée à ${this.userName}`,
-        })
-      }
+      MovingStore.actions.getAnnouncementDetails({
+        id: this.movingEvent.id.toString(), 
+        force: true
+      })
+      new AlertsElement.SuccessAlert({
+        title: `Proposition envoyée`,
+        message: `Votre proposition a bien été envoyée à ${this.userName}`,
+      })
     } catch(e) {
       new AlertsElement.ErrorAlert({
         title: `La proposition a échoué`,
