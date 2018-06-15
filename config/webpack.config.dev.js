@@ -58,6 +58,7 @@ const webpackDevConfig = {
     contentBase: path.join(__dirname, "dist"),
     port: 5000,
     historyApiFallback: true,
+    disableHostCheck: true,
     host: "0.0.0.0",
     hot: true,
     quiet: true,
