@@ -415,12 +415,6 @@ export default class CreateMoving extends Vue {
     delete part1.addressIn.address;
     delete part1.addressOut.address;
     
-    if (this.typeDepart) {
-      // delete part1.addressOut;
-    } 
-    else if (this.typeArrivee) {
-      // delete part1.addressIn;
-    }
     const finalValues = {...part1, ...part2};
     console.log(JSON.parse(JSON.stringify(finalValues)));
     try {
@@ -438,9 +432,10 @@ export default class CreateMoving extends Vue {
               () => Router.push({name: routesNames.movingInfos, params: {movingId: result.data}}),
             ]
           }),
-          new ActionsElements.ConfirmAction({
-            triggers: [() => Router.go(0)]
-          })
+          new ActionsElements.ConfirmAction({})
+        ],
+        onClose: [
+          () => MovingStore.actions.fetchMoving({})
         ]
       })
     } catch(e) {
