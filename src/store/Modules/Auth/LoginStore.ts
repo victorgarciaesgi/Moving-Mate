@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import { merge } from 'lodash'
-import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders } from '../../Api';
+import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders, API_URL } from '../../Api';
 import NotificationsModule from '../Interface/NotificationsStore';
 import router from '@router';
 import { ILoginState } from '@types';
@@ -53,7 +53,7 @@ namespace Getters {
   })
 
   const userPicture = b.read(function userPicture(state) : string {
-    return state.userInfos.profile || require('@images/user.jpg');
+    return state.userInfos.avatar ? API_URL + state.userInfos.avatar.substring(1) : require('@images/user.jpg');
   })
 
   export const getters = {

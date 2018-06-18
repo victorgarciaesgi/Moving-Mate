@@ -13,7 +13,7 @@ const Router = new VueRouter({
   mode: 'history',
   fallback: false,
   async scrollBehavior(to, from, savedPosition) {
-    await timeout(300);
+    // await timeout(300);
     if (savedPosition) {
       return savedPosition
     } else {

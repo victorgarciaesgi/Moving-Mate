@@ -1,7 +1,7 @@
 import Request from './Instance';
 export * from './ApiTypes';
 import axios from 'axios';
-export {addAuthHeaders, removeAuthHeaders} from './Instance';
+export {addAuthHeaders, removeAuthHeaders, API_URL} from './Instance';
 import {AlgoliaSearch} from './AlgoliaController';
 import Paths from '@paths'
 

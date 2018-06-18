@@ -4,7 +4,7 @@ import router from '@src/router';
 import {clone} from 'lodash';
 import * as Types from './ApiTypes';
 
-const API_URL = process.env.API_URL;
+export const API_URL = process.env.API_URL;
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {

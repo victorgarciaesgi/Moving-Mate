@@ -245,20 +245,20 @@ export default class CreateMoving extends Vue {
         icon: require('@icons/surname.svg'),
         value: this.userInfos.firstname || 'Phillibert',
         placeholder: 'Votre prénom',
-        noEdit: !(!!this.userInfos.firstname)
+        noEdit: (!!this.userInfos.firstname)
       }),
       lastname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
         value: this.userInfos.lastname || 'Cojaque',
         placeholder: 'Votre nom de famille',
-        noEdit: !(!!this.userInfos.lastname)
+        noEdit: (!!this.userInfos.lastname)
       }),
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
         value: '0637096255',
         type: 'tel',
         placeholder: 'Votre numéro de téléphone',
-        noEdit: !(!!this.userInfos.phone)
+        noEdit: (!!this.userInfos.phone)
       })
     }),
     part1: new Forms.Form({
