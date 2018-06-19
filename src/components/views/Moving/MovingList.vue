@@ -6,7 +6,7 @@
     <template v-else-if='movingList.length'>
       <ul  class='moving-list' >
       <MovingCard v-for='moving in movingList' 
-                  :key='moving.id'
+                  :key='moving.uuid'
                   :moving='moving'>
       </MovingCard>
     </ul>

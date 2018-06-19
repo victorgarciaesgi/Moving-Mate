@@ -49,9 +49,9 @@ namespace Mutations {
 
   function updateSearchRoute(state: IMoverState, newString: string) {
     if (newString.length) {
-      Router.replace(`/moving/detail/${MovingStore.state.oneAnnouncement.id}/invite/search/${newString}`);
+      Router.replace(`/moving/detail/${MovingStore.state.oneAnnouncement.uuid}/invite/search/${newString}`);
     } else {
-      Router.replace(`/moving/detail/${MovingStore.state.oneAnnouncement.id}/invite`)
+      Router.replace(`/moving/detail/${MovingStore.state.oneAnnouncement.uuid}/invite/search`)
     }
     // Mutations.mutations.updateSearchValue(newString);
   }

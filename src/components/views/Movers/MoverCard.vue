@@ -49,7 +49,7 @@
         </li>
       </ul>
       <div class='mover-actions' v-if='invite || note || canDelete || isMe'>
-        <div class='button-ask button' @click.stop='proposeHelp' v-if='invite'>Demander de l'aide</div>
+        <div class='button-ask button' @click.stop='askHelp' v-if='invite'>Demander de l'aide</div>
         <div class='button-note button' @click.stop='noteMover' v-if='note && !isMe'>Noter</div>
         <div class='button-delete button' @click.stop='deleteMover' v-if='canDelete'>Supprimer</div>
         <div class='button-leave button' @click.stop='leaveMoving' v-if='isMe'>Se retirer</div>
@@ -106,7 +106,7 @@ export default class MoverCard extends Vue {
     return {name: routesNames.user, params: {userId: this.mover.id.toString()}};
   }
 
-  async proposeHelp() {
+  async askHelp() {
     try {
       const response = await new AlertsElement.FormAlert({
         title: `Demander de l'aide à ${this.userName}`,
@@ -119,7 +119,8 @@ export default class MoverCard extends Vue {
           }),
           submit: {
             params: {
-              id: this.movingEvent.id
+              moverId: this.mover.id,
+              movingId: this.movingEvent.uuid
             },
             trigger:  MovingStore.actions.createAskHelp
           }
@@ -159,9 +160,9 @@ export default class MoverCard extends Vue {
           },
           submit: {
             params: {
-              id: this.movingEvent.id
+              id: this.mover.id
             },
-            trigger:  MovingStore.actions.createAskHelp
+            trigger:  MovingStore.actions.createAskHelp // A changer
           }
         }
       }).waitResponse();

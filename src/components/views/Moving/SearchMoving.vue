@@ -170,7 +170,6 @@ export default class SearchMoving extends Vue {
 
   @Watch('formSearchValue') 
   async getResultsFromApi(newVal:string, oldVal:string) {
-    console.log(newVal);
     if (!this.searchCommited) {
       this.searching = false;
       this.placesResultsDisplay = true;

@@ -205,9 +205,9 @@ export default class MovingInfos extends Vue {
   get canAsk() {
     if (this.isMovingMine) return false;
     else if (!LoginStore.state.userInfos.isMover) return false;
-    else if (this.movingEvent.participations) {
-      if (this.movingEvent.participations.users.length >= this.movingEvent.menRequired) return false;
-      return !this.movingEvent.participations.users.some(m => m.id == LoginStore.state.userInfos.id)
+    else if (this.movingEvent.usersParticipating) {
+      if (this.movingEvent.usersParticipating.length >= this.movingEvent.menRequired) return false;
+      return !this.movingEvent.usersParticipating.some(m => m.id == LoginStore.state.userInfos.id)
     }
     return true;
   }
@@ -244,7 +244,7 @@ export default class MovingInfos extends Vue {
           }),
           submit: {
             params: {
-              id: this.movingEvent.id
+              id: this.movingEvent.uuid
             },
             trigger:  MovingStore.actions.createParticipation
           }
@@ -252,7 +252,7 @@ export default class MovingInfos extends Vue {
       }).waitResponse();
 
       MovingStore.actions.getAnnouncementDetails({
-        id: this.movingEvent.id.toString(), 
+        id: this.movingEvent.uuid.toString(),
         force: true
       })
       new AlertsElement.SuccessAlert({

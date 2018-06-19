@@ -68,8 +68,8 @@
       <div class='participants'>
         <div class='wrapper'>
           <span>Participants: </span>
-          <ul class='result' v-if='moving.participations'>
-            <li v-for='part of moving.participations.users' 
+          <ul class='result' v-if='moving.usersParticipating'>
+            <li v-for='part of moving.usersParticipating' 
               :key='part.id'
               :style='{backgroundImage: `url(${part.avatar})`}'>
             </li>
@@ -128,12 +128,12 @@ export default class MovingCard extends Vue {
 
 
   redirectToDetail() {
-    Router.push({name: routesNames.movingInfos, params: {movingId: this.moving.id.toString()}});
+    Router.push({name: routesNames.movingInfos, params: {movingId: this.moving.uuid}});
   }
 
   async fetchImage() {
-    if (this.moving.participations) {
-      this.moving.participations.users.map(async (m) => {
+    if (this.moving.usersParticipating) {
+      this.moving.usersParticipating.map(async (m) => {
         m['avatar'] = m.avatar || require('@images/user.jpg');
         return m;
       })

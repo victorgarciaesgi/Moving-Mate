@@ -51,7 +51,7 @@ namespace Mutations {
     if (newString.length) {
       Router.replace(`/movers/search/${newString}`);
     } else {
-      Router.replace('/movers')
+      Router.replace('/movers/search')
     }
   }
 

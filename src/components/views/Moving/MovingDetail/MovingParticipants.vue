@@ -29,7 +29,7 @@ import axios from 'axios';
 export default class MovingParticipants extends Vue {
   
   get participantsList() {
-    return MovingStore.state.oneAnnouncement.participations?MovingStore.state.oneAnnouncement.participations.users: null;
+    return MovingStore.state.oneAnnouncement.usersParticipating;
   }
 
   get myId() {return LoginStore.state.userInfos.id}

@@ -13,11 +13,10 @@ export interface IMovingState {
 }
 
 export interface IMovingEvent {
-  id: number,
+  // id: number,
+  uuid: string,
   user: IMovingUser,
-  participations: {
-    users: IMovingUser[]
-  },
+  usersParticipating: IMovingUser[],
   label: string,
   addressIn: IAddress,
   addressOut: IAddress,
@@ -41,8 +40,13 @@ export interface IMovingUser {
   surname: string,
   profile: string,
   avatar: string,
-  avatarName: string,
+  city: string,
+  zipcode: string,
+  note: number,
+  nbrCommentaires: number,
+  nbrMoving: number,
   description: string,
+  pricePerHour: number,
   lastname: string,
   firstname: string,
 }

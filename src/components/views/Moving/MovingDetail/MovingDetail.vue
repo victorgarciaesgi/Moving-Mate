@@ -50,15 +50,15 @@ export default class MovingDetail extends Vue {
   get canSeeInfos() {
     if (this.isMovingMine) return true;
     else {
-      if (this.movingEvent.participations) {
-        return this.movingEvent.participations.users.some(m => m.id == LoginStore.state.userInfos.id)
+      if (this.movingEvent.usersParticipating) {
+        return this.movingEvent.usersParticipating.some(m => m.id == LoginStore.state.userInfos.id)
       }
       return false;
     }
   }
 
   get paramId() {
-    return MovingStore.state.oneAnnouncement?MovingStore.state.oneAnnouncement.id: null;
+    return MovingStore.state.oneAnnouncement?MovingStore.state.oneAnnouncement.uuid: null;
   }
 
   public backgroundCover = null;
