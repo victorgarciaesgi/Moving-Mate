@@ -45,7 +45,7 @@ const stateGetter = b.state();
 // Getters
 namespace Getters {
   const fullName = b.read(function fullName(state): string {
-    return state.userInfos.firstname?capitalize(state.userInfos.surname) + " " + capitalize(state.userInfos.name):null;
+    return state.userInfos.firstname?capitalize(state.userInfos.firstname) + " " + capitalize(state.userInfos.lastname):null;
   })
 
   const isAdmin = b.read(function isAdmin(state) : boolean {
@@ -53,7 +53,7 @@ namespace Getters {
   })
 
   const userPicture = b.read(function userPicture(state) : string {
-    return state.userInfos.avatar ? API_URL + state.userInfos.avatar.substring(1) : require('@images/user.jpg');
+    return state.userInfos.avatar || require('@images/user.jpg');
   })
 
   export const getters = {
