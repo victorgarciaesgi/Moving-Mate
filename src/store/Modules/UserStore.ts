@@ -2,6 +2,8 @@ import Api, {ApiError, ApiSuccess} from "@api";
 import {IUserState, IUserProfile} from '@types';
 import {storeBuilder} from "./Store/Store";
 import {LoginStore} from '@modules';
+import {Forms} from '@classes';
+import Paths from '@paths'
 
 //State
 const state: IUserState= {
@@ -44,8 +46,20 @@ namespace Actions {
     }
   }
 
+  async function sendUserEdit(context, form: Object) {
+    try {
+      const {data} = await Api.get('profile/edit', form);
+      console.log(data)
+      return new ApiSuccess({data})
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
   export const actions = {
     getOneUser: b.dispatch(getOneUser),
+    sendUserEdit: b.dispatch(sendUserEdit)
   }
 }
 

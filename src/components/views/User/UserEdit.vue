@@ -21,8 +21,6 @@
                 theme='blue'>
                   Éditer mon profil
               </FormButton>
-
-              
             </div>
         </div>
       </section>
@@ -39,7 +37,7 @@ import { timeout } from '@methods';
 import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
 import {Forms} from '@classes';
-import {LoginStore} from '@store';
+import {LoginStore, UserStore, NotificationsStore} from '@store';
 
 @Component({
   components: {
@@ -81,8 +79,9 @@ export default class UserEdit extends Vue {
 
   get canSubmit() {
     const fieldsModified = Object.keys(this.editUserForm.getData())
-      .filter(key => this.$v.editUserForm[key].$dirty);
-    return fieldsModified.length <= 0;
+      .filter(key => this.$v.editUserForm[key].$dirty)
+      .filter(key => !this.$v.editUserForm[key].$invalid);
+    return (fieldsModified.length <= 0);
   }
 
   resetForm() {
@@ -143,7 +142,8 @@ export default class UserEdit extends Vue {
     this.fillForm();
   }
 
-  submitEdit() {
+  async submitEdit() {
+    this.submitting = true;
     const form = this.editUserForm.getData()
     const filteredForm = Object.keys(form)
       .filter(key => this.$v.editUserForm[key].$dirty)
@@ -155,6 +155,21 @@ export default class UserEdit extends Vue {
       }, {});
 
     console.log(filteredForm);
+    try {
+      const result = await UserStore.actions.sendUserEdit(filteredForm)
+      NotificationsStore.actions.addNotification({
+        type: 'success',
+        message: 'Votre profil a bien été mis à jour',
+      })
+    } catch(e) {
+      NotificationsStore.actions.addNotification({
+        type: 'error',
+        message: 'Erreur lors du changement de vos informations'
+      })
+    } finally {
+      this.submitting = false;
+    }
+
   }
 }
 </script>
