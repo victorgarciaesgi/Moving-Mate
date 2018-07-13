@@ -29,7 +29,7 @@
       <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
       <div v-else-if='valid && dirty && data.error && !isPending' class="form-valid-icon form-valid"></div>
       <div v-else-if='!valid && dirty && data.error && !isPending' class="form-valid-icon form-invalid"></div>
-      <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
+      <div v-else-if='!dirty && required && !data.editMode' class="form-valid-icon form-required"></div>
 
     </div>
 

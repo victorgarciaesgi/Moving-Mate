@@ -34,6 +34,8 @@
             </div>
             <div class='align-right'>
               <FormButton v-for="action in rightButtons" :key='action.text'
+                :to='action.to'
+                :link='action.type == "link"'
                 @click='executeAction(action, true)'
                 :submitting='submitting'
                 :disabled='isDisabled'
@@ -111,8 +113,10 @@ export default class Alerts extends Vue {
   get leftButtons() {return this.alertState.alertData.actions.filter(m=>m).filter(m => m.type === "cancel");}
   
   closeAlert(exter: boolean) {
-    if (!this.alertState.alertData.strict && !exter) {
+    if (!this.alertState.alertData.strict && !exter && this.alertState.alertData.type != "form") {
       AlertsStore.mutations.confirmAlert();
+    } else {
+      AlertsStore.mutations.cancelAlert();
     }
   }
 

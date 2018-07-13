@@ -11,7 +11,7 @@
               <template slot='title'>Pourquoi vérifier mes informations ?</template>
               Indiquer un prénom, nom et un numéro de téléphone permet de recevoir les coordonnées de mes déménageurs une fois la mise en relation effectuée.
             </FormMessage>
-            <FormText v-model='CreateMovingForm.part0.firstname' 
+            <FormText v-model='CreateMovingForm.part0.firstname'
               :vl='$v.CreateMovingForm.part0.firstname' 
               :data='CreateMovingForm.part0.fieldsData.firstname'/>
             <FormText v-model='CreateMovingForm.part0.lastname' 
@@ -63,6 +63,8 @@
                   :data='CreateMovingForm.part1.fieldsData.addressOut.elevator'/>
               </div>
             </template>
+            <CheckBox v-model='CreateMovingForm.part1.needVehicle' 
+              :data='CreateMovingForm.part1.fieldsData.needVehicle'/>
           </li>
           <li v-if='countStep == 2' class='create-view' key='confirm'>
             <FormSeparator>Autres informations</FormSeparator>
@@ -73,16 +75,17 @@
             <FormCalendar v-model='CreateMovingForm.part2.dealDate' 
               :vl='$v.CreateMovingForm.part2.dealDate' 
               :data='CreateMovingForm.part2.fieldsData.dealDate'
-              isMoving/>
+              isMoving />
 
             <div class='form-split two'>
               <FormSelect v-model='CreateMovingForm.part2.estimatedTime' 
                 :vl='$v.CreateMovingForm.part2.estimatedTime' 
                 :data='CreateMovingForm.part2.fieldsData.estimatedTime'/>
               <FormSelect v-model='CreateMovingForm.part2.menRequired' 
-                :vl='$v.CreateMovingForm.part2.menRequired' 
+                :vl='$v.CreateMovingForm.part2.menRequired'
                 :data='CreateMovingForm.part2.fieldsData.menRequired'/>
             </div>
+            
             <FormText v-model='CreateMovingForm.part2.pricePerHourPerUser' 
               :vl='$v.CreateMovingForm.part2.pricePerHourPerUser' 
               :data='CreateMovingForm.part2.fieldsData.pricePerHourPerUser'/>
@@ -126,7 +129,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
   FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar } from "@components";
 import { timeout } from '@methods';
-import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
+import { required, email, numeric, maxLength, minLength, minValue, maxValue } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
 import { GlobalStore, LoginStore, MovingStore } from '@store';
 import { Forms, AlertsElement, ActionsElements } from '@classes';
@@ -142,8 +145,8 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
     return {
       CreateMovingForm: {
         part0: {
-          firstname: {required},
-          lastname: {required},
+          firstname: {required, maxlLength: maxLength(30)},
+          lastname: {required, maxlLength: maxLength(30)},
           phone: {required, phone(value) {
             if (required(value)) {
               const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -155,7 +158,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
         get part1() {
           let baseValidations: any = {
             helpType: {required},
-            volume: {required, numeric},
+            volume: {required, numeric, minValue: minValue(0), maxValue: maxValue(100)},
             addressIn: {
               address: {required},
               addressType: {required},
@@ -191,12 +194,12 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
           return baseValidations;
         },
         part2: {
-          label: {required, maxLenght: maxLength(100)},
+          label: {required, maxLength: maxLength(70)},
           dealDate: {required},
           estimatedTime: {required},
           pricePerHourPerUser: {required, numeric},
           menRequired: {required, numeric},
-          description: {required, maxLength: maxLength(1000)}
+          description: {required,minLength: minLength(20), maxLength: maxLength(1000)}
         }
       }
     }
@@ -243,13 +246,13 @@ export default class CreateMoving extends Vue {
     part0: new Forms.Form({
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        value: this.userInfos.firstname || 'Phillibert',
+        value: this.userInfos.firstname,
         placeholder: 'Votre prénom',
         noEdit: (!!this.userInfos.firstname)
       }),
       lastname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
-        value: this.userInfos.lastname || 'Cojaque',
+        value: this.userInfos.lastname,
         placeholder: 'Votre nom de famille',
         noEdit: (!!this.userInfos.lastname)
       }),
@@ -332,6 +335,10 @@ export default class CreateMoving extends Vue {
           ]
         }),
       },
+      needVehicle: new Forms.CheckBox({
+        placeholder: `J'ai besoin d'un véhicule`,
+        value: false
+      }),
     }),
     part2: new Forms.Form({
       label: new Forms.TextForm({
@@ -340,7 +347,6 @@ export default class CreateMoving extends Vue {
       }),
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
-        value: 1531468857,
         placeholder: 'Date et heure de votre déménagement',
       }),
       estimatedTime: new Forms.Select({
@@ -375,6 +381,7 @@ export default class CreateMoving extends Vue {
     } else {
       let {part0} = Object.assign({}, this.CreateMovingForm);
       part0 = part0.getData();
+      part0.phone = part0.phone.split(' ').join('');
       try {
         this.submitting = true;
         const result = await MovingStore.actions.sendUserInfos(part0);
@@ -420,6 +427,7 @@ export default class CreateMoving extends Vue {
     try {
       this.submitting = true;
       const result: any = await MovingStore.actions.createAnnouncement(finalValues);
+      console.log(result);
       Router.push({name: routesNames.moving})
       new AlertsElement.SuccessAlert({
         title: "Publication réussie!",

@@ -57,8 +57,8 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
   validations: {
     becomeMoverForm: {
       cgu: {isCguChecked(value) {return value}},
-      firstname: {required},
-      lastname: {required},
+      firstname: {required, maxLength: maxLength(30)},
+      lastname: {required, maxLength: maxLength(30)},
       address: {required},
       avatar: {required},
       phone: {required, phone(value) {
@@ -69,7 +69,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
         return true;
       }},
       price:{required, numeric},
-      description: {required}
+      description: {required, maxLength: maxLength(1000)}
     }
   }
 })
@@ -91,12 +91,12 @@ export default class BeMover extends Vue {
     firstname: new Forms.TextForm({
       icon: require('@icons/surname.svg'),
       placeholder: 'Votre prénom',
-      value: this.userInfos.firstname || 'Chibre'
+      value: this.userInfos.firstname
     }),
     lastname: new Forms.TextForm({
       icon: require('@icons/surname.svg'),
       placeholder: 'Votre nom',
-      value: this.userInfos.lastname || 'Famille'
+      value: this.userInfos.lastname
     }),
     avatar: new Forms.UploadForm({
       placeholder: 'Votre photo de profil'
@@ -104,22 +104,18 @@ export default class BeMover extends Vue {
     address: new Forms.TextForm({
       icon: require('@icons/localisation.svg'),
       placeholder: 'Votre adresse',
-      value: 'ChIJ0b25kW1u5kcRkGFCgnraSP4'
     }),
     phone: new Forms.TextForm({
       icon: require('@icons/phone.svg'),
       type: 'tel',
       placeholder: 'Votre numéro de téléphone',
-      value: '0673625267'
     }),
     price: new Forms.TextForm({
       icon: require('@icons/euro.svg'),
       placeholder: 'Votre prix par heure',
-      value: 15
     }),
     description: new Forms.TextForm({
       placeholder: 'Décrivez vous en quelques mots',
-      value: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur'
     })
   })
 
@@ -128,6 +124,7 @@ export default class BeMover extends Vue {
     try {
       this.submitting = true;
       const form = this.becomeMoverForm.getData();
+      form.phone = form.phone.split(' ').join('');
       let formData = new FormData();
       for (let key in form) {
         formData.append(key, form[key]);

@@ -1,7 +1,8 @@
 <template>
   <div class="Switch">
-    <div class='container' @click='changeValue' :class='{checked: value}'>
-      <div class='boule' ></div>
+    <img v-if="loading" src='~@images/loading.svg' height='22' width="22">
+    <div class='container' @click.stop='changeValue' :class='{checked: value}'>
+      <div class='boule'></div>
     </div>
   </div>
 </template>
@@ -15,10 +16,12 @@ import shortid from 'shortid';
 export default class UISwitch extends Vue {
 
   @Prop() value: boolean;
+  @Prop() loading: boolean;
 
 
   changeValue() {
-    this.$emit('input', !this.value)
+    this.$emit('input', !this.value);
+    this.$emit('switch', !this.value);
   }
 
 
@@ -37,6 +40,7 @@ $boule: 25px;
   display: flex;
   flex: 1 1 auto;
   justify-content: flex-end;
+  align-items: center;
   padding: 5px;
 
   .container {
@@ -70,6 +74,10 @@ $boule: 25px;
         left: calc(100% - #{$boule});
       }
     }
+  }
+
+  img {
+    margin-right: 10px;
   }
 }
 

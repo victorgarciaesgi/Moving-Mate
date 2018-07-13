@@ -155,7 +155,6 @@ const getRouteData = async (to: MyRoute | MyRouteRecord) => {
   if (to.meta.contentProp) {
     document.title = `${titleToDisplay.title || to.meta.title} - MovingMate`;
   }
-  return titleToDisplay.verif || to.meta.title;
 }
 
 

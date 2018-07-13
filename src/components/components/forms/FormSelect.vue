@@ -17,15 +17,17 @@
           <SvgIcon :size='28' :src="require('@icons/moving/little_arrow_down.svg')" />
         </div>
       </div>
-      <ul ref='select-options' class='select-options' v-show='showOptions' :style='optionsStyle'>
-        <li v-for='option of data.options' 
-          :key='option.value'
-          :class='{selected: option.value == value}'
-          @click='updateValue(option.value)'>
-            <span>{{option.text}}</span>
-            <SvgIcon v-if='option.value == value' class='icon' :src='require("@icons/done.svg")' :color='css.mainStyle'/>
-        </li>
-      </ul>
+      <transition name='slide-top'>
+        <ul ref='select-options' class='select-options' v-show='showOptions' :style='optionsStyle'>
+          <li v-for='option of data.options' 
+            :key='option.value'
+            :class='{selected: option.value === value}'
+            @click='updateValue(option.value)'>
+              <span>{{option.text}}</span>
+              <SvgIcon v-if='option.value === value' class='icon' :src='require("@icons/done.svg")' :color='css.mainStyle'/>
+          </li>
+        </ul>
+      </transition>
     </div>
 
     <FormError v-if='vl' :vl='vl' :data='data'/>
@@ -56,7 +58,7 @@ export default class FormSelect extends FormMixin {
 
   get getValue() {
     if (this.value) {
-      return this.data.options.find(m => m.value == this.value).text
+      return this.data.options.find(m => m.value === this.value).text
     } else {
       return null;
     }
@@ -128,6 +130,7 @@ export default class FormSelect extends FormMixin {
         font-weight: normal;
         left: 15px;
         top: 50%;
+        text-align: left;
         transform: translateY(-50%);
         color: $g90;
         cursor: text;
@@ -144,6 +147,8 @@ export default class FormSelect extends FormMixin {
         padding-top: 13px;
         flex: 1 1 auto;
         font-weight: bold;
+        text-align: left;
+
       }
 
       .select-status-icon {
@@ -175,6 +180,8 @@ export default class FormSelect extends FormMixin {
         width: 100%;
         display: flex;
         flex-flow: row nowrap;
+        text-align: left;
+
 
         span {
           flex: 1 1 auto;
@@ -194,6 +201,15 @@ export default class FormSelect extends FormMixin {
       }
     }
   }
+}
+
+.slide-top-enter-active,
+.slide-top-leave-active {
+  transition: all 0.3s;
+}
+.slide-top-enter, .slide-top-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
 }
 </style>
 

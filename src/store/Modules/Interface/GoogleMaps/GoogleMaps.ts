@@ -10,7 +10,7 @@ import axios from 'axios';
 let mapInstance: google.maps.Map;
 let geocoder = new google.maps.Geocoder();
 const placesAutocomplete = new google.maps.places.AutocompleteService();
-const PLACES_API = `https://maps.googleapis.com/maps/api/place/details/json?language=fr&type=address&key=AIzaSyBNEvF2wA8myZMLMTC6uTmVSdvb-Ajac-Q&input=`;
+const PLACES_API = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1500&key=AIzaSyB2zJbMB-_jCSHklks5CKKpoUqZ11eeGU0&photoreference=`;
 // param input
 
 export const getMapInstance = async (): Promise<google.maps.Map> => {
@@ -30,10 +30,12 @@ interface geoLocateResult {
 export const geoLocate = (address: string) : Promise<geoLocateResult> => {
   return new Promise((resolve, reject) => {
     geocoder.geocode({address: address}, (results, status) => {
+      console.log(results);
       if (status == google.maps.GeocoderStatus.OK) {
         resolve({
           location: results[0].geometry.location, 
-          bounds: results[0].geometry.bounds})
+          bounds: results[0].geometry.bounds,
+        })
       } else {
         reject()
       }

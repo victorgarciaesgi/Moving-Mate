@@ -4,7 +4,7 @@ import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
 import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
-import { GoogleMaps, getMapInstance } from '@store';
+import { GoogleMaps, getMapInstance, NotificationsStore } from '@store';
 import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
 import {Forms} from '@classes';
@@ -24,7 +24,8 @@ const state: IMovingState = {
   },
   searchingMovingList: false,
   movingList: [],
-  oneAnnouncement: null
+  oneAnnouncement: null,
+  oneAnnouncementDemandes: null
 }
 
 const b = storeBuilder.module<IMovingState>("MovingModule", state);
@@ -76,6 +77,9 @@ namespace Mutations {
   function updateOneAnnouncement(state: IMovingState, movingEvent: Object | null) {
     state.oneAnnouncement = <any>movingEvent;
   }
+  function updateOneAnnouncementDemandes(state: IMovingState, movers: Object | null) {
+    state.oneAnnouncementDemandes = <any>movers;
+  }
 
   export const mutations = {
     updateMovingList: b.commit(updateMovingList),    
@@ -84,7 +88,9 @@ namespace Mutations {
     updateCommitedValue: b.commit(updateCommitedValue),
     updateSearchRoute: b.commit(updateSearchRoute),
     updateSearchingState: b.commit(updateSearchingState),
-    updateOneAnnouncement: b.commit(updateOneAnnouncement)
+    updateOneAnnouncement: b.commit(updateOneAnnouncement),
+    updateOneAnnouncementDemandes: b.commit(updateOneAnnouncementDemandes)
+    
   }
 }
 
@@ -105,10 +111,10 @@ namespace Actions {
         actions.createMarkers({annoucements: data, payload})
       } else {
         const location = await geoLocate(payload.search);
-        console.log(location.location.lat(), location.location.lng());
-        const result = await Api.AlgoliaMoving({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
-        console.log(result);
-        actions.createMarkers({annoucements: result, payload: result});
+        // console.log(location.bounds.getCenter().lat(),location.bounds.getCenter().lng())
+        const result = await Api.AlgoliaMoving({text: payload.search, lat: location.bounds.getCenter().lat(), lng:location.bounds.getCenter().lng()})
+        Mutations.mutations.updateMovingList(result);
+        actions.createMarkers({annoucements: result, payload});
       }
     } finally {
       Mutations.mutations.updateSearchingState(false);
@@ -178,6 +184,10 @@ namespace Actions {
       return {title: data.label};
     }
   }
+  async function getAnnouncementDemandes(context, id: string) {
+    const {data} = await Api.get(`participations/${id}/demand`);
+    Mutations.mutations.updateOneAnnouncementDemandes(data);
+  }
 
   async function createAnnouncement(context, form: Object){
     try {
@@ -205,7 +215,7 @@ namespace Actions {
   async function createParticipation(context, {id, form}:{id: number, form: Forms.Form}) {
     try {
       console.log(form)
-      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${id}`, form);
+      const {data} = await Api.post(`participations/${id}/demand`, form);
       return new ApiSuccess();
 
     } catch {
@@ -213,17 +223,54 @@ namespace Actions {
     }
   }
 
-  async function createAskHelp(context, {id, form}:{id: number, form: Forms.Form}) {
+  async function createAskHelp(context, {moverId,uuid, form}:{moverId: number,uuid: string, form: Forms.Form}) {
+    try {
+      console.log(moverId, uuid);
+      const {data} = await Api.post(`/participations/${uuid}/invitation/${moverId}`, form);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function noteUser(context, {id, form}:{id: number, form: Forms.Form}) {
     try {
       console.log(form)
-      // A CHANGER L'URL
-      const {data} = await Api.post(Paths.PARTICIPATION_CREATE + `/${id}`, form);
+      const {data} = await Api.post(Paths.CREATE_NOTE + `/${id}`, form);
+      NotificationsStore.actions.addNotification({
+        type: 'success',
+        message: data
+      })
+      actions.getAnnouncementDetails({id: state.oneAnnouncement.uuid, force: true})
       return new ApiSuccess();
 
     } catch {
       return new ApiError();
     }
   }
+
+  async function acceptDemande(context, id: number) {
+    try {
+      const response = await Api.put(`participations/${id}/recruit`);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function refuseDemande(context, id: number) {
+    try {
+      const response = await Api.put(`participations/${id}/refuse`);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+
 
   export const actions = {
     fetchMoving: b.dispatch(fetchMoving),
@@ -235,7 +282,11 @@ namespace Actions {
     getAnnouncementDetails: b.dispatch(getAnnouncementDetails),
     createParticipation: b.dispatch(createParticipation),
     sendUserInfos: b.dispatch(sendUserInfos),
-    createAskHelp: b.dispatch(createAskHelp)
+    createAskHelp: b.dispatch(createAskHelp),
+    noteUser: b.dispatch(noteUser),
+    getAnnouncementDemandes: b.dispatch(getAnnouncementDemandes),
+    acceptDemande: b.dispatch(acceptDemande),
+    refuseDemande: b.dispatch(refuseDemande)
   }
 }
 

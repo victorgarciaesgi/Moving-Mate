@@ -1,7 +1,7 @@
 import Request from './Instance';
 export * from './ApiTypes';
 import axios from 'axios';
-export {addAuthHeaders, removeAuthHeaders, API_URL} from './Instance';
+export {addAuthHeaders, removeAuthHeaders, API_URL, APP_BASE} from './Instance';
 import {AlgoliaSearch} from './AlgoliaController';
 import Paths from '@paths'
 
@@ -17,16 +17,16 @@ export namespace ApiTool {
   export async function get(path: string, payload?: any) {
     return await Request('get', path, payload)
   }
-  export async function put(path: string, payload: any) {
+  export async function put(path: string, payload?: any) {
     return await Request('put', path, payload)
   }
   export async function Delete(path: string, payload: any) {
     return await Request('delete', path, payload)
   }
-  export async function AlgoliaMoving(fields: {text: string, lat: number, lng: number}) {
+  export async function AlgoliaMoving(fields: {text: string, lat: number, lng: number}) : Promise<any>{
     return await algoliaApi.searchMoving(fields);
   }
-  export async function AlgoliaMovers(fields: {text: string, lat: number, lng: number}) {
+  export async function AlgoliaMovers(fields: {text: string, lat: number, lng: number}) : Promise<any>{
     return await algoliaApi.searchMovers(fields);
   }
   export async function checkSession({token, refresh_token}) {

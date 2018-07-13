@@ -243,6 +243,8 @@ declare module "vuelidate/lib/validators" {
    */
   function and(...validators: ValidationPredicate[]): () => boolean;
 
-  function numeric()
+  function numeric();
+  function minValue(value: number);
+  function maxValue(value: number);
 
 }

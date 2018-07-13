@@ -135,13 +135,13 @@ export default class FormCalendar extends FormMixin {
   get isPlaceholderHere() {return (this.value.toString().length > 0 || this.isFocused);}
 
 
-  handleDateSelect(date: moment.Moment, type: string) {
+  handleDateSelect(date: number, type: string) {
     if (this.vl) this.vl.$touch();
-    this.selectedDate = date;
+    this.selectedDate = moment.unix(date);
     if (this.selectedHour || this.selectedMinute) {
       this.selectedDate = this.selectedDate.hour(this.selectedHour).minute(this.selectedMinute);
     } else {
-      this.selectedDate = this.selectedDate.hour(date.hour()).minute(date.minute());
+      this.selectedDate = this.selectedDate.hour(10).minute(0);
     }
     if (type == 'prev') {
       this.changeMonth(-1)
@@ -160,7 +160,7 @@ export default class FormCalendar extends FormMixin {
 
   changeHours(value: number) {
     if (this.vl) this.vl.$touch();
-    this.selectedDate = this.selectedDate.add(value, 'hour');
+    this.selectedDate.add(value, 'hours');
     this.selectedHour = this.selectedDate.hour();
     this.selectedMinute = this.selectedDate.minute();
     this.$emit('input', this.selectedDate.unix());
@@ -168,7 +168,7 @@ export default class FormCalendar extends FormMixin {
 
   changeMinutes(value: number) {
     if (this.vl) this.vl.$touch();
-    this.selectedDate = this.selectedDate.add(value, 'minute');
+    this.selectedDate.add(value, 'minutes');
     this.selectedMinute = this.selectedDate.minute();
     this.selectedHour = this.selectedDate.hour();
     this.$emit('input', this.selectedDate.unix());

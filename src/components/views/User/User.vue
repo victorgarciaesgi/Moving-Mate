@@ -1,17 +1,19 @@
 <template>
   <div class='User' v-if="user">
-    <!-- <div class='user-cover'><BackgroundLoader :src='coverPicture' /></div> -->
-    <UITabs class='desktop-tabs' :tabs='tabs'/>
-    <div class='sections'>
+    <div class='user-cover' >
+      <BackgroundLoader v-if='coverPicture' :src='coverPicture' :blur='true' :user='true'/>
       <section class='user-card'>
         <div class="header">
           <div class='userPicture' >
             <BackgroundLoader :src='profilePic' />
           </div>
-          <div class='userName'>
+          <div class='userName' :class='{premium: user.isPremium}'>
+            <span class='premium' v-if='user.isPremium'>
+              Premium 
+              <SvgIcon class='icon' :src='require("@icons/movers/verified.svg")' :size='16' color='white'/>
+            </span>
             <span class='value'>
-              <span>{{userName}}</span> 
-              <SvgIcon :src='require("@icons/movers/verified.svg")' :size='18' color='white'/>
+              <span>{{fullName || userName}}</span> 
             </span>
             <span class='place'>
               <span class='city'>{{user.city || 'Paris'}}</span>
@@ -19,33 +21,39 @@
             </span>
           </div>
         </div>
-        <div class='content'>
-          <ul class='first-infos'>
+        <div class='content' v-if='user.isMover'>
+          <ul class='first-infos' >
             <li>
               <strong>{{userPrice}}€</strong>
               <span>par heure</span>
             </li>
             <li>
-              <strong>5</strong>
-              <span>{{5 | pluralize('déménagement')}}</span>
+              <strong>{{getMovingCount}}</strong>
+              <span>{{getMovingCount | pluralize('déménagement')}}</span>
             </li>
           </ul>
           <ul class='other-infos'>
-            <li class='disponibility' :class='{activated: disponibility}'>
+            <li class='disponibility' :class='{activated: user.isAvailable}'>
               <span class='dot'></span>
-              <span class='text'>{{disponibility?'Disponible':'Indisponible'}}</span>
-              <UISwitch v-model='disponibility' v-if='isMyProfile'/>
+              <span class='text'>{{user.isAvailable?'Disponible':'Indisponible'}}</span>
+              <UISwitch :value='user.isAvailable' v-if='isMyProfile' @switch='toggleDispo' :loading='availableLoading'/>
             </li>
-            <li class='note'>
-              <StarRating :value='starDetail.value' :data='starDetail' />
+            <li class='note' >
+              <StarRating v-if='user.rating' :value='starDetail.value' :data='starDetail' />
+              <div v-else>Pas encore de note</div>
             </li>
           </ul>
 
-          <div class='boutonInvite' v-if='!isMyProfile'>
-            <div class='button-ask' @click.stop='proposeHelp'>Demander de l'aide</div>
+          <div class='boutonInvite' v-if='isMyProfile && !user.isPremium && user.isMover'>
+            <div class='button-prenium' @click.stop='showPrenium = true'>Devenir Prenium</div>
           </div>
         </div>
+        
       </section>
+    </div>
+    <UITabs class='desktop-tabs' :tabs='tabs'/>
+    <div class='sections'>
+      
       <UITabs class='mobile-tabs' :tabs='tabs'/>
       <section class='user-views'>
         <transition name='fade' mode='out-in'>
@@ -53,42 +61,91 @@
         </transition>
       </section>
     </div>
+    <UIModal :show='showPrenium' @close='showPrenium = false' :width='500'>
+      <!-- <span slot='header'>Devenir Prenium</span> -->
+      <div slot='content' style='padding: 20px 20px 0px 20px'>
+        <div class='bePremium'>
+          <div class='infos'>
+            <strong>Avantages Prenium</strong>
+            En activant votre compte en tant que Prenium, vous apparaîterez dans les premiers résultats de recherche.
+            Vous aurez donc beaucoup plus de chance d'être recruté par quelqu'un
+          </div>
+          <div class='price-options'>
+            <div class='options' v-for='option of priceOptions' :key='option.id'>
+              <label :for='`option${option.id}`' :class='{selected: priceOptionSelected == option.price}'>
+                <span class='price'>{{option.price}}€</span>
+                <span class='text'>{{option.text}}</span>
+              </label>
+              <input :id='`option${option.id}`' :value='option.price' v-model='priceOptionSelected' type='radio' style='display: none'>
+            </div>
+          </div>
+
+          <PaypalButton v-if='isMyProfile' :price='priceOptionSelected' @payed='preniumPayed' @canceled='preniumCanceled' ref='paypal' style='dispay: none'/>
+
+        </div>
+        
+      </div>
+      <template slot='footer'>
+        <FormButton @click='showPrenium = false'>Fermer</FormButton>
+      </template>
+    </UIModal>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
-import {UserStore, LoginStore} from '@store';
+import {UserStore, LoginStore, NotificationsStore, geoLocate, EventBus} from '@store';
 import axios from 'axios';
-import {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch} from '@components';
+import Api from '@api';
+import {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch, PaypalButton, UIModal, FormMessage, FormButton} from '@components';
 import { routesNames } from '@router';
 import {ITab} from '@types';
 import {timeout} from '@methods'
 import {Forms, AlertsElement, ActionsElements} from '@classes';
 
 @Component({
-  components: {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch}
+  components: {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch, PaypalButton, UIModal, FormMessage, FormButton}
 })
 
 export default class User extends Vue {
 
-  public profilePic = null;
+  
+  public availableLoading = false;
+  public showPrenium = false;
+  public submittingPrenium = false;
+  public css = require('@css');
+
+  public priceOptions = [
+    {id: 0, price: 5, text: '1 mois'},
+    {id: 1, price: 12, text: '3 mois'},
+    {id: 2, price: 20, text: '6 mois'},
+  ]
+  public priceOptionSelected = 5;
+
 
   get user() {return UserStore.state.oneUser}
   get UserId() {return this.user.id}
   get userName() {return this.user.username};
+  get fullName() {return this.user.firstname + ' ' + this.user.lastname}
   get userPrice() {return this.user.pricePerHour || 15};
   get userCity() {return this.user.city || 'Paris'}
+  get getMovingCount() {return this.user.countAnnouncements || 0 + this.user.countParticipations || 0}
 
-  public disponibility = true;
+  get profilePic() {
+    return this.user.avatar || require('@images/user.jpg');
+  }
+  get coverPicture() {
+    return this.user.avatar;
+  }
+
 
   get tabs(): ITab[]  {
     return [
       {title: 'Profil',icon: require('@icons/movers/user.svg'), to: {name: routesNames.user, params: {userId: this.UserId}}},
       {title: 'Editer mon profil',icon: require('@icons/edit.svg'), condition: this.isMyProfile, to: {name: routesNames.userEdit, params: {userId: this.UserId}}},
-      {title: 'Participations',icon: require('@icons/movers/grid.svg'),childs: true, to: {name: routesNames.userParticipations, params: {userId: this.UserId}}},
-      {title: 'Déménagements',icon: require('@icons/truck.svg'), to: {name: routesNames.userMovings, params: {userId: this.UserId}}},
+      {title: 'Participations',icon: require('@icons/movers/grid.svg'),badge: this.user.countParticipations,childs: true, to: {name: routesNames.userParticipations, params: {userId: this.UserId}}},
+      {title: 'Déménagements',icon: require('@icons/truck.svg'),badge: this.user.countAnnouncements, to: {name: routesNames.userMovings, params: {userId: this.UserId}}},
     ]
   }
 
@@ -102,12 +159,47 @@ export default class User extends Vue {
     }
   }
 
-  public starDetail = new Forms.StarRating({
-    editable: false,
-    value: 4,
-    size: 24,
-    displayNote: true
-  })
+  get starDetail() {
+    return new Forms.StarRating({
+      editable: false,
+      value: this.user.rating,
+      size: 24,
+      displayNote: true
+    })
+  }
+
+  triggerPrenium() {
+    this.submittingPrenium = true;
+    EventBus.$emit('paypal-create');
+  }
+
+  async preniumPayed() {
+    NotificationsStore.actions.addNotification({
+      type: 'success',
+      message: 'Votre compte est maintenant Prenium!'
+    })
+    await UserStore.actions.getOneUser({userId: this.user.id, force: true});
+    this.showPrenium = false;
+  }
+
+  preniumCanceled() {
+    this.submittingPrenium = false;
+  }
+
+  async toggleDispo() {
+    this.availableLoading = true;
+    try {
+      const {data} = await Api.put('/profile/available');
+      this.user.isAvailable = data.isAvailable;
+      NotificationsStore.actions.addNotification({
+        type: 'success',
+        message: `Vous avez maintenant le statut ${data.isAvailable?"Disponible": "Indisponible"}`
+      })
+    } finally {
+      this.availableLoading = false;
+      
+    }
+  }
 
   beforeDestroy() {
     UserStore.mutations.updateOneUser(null);
@@ -149,7 +241,7 @@ export default class User extends Vue {
   }
 
   async mounted () {
-    this.profilePic = this.user.avatar || require('@images/user.jpg');
+    
   }
 }
 </script>
@@ -161,28 +253,35 @@ export default class User extends Vue {
 .User {
   display: flex;
   flex-flow: column wrap;
+  position: relative;
   min-height: 100%;
   width: 100%;
-  
-  .sections {
+  background-color: white;
+
+  .user-cover {
+    position: relative;
+    height: auto;
     display: flex;
-    flex-flow: row nowrap;
-    padding: 20px;
-    width: 100%;
+    min-height: 500px;
+    align-items: center;
     justify-content: center;
-    align-items: flex-start;
-    min-width: 0;
-    
+    background-color: $mainStyle;
+
     .user-card {
       display: flex;
-      position: sticky;
+      position: relative;
+      // position: sticky;
       flex-flow: column nowrap;
       flex: 0 0 auto;
+      margin: 30px;
       width: 300px;
-      top:calc(#{$headerHeight} + 70px);
+      // top: calc(#{$headerHeight} + 70px);
       background-color: white;
       font-size: 16px;
       font-weight: normal;
+      border-radius: 3px;
+      overflow: hidden;
+      z-index: 1000;
       color: $g90;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
@@ -207,11 +306,31 @@ export default class User extends Vue {
           position: absolute;
           bottom: 0px;
           left: 0;
-          background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.4));
+          z-index: 1001;
+          background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.7));
           color: white;
-          height: 60px;
+          height: 90px;
           width: 100%;
           padding: 0 0 0 15px;
+
+          &.premium {
+            padding-top: 0px;
+          }
+
+          .premium {
+            display: flex;
+            background-color: $brown1;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 10px 2px 10px;
+            border-radius: 30px;
+            margin-left: -5px;
+
+            .icon {
+              margin-left: 5px;
+            }
+          }
 
           .value {
             display: flex;
@@ -244,6 +363,7 @@ export default class User extends Vue {
         display: flex;
         flex-flow: column wrap;
         padding-bottom: 10px;
+        background-color: white;
 
         ul.first-infos {
           display: flex;
@@ -302,7 +422,7 @@ export default class User extends Vue {
         .boutonInvite {
           padding: 10px 10px 0 10px;
 
-          .button-ask {
+          .button-prenium {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -327,6 +447,18 @@ export default class User extends Vue {
         }
       }
     }
+  }
+  
+  .sections {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 0 20px 20px 20px;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    min-width: 0;
+    
+    
 
     .user-views {
       display: flex;
@@ -335,13 +467,16 @@ export default class User extends Vue {
       margin-left: 30px;
       flex: 0 1 auto;
       min-width: 0;
+      width: 100%;
       justify-content: center;
       align-items: flex-start;
       align-content: flex-start;
 
       & > * {
-        max-width: 600px;
+        max-width: 800px;
+        width: 100%;
         flex: 0 1 auto;
+        margin-top: 20px;
       }
     }
 
@@ -382,6 +517,59 @@ export default class User extends Vue {
     }
   }
 
+}
+
+.bePremium {
+
+
+  .infos {
+    display: flex;
+    flex-flow: column wrap;
+    padding: 10px;
+    font-size: 15px;
+    text-align: center;
+
+    strong {
+      text-align: center;
+      font-size: 17px;
+    }
+  }
+
+  .price-options {
+    display: flex;
+    flex-flow: row nowrap;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    .options {
+      flex: 1 1 auto;
+      display: flex;
+      height: 60px;
+      margin: 0px 10px 0 10px;  
+
+      label {
+        border: 2px solid $w230;
+        border-radius: 5px;
+        display: flex;
+        flex-flow: column nowrap;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &.selected {
+          border: 2px solid $mainStyle;
+
+          .price{color: $mainStyle}
+        }
+
+        .price {font-weight: bold;}
+
+
+      }
+    }
+  }
 }
 
 </style>

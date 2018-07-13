@@ -7,7 +7,7 @@
           <img src="~@images/logo_truck_M.svg">
         </div>
         <!-- <SocialButton media='facebook'>Inscription avec Facebook</SocialButton> -->
-        <SocialButton media='google'>Inscription avec Google</SocialButton>
+        <SocialButton media='google'>Inscription avec Google (Beta)</SocialButton>
         <FormSeparator>Ou inscrivez vous</FormSeparator>
         <FormText v-model="SignupForm.email" :vl='$v.SignupForm.email' :data='SignupForm.fieldsData.email'/>
         <FormText v-model="SignupForm.username" :vl='$v.SignupForm.username' :data='SignupForm.fieldsData.username'/>
@@ -24,7 +24,7 @@
         <FormButton type='submit' 
           :submitting='submitting' 
           :disabled='$v.SignupForm.$invalid'
-          @disabledClick='touchForm()' 
+          @disabledClick='touchForm()'
           theme='blue'>
           S'inscrire
         </FormButton>
@@ -144,9 +144,6 @@ export default class Inscription extends Vue {
         new AlertsElement.SuccessAlert({
           title: "Inscription réussie",
           message: "Vous êtes bien inscrit. Un mail vous a été envoyé pour valider votre compte",
-          actions: [
-            new ActionsElements.LoginAction()
-          ]
         })
       } catch(e) {
         this.formError = {

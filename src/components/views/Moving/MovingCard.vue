@@ -1,8 +1,8 @@
 <template>
-  <li class='moving-card' :class='{onMap, embed}' @click.prevent='redirectToDetail'>
+  <li class='moving-card' :class='{onMap, embed, isMine}' @click.prevent='redirectToDetail'>
     <div class='header'>
       <div class='profil'>
-        <div class='profil-bg' :style='profilePic'></div>
+        <div class='profil-bg' :style='getProfilePic'></div>
       </div>
       <div class='infos'>
         <div class='name item'>{{userName | capitalize}}</div>
@@ -65,11 +65,11 @@
           </div>
         </div>
       </div>
-      <div class='participants'>
+      <div class='participants' v-if='!user'>
         <div class='wrapper'>
           <span>Participants: </span>
-          <ul class='result' v-if='moving.usersParticipating'>
-            <li v-for='part of moving.usersParticipating' 
+          <ul class='result' v-if='moving.userParticipating'>
+            <li v-for='part of moving.userParticipating' 
               :key='part.id'
               :style='{backgroundImage: `url(${part.avatar})`}'>
             </li>
@@ -92,6 +92,7 @@ import * as Chance from 'chance';
 import axios from 'axios';
 import Router, {routesNames} from '@router';
 import {DateMoving} from '@classes';
+import {LoginStore} from '@store';
 
 @Component({
   components: {
@@ -103,17 +104,24 @@ export default class MovingCard extends Vue {
   @Prop({required: true}) moving: IMovingEvent;
   @Prop({required: false}) onMap: boolean;
   @Prop() embed: boolean;
+  @Prop() user: boolean;
   public css = require('@css');
-  public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
 
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
-  get userName() { return this.moving.user.username; }
+  get userName() { return this.moving.user.firstname + ' ' + this.moving.user.lastname; }
   get getDepart() { return this.moving.addressIn; }
   get getArrivee() { return this.moving.addressOut;}
   get getMenNumber() {return this.moving.menRequired};
   get getPrice() {return this.moving.pricePerHourPerUser};
+  get isMine() {
+    if (!LoginStore.state.isLoggedIn) return false;
+    else {
+      return LoginStore.state.userInfos.id == this.moving.user.id;
+    }
+  }
   get getProfilePic() {
+    console.log()
     return {backgroundImage: `url("${this.moving.user.avatar || require('@images/user.jpg')}")`};
   }
   get getHelpType() {
@@ -132,8 +140,8 @@ export default class MovingCard extends Vue {
   }
 
   async fetchImage() {
-    if (this.moving.usersParticipating) {
-      this.moving.usersParticipating.map(async (m) => {
+    if (this.moving.userParticipating) {
+      this.moving.userParticipating.map(async (m) => {
         m['avatar'] = m.avatar || require('@images/user.jpg');
         return m;
       })
@@ -199,6 +207,10 @@ $radius: 8px;
       @include translateX(-50%);
       top: 100%;
     }
+  }
+
+  &.isMine {
+    border: 1px solid $mainStyle;
   }
 
   &:not(.embed):not(.onMap):hover {

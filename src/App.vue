@@ -31,11 +31,14 @@ import router from "./router";
 import { HeaderComponent, Notifications, ProgressBarComponent, Alerts, SvgIcon } from "@components";
 import { LoginStore } from "@modules";
 import $ from "jquery";
+import { API_URL, APP_BASE } from "@api";
 
 const store: Store<RootState> = storeBuilder.vuexStore({
   strict: DebugMode
 });
 sync(store, router);
+declare var cookieconsent;
+
 
 @Component({
   store: store,
@@ -62,6 +65,24 @@ export default class App extends Vue {
     $(window).resize(() => {
       EventBus.$emit("closePopups");
     });
+
+    window.addEventListener("load", function(){
+    cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "#000"
+        },
+        "button": {
+          "background": "#f1d600"
+        }
+      },
+      "position": "bottom-right",
+      "content": {
+        "message": "En poursuivant votre navigation sur ce site, vous acceptez l'utilisation de Cookies de MovingMate et de tiers permettant la réalisation de statistiques de visites et de mesure d'audience et pour vous proposer des services et offres adaptés",
+        "dismiss": "J'accepte",
+        "href":  APP_BASE + 'cgu'
+      }
+    })});
   }
 
   closePopups() {

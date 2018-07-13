@@ -6,9 +6,10 @@ $mainColor: #3c4858;
 
 $yellow1: #f8ab1c;
 $yellow2: rgb(221, 144, 35);
+$yellow3: #f8d71c;
 
 $blue1: #4286f4;
-$blue2: #63d4ff;
+$blue2: #a9dff5;
 
 $red1: #c84242;
 $orange1: #cf7219;
@@ -19,15 +20,19 @@ $green2: #CEE8DF;
 $green3: #70BEB1;
 $green4: #4c964c;
 
+$brown1: #D99E7E;
+
 :export {
   mainStyle: $mainStyle;
   red1: $red1;
   blue2: $blue2;
   yellow1: $yellow1;
   yellow2: $yellow2;
+  yellow3: $yellow3;
   mainColor: $mainColor;
   green1: $green1;
   green2: $green2;
+  green3: $green3;
 }
 
 

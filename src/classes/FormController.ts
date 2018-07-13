@@ -37,7 +37,7 @@ export namespace Forms {
       });
     }
 
-    getData() {
+    getData() : {[x:string]: any}{
       const _this = Object.assign({}, this);
       delete _this.fieldsData;
       delete _this.initialState;

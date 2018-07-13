@@ -26,7 +26,10 @@ export const routesNames = {
   userEdit: 'userEdit',
   userMovings: 'UserMovings',
   userParticipations: 'UserParticipations',
-  admin: 'admin'
+  admin: 'admin',
+  adminUsers: 'adminUsers',
+  adminMovings: 'adminMovings',
+  cgu: 'cgu'
 }
 
 interface MyMeta {
@@ -162,8 +165,8 @@ export const routesList: MyRouteConfig[]  = [
         component: () => import('@views/Moving/MovingDetail/MovingParticipants.vue'),
         name: routesNames.movingParticipants,
         meta: {
-          contentProp: true,
           isTab: true,
+          contentProp: true,
           asyncData: getOneMoving,
         }
       },
@@ -172,8 +175,8 @@ export const routesList: MyRouteConfig[]  = [
         component: () => import('@views/Moving/MovingDetail/MovingDemandes.vue'),
         name: routesNames.movingDemandes,
         meta: {
-          contentProp: true,
           isTab: true,
+          contentProp: true,
           asyncData: getOneMoving,
         }
       },
@@ -326,8 +329,34 @@ export const routesList: MyRouteConfig[]  = [
       isAuthorized(to) {
         return Stores.LoginStore.getters.isAdmin;
       }
-    }
+    },
+    children: [
+      {
+        path: '/', name: routesNames.adminUsers,
+        component: () => import('@views/Admin/AdminUsers.vue'),
+        meta: {
+          title: 'Admin:Utilisateurs',
+          async asyncData() {
+            await Stores.AdminStore.actions.getUsers()
+          }
+        }
+      },
+      {
+        path: 'movings', name: routesNames.adminMovings,
+        component: () => import('@views/Admin/AdminMoving.vue'),
+        meta: {
+          title: 'Admin:Déménagements'
+        }
+      }
+    ]
 
+  },
+  {
+    path: '/cgu', name: routesNames.cgu,
+    meta: {
+      title: "Conditions d'utilisation"
+    },
+    component: () => import('@views/CGU.vue')
   },
   { path: '/*',
     meta: {
@@ -344,6 +373,6 @@ async function getOneMoving(to: MyRoute) {
 }
 
 async function getOneUser(to: MyRoute, page?) {
-  const username = await Stores.UserStore.actions.getOneUser(to.params.userId);
+  const username = await Stores.UserStore.actions.getOneUser({userId: to.params.userId});
   return {title: username.title +  ' - ' + page};
 }

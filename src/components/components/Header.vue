@@ -28,20 +28,21 @@
                   <div v-else class='center' >Aucun déménagement trouvé</div>
                 </template>
                 <div slot='button' class='bouton-data' >
-                  <span>Mon déménagement</span>
+                  <span>
+                    Mes déménagements
+                    <!-- <div class='count'>{{userInfos.participations.length}}</div> -->
+                  </span>
                 </div>
               </Popup>
             </li>
             <li class='header-button popup header-link'>
-              <Popup v-if='loginState.isLoggedIn' :width='300'>
+              <Popup v-if='loginState.isLoggedIn' :width='450' @close='readAllNotifs'>
                 <template slot='popup'>
-                  <div class='center'>
-                    <SvgIcon :src='require("@icons/notifs/notification_none.svg")'/>
-                    <span>Aucune notification</span>
-                  </div>
+                  <UserNotifs/>
                 </template>
                 <div slot='button' class='bouton-data image' >
                   <SvgIcon :src="require('@icons/notifs/notification_empty.svg')" :size='24'></SvgIcon>
+                  <div class='badge' v-if='nonReadNotifs > 0'>{{nonReadNotifs}}</div>
                 </div>
               </Popup>
             </li>
@@ -56,9 +57,9 @@
                     </div>
                     <ul class='user-option-list'>
                       <router-link tag='li' :to='userProfilePath' class='user-option'>Mon profil</router-link>
-                      <li class='user-option'>Historique de déménagements</li>
+                      <router-link v-if='userInfos.isMover' tag='li' :to='userParticipationsPath' class='user-option'>Historique des participations</router-link>
                       <router-link tag='li' to='/admin' class='user-option' v-if='isAdmin'>Administration</router-link>
-                      <li class='user-option'>Aide</li>
+                      <router-link to='/cgu' class='user-option'>Conditions d'utilisation</router-link>
                       <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
                     </ul>
                  </div>
@@ -104,7 +105,7 @@
                 <router-link @click.native='mobilePanel = false' class='link' v-if='("condition" in link && !!link.condition) || !("condition" in link) ' v-for='link of userLinks' :key='link.path' :to='link.path' :class='{color: link.color}'>
                   {{link.title}}
                 </router-link>
-                <li class='link'>Deconnexion</li>
+                <li class='link' @click='disconnectRequest'>Deconnexion</li>
               </div>
             </div>
             <div class='link-panel'>
@@ -128,16 +129,17 @@ import Component from "vue-class-component";
 import {Store} from 'vuex';
 import {RootState} from '@store';
 
-import { ILoginState, ISignupState } from '@types';
+import { ILoginState, ISignupState, INotif } from '@types';
 import { timeout } from '@methods';
 import { SvgIcon, Connexion, Inscription, Popup } from "@components";
 import MovingCard from '@views/Moving/MovingCard.vue';
-import { LoginStore, SignupStore, GlobalStore, MovingStore } from '@modules'
+import { LoginStore, SignupStore, GlobalStore, MovingStore, UserStore } from '@modules'
 import { StringifyOptions } from "querystring";
 import {routesNames} from '@router';
+import UserNotifs from './UserNotifs/UserNotifications.vue';
 
 @Component({
-  components: { Connexion, Inscription, Popup, SvgIcon, MovingCard },
+  components: { Connexion, Inscription, Popup, SvgIcon, MovingCard, UserNotifs },
 })
 export default class HeaderComponent extends Vue {
 
@@ -148,6 +150,7 @@ export default class HeaderComponent extends Vue {
   get isAdmin() {return LoginStore.getters.isAdmin};
   get headerBox() {return GlobalStore.state.headerBoxShadow};
   get userProfilePath() {return {name: routesNames.user, params: {userId: this.userInfos.id}}}
+  get userParticipationsPath() {return {name: routesNames.userParticipations, params: {userId: this.userInfos.id}}}
 
   private showLogin = LoginStore.mutations.showLogin;
   private disconnectRequest = LoginStore.actions.disconnectRequest;
@@ -195,6 +198,20 @@ export default class HeaderComponent extends Vue {
     } finally {
       this.searchingMyMoving = false;
     }
+  }
+
+  get notifications() : INotif[]{
+    return UserStore.state.notifications;
+  }
+
+  get nonReadNotifs() {
+    return this.notifications.reduce((acc, curr, index) => {
+      if (!curr.read) return acc++;
+    }, 0)
+  }
+
+  readAllNotifs() {
+    UserStore.mutations.readAllNotifs();
   }
 
 
@@ -318,6 +335,7 @@ div.header-wrapper{
 
         %header-button {
           display: flex;
+          position: relative;
           flex-flow: row nowrap;
           justify-content: center;
           align-items: center;
@@ -349,7 +367,23 @@ div.header-wrapper{
             }
           }
 
-          span {padding: 7px 15px 8px 15px;}
+          span {
+            padding: 7px 15px 8px 15px;
+            display: flex;
+            .count {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 20px;
+              min-width: 20px;
+              font-weight: bold;
+              color: white;
+              font-size: 12px;
+              background-color: $mainStyle;
+              border-radius: 30px;
+              margin-left: 5px;
+            }
+         }
 
           .profile-image {
             @include bg-center;
@@ -379,6 +413,22 @@ div.header-wrapper{
               &.image {
                 padding: 5px;
               }
+
+              .badge {
+                position: absolute;
+                right: 5px;
+                top: 0;
+                transform: translateX(50%);
+                background-color: $red1;
+                color: white;
+                border-radius: 40px;
+                font-size: 11px;
+                height: 18px;
+                padding: 0 6px 0 6px;
+                line-height: 18px;
+              }
+
+              
             }
 
             .popup-box.active ~ .bouton-popup .bouton-data{

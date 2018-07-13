@@ -4,7 +4,6 @@ import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
 import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
-import Marker from './Interface/GoogleMaps/Markers';
 import Paths from '@paths';
 
 
@@ -84,9 +83,9 @@ namespace Actions {
         Mutations.mutations.updateMoverList(data);
       } else {
         const location = await geoLocate(payload.search);
-        console.log(location.location.lat(), location.location.lng());
-        const result = await Api.AlgoliaMoving({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
         console.log(result);
+        Mutations.mutations.updateMoverList(result);
       }
     } finally {
       Mutations.mutations.updateSearchingState();
@@ -139,11 +138,22 @@ namespace Actions {
     }
   }
 
+  async function recupNoteUser(context, id: string) {
+    try {
+      const {data} = await Api.get(Paths.CREATE_NOTE + `/${id}`);
+      console.log(data);
+      return new ApiSuccess({data});
+    } catch(e) {
+      return new ApiError();
+    }
+  }
+
   export const actions = {
     fetchMover: b.dispatch(fetchMover),
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
-    becomeMover: b.dispatch(becomeMover)
+    becomeMover: b.dispatch(becomeMover),
+    recupNoteUser: b.dispatch(recupNoteUser)
   }
 }
 

@@ -86,8 +86,8 @@ export default class Popup extends Vue {
   .popup-box{
     position: absolute;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    // justify-content: center;
+    // align-items: center;
     background-color: white;
     top: calc(100% + 15px);
     border-radius: 5px;

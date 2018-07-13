@@ -28,7 +28,7 @@
       <img v-if='isPending' class='form-valid-icon' src='~@images/loading.svg'>
       <div v-else-if='valid && dirty && data.error && !isPending' class="form-valid-icon form-valid"></div>
       <div v-else-if='!valid && dirty && data.error && !isPending' class="form-valid-icon form-invalid"></div>
-      <div v-else-if='!dirty && required' class="form-valid-icon form-required"></div>
+      <div v-else-if='!dirty && required && !data.editMode' class="form-valid-icon form-required"></div>
 
     </div>
 
@@ -93,13 +93,15 @@ export default class FormText extends FormMixin {
     display: block;
     background-color: #e0e1e4;
     color: $mainColor;
-    padding: 15px 30px 0 15px;
-    margin: 5px 0 5px 0;
+    overflow: auto;
+    padding: 0 30px 0 15px;
+    margin: 15px 0 5px 0;
     transition: all 0.2s;
     width: 100%;
     font-size: 15px;
     border-radius: 5px;
     border: 1px solid transparent;
+    border-top: 15px solid transparent;
 
     &.icon {
       padding-left: 60px;
@@ -141,7 +143,6 @@ export default class FormText extends FormMixin {
     
     &.top {
       font-size: 12px;
-      top: 6px;
       cursor: default;
     }
   }

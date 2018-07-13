@@ -31,6 +31,8 @@ export default class FormError extends Vue {
     email: "L'adresse mail doit être valide",
     minLength: `${this.vl.$params.minLength ? this.vl.$params.minLength.min : ""} caractères minimum`,
     maxLength: `${this.vl.$params.maxLength ? this.vl.$params.maxLength.max : ""} caractères maximum`,
+    minValue: `La valeur doit être supérieur à ${this.vl.$params.minValue ? this.vl.$params.minValue.min : ""}`,
+    maxValue: `La valeur doit être inférieure à ${this.vl.$params.maxValue ? this.vl.$params.maxValue.max : ""}`,
     sameAs: "Les mots de passe doivent être identiques",
     isMailUnique: 'Cet email est déjà utilisé',
     isNameUnique: 'Ce nom est déjà utilisé',

@@ -13,7 +13,7 @@
       </transition>
     </div>
     <div class='image-previsu'>
-      <UIModal :show='imagePrevisu' @close='toggleImage(false)' full onlyContent>
+      <UIModal :show='imagePrevisu' @close='toggleImage(false)' full onlyContent :width='900'>
         <BackgroundLoader :src='backgroundCover' :absolute='true'/>
       </UIModal>
     </div>
@@ -39,8 +39,8 @@ export default class MovingDetail extends Vue {
 
   public tabs: ITab[] = [
     {title: 'Informations',icon: require('@icons/infos.svg'), to: {name: routesNames.movingInfos, params: {movingId: this.paramId}}},
-    {title: 'Participants validés',icon: require('@icons/done.svg'), to: {name: routesNames.movingParticipants, params: {movingId: this.paramId}}},
-    {title: 'Demandes',condition: this.isMovingMine, icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
+    {title: 'Participants validés',icon: require('@icons/done.svg'),badge: this.movingEvent.userParticipating?this.movingEvent.userParticipating.length:null, to: {name: routesNames.movingParticipants, params: {movingId: this.paramId}}},
+    {title: 'Demandes',condition: this.isMovingMine,badge: this.movingEvent.userNotParticipating?Object.values(this.movingEvent.userNotParticipating).length:null, icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
     {title: 'Inviter des déménageurs', condition: this.isMovingMine, icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
     {title: 'Offres partenaires',condition: this.isMovingMine,  icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
   ]
@@ -50,8 +50,8 @@ export default class MovingDetail extends Vue {
   get canSeeInfos() {
     if (this.isMovingMine) return true;
     else {
-      if (this.movingEvent.usersParticipating) {
-        return this.movingEvent.usersParticipating.some(m => m.id == LoginStore.state.userInfos.id)
+      if (this.movingEvent.userParticipating) {
+        return this.movingEvent.userParticipating.some(m => m.id == LoginStore.state.userInfos.id)
       }
       return false;
     }
@@ -130,6 +130,7 @@ export default class MovingDetail extends Vue {
     flex-flow: row nowrap;
     width: 100%;
     height: auto;
+    padding-top: 20px;
   }
 
   .moving-tabs {

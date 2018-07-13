@@ -28,11 +28,9 @@ export default class CalendarDay extends Vue {
   @Prop() isMoving: boolean;
 
   public fullDate: moment.Moment= null;
+  public selectedDate = null;
 
   get dateNumber() {return this.dateElement.date;}
-  get selectedDate() {
-    return moment.unix(this.selected);
-  }
 
   get isToday() {
     const today = moment();
@@ -56,12 +54,17 @@ export default class CalendarDay extends Vue {
 
   handleSelect() {
     if (!this.isPassed) {
-      this.$emit('select', this.fullDate, this.dateElement.type);
+      this.$emit('select', this.fullDate.unix(), this.dateElement.type);
     }
   }
 
+  @Watch('selected') selectedChanged(newVal) {
+    this.selectedDate = moment.unix(newVal);
+  }
+
   created() {
-    this.fullDate = moment().year(this.dateElement.year).month(this.dateElement.month).date(this.dateElement.date)
+    this.fullDate = moment().year(this.dateElement.year).month(this.dateElement.month).date(this.dateElement.date).hour(10).minute(0);
+    this.selectedDate = moment.unix(this.selected);
   }
 }
 </script>

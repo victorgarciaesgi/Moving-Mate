@@ -6,6 +6,7 @@
           <div class='icon normal'><SvgIcon :size='22' color='#5a5a5a' v-if='tab.icon' :src='tab.icon' /></div>
           <div class='icon blue'><SvgIcon :size='22' :color='css.mainStyle' v-if='tab.icon' :src='tab.icon' /></div>
           <span>{{tab.title}}</span>
+          <div v-if='tab.badge' class='badge'>{{tab.badge}}</div>
       </router-link>
     </ul>
   </div>
@@ -97,6 +98,19 @@ export default class UITabs extends Vue {
         padding: 15px 0 15px 5px;
       }
 
+      .badge {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 7px 0 7px;
+        height: 20px;
+        background-color: $g90;
+        font-size: 12px;
+        color: white;
+        border-radius: 40px;
+        margin-left: 5px;
+      }
+
       &.childs.router-link-active, &.router-link-exact-active{
         color: $mainStyle;
         border-color: $mainStyle;
@@ -104,6 +118,8 @@ export default class UITabs extends Vue {
         .icon.blue {
           display: block;
         }
+
+        .badge {background-color: $mainStyle}
 
         .icon.normal {
           display: none;

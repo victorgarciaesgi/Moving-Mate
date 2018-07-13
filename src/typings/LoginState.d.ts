@@ -20,6 +20,7 @@ export interface IUser {
   userToken: string,
   roles: Array<IUserRoles>;
   address: IAddress;
+  isAvailable: boolean,
   isMover: boolean,
   avatar: string,
   avatarName: string,
@@ -28,6 +29,7 @@ export interface IUser {
   lastname: string,
   firstname: string,
   birthdate: string,
+  fullAddress: string,
 }
 
 export type IUserRoles = "ROLE_USER" | "ROLE_ADMIN";

@@ -1,5 +1,5 @@
 <template>
-  <button @mousedown.stop='emitClick($event)' :type='type' 
+  <component class='button' :is='link?"router-link":"button"' :to='to' @mousedown.stop='emitClick($event)' :type='type'
     :class='[{submitting: submitting, disabled: disabled}, colorClass]'
     :style='getColorTheme'>
     <img v-if='!!icon' :src="icon">
@@ -8,7 +8,7 @@
     </span>
     <SvgIcon v-if='colorTheme' class='loading' :src='require("@images/loading_white.svg")' :size='18' />
     <SvgIcon v-else class='loading' :src='require("@images/loading.svg")' :size='18' />
-  </button>
+  </component>
 </template>
 
 <script lang="ts">
@@ -29,6 +29,9 @@ export default class FormButton extends Vue {
   @Prop({required: false}) icon: string;
   @Prop({required: false}) theme: string;
   @Prop({required: false}) color: string;
+
+  @Prop() link: boolean;
+  @Prop() to: any;
   
   @Prop() colorTheme: string;
 
@@ -44,7 +47,9 @@ export default class FormButton extends Vue {
   }
 
   emitClick(event: Event) {
-    if (!this.submitting && !this.disabled) {
+    if (this.link) {
+      event.preventDefault();
+    } else if (!this.submitting && !this.disabled) {
       if (this.type == 'button') this.$emit('click');
       else if (this.type == 'submit') this.$emit('submit')
     } else if (this.disabled) {
@@ -70,7 +75,7 @@ export default class FormButton extends Vue {
 
 <style lang='scss' scoped>
 
-button {
+.button {
   position: relative;
   display: flex;
   justify-content: center;

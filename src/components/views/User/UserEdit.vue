@@ -46,11 +46,10 @@ import {LoginStore, UserStore, NotificationsStore} from '@store';
   },
   validations: {
     editUserForm: {
-      username: {required},
       firstname: {required},
       lastname: {required},
       address: {required},
-      picture: {required},
+      avatar: {required},
       phone: {required, phone(value) {
         if (required(value)) {
           const regex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
@@ -74,7 +73,7 @@ export default class UserEdit extends Vue {
   public submitting = false;
 
   get userInfos() {
-    return LoginStore.state.userInfos
+    return UserStore.state.oneUser
   }
 
   get canSubmit() {
@@ -91,12 +90,6 @@ export default class UserEdit extends Vue {
 
   fillForm() {
     this.editUserForm = new Forms.Form({
-      username: new Forms.TextForm({
-        icon: require('@icons/surname.svg'),
-        placeholder: 'Votre pseudo',
-        value: this.userInfos.username,
-        editMode: true
-      }),
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
         placeholder: 'Votre prénom',
@@ -109,30 +102,33 @@ export default class UserEdit extends Vue {
         value: this.userInfos.lastname,
         editMode: true
       }),
-      picture: new Forms.UploadForm({
+      avatar: new Forms.UploadForm({
         placeholder: 'Votre photo de profil',
-        value: this.userInfos.avatar || require('@images/home_image/home_image.jpg'),
+        value: this.userInfos.avatar,
         editMode: true
       }),
       address: new Forms.PlaceSearchForm({
         icon: require('@icons/localisation.svg'),
         placeholder: 'Votre adresse',
-        value: {title: this.userInfos.address?this.userInfos.address.value: null},
+        value: {title: this.userInfos.fullAddress?this.userInfos.fullAddress: null},
         editMode: true
       }),
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
         type: 'tel',
         placeholder: 'Votre numéro de téléphone',
+        value: this.userInfos.phone,
         editMode: true
       }),
       price: new Forms.TextForm({
         icon: require('@icons/euro.svg'),
         placeholder: 'Votre prix par heure',
+        value: this.userInfos.pricePerHour,
         editMode: true
       }),
       description: new Forms.FieldForm({
         placeholder: 'Votre description',
+        value: this.userInfos.description,
         editMode: true
       })
     })
@@ -153,10 +149,15 @@ export default class UserEdit extends Vue {
           [key]: form[key]
         };
       }, {});
-
+    let formData = new FormData();
+    for (let key in filteredForm) {
+      formData.append(key, form[key]);
+    }
     console.log(filteredForm);
     try {
-      const result = await UserStore.actions.sendUserEdit(filteredForm)
+      const result = await UserStore.actions.sendUserEdit(formData);
+      UserStore.actions.getOneUser({userId: this.userInfos.id, force: true});
+      LoginStore.actions.refreshUserInfos();
       NotificationsStore.actions.addNotification({
         type: 'success',
         message: 'Votre profil a bien été mis à jour',
@@ -182,9 +183,9 @@ export default class UserEdit extends Vue {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: white;
-  padding: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  // background-color: white;
+  // padding: 10px;
+  // box-shadow: 0 0 10px rgba(0,0,0,0.1);
 
   .sections {
     display: flex;

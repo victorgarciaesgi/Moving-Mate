@@ -4,13 +4,21 @@
       <div class='header'>
         <h1 class='title'>{{movingEvent.label}}</h1>
         <div class='state'>
-          <span>Annonce normale</span>
-        </div>
-        <div class='description'>
-          {{getDescription}}
+          <span>Publiée {{getCreated}}</span>
         </div>
       </div>
       <div class='content'>
+        <div class='block'>
+          <div class='section-title'>
+            <SvgIcon class='icon' :src='require("@icons/description.svg")' :size='20'/>
+            Description
+          </div>
+          <div class='section-content'>
+            <div class='description'>
+              {{getDescription}}
+            </div>
+          </div>
+        </div>
         <div class='block'>
           <div class='section-title'>
             <SvgIcon class='icon' :src='require("@icons/time.svg")' :size='20'/>
@@ -78,8 +86,8 @@
             Participants validés
           </div>
           <div class='section-content'>
-            <ul class='result' v-if='movingEvent.participations'>
-              <MoverCard v-for='mover of movingEvent.participations.users' 
+            <ul class='result' v-if='movingEvent.userParticipating'>
+              <MoverCard v-for='mover of movingEvent.userParticipating'
                 :key='mover.id' :mover='mover' display/>
             </ul>
             <span class='result' v-else>Aucun participants</span>
@@ -88,14 +96,14 @@
       </div>
     </section>
     <section class='moving-actions'>
-      <div class='header'>
+      <router-link class='header' :to='getUserPath'>
         <div class='user'>
           <div class='picture' :style='getProfilePic'></div>
         </div>
         <div class='infos'>
           <span class='name'>{{userName}}</span>
         </div>
-      </div>
+      </router-link>
       <div class='content'>
         <div class='moving-places'>
           <div class='depart element'>
@@ -165,6 +173,7 @@ import MoverCard from '@views/Movers/MoverCard.vue';
 import {MovingStore, LoginStore} from '@store';
 import {DateMoving, AlertsElement, ActionsElements, Forms} from '@classes';
 import { timeout } from '@methods';
+import { routesNames } from '@router';
 
 @Component({
   components: {
@@ -176,18 +185,17 @@ export default class MovingInfos extends Vue {
   public formatedDate = null;
   public dateFrom = null;
   public backgroundCover = null;
-  public profilePic = {backgroundImage: `url("${require('@images/user.jpg')}")`};
   public css = require('@css');
 
   get movingEvent() {return MovingStore.state.oneAnnouncement}
 
-  get getDescription() { return this.chance.paragraph(); }
-  get chance() { return new Chance(); }
-  get userName() { return this.movingEvent.user.username; }
+  get getDescription() { return this.movingEvent.description }
+  get userName() { return this.movingEvent.user.firstname + ' ' + this.movingEvent.user.lastname; }
   get getDepart() { return this.movingEvent.addressIn; }
   get getArrivee() { return this.movingEvent.addressOut;}
   get getMenNumber() {return this.movingEvent.menRequired};
   get getPrice() {return this.movingEvent.pricePerHourPerUser};
+  get getCreated() { return moment(Number(this.movingEvent.createdAt) * 1000).fromNow()}
   get getBegin() {
     const date = new DateMoving(this.movingEvent.dealDate);
     return date;
@@ -201,13 +209,18 @@ export default class MovingInfos extends Vue {
     else return 'Départ/Arrivée'
   }
 
+  get getUserPath() {return {name: routesNames.user, params: {userId: this.movingEvent.user.id}}}
+
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
   get canAsk() {
     if (this.isMovingMine) return false;
-    else if (!LoginStore.state.userInfos.isMover) return false;
-    else if (this.movingEvent.usersParticipating) {
-      if (this.movingEvent.usersParticipating.length >= this.movingEvent.menRequired) return false;
-      return !this.movingEvent.usersParticipating.some(m => m.id == LoginStore.state.userInfos.id)
+    else if (this.movingEvent.userParticipating) {
+      if (this.movingEvent.userParticipating.length >= this.movingEvent.menRequired) return false;
+      return !this.movingEvent.userParticipating.some(m => m.id == LoginStore.state.userInfos.id)
+    }
+    else if (this.movingEvent.userNotParticipating) {
+      if (this.movingEvent.userNotParticipating.length >= this.movingEvent.menRequired) return false;
+      return !this.movingEvent.userNotParticipating.some(m => m.id == LoginStore.state.userInfos.id)
     }
     return true;
   }
@@ -232,38 +245,87 @@ export default class MovingInfos extends Vue {
   }
   
   async proposeHelp() {
-    try {
-      const response = await new AlertsElement.FormAlert({
-        title: `Proposer son aide à ${this.userName}`,
-        message: `En confirmant, ${this.userName} recevra une proposition d'aide de votre part et se verra en droit de l'accepter ou de la décliner`,
-        formElement: {
-          form: new Forms.Form({
-            message: new Forms.FieldForm({
-              placeholder: `Message pour ${this.userName} (optionnel)`
-            })
+    if (!LoginStore.state.userInfos.isMover) {
+      const response = await new AlertsElement.Alert({
+        type: 'warning',
+        title: `Vous n'êtes pas déménageur`,
+        message: `Pour pouvoir proposer son aide à quelqu'un, il faut être activé en tant que déménageur`,
+        actions: [
+          new ActionsElements.LinkAction({
+            text: 'Devenir déménageur',
+            to: {path: '/bemover'}
           }),
-          submit: {
-            params: {
-              id: this.movingEvent.uuid
+          new ActionsElements.ConfirmAction({})
+        ]
+      })
+    } else if (!LoginStore.state.userInfos.isAvailable) {
+      const response = await new AlertsElement.Alert({
+        type: 'warning',
+        title: `Vous avez le statut indisponible`,
+        message: `Pour pouvoir proposer son aide à quelqu'un, il faut avoir indiqué être disponible`,
+        actions: [
+          new ActionsElements.LinkAction({
+            text: 'Mon profil',
+            to: {path: `/user/${LoginStore.state.userInfos.id}`}
+          }),
+          new ActionsElements.ConfirmAction({})
+        ]
+      })
+    }
+    else {
+      try {
+        const response = await new AlertsElement.FormAlert({
+          title: `Proposer son aide à ${this.userName}`,
+          message: `En confirmant, ${this.userName} recevra une proposition d'aide de votre part et se verra en droit de l'accepter ou de la décliner`,
+          formElement: {
+            form: new Forms.Form({
+              help: new Forms.Select({
+                placeholder: 'Je peux aider:',
+                options: [ 
+                  {value: 1, text: 'Pour le départ seulement'},
+                  {value: 2, text: `Pour l'arrivée seulement`},
+                  {value: 3, text: `Pour le trajet seulement`},
+                  {value: 4, text: 'Pour tout'},
+                ]
+              }),
+              proposeCar: new Forms.CheckBox({
+                placeholder: `Je dispose d'un véhicule`,
+                value: false
+              }),
+              message: new Forms.FieldForm({
+                placeholder: `Message pour ${this.userName} (optionnel)`
+              }),
+            }),
+            validations: {
+              help: {required}
             },
-            trigger:  MovingStore.actions.createParticipation
+            submit: {
+              params: {
+                id: this.movingEvent.uuid
+              },
+              trigger:  MovingStore.actions.createParticipation
+            }
           }
-        }
-      }).waitResponse();
+        }).waitResponse();
 
-      MovingStore.actions.getAnnouncementDetails({
-        id: this.movingEvent.uuid.toString(),
-        force: true
-      })
-      new AlertsElement.SuccessAlert({
-        title: `Proposition envoyée`,
-        message: `Votre proposition a bien été envoyée à ${this.userName}`,
-      })
-    } catch(e) {
-      new AlertsElement.ErrorAlert({
-        title: `La proposition a échoué`,
-        message: `Une erreur s'est produite lors de l'envoi de la proposition`,
-      })
+        console.log(response)
+
+        if (response) {
+          MovingStore.actions.getAnnouncementDetails({
+            id: this.movingEvent.uuid.toString(),
+            force: true
+          })
+          new AlertsElement.SuccessAlert({
+            title: `Proposition envoyée`,
+            message: `Votre proposition a bien été envoyée à ${this.userName}`,
+          })
+        }
+      } catch(e) {
+        new AlertsElement.ErrorAlert({
+          title: `La proposition a échoué`,
+          message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+        })
+      }
     }
   }
 }
@@ -297,7 +359,7 @@ export default class MovingInfos extends Vue {
       display: flex;
       flex-flow: column nowrap;
       margin-bottom: 10px;
-      padding: 0 0 15px 0;
+      padding: 0 0 10px 0;
 
 
       h1.title {
@@ -701,6 +763,7 @@ export default class MovingInfos extends Vue {
         flex-flow: column wrap;
         align-items: center;
         flex: 0 0 auto;
+        padding: 10px;
       }
 
       .content {

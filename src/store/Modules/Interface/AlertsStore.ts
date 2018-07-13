@@ -35,11 +35,13 @@ namespace Mutations {
     Actions.actions.onCloseAction({alert: Object.assign({}, state.alertData), value: true})
     state.alertData = null;
     state.alertShow = false;
+    if (resolveAlert) resolveAlert(true);
   }
   function cancelAlert(state: IAlertsState) {
     Actions.actions.onCloseAction({alert: Object.assign({}, state.alertData), value: false})
     state.alertData = null;
     state.alertShow = false;
+    if (resolveAlert) resolveAlert(false);
   }
 
   export const mutations = {

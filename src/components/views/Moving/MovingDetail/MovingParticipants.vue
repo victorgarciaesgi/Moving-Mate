@@ -2,7 +2,8 @@
   <div class='Participants'>
     <ul class='mover-list' v-if='participantsList'>
       <MoverCard :mover='mover' v-for='mover of participantsList' :key='mover.id'
-        :canDelete='isMovingMine' :isMe='mover.id == myId' note display minimal/>
+        :canDelete='isMovingMine' :isMe='mover.id == myId' note display minimal 
+        :phone='isMovingMine'/>
     </ul>
     <div v-else class='no-result flexy'>
       <SvgIcon :src='require("@icons/divers/face_bad.svg")' 
@@ -29,11 +30,10 @@ import axios from 'axios';
 export default class MovingParticipants extends Vue {
   
   get participantsList() {
-    return MovingStore.state.oneAnnouncement.usersParticipating;
+    return MovingStore.state.oneAnnouncement.userParticipating;
   }
 
   get myId() {return LoginStore.state.userInfos.id}
-
   get movingEvent() {return MovingStore.state.oneAnnouncement}
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
 
@@ -59,7 +59,6 @@ export default class MovingParticipants extends Vue {
     padding-top: 20px;
     justify-content: center;
     align-items: flex-start;
-
   }
 }
  

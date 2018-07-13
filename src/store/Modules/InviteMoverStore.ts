@@ -4,6 +4,7 @@ import { flatten, isEmpty } from 'lodash';
 import { storeBuilder } from "./Store/Store";
 import Router from '@router';
 import Marker from './Interface/GoogleMaps/Markers';
+import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
 import Paths from '@paths';
 import MovingStore from './MovingStore';
 
@@ -79,9 +80,16 @@ namespace Actions {
     Mutations.mutations.updateMoverList([]);
 
     try {
-      const { data } = await Api.get(Paths.MOVERS_LIST, payload);
-      console.log(data);
-      Mutations.mutations.updateMoverList(data);
+      if (!payload.search) {
+        const { data } = await Api.get(Paths.MOVERS_LIST, payload);
+        console.log(data);
+        Mutations.mutations.updateMoverList(data);
+      } else {
+        const location = await geoLocate(payload.search);
+        console.log(location.location.lat(), location.location.lng());
+        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        Mutations.mutations.updateMoverList(result);
+      }
     } finally {
       Mutations.mutations.updateSearchingState();
     }

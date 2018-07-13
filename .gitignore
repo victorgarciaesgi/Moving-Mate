@@ -18,6 +18,8 @@
 /.idea/
 /dist
 /cert
+/mobile-app/www
+/mobile-app/platforms
 
 /.vscode/chrome
 /remote-profile

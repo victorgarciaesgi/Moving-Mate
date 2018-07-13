@@ -12,14 +12,13 @@
     // "noUnusedParameters": true,
     "pretty": true,
     "noImplicitThis": true,
-    "types": [
-      "./src/typings/*"
-    ],
     "lib": [
       "dom",
       "es5",
       "es2015",
       "es2015.promise",
+      "es2017",
+      "es2017.object",
       "es7"
     ],
     "baseUrl": "./src",
@@ -52,7 +51,9 @@
   "exclude": [
     "typings/browser.d.ts",
     "typings/browser",
-    "node_modules" 
+    "node_modules",
+    "mobile-app",
+    "dist"
   ],
   "compileOnSave": true
 }

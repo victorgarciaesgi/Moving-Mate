@@ -17,7 +17,7 @@
           </template>
         </div>
       </div>
-      <div class='displayNote'>
+      <div class='displayNote' v-if='data.displayNote'>
         <div class='value'>{{ (hoverCount != 0?(hoverCount):'-') }} / {{data.starCount}}</div>
       </div>
     </div>
@@ -99,8 +99,13 @@ export default class StarRating extends FormMixin {
     }
   }
 
+  @Watch('value') valueChanged() {
+    this.hoverCount = this.value || this.data.init;
+  }
+
   mounted() {
     this.hoverCount = this.value || this.data.init;
+    if (this.value) this.rating = this.value;
   }
 
   hover(value) {

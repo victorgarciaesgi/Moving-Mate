@@ -9,14 +9,27 @@ export interface IMovingState {
   },
   searchingMovingList: boolean,
   movingList: IMovingEvent[],
-  oneAnnouncement: IMovingEvent
+  oneAnnouncement: IMovingEvent,
+  oneAnnouncementDemandes: IMoverDemande[]
+}
+
+export interface IMoverDemande {
+  user: IMover,
+  message: string,
+  vehicle: boolean,
+  help: number
+}
+
+export enum demandeHelp {
+  depart,arrivee,trajet,tout
 }
 
 export interface IMovingEvent {
   // id: number,
   uuid: string,
   user: IMovingUser,
-  usersParticipating: IMovingUser[],
+  userNotParticipating: {id: string}[],
+  userParticipating: IMovingUser[],
   label: string,
   addressIn: IAddress,
   addressOut: IAddress,

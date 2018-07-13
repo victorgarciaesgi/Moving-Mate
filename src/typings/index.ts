@@ -1,5 +1,6 @@
 export * from './LoginState';
 export * from './Signup';
+export * from './AdminState';
 export * from './MovingState';
 export * from './MoverState';
 export * from './Notifications';
@@ -22,9 +23,10 @@ export interface ITab {
   icon?: any,
   condition?: boolean,
   childs?: boolean,
+  badge?: number,
   to: {
     name: string,
-    params: {
+    params?: {
       [x:string]: any
     }
   }

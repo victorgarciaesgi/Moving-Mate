@@ -7,8 +7,10 @@ const ServerRoutes = {
   MOVING_CREATE: 'announcement',
   MOVING_USER_INFOS: 'user/verify',
   PARTICIPATION_CREATE: 'participations',
+  CREATE_NOTE: 'note_user',
   MOVERS_LIST: 'movers',
   NEW_MOVER: 'mover',
+  USERS: 'users'
 }
 
 export default ServerRoutes;

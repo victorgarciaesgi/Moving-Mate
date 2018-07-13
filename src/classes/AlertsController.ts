@@ -1,6 +1,8 @@
 import { AlertsStore, LoginStore } from '@store';
 import {Forms} from './FormController';
 
+import Router from '@router';
+
 export namespace AlertsElement {
 
   type AlertType = "success" | "confirm" | "warning" | "error" | "info" | "form";
@@ -111,14 +113,16 @@ export namespace ActionsElements {
   export class Action {
     public type: ActionType;
     public text: string;
+    public to?: {path: string} | {name: string, params?: {[x: string]: any}};
     public trigger?: Function;
     public triggers?: Function[];
 
-    constructor({type, text, trigger, triggers}: Action) {
+    constructor({type, text, trigger, triggers, to}: Action) {
       this.text = text;
       this.type = type;
       this.trigger = trigger;
       this.triggers = triggers;
+      this.to = to;
     }
   }
 
@@ -136,6 +140,16 @@ export namespace ActionsElements {
       } else {
         this.trigger = this.trigger = AlertsStore.mutations.confirmAlert;
       }
+    }
+  }
+
+  export class LinkAction extends Action {
+    constructor({text, to}: {text: string, to: {path: string} | {name: string, params?: {[x: string]: any}}}) {
+      super({
+        text: text,
+        to: to,
+        type: "link",
+      });
     }
   }
 

@@ -23,7 +23,7 @@ export class AxiosError {
       // NotificationsStore.actions.addNotification({ type: 'warning', message: message })
     } 
     else {
-      if (data.message !== 'Bad credentials') {
+      if (data.error && data.error.message != 'Bad credentials') {
         LoginStore.actions.disconnectRequest();
       }
     }
@@ -55,14 +55,16 @@ export interface IApiResponse {
 }
 
 export class ApiResponse {
-  constructor(fields: {message?: string, data?: any, type: any, success: boolean}) {
+  public data?: any;
+  public message?: any;
+  constructor(fields: {message?: string, data?: any, type: any, success: boolean}){
     let returnData: any = {};
     returnData.message = fields.message;
     returnData.type = fields.type;
     returnData.data = fields.data != null ? fields.data : {};
     returnData.success = fields.success;
-    if (fields.success) return Promise.resolve(returnData);
-    else return Promise.reject(returnData)
+    if (fields.success) return <any>Promise.resolve(returnData);
+    else return <any>Promise.reject(returnData)
   }
 }
 

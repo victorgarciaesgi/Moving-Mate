@@ -11,7 +11,7 @@
         </span>
       </div>
       <!-- <SocialButton media='facebook'>Connexion avec Facebook</SocialButton> -->
-      <SocialButton media='google'>Connexion avec Google</SocialButton>
+      <SocialButton media='google'>Connexion avec Google (Beta)</SocialButton>
       <FormSeparator>Ou connectez vous</FormSeparator>
       <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>
       <FormText v-model="LoginForm._password" :vl='$v.LoginForm._password' :data='LoginForm.fieldsData._password'/>
@@ -76,7 +76,7 @@ export default class Connexion extends Vue {
 
   public LoginForm = new Forms.Form({
     _username: new Forms.TextForm({
-      value: 'victor@gmail.com',
+      value: '@gmail.com',
       error: false,
       placeholder: 'Adresse email',
       icon: require('@icons/mail.svg')

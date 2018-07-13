@@ -5,6 +5,7 @@ import {clone} from 'lodash';
 import * as Types from './ApiTypes';
 
 export const API_URL = process.env.API_URL;
+export const APP_BASE = process.env.NODE_ENV === 'development'? 'http://localhost:5000/': 'http://51.254.123.205:5000/';
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
@@ -50,7 +51,6 @@ async function Request(type: string, path: string, payload: any, noAuth?: boolea
       })
       return new Types.AxiosSuccess(response.data);
     } else if (type == 'postFormData') {
-      console.log('ok')
       let response: AxiosResponse = await axiosInstance.post(path, payload, {
         headers: {
           'Content-Type': 'multipart/form-data'

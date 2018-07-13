@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>  
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="description" content="{{description}}">
@@ -10,15 +11,19 @@
     <link rel="canonical" href="" />
     <title>Moving Mate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv=”Content-Security-Policy” content=”default-src *”>    
     <script src="https://apis.google.com/js/platform.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpgEmBx1ewmHUitwPaVuv6hVahZGZa6fo&libraries=places"></script>
     <script src='https://rawgit.com/googlemaps/v3-utility-library/master/infobox/src/infobox_packed.js'></script>
-
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
     <!-- <script
   src="https://code.jquery.com/jquery-3.3.1.min.js"
   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
   crossorigin="anonymous"></script> -->
     <meta name="google-signin-client_id" content="548907886754-8io57tdrseu4ifkbin8jprtkhd4ds5eg.apps.googleusercontent.com">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
   </head>
 
   <body ondragstart="return false;" ondrop="return false;">

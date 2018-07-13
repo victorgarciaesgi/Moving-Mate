@@ -1,20 +1,34 @@
 <template>
   <div class='Home'>
     <section class='image-home'>
-      <ul class="link-list">
-        <router-link to='moving' class='link'>
-          <SvgIcon class='icon' :src='require("@icons/truck.svg")'/>
-          Voir les déménagements
-        </router-link>
-        <router-link to='movers' class='link'>
-          <SvgIcon class='icon' :src='require("@icons/people.svg")'/>
-          Liste des déménageurs
-        </router-link>
-        <router-link to='moving/create' class='link'>
-          <SvgIcon class='icon' :src='require("@icons/add_circle.svg")'/>
-          Créer une annonce
-        </router-link>
-      </ul>
+      <div class='part moving'>
+        <div class='title'>Vous voulez déménager</div>
+        <ul class="link-list">
+           <router-link to='moving/create' class='link'>
+            <SvgIcon class='icon' :src='require("@icons/add_circle.svg")'/>
+            Créer une annonce
+          </router-link>
+          <router-link to='movers' class='link'>
+            <SvgIcon class='icon' :src='require("@icons/people.svg")'/>
+            Liste des déménageurs
+          </router-link>
+        </ul>
+      </div>
+      <div class='part mover'>
+        <div class='title'>Vous voulez être déménageur</div>
+        <ul class='link-list'>
+          <router-link to='bemover' class='link' v-if='!userInfos.isMover'>
+            <SvgIcon class='icon' :src='require("@icons/name.svg")'/>
+            Devenir déménageur
+          </router-link>
+          <router-link to='moving' class='link'>
+            <SvgIcon class='icon' :src='require("@icons/truck.svg")'/>
+            Voir les déménagements
+          </router-link>
+          
+        </ul>
+      </div>
+     
     </section>
 
     <section class='help '>
@@ -37,7 +51,7 @@
     </section>
 
     <section>
-      <FooterComponent></FooterComponent>
+      <!-- <FooterComponent></FooterComponent> -->
     </section>
   </div>
 </template>
@@ -69,6 +83,8 @@ export default class Home extends Vue {
   handlePathSelect(path: svgPath) {
     router.push(`/moving/search/${path.title}`);
   }
+
+  get userInfos() {return LoginStore.state.userInfos}
 
   async mounted() {
     // new AlertsElement.SuccessAlert({
@@ -105,43 +121,80 @@ export default class Home extends Vue {
 
   section.image-home {
     overflow: hidden;
-    height: 400px;
-    max-height: 60vh;
-    background-image: url("~@images/home_image/home_image.jpg");
-    @include bg-center;
+    // max-height: 60vh;
     display: flex;
+    flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
 
-    .link-list {
+    .part {
       display: flex;
-      flex-flow: row wrap;
+      flex: 1 0 50%;
+      min-width: 300px;
+      height: 400px;
+      flex-flow: column wrap;
       justify-content: center;
       align-items: center;
-
-      .link {
-        display: flex;
-        padding: 10px 20px 10px 20px;
-        background-color: white;
-        border-radius: 5px;
-        font-weight: bold;
-        box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        margin: 5px 10px 5px 10px;
-        justify-content: center;
-        align-items: center;
-
-        .icon {
-          margin-right: 10px;
-        }
+      @include bg-center;
+      &.moving {
+        background-image: url("~@images/home_image/home1.jpg");
+      }
+      &.mover {
+        background-image: url("~@images/home_image/home2.jpg");
       }
 
+      &::before {
+        content: '';
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        position: absolute;
+        background-color: rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+
+      .title {
+        font-weight: bold;
+        color: white; 
+        font-size: 35px;
+        z-index: 2;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      ul.link-list {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        z-index: 2;
+        align-items: center;
+
+        .link {
+          display: flex;
+          padding: 10px 20px 10px 20px;
+          background-color: white;
+          border-radius: 40px;
+          font-weight: bold;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
+          margin: 5px 10px 5px 10px;
+          justify-content: center;
+          align-items: center;
+
+          .icon {
+            margin-right: 10px;
+          }
+        }
+      }
     }
 
+    @media screen and (max-width: 800px) {
+      flex-flow: column wrap;
 
-    img {
-      width: 100%;
-      object-fit: cover;
-      height: auto;
+      .part {
+        flex: 1 1 100%;
+        width: 100%;
+      }
     }
   }
 
