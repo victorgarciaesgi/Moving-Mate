@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <div class='BeMover'>
     <div class='sections'>
       <section class='bemover-form'>
@@ -21,6 +21,7 @@
           </FormMessage>
           <FormField v-model='becomeMoverForm.description' :vl='$v.becomeMoverForm.description' :data='becomeMoverForm.fieldsData.description' />
           <CheckBox v-model='becomeMoverForm.cgu' :vl='$v.becomeMoverForm.cgu' :data='becomeMoverForm.fieldsData.cgu'/>
+          <router-link class='cgu' to='/cgu' target='_blank'>Voir les CGU</router-link>
           <div class='footer'>
             <FormButton 
               :submitting='submitting'
@@ -99,23 +100,28 @@ export default class BeMover extends Vue {
       value: this.userInfos.lastname
     }),
     avatar: new Forms.UploadForm({
-      placeholder: 'Votre photo de profil'
+      placeholder: 'Votre photo de profil',
+      value: this.userInfos.avatar
     }),
     address: new Forms.TextForm({
       icon: require('@icons/localisation.svg'),
       placeholder: 'Votre adresse',
+      value: this.userInfos.fullAddress?{title: this.userInfos.fullAddress}: null,
     }),
     phone: new Forms.TextForm({
       icon: require('@icons/phone.svg'),
       type: 'tel',
+      value: this.userInfos.phone,
       placeholder: 'Votre numéro de téléphone',
     }),
     price: new Forms.TextForm({
       icon: require('@icons/euro.svg'),
       placeholder: 'Votre prix par heure',
+      value: this.userInfos.pricePerHour,
     }),
     description: new Forms.TextForm({
       placeholder: 'Décrivez vous en quelques mots',
+      value: this.userInfos.description,
     })
   })
 
@@ -201,6 +207,12 @@ export default class BeMover extends Vue {
           flex-flow: row wrap;
           justify-content: flex-end;
           padding-top: 10px;
+        }
+
+        .cgu {
+          font-weight: bold;
+          font-size: 13px;
+          &:hover {text-decoration: underline}
         }
       }
     }

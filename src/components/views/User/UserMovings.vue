@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <div class="moving-list-root">
     <template v-if='movings.length'>
       <ul class='moving-list' >

@@ -61,12 +61,13 @@ export default class Popup extends Vue {
     } 
     else {
       this.show = false;
+      this.$emit('close');
     }
   }
 
   created(){
     EventBus.$on('closePopups', (element?) => {
-      if (element !== this) {
+      if (element !== this && this.show) {
         this.show = false;
         this.$emit('close');
       }
@@ -86,8 +87,8 @@ export default class Popup extends Vue {
   .popup-box{
     position: absolute;
     display: flex;
-    // justify-content: center;
-    // align-items: center;
+    justify-content: center;
+    align-items: center;
     background-color: white;
     top: calc(100% + 15px);
     border-radius: 5px;

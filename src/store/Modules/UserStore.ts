@@ -28,11 +28,14 @@ namespace Mutations {
     })
   }
 
-
+  function updateNotifications(state: IUserState, notifs: Object) {
+    state.notifications = <any>notifs;
+  }
 
   export const mutations = {
     updateOneUser: b.commit(updateOneUser),
     readAllNotifs: b.commit(readAllNotifs),
+    updateNotifications: b.commit(updateNotifications)
   }
 }
 
@@ -68,9 +71,32 @@ namespace Actions {
     }
   }
 
+  async function getUserNotifications(context) {
+    try {
+      const {data} = await Api.get('notifications');
+      Mutations.mutations.updateNotifications(data);
+      return new ApiSuccess()
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function readNotifications(context) {
+    try {
+      Mutations.mutations.readAllNotifs();
+      const {data} = await Api.post('notifications/read');
+      return new ApiSuccess({data})
+    } catch {
+      return new ApiError();
+    }
+  }
+
   export const actions = {
     getOneUser: b.dispatch(getOneUser),
-    sendUserEdit: b.dispatch(sendUserEdit)
+    sendUserEdit: b.dispatch(sendUserEdit),
+    getUserNotifications: b.dispatch(getUserNotifications),
+    readNotifications: b.dispatch(readNotifications)
   }
 }
 

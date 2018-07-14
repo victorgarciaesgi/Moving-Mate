@@ -80,7 +80,7 @@
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMover} from '@types';
-import {required} from 'vuelidate/lib/validators';
+import {required, maxLength} from 'vuelidate/lib/validators';
 import Api from '@api';
 import { StarRating, SvgIcon, UISwitch, BackgroundLoader, Notifications } from '@components';
 import * as Chance from 'chance';
@@ -154,6 +154,9 @@ export default class MoverCard extends Vue {
               placeholder: `Message pour ${this.fullname} (optionnel)`
             })
           }),
+          validations: {
+            message: {maxLength: maxLength(300)}
+          },
           submit: {
             params: {
               moverId: this.mover.id,
@@ -204,7 +207,8 @@ export default class MoverCard extends Vue {
             })
           }),
           validations: {
-            rating: {required}
+            rating: {required},
+            comment: {maxLength: maxLength(300)}
           },
           submit: {
             params: {

@@ -297,7 +297,8 @@ export default class MovingInfos extends Vue {
               }),
             }),
             validations: {
-              help: {required}
+              help: {required},
+              message: {maxLength: maxLength(300)}
             },
             submit: {
               params: {

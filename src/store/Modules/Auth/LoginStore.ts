@@ -23,6 +23,7 @@ const initialState: ILoginState = {
     firstname: null,
     lastname: null,
     isAvailable: null,
+    pricePerHour: null,
     isMover: null,
     address: null,
     roles: [],

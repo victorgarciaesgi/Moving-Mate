@@ -2,8 +2,8 @@
   <div class='container'>
     <div class='cgu'>
     <div class='title'>Conditions générales d'utilisation</div>
-    <div class='content'>
-      MENTIONS LEGALES.
+    <p class='content'>
+MENTIONS LEGALES.
 Conformément aux dispositions des Articles 6-lll et 19 de la Loi n°2004-575 du 21 juin 2004 pour la
 Conﬁance dans l’économie numérique, dite L.C.E.N.. il est porté à la connaissance des utilisateurs et
 visiteurs du site Moving Mate les présentes mentions légales.
@@ -47,7 +47,7 @@ Article 3 – Collecte de données et loi informatique et libertésLe site Movin
 Article 4 – Contact
 Pour tout signalement de contenus ou d’activités illicites:  ‘Utilisateur peut contacter l’Éditeur à l’adresse cité; ou par courrier recommandé avec accusé de réception adressé à I’Éditeur aux coordonnées précisées dans les présentes mentions légales.
 
-    </div>
+    </p>
   </div>
   </div>
 </template>
@@ -70,6 +70,10 @@ Pour tout signalement de contenus ou d’activités illicites:  ‘Utilisateur p
       font-size: 20px;
       text-align: center;
       margin-bottom: 20px;
+    }
+
+    .content {
+      white-space: pre-wrap;
     }
   }
 }

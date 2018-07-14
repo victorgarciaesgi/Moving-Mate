@@ -98,6 +98,7 @@ import {Component, Prop} from 'vue-property-decorator';
 import {UserStore, LoginStore, NotificationsStore, geoLocate, EventBus} from '@store';
 import axios from 'axios';
 import Api from '@api';
+import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
 import {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch, PaypalButton, UIModal, FormMessage, FormButton} from '@components';
 import { routesNames } from '@router';
 import {ITab} from '@types';
@@ -127,10 +128,13 @@ export default class User extends Vue {
   get user() {return UserStore.state.oneUser}
   get UserId() {return this.user.id}
   get userName() {return this.user.username};
-  get fullName() {return this.user.firstname + ' ' + this.user.lastname}
+  get fullName() {
+    if (this.user.firstname) return this.user.firstname + ' ' + this.user.lastname;
+    return null;
+  }
   get userPrice() {return this.user.pricePerHour || 15};
   get userCity() {return this.user.city || 'Paris'}
-  get getMovingCount() {return this.user.countAnnouncements || 0 + this.user.countParticipations || 0}
+  get getMovingCount() {return Number(this.user.countAnnouncements?this.user.countAnnouncements:0) + Number(this.user.countParticipations?this.user.countParticipations:0)}
 
   get profilePic() {
     return this.user.avatar || require('@images/user.jpg');
@@ -217,6 +221,9 @@ export default class User extends Vue {
               placeholder: `Message pour ${this.userName} (optionnel)`
             })
           }),
+          validations: {
+            message: {maxLength: maxLength(300)}
+          },
           submit: {
             params: {
               id: this.UserId

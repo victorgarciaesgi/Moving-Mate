@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <div class='EditUser'>
     <div class='sections'>
       <section class='edit-form'>

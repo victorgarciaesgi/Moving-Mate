@@ -1,12 +1,18 @@
 <template>
-  <div class='notif'>
+  <div class='notif' :class="{read: !notif.read}">
     <div class='infos'>
       <div class='icon'>
         <div class='profil' :style='getProfil'></div>
+        <div class='isNew' v-if='!notif.read'>
+          <span>NEW</span>
+        </div>
         <!-- <SvgIcon v-else :src='getIcon' :size='30' color='white'/> -->
       </div>
-      <div class='text'>
-        {{notif.content.text}}
+      <div class='details'>
+        <div class='text'>
+          {{notif.text}}
+        </div>
+        <div class='time'>Il y a 9 minutes</div>
       </div>
     </div>
     <div class='actions' v-if="notif.type == 'invitation'">
@@ -52,13 +58,12 @@ export default class Notif extends Vue {
   flex-flow: column wrap;
   width: 100%;
   height: auto;
-  padding: 5px 5px 10px 5px;
+  padding: 10px 10px 10px 10px;
   background-color: white;
   color: $g60;
 
   &:not(:last-child) {
     border-bottom: 1px solid $w235;
-    margin-bottom: 10px;
   }
 
   .infos {
@@ -82,16 +87,43 @@ export default class Notif extends Vue {
         border-radius: 100%;
         border: 2px solid $mainStyle;
       }
+
+      .isNew {
+        position: absolute;
+        left: -3px;
+        top: -3px;
+        span {
+          background-color: $red1;
+          color: white;
+          border-radius: 40px;
+          padding: 3px 8px 3px 8px;
+          font-weight: bold;
+          font-size: 10px;
+        }
+      }
     }
 
-    .text {
+    .details {
       display: flex;
+      flex-flow: column wrap;
       flex: 1 1 auto;
-      white-space: normal;
-      line-height: 20px;
-      padding: 5px;
-      font-size: 15px;
-      align-items: center;
+      justify-content: center;
+      padding-left: 5px;
+
+      .text {
+        display: flex;
+        white-space: normal;
+        flex: 1 1 auto;
+        line-height: 20px;
+        font-size: 15px;
+        align-items: flex-end;
+      }
+
+      .time {
+        flex: 1 1 auto;
+        color: $w120;
+        font-size: 12px;
+      }
     }
   }
 

@@ -27,6 +27,21 @@
   </head>
 
   <body ondragstart="return false;" ondrop="return false;">
-    <div id='app'>Loading...</div>
+    <div id='app'>
+      <div class='loader-app'>
+        <img src="./images/loading.svg" height="60" width="60">
+      </div>
+    </div>
+    <style>
+      .loader-app {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+        flex-flow: column wrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+      }
+    </style>
   </body>
 </html>

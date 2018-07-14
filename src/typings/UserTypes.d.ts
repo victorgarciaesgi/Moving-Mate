@@ -45,6 +45,8 @@ export interface INotif {
   id: number,
   type: 'invitation' | 'success' | 'fail',
   read: boolean,
+  createdAt: number,
+  text: string,
   content: {
     userFrom?: {
       avatar: string,
@@ -52,7 +54,6 @@ export interface INotif {
       firstname: string,
     }
     announcementUuId?: string,
-    text: string,
     participationId?: number,
   }
 }

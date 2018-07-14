@@ -21,6 +21,7 @@ export interface IUser {
   roles: Array<IUserRoles>;
   address: IAddress;
   isAvailable: boolean,
+  pricePerHour: number,
   isMover: boolean,
   avatar: string,
   avatarName: string,

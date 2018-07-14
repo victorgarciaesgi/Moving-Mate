@@ -19,7 +19,7 @@
 
           <template v-if='loginState.isLoggedIn'>
             <li class='header-button popup header-link'>
-              <Popup v-if='loginState.isLoggedIn' @open='fetchMyMoving'>
+              <Popup v-if='loginState.isLoggedIn' @open='fetchMyMoving' key='moving'>
                 <template slot='popup'>
                   <div class='center' v-if='searchingMyMoving'><img src='~@images/loading.svg'></div>
                   <div v-else-if="myMoving">
@@ -36,7 +36,7 @@
               </Popup>
             </li>
             <li class='header-button popup header-link'>
-              <Popup v-if='loginState.isLoggedIn' :width='450' @close='readAllNotifs'>
+              <Popup v-if='loginState.isLoggedIn' :width='450'  key='notifs' @close='readAllNotifs'>
                 <template slot='popup'>
                   <UserNotifs/>
                 </template>
@@ -48,7 +48,7 @@
             </li>
 
             <li class="header-button popup header-link">
-              <Popup :width='250'>
+              <Popup :width='250' key='user'>
                 <template slot='popup'>
                  <div class='user-options-popup'>
                     <div class="user">
@@ -210,8 +210,8 @@ export default class HeaderComponent extends Vue {
     }, 0)
   }
 
-  readAllNotifs() {
-    UserStore.mutations.readAllNotifs();
+  readAllNotifs(test) {
+    UserStore.actions.readNotifications()
   }
 
 

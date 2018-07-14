@@ -1,4 +1,4 @@
-<template lang='html'>
+<template>
   <div class='Movers'>
     <section class='searchResults'>
       <section class='searchComponent' :class='{shadow, invite}'>

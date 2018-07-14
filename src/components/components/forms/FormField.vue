@@ -136,13 +136,15 @@ export default class FormText extends FormMixin {
     transition: all 0.2s;
     font-size: 16px;
     font-weight: normal;
+    text-align: left;
     left: 15px;
-    top: 15px;
+    top: 27px;
     color: $w150;
     cursor: text;
     
     &.top {
       font-size: 12px;
+      top: 15px;
       cursor: default;
     }
   }

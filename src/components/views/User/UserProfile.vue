@@ -20,8 +20,8 @@
           </div>
         </div>
       </div>
-      <div class='list'>
-        <div class='comment' v-if='userComments' v-for='comment of commentsToDisplay' :key='comment.id'>
+      <div class='list' v-if='userComments.length'>
+        <div class='comment'  v-for='comment of commentsToDisplay' :key='comment.id'>
           <div class='header'>
             <div class='users' :class='{reverse: tabSelected == 1}'>
               <router-link :to='`/user/${comment.user.id}`' class='user'>
@@ -54,8 +54,8 @@
             <span class='text'>{{comment.comment}}</span>
           </div>
         </div>
-        <div v-else>Aucun commentaire</div>
       </div>
+      <div v-else class='noresult'>Aucun commentaire</div>
     </div>
   </div>
 
@@ -112,8 +112,7 @@
     }
 
     get userComments() {
-      const comments = <any>Object.values(this.user.comments);
-      return comments.sort((a, b) => b.createdAt - a.createdAt).map(m => {m.fromNow = moment(m.createdAt * 1000).fromNow(); return m});
+      return this.user.comments.sort((a, b) => b.createdAt - a.createdAt).map(m => {m.fromNow = moment(m.createdAt * 1000).fromNow(); return m});
     }
     get getDescription() { 
       return this.user.description; 
@@ -319,6 +318,14 @@
 
         
       }
+    }
+
+    .noresult {
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      background-color: $w235;
+      min-height: 120px;
     }
   }
 }

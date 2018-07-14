@@ -1,6 +1,6 @@
 <template>
   <div id='app' @click='closePopups()'>
-    <template>
+    <template v-if='sessionChecked'>
       <HeaderComponent/>
       <ProgressBarComponent/>
       <Notifications/>
@@ -11,12 +11,12 @@
         </transition>
       </div>
     </template>
-    <!-- <template>
+    <template v-else>
       <div class='loader-login'>
-        <img src="~@images/loading_white.svg" height="60" width="60">
-        <span>Chargement</span>
+        <SvgIcon :src="require('@images/loading.svg')" :size='60'/>
+        <span>Connexion...</span>
       </div>
-    </template> -->
+    </template>
   </div>
 </template>
 
@@ -29,9 +29,10 @@ import { Component, Watch } from "vue-property-decorator";
 import { EventBus, RootState, storeBuilder, DebugMode, AlertsStore } from "@store";
 import router from "./router";
 import { HeaderComponent, Notifications, ProgressBarComponent, Alerts, SvgIcon } from "@components";
-import { LoginStore } from "@modules";
+import { LoginStore, UserStore } from "@modules";
 import $ from "jquery";
 import { API_URL, APP_BASE } from "@api";
+import { setInterval } from "timers";
 
 const store: Store<RootState> = storeBuilder.vuexStore({
   strict: DebugMode
@@ -83,6 +84,10 @@ export default class App extends Vue {
         "href":  APP_BASE + 'cgu'
       }
     })});
+
+    const interval = setInterval(() => {
+      UserStore.actions.getUserNotifications();
+    }, 10000)
   }
 
   closePopups() {
@@ -107,15 +112,16 @@ export default class App extends Vue {
     display: flex;
     height: 100%;
     width: 100%;
-    background-color: $mainStyle;
-    color: white;
+    color: $g60;
+    font-weight: bold;
+    font-size: 20px;
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
     align-content: center;
 
     img {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
   }
 }

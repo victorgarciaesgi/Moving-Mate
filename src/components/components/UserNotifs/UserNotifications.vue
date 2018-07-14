@@ -17,52 +17,55 @@ import Vue from "vue";
 import { Component, Prop } from "vue-property-decorator";
 import {UserStore} from '@store';
 import Api from '@api';
+import {SvgIcon} from '@components'
 import {INotif} from '@types';
 import Notif from './Notif.vue';
 
 @Component({
-  components: {Notif}
+  components: {Notif, SvgIcon}
 })
 export default class UserNotifications extends Vue {
 
-  get notifications() : INotif[]{
-    return [
-      {
-        id: 0, 
-        type: 'invitation', 
-        read: false, 
-        content: {
-          userFrom: {
-            avatar: require('@images/user.jpg'),
-            id: 10,
-            firstname: 'Victor'
-          },
-          announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
-          text: `Victor vous a invité à l'aider pour son déménagement`,
-          participationId: 10
-        }
-      },
-      {
-        id: 1, 
-        type: 'success', 
-        read: true, 
-        content: {
-          userFrom: {
-            avatar: require('@images/user.jpg'),
-            id: 10,
-            firstname: 'Victor'
-          },
-          announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
-          text: `Maxence a accepté votre demande d'aide`,
-          participationId: 11
-        }
-      }
-    ]
-  }
-
   // get notifications() : INotif[]{
-  //   return UserStore.state.notifications;
+  //   return [
+  //     {
+  //       id: 0, 
+  //       type: 'invitation', 
+  //       read: false,
+  //       createdAt: 0,
+  //       text: `Victor vous a invité à l'aider pour son déménagement`,
+  //       content: {
+  //         userFrom: {
+  //           avatar: require('@images/user.jpg'),
+  //           id: 10,
+  //           firstname: 'Victor'
+  //         },
+  //         announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
+  //         participationId: 10
+  //       }
+  //     },
+  //     {
+  //       id: 1, 
+  //       type: 'success', 
+  //       read: true, 
+  //       createdAt: 0,
+  //       text: `Maxence a accepté votre demande d'aide`,
+  //       content: {
+  //         userFrom: {
+  //           avatar: require('@images/user.jpg'),
+  //           id: 10,
+  //           firstname: 'Victor'
+  //         },
+  //         announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
+  //         participationId: 11
+  //       }
+  //     }
+  //   ]
   // }
+
+  get notifications() : INotif[]{
+    return UserStore.state.notifications;
+  }
 
   get readNotifs() {
     return this.notifications.reduce((acc, curr, index) => {
@@ -81,14 +84,24 @@ export default class UserNotifications extends Vue {
 .Notifs {
   display: flex;
   position: relative;
+  justify-content: center;
+  align-items: center;
   height: 100%;
   width: 100%;
+
+  .center {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+  }
   
   .notif-list {
     display: flex;
     width: 100%;
     flex-flow: column wrap;
-    padding: 10px 10px 10px 10px;
+    overflow: hidden;
+    border-radius: 5px;
   }
 }
 
