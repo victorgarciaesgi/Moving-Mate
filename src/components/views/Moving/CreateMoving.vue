@@ -258,7 +258,6 @@ export default class CreateMoving extends Vue {
       }),
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
-        value: '0637096255',
         type: 'tel',
         placeholder: 'Votre numéro de téléphone',
         noEdit: (!!this.userInfos.phone)

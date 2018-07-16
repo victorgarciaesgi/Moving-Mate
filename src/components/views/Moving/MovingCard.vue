@@ -37,30 +37,30 @@
       <div class='moving-infos' v-if='!popup && !admin'>
         <div class='info'>
           <div class='info-content'>
-            <strong>{{getPrice}}€</strong>
+            <div class='strong'>{{getPrice}}€</div>
             <span>par pers.</span>
           </div>
         </div>
         <div class='info'>
           <div class='info-content'>
-            <strong>{{getMenNumber}}</strong>
+            <div class='strong'>{{getMenNumber}}</div>
             <span>{{getMenNumber | pluralize('déménageur')}}</span>
           </div>
         </div>
         <div class='info'>
           <div class='info-content'>
-            <strong>
+            <div class='strong'>
               <SvgIcon v-if='moving.helpType == 0' :src='require("@icons/moving/arrow_up.svg")' :size='26' :color='css.mainStyle'/>
               <SvgIcon v-else-if='moving.helpType == 1' :src='require("@icons/moving/arrow_down.svg")' :size='26' :color='css.mainStyle'/>
               <SvgIcon v-else :src='require("@icons/moving/arrow_both.svg")' :size='26' :color='css.mainStyle'/>
-            </strong>
+            </div>
             <span>{{getHelpType}}</span>
           </div>
         </div>
         
         <div class='info'>
           <div class='info-content'>
-            <strong><SvgIcon :src='require("@icons/moving/timer.svg")' :size='26'  :color='css.mainStyle'/></strong>
+            <div class='strong'><SvgIcon :src='require("@icons/moving/timer.svg")' :size='26'  :color='css.mainStyle'/></div>
             <span>{{moving.estimatedTime || 5}} {{moving.estimatedTime | pluralize('heure')}}</span>
           </div>
         </div>
@@ -91,7 +91,8 @@
 import Vue from 'vue'
 import { Component, Prop} from 'vue-property-decorator';
 import {IMovingEvent} from '@types';
-import { StarRating, SvgIcon, UISwitch } from '@components';
+import { StarRating, UISwitch } from '@components';
+import SvgIcon from '../../components/widgets/Divers/SvgIcon.vue';
 import * as Chance from 'chance';
 import axios from 'axios';
 import Router, {routesNames} from '@router';
@@ -382,13 +383,14 @@ $radius: 8px;
           color: $w120;
           font-size: 15px;
 
-          strong {
+          .strong {
             display: flex;
             justify-content: center;
             margin-right: 8px;
             font-size: 20px;
             color: $mainStyle;
             flex: 0 0 auto;
+            font-weight: bold;
             min-width: 40px;
             padding: 0 5px 0 5px;
             border-right: 1px solid $w220;

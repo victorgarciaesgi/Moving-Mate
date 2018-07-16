@@ -274,6 +274,7 @@ export default class MovingInfos extends Vue {
     }
     else {
       try {
+        const _this = this;
         const response = await new AlertsElement.FormAlert({
           title: `Proposer son aide à ${this.userName}`,
           message: `En confirmant, ${this.userName} recevra une proposition d'aide de votre part et se verra en droit de l'accepter ou de la décliner`,
@@ -281,12 +282,24 @@ export default class MovingInfos extends Vue {
             form: new Forms.Form({
               help: new Forms.Select({
                 placeholder: 'Je peux aider:',
-                options: [ 
-                  {value: 1, text: 'Pour le départ seulement'},
-                  {value: 2, text: `Pour l'arrivée seulement`},
-                  {value: 3, text: `Pour le trajet seulement`},
-                  {value: 4, text: 'Pour tout'},
-                ]
+                get options() {
+                  if (_this.movingEvent.helpType == 0) {
+                      return [ 
+                      {value: 1, text: 'Pour le départ seulement'},
+                    ]
+                  } else if(_this.movingEvent.helpType == 1) {
+                      return [ 
+                      {value: 2, text: `Pour l'arrivée seulement`},
+                    ]
+                  } else {
+                    return [ 
+                    {value: 1, text: 'Pour le départ seulement'},
+                    {value: 2, text: `Pour l'arrivée seulement`},
+                    {value: 3, text: `Pour le trajet seulement`},
+                    {value: 4, text: 'Pour tout'},
+                  ]
+                  }
+                }
               }),
               proposeCar: new Forms.CheckBox({
                 placeholder: `Je dispose d'un véhicule`,
