@@ -4,11 +4,14 @@
       <img src="~@images/loading.svg">
     </div>
     <template v-else-if='movingList.length'>
-      <ul  class='moving-list' >
-      <MovingCard v-for='moving in movingList' 
-                  :key='moving.uuid'
-                  :moving='moving'>
-      </MovingCard>
+      <ul class='moving-list'>
+        <MovingCard v-for='moving in movingList' 
+                    :key='moving.uuid'
+                    :moving='moving'>
+        </MovingCard>
+        <!-- <div class='loading-lazy' v-if='!offsetState && loadingLazy'>
+          <img src="~@images/loading.svg" height='50' width="50">
+        </div> -->
     </ul>
     </template>
     <div v-else class='no-result flexy'>
@@ -32,8 +35,23 @@ import { SvgIcon } from '@components';
 })
 export default class MovingList extends Vue {
 
+  public loadingLazy = false;
+
   get movingList() {return MovingStore.getters.formatedMovingList}
   get searching() {return MovingStore.state.searchingMovingList}
+  get offsetState() {return MovingStore.state.endOffset}
+  
+  scrollContent() {
+    if (this.offsetState) return;
+    else {
+      this.loadingLazy = true;
+      try {
+        MovingStore.actions.fetchMovingOffset()
+      } finally {
+        this.loadingLazy = false;
+      }
+    }
+  }
 
 
   mounted() {
@@ -72,6 +90,14 @@ export default class MovingList extends Vue {
     width: 100%;
     flex: 1 1 auto;
     padding: 10px;
+
+    .loading-lazy {
+      width: 100%;
+      display: flex;
+      height: 70px;
+      justify-content: center;
+      align-items: center;
+    }
     
   }
 

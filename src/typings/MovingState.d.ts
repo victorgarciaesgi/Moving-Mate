@@ -10,7 +10,10 @@ export interface IMovingState {
   searchingMovingList: boolean,
   movingList: IMovingEvent[],
   oneAnnouncement: IMovingEvent,
-  oneAnnouncementDemandes: IMoverDemande[]
+  oneAnnouncementDemandes: IMoverDemande[],
+  offset: number,
+  location: any,
+  endOffset: boolean,
 }
 
 export interface IMoverDemande {

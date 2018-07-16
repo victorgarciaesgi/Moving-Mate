@@ -4,11 +4,11 @@
       <span slot='header'>Inscription</span>
       <div slot='content' style='padding: 0 20px 0px 20px'>
         <div class='moving-logo'>
-          <img src="~@images/logo_truck_M.svg">
+          <img src="~@images/logo_banniere.svg">
         </div>
         <!-- <SocialButton media='facebook'>Inscription avec Facebook</SocialButton> -->
         <!-- <SocialButton media='google'>Inscription avec Google (Beta)</SocialButton> -->
-        <FormSeparator>Ou inscrivez vous</FormSeparator>
+        <FormSeparator>Inscrivez vous</FormSeparator>
         <FormText v-model="SignupForm.email" :vl='$v.SignupForm.email' :data='SignupForm.fieldsData.email'/>
         <FormText v-model="SignupForm.username" :vl='$v.SignupForm.username' :data='SignupForm.fieldsData.username'/>
         <FormText v-model="SignupForm.plainPassword.first" :vl='$v.SignupForm.plainPassword.first' :data='SignupForm.fieldsData.plainPassword.first'/>
@@ -165,9 +165,9 @@ export default class Inscription extends Vue {
 
 
 
-<style lang='scss'>
+<style lang='scss' scoped>
   .moving-logo {
-    padding: 5px 30px 10px 30px;
+    padding: 10px 30px 10px 30px;
     display: flex;
     justify-content: center;
     align-content: center;
@@ -175,7 +175,7 @@ export default class Inscription extends Vue {
     flex-flow: column nowrap;
 
     img {
-      width: 70px;
+      width: 230px;
       height: auto;
     }
   }

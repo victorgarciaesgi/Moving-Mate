@@ -85,6 +85,10 @@ module Mutations {
     state.markers = markers;
   }
 
+  async function pushMarkers(state: IGoogleMapsState, markers: IMarker[]) {
+    state.markers = state.markers.concat(markers);
+  }
+
   function closeMarkers(state: IGoogleMapsState) {
     state.markers.forEach(marker => {
       marker.infoBox.close();
@@ -105,6 +109,7 @@ module Mutations {
     renderMap: b.commit(renderMap),
     reloadMap: b.commit(reloadMap),
     updateMarkers: b.commit(updateMarkers),
+    pushMarkers: b.commit(pushMarkers),
     closeMarkers: b.commit(closeMarkers),
     deleteMarkersFromMap: b.commit(deleteMarkersFromMap),
     addMarkersFromMap: b.commit(addMarkersFromMap),

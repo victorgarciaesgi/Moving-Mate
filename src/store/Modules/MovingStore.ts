@@ -25,7 +25,10 @@ const state: IMovingState = {
   searchingMovingList: false,
   movingList: [],
   oneAnnouncement: null,
-  oneAnnouncementDemandes: null
+  oneAnnouncementDemandes: null,
+  offset: 20,
+  endOffset: false,
+  location: null,
 }
 
 const b = storeBuilder.module<IMovingState>("MovingModule", state);
@@ -47,6 +50,10 @@ namespace Getters {
 namespace Mutations {
   function updateMovingList(state: IMovingState, list: Array<any>) {
     state.movingList = list;
+  }
+
+  function pushMovingList(state: IMovingState, list: Array<any>) {
+    state.movingList = state.movingList.concat(list);
   }
 
   function updateSearchList(state: IMovingState, list: Array<any>) {
@@ -82,7 +89,8 @@ namespace Mutations {
   }
 
   export const mutations = {
-    updateMovingList: b.commit(updateMovingList),    
+    updateMovingList: b.commit(updateMovingList),
+    pushMovingList: b.commit(pushMovingList),    
     updateSearchList: b.commit(updateSearchList),
     updateSearchValue: b.commit(updateSearchValue),
     updateCommitedValue: b.commit(updateCommitedValue),
@@ -100,6 +108,7 @@ namespace Actions {
   async function fetchMoving(context, payload?: {search?: string}) {
     GoogleMaps.mutations.updateMarkers([]);
     Mutations.mutations.updateSearchingState(true);
+    state.offset = 20;
     state.formSearchData.searchCommited = true;
     if (isEmpty(payload)) payload.search = state.formSearchData.formSearchValue;
     Mutations.mutations.updateMovingList([]);
@@ -121,11 +130,36 @@ namespace Actions {
     }
   }
 
+  async function fetchMovingOffset(context) {
+    try {
+      const { data } = await Api.get(Paths.MOVING_LIST, {offset: state.offset});
+      if (data.length) {
+        state.offset += 20;
+        Mutations.mutations.pushMovingList(data);
+        actions.pushMarkers({annoucements: data})
+      } else {
+        state.endOffset = true;
+      }
+    } finally {
+      Mutations.mutations.updateSearchingState(false);
+    }
+  }
+
   async function createMarkers(context, {annoucements, payload}) {
     console.log(annoucements);
     let markers: IMarker[] = [];
     await getMapInstance();
     const bounds = await GoogleMaps.actions.reCenterMap(payload.search);
+    for (let moving of annoucements) {
+      markers.push(new Marker(moving))
+    }
+    GoogleMaps.mutations.updateMarkers(markers);
+  } 
+
+  async function pushMarkers(context, {annoucements}) {
+    console.log(annoucements);
+    let markers: IMarker[] = [];
+    await getMapInstance();
     for (let moving of annoucements) {
       markers.push(new Marker(moving))
     }
@@ -274,9 +308,11 @@ namespace Actions {
 
   export const actions = {
     fetchMoving: b.dispatch(fetchMoving),
+    fetchMovingOffset: b.dispatch(fetchMovingOffset),
     fetchPlaces: b.dispatch(fetchPlaces),
     fetchUserLocation: b.dispatch(fetchUserLocation),
     createMarkers: b.dispatch(createMarkers),
+    pushMarkers: b.dispatch(pushMarkers),
     createAnnouncement: b.dispatch(createAnnouncement),
     getOneAnnouncement: b.dispatch(getOneAnnouncement),
     getAnnouncementDetails: b.dispatch(getAnnouncementDetails),

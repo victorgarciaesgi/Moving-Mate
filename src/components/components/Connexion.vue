@@ -4,7 +4,7 @@
     
     <div slot='content' style='padding: 10px 30px 10px 30px'>
       <div class='moving-logo'>
-        <!-- <img src="~@images/logo_truck_M.svg"> -->
+        <img src="~@images/logo_banniere.svg">
         <span class='form-option'>
           Pas encore inscrit? 
           <span class='form-link' @click='handleSubmitLink()'>Inscrivez vous</span>
@@ -165,7 +165,7 @@ export default class Connexion extends Vue {
     flex-flow: column nowrap;
 
     img {
-      width: 70px;
+      width: 200px;
       height: auto;
     }
   }
