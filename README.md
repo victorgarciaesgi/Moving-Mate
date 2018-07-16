@@ -10,6 +10,7 @@
 
 - Vue single file components with Typescript using [Vue-property-decorator](https://github.com/kaorun343/vue-property-decorator) and [Vue-mixin-decorator](https://github.com/justrhysism/vue-mixin-decorator)
 - Vuex Store with namespaced modules
+- Full form component suite, including Calendar, Upload, Stars, Select etc...
 - Vue router with progress bar and async fetch before resolve
 - Form Validation using [Vuelidate](https://github.com/monterail/vuelidate)
 - Webpack dev server with Hot Modules Replacements and minified/gzipped code in Prod
@@ -19,6 +20,7 @@
 - SCSS implementation
 - 100% flexbox
 - JWT OAuth
+- Paypal Payment (Sandbox)
 - Google OAuth
 - Google Maps Client
 

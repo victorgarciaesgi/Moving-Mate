@@ -28,7 +28,7 @@ export interface IMovingEvent {
   // id: number,
   uuid: string,
   user: IMovingUser,
-  userNotParticipating: {id: string}[],
+  userNotParticipating: IDemande[],
   userParticipating: IMovingUser[],
   label: string,
   addressIn: IAddress,
@@ -62,6 +62,13 @@ export interface IMovingUser {
   pricePerHour: number,
   lastname: string,
   firstname: string,
+}
+
+export interface IDemande extends IMovingUser {
+  help: number,
+  proposeCar: boolean,
+  message: string,
+  participationId: string
 }
 
 export interface IAddress {

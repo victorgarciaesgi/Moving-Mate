@@ -1,4 +1,4 @@
-import {IAddress} from './'
+import {IAddress, IMovingEvent} from './'
 
 export interface ILoginState {
   userInfos: IUser,
@@ -6,6 +6,10 @@ export interface ILoginState {
   isLoggedIn: boolean,
   requesting: boolean,
   showModal: boolean,
+  myMovings: {
+    Announcements: IMovingEvent[],
+    Participations: IMovingEvent[]
+  },
   RouteAfter: string,
   init?: void,
 }

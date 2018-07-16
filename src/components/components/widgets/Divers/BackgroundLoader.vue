@@ -1,5 +1,5 @@
 <template>
-  <div ref='root' class='background-loader' :class='{loaded: bigImgLoaded, blur, user}'>
+  <div ref='root' class='background-loader' :class='{loaded: bigImgLoaded, blur, user, margin}'>
     <transition name='fade' mode='out-in'>
       <img v-if="bigImgLoaded && !!absolute" class='image' :src="displaySrc">
       <div v-else-if='bigImgLoaded' class='cover' :style='loaderImg'></div>
@@ -14,7 +14,7 @@ import {Component, Prop, Watch} from 'vue-property-decorator';
 import { isAbsolute } from 'path';
 
 @Component({
-  props: ['src', 'absolute', 'blur', 'user']
+  props: ['src', 'absolute', 'blur', 'user', 'margin']
 })
 export default class BackgroundLoader extends Vue {
 
@@ -24,6 +24,7 @@ export default class BackgroundLoader extends Vue {
   @Prop() user: boolean;
   @Prop() src; 
   @Prop() blur: boolean
+  @Prop() margin: boolean;
 
   public bigImgLoaded = false;
   public displaySrc = null;
@@ -73,7 +74,7 @@ export default class BackgroundLoader extends Vue {
   width: 100%;
   background-color: $g90;
   transition: all 0.3s;
-  min-height: 200px;
+  min-height: 250px;
   max-height: 100%;
   overflow: hidden;
 
@@ -85,6 +86,12 @@ export default class BackgroundLoader extends Vue {
 
   &.blur {
     .cover {filter: blur(30px);}
+  }
+
+  &.margin {
+    .cover {
+      top: -24px;
+    }
   }
 
   .image {
@@ -101,6 +108,7 @@ export default class BackgroundLoader extends Vue {
     background-size: cover;
     background-position: center center;
     width: 100%;
+
   }
 
   .icon {

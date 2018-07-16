@@ -46,10 +46,11 @@ export default class PaypalButton extends Vue {
               });
           },
           onCancel(data, actions) {
-            this.$emit('canceled');
+            _this.$emit('canceled');
           },
 
           onError(err) {
+            _this.$emit('canceled');
           }
         }, '.paypal-button');
     } catch(err) {

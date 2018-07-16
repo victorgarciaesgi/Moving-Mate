@@ -1,8 +1,10 @@
 import { RouteConfig, Route, RouteRecord } from 'vue-router/types';
 import * as Stores from '@store';
 import { Connexion, Inscription } from '@components';
-import {AlertsElement, ActionsElements} from '@classes';
+import {AlertsElement, ActionsElements, Forms} from '@classes';
 import Router from './index';
+import { required, email, minLength, maxLength, sameAs } from 'vuelidate/lib/validators';
+
 import {timeout} from '@methods';
 
 export const routesNames = {
@@ -112,6 +114,7 @@ export const routesList: MyRouteConfig[]  = [
   },
   {
     path: '/moving/detail/:movingId',
+    name: routesNames.movingDetail,
     component: () => import('@views/Moving/MovingDetail/MovingDetail.vue'),
     meta: {
       requiresAuth: true,
@@ -138,8 +141,9 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isTab: true,
           async asyncData(to: MyRoute) {
+            const result = await getOneMoving(to);
             await Stores.InviteMoverStore.actions.fetchMover({});
-            return await getOneMoving(to)
+            return result;
           },
         },
         children: [
@@ -168,16 +172,25 @@ export const routesList: MyRouteConfig[]  = [
           isTab: true,
           contentProp: true,
           asyncData: getOneMoving,
+          isAuthorized(to: MyRoute) {
+            if (Stores.MovingStore.state.oneAnnouncement.user.id == Stores.LoginStore.state.userInfos.id) return true;
+            else if (Stores.MovingStore.state.oneAnnouncement.userParticipating) {
+              return Stores.MovingStore.state.oneAnnouncement.userParticipating.some(m => m.id == Stores.LoginStore.state.userInfos.id)
+            }
+          }
         }
       },
       {
         path: 'demandes',
-        component: () => import('@views/Moving/MovingDetail/MovingDemandes.vue'),
+        component: () => import('@views/Moving/MovingDetail/MovingDemandes/MovingDemandes.vue'),
         name: routesNames.movingDemandes,
         meta: {
           isTab: true,
           contentProp: true,
           asyncData: getOneMoving,
+          isAuthorized(to: MyRoute) {
+            return Stores.MovingStore.state.oneAnnouncement.user.id == Stores.LoginStore.state.userInfos.id;
+          }
         }
       },
       {
@@ -188,6 +201,9 @@ export const routesList: MyRouteConfig[]  = [
           contentProp: true,
           isTab: true,
           asyncData: getOneMoving,
+          isAuthorized(to: MyRoute) {
+            return Stores.MovingStore.state.oneAnnouncement.user.id == Stores.LoginStore.state.userInfos.id;
+          }
         }
       }
     ]
@@ -321,6 +337,41 @@ export const routesList: MyRouteConfig[]  = [
     }
   },
   {
+    path: '/change-password/:token',
+    async beforeEnter(to, from) {
+      Router.replace('/', async () => {
+        if (to.params.token) {
+          new AlertsElement.FormAlert({
+            title: 'Changer de mot de passe',
+            message: 'Veuillez entrer votre nouveau mot de passe',
+            formElement: {
+              form: new Forms.Form({
+                password: new Forms.TextForm({
+                  type: 'password',
+                  placeholder: 'Mot de passe'
+                }),
+                rePassword: new Forms.TextForm({
+                  type: 'password',
+                  placeholder: 'Confirmation du mot de passe'
+                })
+              }),
+              validations: {
+                password: {required},
+                rePassword: {required, sameAs: sameAs('password')}
+              },
+              submit: {
+                params: {
+                  token: to.params.token
+                },
+                trigger: Stores.LoginStore.actions.changePassword
+              }
+            }
+          })
+        }
+      });
+    }
+  },
+  {
     path: '/admin', name: routesNames.admin,
     component: () => import('@views/Admin/Admin.vue'),
     meta: {
@@ -335,9 +386,10 @@ export const routesList: MyRouteConfig[]  = [
         path: '/', name: routesNames.adminUsers,
         component: () => import('@views/Admin/AdminUsers.vue'),
         meta: {
+          isTab: true,
           title: 'Admin:Utilisateurs',
           async asyncData() {
-            await Stores.AdminStore.actions.getUsers()
+            await Stores.AdminStore.actions.getUsers();
           }
         }
       },
@@ -345,7 +397,11 @@ export const routesList: MyRouteConfig[]  = [
         path: 'movings', name: routesNames.adminMovings,
         component: () => import('@views/Admin/AdminMoving.vue'),
         meta: {
-          title: 'Admin:Déménagements'
+          isTab: true,
+          title: 'Admin:Déménagements',
+          async asyncData() {
+            await Stores.AdminStore.actions.getMovings()
+          }
         }
       }
     ]

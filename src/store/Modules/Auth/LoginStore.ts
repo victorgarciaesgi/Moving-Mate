@@ -3,6 +3,7 @@ import { merge } from 'lodash'
 import Api, { ApiError, ApiSuccess, ApiWarning, ApiResponse, addAuthHeaders, removeAuthHeaders, API_URL } from '../../Api';
 import NotificationsModule from '../Interface/NotificationsStore';
 import router from '@router';
+import {UserStore} from '../'
 import { ILoginState } from '@types';
 import { capitalize } from 'lodash';
 import { storeBuilder } from "../Store/Store";
@@ -35,7 +36,11 @@ const initialState: ILoginState = {
   isLoggedIn: false,
   requesting: false,
   RouteAfter: null,
-  showModal: false
+  showModal: false,
+  myMovings: {
+    Announcements: null,
+    Participations: null,
+  },
 }
 
 // State
@@ -90,6 +95,8 @@ namespace Mutations {
     state.isLoggedIn = true;
     state.showModal = false;
     addAuthHeaders();
+    UserStore.mutations.updateNotifications([]);
+    UserStore.actions.getUserNotifications();
     if (state.RouteAfter || redirect) {
       router.push(state.RouteAfter?state.RouteAfter:redirect);
     }
@@ -118,6 +125,12 @@ namespace Mutations {
     // window.location.reload();
   }
 
+  function updateMyAnnouncements(state: ILoginState, movings: Object) {
+    state.myMovings = <any>movings;
+  }
+
+  
+
   export const mutations = {
     showLogin: b.commit(showLogin),
     showLoginRoute: b.commit(showLoginRoute),
@@ -125,7 +138,9 @@ namespace Mutations {
     connectUser: b.commit(connectUser),
     disconnectUser: b.commit(disconnectUser),
     sessionChecked: b.commit(sessionChecked),
-    updateUserInfos: b.commit(updateUserInfos)
+    updateUserInfos: b.commit(updateUserInfos),
+    updateMyAnnouncements: b.commit(updateMyAnnouncements)
+    
   }
 }
 
@@ -197,6 +212,45 @@ namespace Actions {
     }
   }
 
+  async function getMyAnnouncements(context) {
+    try {
+      const {data} = await Api.get(`/profile/move-plan`);
+      Mutations.mutations.updateMyAnnouncements(data);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function passwordResetRequest(context, {form}) {
+    try {
+      const {data} = await Api.post(`resetting/reset-mail`, form);
+      return new ApiSuccess();
+
+    } catch {
+      return new ApiError();
+    }
+  }
+
+  async function changePassword(context, {token, form}) {
+    try {
+      const {data} = await Api.post(`resetting/reset/${token}`, form);
+      NotificationsModule.actions.addNotification({
+        type: 'success',
+        message: 'Mot de passe changé!'
+      })
+      return new ApiSuccess();
+
+    } catch {
+      NotificationsModule.actions.addNotification({
+        type: 'error',
+        message: 'Erreur lors du changement de mot de passe'
+      })
+      return new ApiError();
+    }
+  }
+
 
 
   export const actions = {
@@ -204,7 +258,10 @@ namespace Actions {
     connexionSuccess: b.dispatch(connexionSuccess),
     disconnectRequest: b.dispatch(disconnectRequest),
     checkUserSession: b.dispatch(checkUserSession),
-    refreshUserInfos: b.dispatch(refreshUserInfos)
+    refreshUserInfos: b.dispatch(refreshUserInfos),
+    getMyAnnouncements: b.dispatch(getMyAnnouncements),
+    passwordResetRequest: b.dispatch(passwordResetRequest),
+    changePassword: b.dispatch(changePassword),
   }
 }
 

@@ -1,37 +1,28 @@
 <template>
-  <div class='Admin'>
-    <UITabs :tabs='tabs'/>
-    <section class='admin-views'>
-      <transition name='fade' mode='out-in'>
-        <router-view />
-      </transition>
-    </section>
+  <div class='AdminMovings'>
+    <MovingCard :moving='moving' v-for='moving of movingList' :key='moving.id' admin>
+    </MovingCard>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {Component, Prop} from 'vue-property-decorator';
-import {UserStore, LoginStore} from '@store';
+import {UserStore, LoginStore, AdminStore} from '@store';
 import axios from 'axios';
 import {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch} from '@components';
 import { routesNames } from '@router';
-import {ITab} from '@types';
+import MovingCard from '../Moving/MovingCard.vue';
 import {timeout} from '@methods'
 import {Forms, AlertsElement, ActionsElements} from '@classes';
 
 @Component({
-  components: {UITabs, BackgroundLoader, SvgIcon, StarRating, UISwitch}
+  components: {UITabs, MovingCard}
 })
 
-export default class Admin extends Vue {
+export default class AdminUsers extends Vue {
 
-  get tabs(): ITab[]  {
-    return [
-      {title: 'Utilisateurs', icon: require('@icons/movers/user.svg'), to: {name: routesNames.adminUsers}},
-      {title: 'Déménagements', icon: require('@icons/truck.svg'), to: {name: routesNames.adminMovings}},
-    ]
-  }
+  get movingList() {return AdminStore.state.movingList};
 }
 </script>
 
@@ -39,23 +30,14 @@ export default class Admin extends Vue {
 <style lang="scss" scoped>
 
 
-.Admin {
+.AdminMovings {
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   min-height: 100%;
   width: 100%;
-  
-  .admin-views {
-    display: flex;
-    flex-flow: row nowrap;
-    padding: 20px;
-    width: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    min-width: 0;
-    
-  }
-
+  padding: 20px;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 </style>

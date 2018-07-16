@@ -1,7 +1,13 @@
 <template>
   <div class='Notifs'>
     <div v-if='notifications.length' class='notif-list'>
-      <Notif v-for="notif of notifications" :key='notif.id' :notif='notif'/>
+      <div class='header'>
+        <span>Notifications: </span>
+        <span class='count'>{{notifications.length}}</span>
+      </div>
+      <div class='list'>
+        <Notif v-for="notif in orderBy(notifications, 'createdAt', -1)" :key='notif.id' :notif='notif'/>
+      </div>
     </div>
     <div v-else class='center' >
       <SvgIcon :src='require("@icons/notifs/notification_none.svg")'/>
@@ -26,50 +32,15 @@ import Notif from './Notif.vue';
 })
 export default class UserNotifications extends Vue {
 
-  // get notifications() : INotif[]{
-  //   return [
-  //     {
-  //       id: 0, 
-  //       type: 'invitation', 
-  //       read: false,
-  //       createdAt: 0,
-  //       text: `Victor vous a invité à l'aider pour son déménagement`,
-  //       content: {
-  //         userFrom: {
-  //           avatar: require('@images/user.jpg'),
-  //           id: 10,
-  //           firstname: 'Victor'
-  //         },
-  //         announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
-  //         participationId: 10
-  //       }
-  //     },
-  //     {
-  //       id: 1, 
-  //       type: 'success', 
-  //       read: true, 
-  //       createdAt: 0,
-  //       text: `Maxence a accepté votre demande d'aide`,
-  //       content: {
-  //         userFrom: {
-  //           avatar: require('@images/user.jpg'),
-  //           id: 10,
-  //           firstname: 'Victor'
-  //         },
-  //         announcementUuId: '06f0d676-7dd1-11e8-8c7f-34363bcb2f1c',
-  //         participationId: 11
-  //       }
-  //     }
-  //   ]
-  // }
 
   get notifications() : INotif[]{
     return UserStore.state.notifications;
   }
 
+
   get readNotifs() {
     return this.notifications.reduce((acc, curr, index) => {
-      if (curr.read) return acc++;
+      if (curr.read) return acc + 1;
     }, 0)
   }
 
@@ -84,9 +55,6 @@ export default class UserNotifications extends Vue {
 .Notifs {
   display: flex;
   position: relative;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
   width: 100%;
 
   .center {
@@ -94,14 +62,42 @@ export default class UserNotifications extends Vue {
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
   }
   
   .notif-list {
     display: flex;
     width: 100%;
-    flex-flow: column wrap;
+    height: 100%;
+    flex-flow: column nowrap;
     overflow: hidden;
     border-radius: 5px;
+
+    .header {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 14px;
+      height: 35px;
+      font-weight: bold;
+
+      .count {
+        margin-left: 5px;
+        color: $mainStyle;
+      }
+    }
+
+    .list {
+      display: flex;
+      flex: 1 1 auto;
+      background-color: $w240;
+      padding: 10px 10px 0 10px;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+      overflow-y: auto;
+    }
   }
 }
 

@@ -197,6 +197,29 @@ export default class FormUpload extends FormMixin {
       this.dropped = true;
       this.imageUploaded = true;
     }
+
+    // if (!!this.value && !(this.value instanceof File)) {
+    //   const image = new Image();
+    //   image.onload = () => {
+    //     const blob = new Blob([image], {type:"image/jpeg"});
+    //     const file = new File([blob], 'Photo actuelle')
+    //     const reader = new FileReader();
+    //     this.loadingImage = true;
+    //     this.fileTitle = 'Photo actuelle';
+
+    //     reader.onload = (event: any) => {
+    //       this.imagePrevisu = this.value;
+    //       this.imageUploaded = true;
+    //       this.onlyDisplay = true;
+    //       this.loadingImage = false;
+    //       this.dropped = true;
+    //       this.$emit('input', file);
+    //     }
+    //     reader.onerror = () => {this.loadingImage = false;}
+    //     reader.readAsDataURL(<any>file);
+    //   }
+    //   image.src = this.value;
+    // }
   }
 
   created() {

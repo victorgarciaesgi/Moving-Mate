@@ -78,6 +78,9 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
     if (to.matched.some(m => m.meta.requiresAuth)) {
       await LoginStore.actions.refreshUserInfos();
       if (LoginStore.state.isLoggedIn) {
+        if (!!to.meta.asyncData) {
+          await getRouteData(to);
+        }
         if (to.matched.some(m => !!m.meta.isAuthorized)) {
           const results = await Promise.all([
             ...to.matched.filter(m => !!m.meta.isAuthorized)
@@ -93,9 +96,6 @@ Router.beforeEach(async (to: MyRoute, from: MyRoute, next) => {
               next('/');
             }
           }
-        } 
-        if (!!to.meta.asyncData) {
-          await getRouteData(to);
         }
       }
       else {

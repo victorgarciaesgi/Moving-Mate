@@ -3,7 +3,7 @@
     <div class='sections'>
       <section class='edit-form'>
         <h1>Modifier mes informations</h1>
-        <div class='content'>
+        <div class='content' v-if='showForm'>
           <component :is='value.component' 
             v-for='(value, key) in editUserForm.fieldsData' 
             :key='key'
@@ -12,7 +12,7 @@
             :data='value'></component>
             <div class='footer'>
               <FormButton @click='resetForm()'>
-                  Annuler
+                  Reinitialiser les champs
               </FormButton>
               <FormButton 
                 :submitting='submitting'
@@ -30,11 +30,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch} from "vue-property-decorator";
 import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
 FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar, FormUpload } from "@components";
 import { timeout } from '@methods';
-import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
+import { required, email, numeric, maxLength, maxValue, minValue } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
 import {Forms} from '@classes';
 import {LoginStore, UserStore, NotificationsStore} from '@store';
@@ -46,8 +46,8 @@ import {LoginStore, UserStore, NotificationsStore} from '@store';
   },
   validations: {
     editUserForm: {
-      firstname: {required},
-      lastname: {required},
+      firstname: {required, maxLength: maxLength(30)},
+      lastname: {required, maxLength: maxLength(30)},
       address: {required},
       avatar: {required},
       phone: {required, phone(value) {
@@ -57,8 +57,8 @@ import {LoginStore, UserStore, NotificationsStore} from '@store';
         }
         return true;
       }},
-      price:{required, numeric},
-      description: {required}
+      price:{required, numeric, maxValue: maxValue(100), minValue: minValue(5)},
+      description: {required, maxLength: maxLength(1000)}
     }
   }
 })
@@ -71,6 +71,7 @@ export default class UserEdit extends Vue {
   public editUserForm: Forms.Form = null;
   public css = require('@css');
   public submitting = false;
+  public showForm = true;
 
   get userInfos() {
     return UserStore.state.oneUser
@@ -88,7 +89,7 @@ export default class UserEdit extends Vue {
     this.editUserForm.reset();
   }
 
-  fillForm() {
+  @Watch('userInfos') fillForm() {
     this.editUserForm = new Forms.Form({
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
@@ -131,6 +132,18 @@ export default class UserEdit extends Vue {
         value: this.userInfos.description,
         editMode: true
       })
+    })
+    this.$v.$reset();
+    this.editUserForm.reset();
+    this.updateComponent();
+  }
+
+  updateComponent(){    
+    var self = this;
+    self.showForm = false;
+    Vue.nextTick(function (){
+      console.log("re-render");
+      self.showForm = true;
     })
   }
 

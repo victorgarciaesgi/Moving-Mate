@@ -37,13 +37,15 @@ import {ITab} from '@types';
 export default class MovingDetail extends Vue {
   
 
-  public tabs: ITab[] = [
-    {title: 'Informations',icon: require('@icons/infos.svg'), to: {name: routesNames.movingInfos, params: {movingId: this.paramId}}},
-    {title: 'Participants validés',icon: require('@icons/done.svg'),badge: this.movingEvent.userParticipating?this.movingEvent.userParticipating.length:null, to: {name: routesNames.movingParticipants, params: {movingId: this.paramId}}},
-    {title: 'Demandes',condition: this.isMovingMine,badge: this.movingEvent.userNotParticipating?Object.values(this.movingEvent.userNotParticipating).length:null, icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
-    {title: 'Inviter des déménageurs', condition: this.isMovingMine, icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
-    {title: 'Offres partenaires',condition: this.isMovingMine,  icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
-  ]
+  get tabs(): ITab[]  {
+    return [
+      {title: 'Informations',icon: require('@icons/infos.svg'), to: {name: routesNames.movingInfos, params: {movingId: this.paramId}}},
+      {title: 'Participants validés',icon: require('@icons/done.svg'),badge: this.movingEvent.userParticipating?this.movingEvent.userParticipating.length:null, to: {name: routesNames.movingParticipants, params: {movingId: this.paramId}}},
+      {title: 'Demandes',condition: this.isMovingMine,badge: this.movingEvent.userNotParticipating?Object.values(this.movingEvent.userNotParticipating).length:null, icon: require('@icons/moving/inbox.svg'), to: {name: routesNames.movingDemandes, params: {movingId: this.paramId}}},
+      {title: 'Inviter des déménageurs', condition: this.isMovingMine, icon: require('@icons/moving/invite.svg'),childs: true, to: {name: routesNames.movingInvite, params: {movingId: this.paramId}}},
+      {title: 'Offres partenaires',condition: this.isMovingMine,  icon: require('@icons/moving/offer.svg'),to: {name: routesNames.movingOffers, params: {movingId: this.paramId}}},
+    ]
+  }
   public imagePrevisu = false;
   public imagePrevisuLoaded = false;
 

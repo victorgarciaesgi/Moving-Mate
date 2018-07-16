@@ -13,7 +13,7 @@
     </template>
     <template v-else>
       <div class='loader-login'>
-        <SvgIcon :src="require('@images/loading.svg')" :size='60'/>
+        <SvgIcon class='img' :src="require('@images/loading.svg')" :size='60'/>
         <span>Connexion...</span>
       </div>
     </template>
@@ -87,7 +87,8 @@ export default class App extends Vue {
 
     const interval = setInterval(() => {
       UserStore.actions.getUserNotifications();
-    }, 10000)
+    }, 5000)
+    UserStore.actions.getUserNotifications();
   }
 
   closePopups() {
@@ -120,7 +121,7 @@ export default class App extends Vue {
     align-items: center;
     align-content: center;
 
-    img {
+    .img {
       margin-bottom: 20px;
     }
   }

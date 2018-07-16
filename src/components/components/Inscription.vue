@@ -7,7 +7,7 @@
           <img src="~@images/logo_truck_M.svg">
         </div>
         <!-- <SocialButton media='facebook'>Inscription avec Facebook</SocialButton> -->
-        <SocialButton media='google'>Inscription avec Google (Beta)</SocialButton>
+        <!-- <SocialButton media='google'>Inscription avec Google (Beta)</SocialButton> -->
         <FormSeparator>Ou inscrivez vous</FormSeparator>
         <FormText v-model="SignupForm.email" :vl='$v.SignupForm.email' :data='SignupForm.fieldsData.email'/>
         <FormText v-model="SignupForm.username" :vl='$v.SignupForm.username' :data='SignupForm.fieldsData.username'/>
@@ -66,9 +66,10 @@ import Api from '@api';
           }
           return true;
         },
+        maxLength: maxLength(20)
       },
       plainPassword: {
-        first: {required},
+        first: {required, minLength: minLength(3)},
         second: {required, sameAs: sameAs('first')},
       }
     }

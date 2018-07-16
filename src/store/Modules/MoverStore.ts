@@ -83,7 +83,7 @@ namespace Actions {
         Mutations.mutations.updateMoverList(data);
       } else {
         const location = await geoLocate(payload.search);
-        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.bounds.getCenter().lat(), lng:location.bounds.getCenter().lng()})
         console.log(result);
         Mutations.mutations.updateMoverList(result);
       }

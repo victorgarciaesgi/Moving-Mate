@@ -175,7 +175,7 @@ namespace Actions {
   }
 
   async function getAnnouncementDetails(context, {id, force}: {id: string, force?: boolean}) {
-    if (state.oneAnnouncement != null && !force) {
+    if (state.oneAnnouncement != null && !force && state.oneAnnouncement.uuid == id) {
       return {title: state.oneAnnouncement.label}
     } else {
       const {data} = await Api.get(Paths.MOVING_DETAIL + id);
@@ -213,13 +213,13 @@ namespace Actions {
   }
 
   async function createParticipation(context, {id, form}:{id: number, form: Forms.Form}) {
-    try {
-      console.log(form)
-      const {data} = await Api.post(`participations/${id}/demand`, form);
-      return new ApiSuccess();
-
-    } catch {
-      return new ApiError();
+    const {data, success, status} = await Api.post(`participations/${id}/demand`, form);
+    console.log(data);
+    if (success) {
+      return new ApiSuccess({data});
+    } else {
+      console.log(data);
+      return new ApiError({data})
     }
   }
 
@@ -250,7 +250,7 @@ namespace Actions {
     }
   }
 
-  async function acceptDemande(context, id: number) {
+  async function acceptDemande(context, id: string) {
     try {
       const response = await Api.put(`participations/${id}/recruit`);
       return new ApiSuccess();
@@ -260,7 +260,7 @@ namespace Actions {
     }
   }
 
-  async function refuseDemande(context, id: number) {
+  async function refuseDemande(context, id: string) {
     try {
       const response = await Api.put(`participations/${id}/refuse`);
       return new ApiSuccess();

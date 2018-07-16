@@ -267,7 +267,7 @@ export default class CreateMoving extends Vue {
     part1: new Forms.Form({
       helpType: new Forms.Radio({
         placeholder: `J'ai besoin d'aide:`,
-        value: 2,
+        value: 0,
         options: [
           {value: 0, text: 'Au départ'},
           {value: 1, text: `A l'arrivée`},
@@ -276,13 +276,11 @@ export default class CreateMoving extends Vue {
       }),
       volume: new Forms.TextForm({
         placeholder: `Volume estimé total (en m³)`,
-        value: 50,
         icon: require('@icons/moving/volume.svg')
       }),
       addressIn: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_up.svg'),
-          value: "ChIJ6Wdw6uFv5kcRFiniHxoAJ-o",
           placeholder: 'Votre adresse de départ'
         }),
         addressType:  new Forms.Radio({
@@ -310,7 +308,6 @@ export default class CreateMoving extends Vue {
       addressOut: {
         address: new Forms.TextForm({
           icon: require('@icons/moving/arrow_down.svg'),
-          value: 'ChIJcVon7gevthIReAMdXVT163k',
           placeholder: `Votre adresse d'arrivée`
         }),
         addressType:  new Forms.Radio({
@@ -343,7 +340,6 @@ export default class CreateMoving extends Vue {
     part2: new Forms.Form({
       label: new Forms.TextForm({
         placeholder: 'Titre de votre déménagement (court)',
-        value: 'tesstttt'
       }),
       dealDate: new Forms.TextForm({
         icon: require('@icons/date.svg'),
@@ -351,14 +347,12 @@ export default class CreateMoving extends Vue {
       }),
       estimatedTime: new Forms.Select({
         placeholder: 'Durée du déménagement',
-        value: 2,
         options: Array.from(Array(10)).map((val, index) => {
           return {value: index + 1, text: index + 1 + 'h'}
         })
       }),
       menRequired: new Forms.Select({
         placeholder: 'Nombre de personnes requises',
-        value: 3,
         options: Array.from(Array(15)).map((val, index) => {
           return {value: index + 1, text: index + 1 + ' personnes'}
         })
@@ -366,11 +360,9 @@ export default class CreateMoving extends Vue {
       pricePerHourPerUser: new Forms.TextForm({
         icon: require('@icons/euro.svg'),
         placeholder: 'Prix par heure et par déménageur conseillé (en €)',
-        value: 15
       }),
       description: new Forms.TextForm({
         placeholder: 'Description du déménagement',
-        value: 'akljlkjdlandlzdlzaldajl'
       })
     })
   }
@@ -449,7 +441,7 @@ export default class CreateMoving extends Vue {
     } catch(e) {
       new AlertsElement.ErrorAlert({
         title: 'Erreur lors de la création',
-        message: `Une erreur s'est produite lors de la création de l'annonce. Veuillez nous excuser`,
+        message: e.data.error.message || `Une erreur s'est produite lors de la création de l'annonce. Veuillez nous excuser`,
       })
     } finally {
       this.submitting = false;

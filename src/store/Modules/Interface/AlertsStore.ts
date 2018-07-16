@@ -73,7 +73,7 @@ namespace Actions {
         }
         resolveAlert(value)
       } catch(e) {
-        rejectAlert(value)
+        rejectAlert(e)
       } finally {
         context.state.submitting = false;
       }
@@ -94,7 +94,7 @@ namespace Actions {
           }
           resolveAlert(value)
         } catch(e) {
-          rejectAlert(value)
+          rejectAlert(e)
         } finally {
           context.state.submitting = false;
         }

@@ -2,7 +2,7 @@
   <div class="moving-list-root">
     <template v-if='participations.length'>
       <ul  class='moving-list' >
-      <MovingCard v-for='moving in participations'
+      <MovingCard v-for='moving of participations'
                   :key='moving.uuid'
                   :moving='moving'
                   user>
@@ -32,8 +32,7 @@ export default class UserParticipations extends Vue {
   
 
   get participations() {
-    let parts = UserStore.state.oneUser.participations;
-    return parts;
+    return UserStore.state.oneUser.participations;
   }
 }
 </script>

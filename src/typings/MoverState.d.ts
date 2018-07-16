@@ -12,5 +12,6 @@ export interface IMoverState {
 }
 
 export interface IMover extends IUserProfile {
-  participationId: number,
+  participationId: string,
+  enabled: boolean,
 }

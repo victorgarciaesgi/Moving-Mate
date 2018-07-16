@@ -87,8 +87,9 @@ export default class Popup extends Vue {
   .popup-box{
     position: absolute;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    // justify-content: center;
+    // align-items: center;
+    align-items: stretch;
     background-color: white;
     top: calc(100% + 15px);
     border-radius: 5px;
@@ -102,10 +103,14 @@ export default class Popup extends Vue {
     flex-flow: row nowrap;
     z-index: 10011;
 
-    .center {
+    .centerContent {
       display: flex;
-      flex-flow: row wrap;
-      justify-content: space-between;
+      flex-flow: row nowrap;
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      text-align: center;
     }
 
     &.center {

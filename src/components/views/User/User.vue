@@ -298,6 +298,7 @@ export default class User extends Vue {
         flex-flow: row nowrap;
         flex: 0 0 auto;
         height: auto;
+        height: 250px;
         border-radius: 5px 5px 0 0;
 
         .userPicture {

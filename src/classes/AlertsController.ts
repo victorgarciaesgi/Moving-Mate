@@ -14,7 +14,7 @@ export namespace AlertsElement {
       [x:string]: any
     },
     submit: {
-      params: {[x:string]: any},
+      params?: {[x:string]: any},
       trigger: Function
     }
   }
@@ -35,6 +35,25 @@ export namespace AlertsElement {
 
     async waitResponse() {
       return AlertsStore.actions.addAlert(this);
+    }
+  }
+
+  export class WarningAlert extends Alert {
+    constructor(fields?: {title: string, message?: string, strict?: boolean, actions?: ActionsElements.Action[], onClose?: Function[]}) {
+      const actions = fields.actions || [];
+      const confirmAction = (fields.actions && fields.actions.find(m => m.type == 'confirm')) ? undefined : new ActionsElements.ConfirmAction({})
+      console.log(fields.actions)
+      super({
+        title: fields.title,
+        type: 'warning',
+        strict: fields.strict,
+        message: fields.message,
+        onClose: fields.onClose,
+        actions: [
+          ...actions,
+          confirmAction
+        ]
+      });
     }
   }
 

@@ -1,7 +1,6 @@
 <template>
   <div class='AdminUsers'>
     <MoverCard :mover='user' v-for='user of userList' :key='user.id' admin>
-      {{user.username}}
     </MoverCard>
   </div>
 </template>

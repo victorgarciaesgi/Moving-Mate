@@ -72,13 +72,15 @@ namespace Actions {
   }
 
   async function getUserNotifications(context) {
-    try {
-      const {data} = await Api.get('notifications');
-      Mutations.mutations.updateNotifications(data);
-      return new ApiSuccess()
-
-    } catch {
-      return new ApiError();
+    if (LoginStore.state.isLoggedIn) {
+      try {
+        const {data} = await Api.get('notifications');
+        Mutations.mutations.updateNotifications(data);
+        return new ApiSuccess()
+  
+      } catch {
+        return new ApiError();
+      }
     }
   }
 

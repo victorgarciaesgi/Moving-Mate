@@ -2,7 +2,7 @@
   <router-link tag='li' class='Mover-card' :to='redirectToDetail' :class='{premium: mover.isPremium}'>
     <div class="header">
       <div class='userPicture'>
-        <BackgroundLoader :src='profilePic' />
+        <BackgroundLoader :src='profilePic' margin='true'/>
       </div>
       <div class='userName' :class='{premium: mover.isPremium}'>
         <span class='premium' v-if='mover.isPremium'>
@@ -65,10 +65,10 @@
           <img v-if='noteLoading' src='~@images/loading.svg' height="22" width="22">
         </div>
         <div class='button-delete button' @click.stop='deleteMover' v-if='canDelete'>Supprimer</div>
-        <div class='button-leave button' @click.stop='leaveMoving' v-if='isMe'>Se retirer</div>
+        <div class='button-leave button' @click.stop='seRetirer' v-if='isMe'>Se retirer</div>
         <div class='switch' v-if='admin'>
           <span>{{mover.enabled?'Activé':'Désactivé'}}</span>
-          <UISwitch :value='mover.enabled'/>
+          <UISwitch :value='mover.enabled' @switch='toggleEnabled' :loading='loadingEnabled'/>
         </div>
       </div>
     </div>
@@ -85,7 +85,7 @@ import Api from '@api';
 import { StarRating, SvgIcon, UISwitch, BackgroundLoader, Notifications } from '@components';
 import * as Chance from 'chance';
 import axios from 'axios';
-import {MovingStore, LoginStore, NotificationsStore, MoverStore} from '@store';
+import {MovingStore, LoginStore, NotificationsStore, MoverStore, AdminStore} from '@store';
 import Router, {routesNames} from '@router';
 import {DateMoving, Forms, AlertsElement, ActionsElements} from '@classes';
 
@@ -110,6 +110,7 @@ export default class MoverCard extends Vue {
   public css = require('@css');
   public profilePic = null;
   public noteLoading = false;
+  public loadingEnabled = false;
 
   get userName() {return this.mover.username};
   get userPrice() {return this.mover.pricePerHour || 15};
@@ -143,6 +144,16 @@ export default class MoverCard extends Vue {
     return {name: routesNames.user, params: {userId: this.mover.id.toString()}};
   }
 
+  async toggleEnabled() {
+    this.loadingEnabled = true;
+    try {
+      const {data} = await AdminStore.actions.toggleUser(this.mover.id);
+      this.mover.enabled = data.active;
+    } finally {
+      this.loadingEnabled = false;
+    }
+  }
+
   async askHelp() {
     try {
       const response = await new AlertsElement.FormAlert({
@@ -169,14 +180,14 @@ export default class MoverCard extends Vue {
 
       if (response) {
         new AlertsElement.SuccessAlert({
-          title: `Proposition envoyée`,
+          title: `Invitation envoyée`,
           message: `Votre demande a bien été envoyée à ${this.fullname}`,
         })
       }
     } catch(e) {
       new AlertsElement.ErrorAlert({
-        title: `La proposition a échoué`,
-        message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+        title: `L'invitation a échoué`,
+        message: `Une erreur s'est produite lors de l'envoi de l'invitation`,
       })
     }
   }
@@ -259,6 +270,38 @@ export default class MoverCard extends Vue {
     }
   }
 
+  async seRetirer() {
+    try {
+      const response = await new AlertsElement.Alert({
+        title: `Partir du déménagement?`,
+        type: 'info',
+        message: `Vous ne participerez plus au déménagement`,
+        actions: [
+          new ActionsElements.CancelAction(),
+          new ActionsElements.ConfirmAction({
+            text: 'Confirmer',
+            triggers: [
+              async () => {
+                const response = await MovingStore.actions.refuseDemande(this.mover.participationId)
+                Router.push({name: routesNames.movingInfos, params: {movingId: MovingStore.state.oneAnnouncement.uuid}})
+                MovingStore.actions.getAnnouncementDetails({id: this.movingEvent.uuid, force: true});
+                NotificationsStore.actions.addNotification({
+                  type: 'success',
+                  message: 'Vous vous êtes retiré du déménagement'
+                })
+              }
+            ]
+          })
+        ]
+      }).waitResponse();
+    } catch(e) {
+      NotificationsStore.actions.addNotification({
+        type: 'error',
+        message: 'Echec de la supression'
+      })
+    }
+  }
+
   mounted() {
     this.profilePic = this.mover.avatar || require('@images/user.jpg');
   }
@@ -310,7 +353,7 @@ $radius: 8px;
 
     .userPicture {
       flex: 1 0 auto;
-      height: 160px;
+      height: 200px;
       overflow: hidden;
     }
 

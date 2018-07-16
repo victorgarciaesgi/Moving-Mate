@@ -11,13 +11,13 @@
         </span>
       </div>
       <!-- <SocialButton media='facebook'>Connexion avec Facebook</SocialButton> -->
-      <SocialButton media='google'>Connexion avec Google (Beta)</SocialButton>
+      <!-- <SocialButton media='google'>Connexion avec Google (Beta)</SocialButton> -->
       <FormSeparator>Ou connectez vous</FormSeparator>
       <FormText v-model="LoginForm._username" :vl='$v.LoginForm._username' :data='LoginForm.fieldsData._username'/>
       <FormText v-model="LoginForm._password" :vl='$v.LoginForm._password' :data='LoginForm.fieldsData._password'/>
 
       <div class='form-option'>
-        <span class='form-link'>Mot de passe oublié?</span>
+        <span class='form-link' @click='forgotPassword'>Mot de passe oublié?</span>
       </div>
       <!-- <CheckBox v-model='LoginForm._souvenir' label='Se souvenir de moi' name="_souvenir" />    -->
       <div class='infoMessage' v-if='infoMessage.length' :class='[errorType]'>
@@ -44,7 +44,7 @@ import { UIModal, FormText, CheckBox, FormButton, FormSeparator, SocialButton } 
 import { timeout } from '@methods';
 import { required, email } from 'vuelidate/lib/validators';
 import { LoginStore, NotificationsStore, SignupStore } from '@modules';
-import { Forms } from '@classes'
+import { Forms, AlertsElement } from '@classes'
 
 @Component({
   components: {
@@ -73,16 +73,13 @@ export default class Connexion extends Vue {
   public error: boolean = true;
   public errorType: string = '';
 
-
   public LoginForm = new Forms.Form({
     _username: new Forms.TextForm({
-      value: '@gmail.com',
       error: false,
       placeholder: 'Adresse email',
       icon: require('@icons/mail.svg')
     }),
     _password: new Forms.TextForm({
-      value: '1234',
       error: false,
       type: 'password',
       placeholder: 'Mot de passe',
@@ -96,6 +93,41 @@ export default class Connexion extends Vue {
       this.LoginForm.reset()
     }
     this.closeModal();
+  }
+
+  async forgotPassword() {
+    try {
+      const response = await new AlertsElement.FormAlert({
+        title: 'Demander un changement de mot de passe',
+        message: 'Un mail vous sera envoyé avec un lien qui vous permettra de changer votre mot de passe',
+        formElement: {
+          form: new Forms.Form({
+            email: new Forms.TextForm({
+              type: 'email',
+              placeholder: 'Votre adresse email'
+            })
+          }),
+          validations: {
+            email: {required, email}
+          },
+          submit: {
+            trigger: LoginStore.actions.passwordResetRequest
+          }
+        }
+      }).waitResponse();
+
+      if (response) {
+        NotificationsStore.actions.addNotification({
+          type: 'success',
+          message: 'Votre mail est envoyé'
+        })
+      }
+    } catch {
+      NotificationsStore.actions.addNotification({
+        type: 'error',
+        message: `Erreur lors de l'envoi`
+      })
+    }
   }
 
   handleSubmitLink() {
@@ -148,6 +180,7 @@ export default class Connexion extends Vue {
   .form-link {
     color: darken($mainStyle, 10%);
     cursor: pointer;
+    &:hover {text-decoration: underline}
   }
 
   .infoMessage {

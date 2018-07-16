@@ -45,7 +45,7 @@ import { Component, Prop } from "vue-property-decorator";
 import { UIModal, FormButton, FormText, UISteps, FormPlaceSearch,
   FormMessage, Radio, FormSelect, FormSeparator,FormField, CheckBox, FormCalendar, FormUpload } from "@components";
 import { timeout } from '@methods';
-import { required, email, numeric, maxLength } from 'vuelidate/lib/validators';
+import { required, email, numeric, maxLength, maxValue, minValue } from 'vuelidate/lib/validators';
 import Router, {routesNames} from '@router';
 import { GlobalStore, LoginStore, MoverStore } from '@store';
 import { Forms, AlertsElement, ActionsElements } from '@classes';
@@ -69,7 +69,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
         }
         return true;
       }},
-      price:{required, numeric},
+      price:{required, numeric, maxValue: maxValue(100), minValue: minValue(5)},
       description: {required, maxLength: maxLength(1000)}
     }
   }
@@ -101,12 +101,11 @@ export default class BeMover extends Vue {
     }),
     avatar: new Forms.UploadForm({
       placeholder: 'Votre photo de profil',
-      value: this.userInfos.avatar
+      // value: this.userInfos.avatar
     }),
     address: new Forms.TextForm({
       icon: require('@icons/localisation.svg'),
       placeholder: 'Votre adresse',
-      value: this.userInfos.fullAddress?{title: this.userInfos.fullAddress}: null,
     }),
     phone: new Forms.TextForm({
       icon: require('@icons/phone.svg'),
@@ -130,6 +129,7 @@ export default class BeMover extends Vue {
     try {
       this.submitting = true;
       const form = this.becomeMoverForm.getData();
+      console.log(form)
       form.phone = form.phone.split(' ').join('');
       let formData = new FormData();
       for (let key in form) {

@@ -214,13 +214,13 @@ export default class MovingInfos extends Vue {
   get isMovingMine() {return this.movingEvent.user.id == LoginStore.state.userInfos.id}
   get canAsk() {
     if (this.isMovingMine) return false;
-    else if (this.movingEvent.userParticipating) {
+    if (this.movingEvent.userParticipating) {
       if (this.movingEvent.userParticipating.length >= this.movingEvent.menRequired) return false;
-      return !this.movingEvent.userParticipating.some(m => m.id == LoginStore.state.userInfos.id)
+      if(this.movingEvent.userParticipating.some(m => m.id == LoginStore.state.userInfos.id)) return false;
     }
-    else if (this.movingEvent.userNotParticipating) {
+    if (this.movingEvent.userNotParticipating) {
       if (this.movingEvent.userNotParticipating.length >= this.movingEvent.menRequired) return false;
-      return !this.movingEvent.userNotParticipating.some(m => m.id == LoginStore.state.userInfos.id)
+      if (this.movingEvent.userNotParticipating.some(m => m.id == LoginStore.state.userInfos.id)) return false;
     }
     return true;
   }
@@ -322,9 +322,10 @@ export default class MovingInfos extends Vue {
           })
         }
       } catch(e) {
+        console.log(e)
         new AlertsElement.ErrorAlert({
           title: `La proposition a échoué`,
-          message: `Une erreur s'est produite lors de l'envoi de la proposition`,
+          message: e.data.error.message,
         })
       }
     }
@@ -495,6 +496,12 @@ export default class MovingInfos extends Vue {
                 color: $w110;
               }
             }
+          }
+
+          .result {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: flex-start;
           }
 
         }

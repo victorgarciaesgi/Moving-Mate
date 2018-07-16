@@ -1,7 +1,7 @@
 <template>
   <div class="Switch">
     <img v-if="loading" src='~@images/loading.svg' height='22' width="22">
-    <div class='container' @click.stop='changeValue' :class='{checked: value}'>
+    <div class='container' @click.stop.prevent='changeValue' :class='{checked: value}'>
       <div class='boule'></div>
     </div>
   </div>

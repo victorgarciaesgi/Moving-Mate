@@ -77,6 +77,7 @@ export default class Home extends Vue {
     {icon: require('@icons/annonce.svg'), text:'Je publie une annonce gratuitement sur le site!'},
     {icon: require('@icons/people.svg'), text:'Des déménageurs répertoriés viendront proposer leur services'},
     {icon: require('@icons/phone.svg'), text:'Nous vous mettons en relation avec les déménageurs'},
+    {icon: require('@icons/euro.svg'), text:"Je paye les déménageurs en main propre une fois le déménagement fini"},
     {icon: require('@icons/star_plain.svg'), text:'Je laisse un avis et une note sur les déménageurs une fois le déménagement fini'},
   ];
 

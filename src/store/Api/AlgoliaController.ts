@@ -31,14 +31,20 @@ export class AlgoliaSearch {
   async searchMovers(fields: { text: string, lat: number, lng: number }) {
     let result;
     let userCoords = `${fields.lat}, ${fields.lng}`;
+    let uuid;
 
-    algoliaHelperMoving.setQueryParameter('aroundLatLng', userCoords);
-    algoliaHelperMoving.search();
+    return new Promise((resolve, reject) => {
+      algoliaHelperMover.setQueryParameter('aroundLatLng', userCoords);
+      algoliaHelperMover.setQueryParameter('aroundRadius', 25000);
+      algoliaHelperMover.search();
 
-    algoliaHelperMoving.on('result', function (data) {
-      result = data.hits;
-    });
+      algoliaHelperMover.on('result', async (data) => {
+        const objectIdList = data.hits.map(value => value.id);
 
-    return result;
+        const result = await Api.post('moversList', {'objectId': objectIdList});
+
+        resolve(result.data);
+      });
+    })
   }
 }

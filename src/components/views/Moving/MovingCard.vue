@@ -1,5 +1,5 @@
 <template>
-  <li class='moving-card' :class='{onMap, embed, isMine}' @click.prevent='redirectToDetail'>
+  <li class='moving-card' :class='{onMap, embed, isMine, popup}' @click.prevent='redirectToDetail'>
     <div class='header'>
       <div class='profil'>
         <div class='profil-bg' :style='getProfilePic'></div>
@@ -34,7 +34,7 @@
         </div>
         <div class='liaison' v-if='moving.helpType == 2'></div>
       </div>
-      <div class='moving-infos'>
+      <div class='moving-infos' v-if='!popup && !admin'>
         <div class='info'>
           <div class='info-content'>
             <strong>{{getPrice}}€</strong>
@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-      <div class='participants' v-if='!user'>
+      <div class='participants' v-if='!user && !popup && !admin'>
         <div class='wrapper'>
           <span>Participants: </span>
           <ul class='result' v-if='moving.userParticipating'>
@@ -76,6 +76,10 @@
           </ul>
           <span class='result' v-else>Aucun</span>
         </div>
+      </div>
+      <div class='switch' v-if='admin'>
+        <span>{{moving.enabled?'Activé':'Désactivé'}}</span>
+        <UISwitch :value='moving.enabled' @switch='toggleEnabled' :loading='loadingEnabled'/>
       </div>
     </div>
     <div class='triangle' v-if='onMap'></div>
@@ -92,7 +96,7 @@ import * as Chance from 'chance';
 import axios from 'axios';
 import Router, {routesNames} from '@router';
 import {DateMoving} from '@classes';
-import {LoginStore} from '@store';
+import {LoginStore, AdminStore} from '@store';
 
 @Component({
   components: {
@@ -105,7 +109,11 @@ export default class MovingCard extends Vue {
   @Prop({required: false}) onMap: boolean;
   @Prop() embed: boolean;
   @Prop() user: boolean;
+  @Prop() popup: boolean;
+  @Prop() admin: boolean;
   public css = require('@css');
+  public loadingEnabled = false;
+  
 
   get getDescription() { return this.chance.paragraph(); }
   get chance() { return new Chance(); }
@@ -137,6 +145,16 @@ export default class MovingCard extends Vue {
 
   redirectToDetail() {
     Router.push({name: routesNames.movingInfos, params: {movingId: this.moving.uuid}});
+  }
+
+  async toggleEnabled() {
+    this.loadingEnabled = true;
+    try {
+      const {data} = await AdminStore.actions.toggleMoving(this.moving.uuid);
+      this.moving.enabled = data.active;
+    } finally {
+      this.loadingEnabled = false;
+    }
   }
 
   async fetchImage() {
@@ -180,6 +198,10 @@ $radius: 8px;
   &.embed {
     margin: 0;
     box-shadow: none;
+  }
+
+  &.popup {
+    margin-bottom: 10px;
   }
 
 
@@ -505,36 +527,15 @@ $radius: 8px;
       }
     }
 
-    .description {
-      position: relative;
-      text-align: left;
-      flex: 1 1 auto;
-      text-align: justify;
+    .switch {
       display: flex;
-      overflow: hidden;
-      font-size: 13px;
-      padding: 0 15px 0 15px;
-      margin-bottom: 12px;
-      color: $w110;
+      flex-flow: row nowrap;
+      align-items: center;
+      padding: 5px;
+      border-top: 1px solid $w230;
 
-      &:before {
-        content: ' ';
-        position: absolute;
-        right: 15px;
-        bottom: 0px;
-        height: 1.5em;
-        width: 30px;
-        text-align: right;
-        background: linear-gradient(to right, rgba(255, 255, 255, 0.342), #FFF);
-      }
-      &:after {
-        content: '';
-        position: absolute;
-        right: 0;
-        width: 10px;
-        height: 10px;
-        margin-top: 2px;
-        background: white;
+      span {
+        flex: 1 1 auto;
       }
     }
   }

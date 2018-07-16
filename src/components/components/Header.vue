@@ -21,11 +21,11 @@
             <li class='header-button popup header-link'>
               <Popup v-if='loginState.isLoggedIn' @open='fetchMyMoving' key='moving'>
                 <template slot='popup'>
-                  <div class='center' v-if='searchingMyMoving'><img src='~@images/loading.svg'></div>
-                  <div v-else-if="myMoving">
-                    <MovingCard :moving='myMoving' embed />
+                  <div class='centerContent' v-if='searchingMyMoving'><img src='~@images/loading.svg'></div>
+                  <div v-else-if="myMovings" style='display: flex'>
+                    <UserMovings/>
                   </div>
-                  <div v-else class='center' >Aucun déménagement trouvé</div>
+                  <div v-else class='centerContent' >Aucun déménagement trouvé</div>
                 </template>
                 <div slot='button' class='bouton-data' >
                   <span>
@@ -57,10 +57,11 @@
                     </div>
                     <ul class='user-option-list'>
                       <router-link tag='li' :to='userProfilePath' class='user-option'>Mon profil</router-link>
+                      <router-link tag='li' :to='userEditPath' class='user-option'>Modifier mes informations</router-link>
                       <router-link v-if='userInfos.isMover' tag='li' :to='userParticipationsPath' class='user-option'>Historique des participations</router-link>
                       <router-link tag='li' to='/admin' class='user-option' v-if='isAdmin'>Administration</router-link>
                       <router-link to='/cgu' class='user-option'>Conditions d'utilisation</router-link>
-                      <li class='user-option' @click='disconnectRequest'>Deconnexion</li>
+                      <li class='user-option red' @click='disconnectRequest'>Deconnexion</li>
                     </ul>
                  </div>
                 </template>
@@ -137,9 +138,11 @@ import { LoginStore, SignupStore, GlobalStore, MovingStore, UserStore } from '@m
 import { StringifyOptions } from "querystring";
 import {routesNames} from '@router';
 import UserNotifs from './UserNotifs/UserNotifications.vue';
+import UserMovings from './UserMovings.vue';
+
 
 @Component({
-  components: { Connexion, Inscription, Popup, SvgIcon, MovingCard, UserNotifs },
+  components: { Connexion, Inscription, Popup, SvgIcon, MovingCard, UserNotifs, UserMovings },
 })
 export default class HeaderComponent extends Vue {
 
@@ -150,6 +153,7 @@ export default class HeaderComponent extends Vue {
   get isAdmin() {return LoginStore.getters.isAdmin};
   get headerBox() {return GlobalStore.state.headerBoxShadow};
   get userProfilePath() {return {name: routesNames.user, params: {userId: this.userInfos.id}}}
+  get userEditPath() {return {name: routesNames.userEdit, params: {userId: this.userInfos.id}}}
   get userParticipationsPath() {return {name: routesNames.userParticipations, params: {userId: this.userInfos.id}}}
 
   private showLogin = LoginStore.mutations.showLogin;
@@ -186,15 +190,15 @@ export default class HeaderComponent extends Vue {
     }
   }
 
-  public myMoving = null;
+  get myMovings() {
+    return (LoginStore.state.myMovings.Announcements || LoginStore.state.myMovings.Participations)
+  }
   public searchingMyMoving = false;
 
   async fetchMyMoving() {
-    if (this.myMoving) return;
     try {
       this.searchingMyMoving = true;
-      const moving = await MovingStore.actions.getOneAnnouncement('9');
-      this.myMoving = moving;
+      const moving = await LoginStore.actions.getMyAnnouncements();
     } finally {
       this.searchingMyMoving = false;
     }
@@ -206,7 +210,8 @@ export default class HeaderComponent extends Vue {
 
   get nonReadNotifs() {
     return this.notifications.reduce((acc, curr, index) => {
-      if (!curr.read) return acc++;
+      if (!curr.read) return acc + 1;
+      return acc;
     }, 0)
   }
 
@@ -609,6 +614,10 @@ div.header-wrapper{
       cursor: pointer;
       font-weight: bold;
 
+      &.red {
+        color: $red1;
+      }
+
       &:hover{
         background-color: $w245;
       }
@@ -616,6 +625,7 @@ div.header-wrapper{
       &:active{
         background-color: $w220;
       }
+      
     }
   }
 }
@@ -638,6 +648,8 @@ div.header-wrapper{
 .coulisse-enter, .coulisse-leave-to {
   opacity: 0;
 }
+
+
 
 
 </style>

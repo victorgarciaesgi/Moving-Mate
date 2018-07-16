@@ -7,6 +7,7 @@ import Marker from './Interface/GoogleMaps/Markers';
 import {geoLocate} from './Interface/GoogleMaps/GoogleMaps';
 import Paths from '@paths';
 import MovingStore from './MovingStore';
+import {LoginStore} from './'
 
 
 const GEO_API = 'https://geo.api.gouv.fr';
@@ -35,8 +36,18 @@ namespace Getters {
 
 // Mutations
 namespace Mutations {
-  function updateMoverList(state: IMoverState, list: Array<any>) {
-    state.moverList = list;
+  function updateMoverList(state: IMoverState, list: Array<IMover>) {
+    state.moverList = list.filter(mover => {
+      let result = false;
+      if (mover.id != LoginStore.state.userInfos.id) result = true;
+      if (MovingStore.state.oneAnnouncement.userParticipating) {
+        if (MovingStore.state.oneAnnouncement.userParticipating.some(user => user.id == mover.id)) result = false;
+      }
+      if (MovingStore.state.oneAnnouncement.userNotParticipating) {
+        if (MovingStore.state.oneAnnouncement.userNotParticipating.some(user => user.id == mover.id)) result = false;
+      }
+      return result;
+    });
   }
 
   function updateSearchList(state: IMoverState, list: Array<any>) {
@@ -87,7 +98,7 @@ namespace Actions {
       } else {
         const location = await geoLocate(payload.search);
         console.log(location.location.lat(), location.location.lng());
-        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.location.lat(), lng:location.location.lng()})
+        const result = await Api.AlgoliaMovers({text: payload.search, lat: location.bounds.getCenter().lat(), lng:location.bounds.getCenter().lng()})
         Mutations.mutations.updateMoverList(result);
       }
     } finally {
