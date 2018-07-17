@@ -50,7 +50,9 @@
                   <SvgIcon class='icon' :src='card.image' :color='css.mainStyle' :size='card.size || 24'/>
                   <span>{{card.title}}</span>
                 </div>
-                <div class='value'>{{card.value}}</div>
+                <div class='value'>
+                  <span>{{card.value}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -507,6 +509,11 @@ export default class MovingInfos extends Vue {
                 font-size: 20px;
                 font-weight: bold;
                 color: $w110;
+                
+                span {
+                  white-space: nowrap;
+                  @include ellipsis;
+                }
               }
             }
           }

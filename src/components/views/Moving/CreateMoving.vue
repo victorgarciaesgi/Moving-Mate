@@ -198,7 +198,7 @@ import { Forms, AlertsElement, ActionsElements } from '@classes';
           label: {required, maxLength: maxLength(70)},
           dealDate: {required},
           estimatedTime: {required},
-          pricePerHourPerUser: {required, numeric},
+          pricePerHourPerUser: {required, numeric, maxValue: maxValue(100), minValue: minValue(5)},
           menRequired: {required, numeric},
           description: {required,minLength: minLength(20), maxLength: maxLength(1000)}
         }
