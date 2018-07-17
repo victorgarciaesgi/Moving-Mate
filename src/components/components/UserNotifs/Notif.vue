@@ -217,6 +217,12 @@ export default class Notif extends Vue {
 
       &.blue {color: $green4;}
       &.red {color: $red1}
+      &:hover {
+        background-color: $w250;
+      }
+      &:active {
+        background-color: $w235;
+      }
 
       img {
         margin-left: 5px;

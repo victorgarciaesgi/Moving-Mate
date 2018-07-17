@@ -328,6 +328,19 @@
       min-height: 120px;
     }
   }
+
+  @media screen and (max-width: 1000px) {
+    flex-flow: row wrap;
+    align-items: flex-start;
+    justify-content: center;
+
+    .history {
+      margin-left: 0;
+      margin-top: 20px;
+      max-width: 600px;
+      flex-shrink: 1;
+    }
+  }
 }
 
 </style>

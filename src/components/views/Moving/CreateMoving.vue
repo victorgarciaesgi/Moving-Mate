@@ -28,10 +28,11 @@
             <FormText v-model='CreateMovingForm.part1.volume'
               :vl='$v.CreateMovingForm.part1.volume' 
               :data='CreateMovingForm.part1.fieldsData.volume'/>
+
             <template v-if='typeDepart || typeBoth'>
               <FormSeparator>Informations du départ</FormSeparator>
               <FormPlaceSearch v-model='CreateMovingForm.part1.addressIn.address'  key='departAddress'
-                :vl='$v.CreateMovingForm.part1.addressIn.address' 
+                :vl='$v.CreateMovingForm.part1.addressIn.address'
                 :data='CreateMovingForm.part1.fieldsData.addressIn.address'/>
               <Radio row v-model='CreateMovingForm.part1.addressIn.addressType' 
                 :vl='$v.CreateMovingForm.part1.addressIn.addressType' 
@@ -242,7 +243,10 @@ export default class CreateMoving extends Vue {
     }
   }
 
-  public CreateMovingForm: any = {
+  public CreateMovingForm: any = null;
+
+  created() {
+    this.CreateMovingForm = {
     part0: new Forms.Form({
       firstname: new Forms.TextForm({
         icon: require('@icons/surname.svg'),
@@ -259,6 +263,7 @@ export default class CreateMoving extends Vue {
       phone: new Forms.TextForm({
         icon: require('@icons/phone.svg'),
         type: 'tel',
+        value: this.userInfos.phone,
         placeholder: 'Votre numéro de téléphone',
         noEdit: (!!this.userInfos.phone)
       })
@@ -364,6 +369,7 @@ export default class CreateMoving extends Vue {
         placeholder: 'Description du déménagement',
       })
     })
+  }
   }
 
   async sendUserInfos() {
@@ -504,6 +510,10 @@ export default class CreateMoving extends Vue {
       flex-flow: column wrap;
       justify-content: center;
       align-items: center;
+
+      .fill {
+        width: 100%;
+      }
     }
   }
 }
