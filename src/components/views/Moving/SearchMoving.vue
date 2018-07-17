@@ -360,17 +360,16 @@ export default class SearchMoving extends Vue {
           z-index: 2;
           box-shadow: 0 0 15px rgba(0,0,0,0.15);
 
-          &:before {
-            width: 100%;
-            height: 100%;
-            left: 0;
-            bottom: -4px;
-            z-index: 0;
-            background-color: $w220;
-            position: absolute;
-            content: "";
-            border-radius: 5px;
-          }
+          // &::before {
+          //   width: 100%;
+          //   height: 100%;
+          //   left: 0;
+          //   bottom: -4px;
+          //   background-color: $w220;
+          //   position: absolute;
+          //   content: "";
+          //   border-radius: 5px;
+          // }
 
           ul {
             display: flex;
