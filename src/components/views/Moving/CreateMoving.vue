@@ -356,7 +356,7 @@ export default class CreateMoving extends Vue {
         })
       }),
       menRequired: new Forms.Select({
-        placeholder: 'Nombre de personnes requises',
+        placeholder: 'Personnes requises',
         options: Array.from(Array(15)).map((val, index) => {
           return {value: index + 1, text: index + 1 + ' personnes'}
         })

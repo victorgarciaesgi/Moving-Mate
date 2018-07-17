@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class='list' v-if='userComments.length'>
+      <div class='list' v-if='commentsToDisplay.length'>
         <div class='comment'  v-for='comment of commentsToDisplay' :key='comment.id'>
           <div class='header'>
             <div class='users' :class='{reverse: tabSelected == 1}'>
