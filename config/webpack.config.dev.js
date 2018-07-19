@@ -61,6 +61,7 @@ const webpackDevConfig = {
     disableHostCheck: true,
     host: "0.0.0.0",
     hot: true,
+    open: true,
     quiet: true,
     inline: true,
     noInfo: true,

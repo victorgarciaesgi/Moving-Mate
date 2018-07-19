@@ -7,10 +7,11 @@
   "scripts": {
     "dev2": "webpack-dashboard -- webpack-dev-server --inline --progress --color",
     "dev": "webpack-dev-server --inline --progress",
-    "prod": "npm run clean && npm run build:prod && npm run server:prod",
-    "prod2": "npm run clean && npm run build:prod && npm run server:dev",
+    "prod": "npm run clean && npm run build:prod && npm run stop:prod && npm run server:prod",
+    "prod2": "npm run clean && npm run build:prod && npm run stop:prod && npm run server:dev",
     "start": "npm run prod",
     "server:prod": "cross-env NODE_ENV=production pm2 start Server.js",
+    "stop:prod": "pm2 stop Server",
     "server:dev": "cross-env NODE_ENV=production nodemon Server.js",
     "build:prod": "webpack --display-entrypoints --config  config/webpack.config.prod.js --progress",
     "build:mobile": "webpack --display-entrypoints --config  config/webpack.config.mobile.js --progress",

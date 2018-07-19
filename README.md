@@ -24,7 +24,9 @@
 - Google OAuth
 - Google Maps Client
 
-## Installation
+Open Source at https://github.com/victorgarciaesgi/Moving-Mate
+
+# Installation
 
 ```bash
 npm install
@@ -34,31 +36,108 @@ npm install
 yarn
 ```
 
-## Developing
+# Change API url endpoint
 
-A page will open on [localhost:5000](http://localhost:5000) .
+go to `./environment`
 
-Live reload and Hot Module Replacement.
+`dev.env.js` -> API_URL constant for development
+`prod.env.js` -> API_URL constant for production
+
+
+## Config
+
+Webpack config in `./config`
+
+# Developpment
 
 ```bash
 npm run dev
 ```
 
-## Production
+A page will open on [localhost:5000](http://localhost:5000).
 
-Deploy with minified bundle size, gzipped and chunks vendors and Vue production mode
+Build ~ 60s
+
+Live reload, Hot Module Replacement and Vue devtools
+
+
+```bash
+npm run dev2
+```
+
+Same as dev but with **Webpack-Dashboard**
+
+# Production
 
 ```bash
 npm run prod
-
 ```
 
-## Generate SSL certificate
+- pm2
+- minified bundle size
+- uglified code
+- gzipped
+- chunks vendors
+- Vue production mode
+- drop console logs and comments
 
 ```bash
-openssl genrsa -des3 -out ./cert/rootCA.key 2048
+npm run prod2
+```
+Same as prod but with **Nodemon**
+
+```bash
+npm run build:prod
+```
+
+Regenerate the assets
+
+# Mobile app
+
+```bash
+npm i -g cordova
 ```
 
 ```bash
-openssl req -x509 -new -nodes -key ./cert/rootCA.key -sha256 -days 1024 -out ./cert/rootCA.pem
+npm run build:mobile
+```
+
+It wuild build the app in prod mode, targeted to ```./mobile-app/www```
+
+```bash
+cd ./mobile-app
+```
+
+```bash
+npm install
+```
+
+```bash
+cordova platform add ios
+# or
+cordova platform add android
+```
+
+## For IOS
+
+Go to ```./platforms/ios``` and open the Xcode project (Mac only)
+
+## For Android
+
+Install Android Studio
+
+## Build
+
+```bash
+cordova build ios
+# or
+cordova build android
+```
+
+plug your Iphone/android
+
+```bash
+cordova run ios
+# or
+cordova run android
 ```
